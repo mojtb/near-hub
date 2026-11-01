@@ -1,0 +1,19 @@
+repo,ecosystem,repo_group,why_track
+near/nearcore,near,protocol,reference NEAR client
+near/mpc,near,chain_signatures,MPC node behind Chain Signatures
+near/intents,near,intents,NEAR Intents contracts
+near/near-sdk-rs,near,developer_tools,Rust contract SDK
+near/near-api-js,near,developer_tools,JavaScript client library
+near/near-cli-rs,near,developer_tools,command line tool
+near/docs,near,developer_tools,official documentation
+near-daos/sputnik-dao-contract,near,governance,Sputnik DAO contracts
+aurora-is-near/aurora-engine,near,ecosystem,Aurora EVM on NEAR
+nearai/cloud-api,near,ai,NEAR AI cloud API
+out-layer/outlayer,near,ai,OutLayer agent transactions
+NEAR-DevHub/trezu,near,ecosystem,Trezu treasury
+anza-xyz/agave,solana,protocol,reference Solana client
+MystenLabs/sui,sui,protocol,reference Sui client
+aptos-labs/aptos-core,aptos,protocol,reference Aptos client
+ava-labs/avalanchego,avalanche,protocol,reference Avalanche client
+ton-blockchain/ton,ton,protocol,reference TON client
+ethereum/go-ethereum,ethereum,protocol,reference Ethereum execution client

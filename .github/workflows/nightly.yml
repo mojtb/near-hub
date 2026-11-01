@@ -1,0 +1,69 @@
+# Captures a snapshot every night on the data/nightly branch, so point-in-time data keeps building up.
+# Keys are optional repository secrets; a source without its key is skipped with a clear message.
+# main stays on its pinned snapshot, so the README's expected numbers do not drift.
+name: Nightly snapshot
+
+on:
+  schedule:
+    - cron: "23 1 * * *"
+  workflow_dispatch:
+    inputs:
+      profile:
+        description: "nightly, or backfill for the long history jobs"
+        default: nightly
+
+permissions:
+  contents: write
+
+concurrency:
+  group: nightly-snapshot
+
+env:
+  AS_OF: "9999-12-31"
+  NEARBLOCKS_API_KEY: ${{ secrets.NEARBLOCKS_API_KEY }}
+  FASTNEAR_API_KEY: ${{ secrets.FASTNEAR_API_KEY }}
+  INTENTS_EXPLORER_JWT: ${{ secrets.INTENTS_EXPLORER_JWT }}
+  DUNE_API_KEY: ${{ secrets.DUNE_API_KEY }}
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Switch to data/nightly and bring in main
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git ls-remote --exit-code --heads origin data/nightly >/dev/null; then
+            git switch data/nightly
+            # Generated files on this branch win; they are rebuilt below anyway. Code comes from main.
+            git merge --no-edit -X ours origin/main
+          else
+            git switch -c data/nightly
+          fi
+      - run: make setup PYTHON=python
+      - name: Fetch
+        run: .venv/bin/python -m ingest run --profile "${{ inputs.profile || 'nightly' }}"
+      - name: Build, document and fingerprint
+        run: make warehouse fingerprints catalog
+      - name: Verify
+        id: verify
+        continue-on-error: true
+        run: make verify
+      - name: Commit what was fetched, even if a check failed
+        run: |
+          git add data docs README.md
+          git diff --cached --quiet || git commit -m "Snapshot $(date -u +%F)"
+          git push origin data/nightly
+      - name: Report a failed check
+        if: steps.verify.outcome == 'failure'
+        run: |
+          echo "::error::make verify failed on this snapshot; the data was still committed so it can be inspected"
+          exit 1

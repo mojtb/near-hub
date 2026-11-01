@@ -1,0 +1,8 @@
+# Data files are binary or generated, so keep them out of diffs and language statistics.
+data/**/*.gz binary linguist-vendored
+data/**/*.parquet binary linguist-vendored
+data/gold/*.csv linguist-generated
+data/gold/_catalog.json linguist-generated
+data/gold/_fingerprints.json linguist-generated
+docs/DATA_CATALOG.md linguist-generated
+docs/RECONCILIATION.md linguist-generated

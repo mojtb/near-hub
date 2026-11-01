@@ -1,0 +1,8 @@
+.venv
+.git
+.env
+.logs
+data/warehouse.duckdb
+data/warehouse.duckdb.wal
+warehouse/target
+warehouse/logs

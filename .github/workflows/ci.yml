@@ -1,0 +1,32 @@
+# Proves the judge path on a clean machine with no keys: setup, build from committed data, verify.
+name: Reproducibility check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  reproduce:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: make setup PYTHON=python
+      - run: make warehouse
+      - run: make verify
+
+  container:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -t near-thesis .
+      - run: docker run --rm near-thesis
