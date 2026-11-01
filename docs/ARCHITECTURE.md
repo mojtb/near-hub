@@ -46,12 +46,14 @@ flowchart LR
 
 | Branch | Holds | Updated by |
 |---|---|---|
-| `main` | Code plus the pinned snapshot. What judges run | Commits, and merges from `data/nightly` when the pin moves |
-| `data/nightly` | `main` plus each night's snapshots | `.github/workflows/nightly.yml` |
+| `main` | Code plus the pinned snapshot. What judges run | Commits, and data copied from `data/nightly` when the pin moves |
+| `data/nightly` | One commit per night: that night's code and data, pinned to that night, without `.github` | `.github/workflows/nightly.yml` |
 
 `ci.yml` runs `make setup warehouse verify` on a clean Linux machine for every push to `main`. It has no network keys, so it proves the judge path.
 
-To move the pin: merge `data/nightly` into `main`, write the new date to `data/PINNED`, then run `make warehouse fingerprints catalog verify` and commit.
+`data/nightly` shares no history with `main` and is never merged. Each night the job starts from `main`'s code, copies in the branch's `data/`, and commits the result on top of the branch. A commit on it passes `make setup warehouse verify` by itself, except on a night the job reports a failed check.
+
+To move the pin: run `git fetch origin data/nightly && git checkout FETCH_HEAD -- data`, then `make warehouse fingerprints catalog verify`, and commit. `data/PINNED` comes along with the data.
 
 ## Conventions
 

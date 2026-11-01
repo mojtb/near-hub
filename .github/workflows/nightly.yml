@@ -1,6 +1,9 @@
 # Captures a snapshot every night on the data/nightly branch, so point-in-time data keeps building up.
 # Keys are optional repository secrets; a source without its key is skipped with a clear message.
 # main stays on its pinned snapshot, so the README's expected numbers do not drift.
+#
+# Each snapshot commit holds that night's code and data, pinned to that night, so it rebuilds by itself.
+# It leaves out .github, because GitHub refuses a push from this job's token if it changes a workflow file.
 name: Nightly snapshot
 
 on:
@@ -9,7 +12,7 @@ on:
   workflow_dispatch:
     inputs:
       profile:
-        description: "all, nightly or backfill. History jobs run in batches, so each night fills in a little more"
+        description: "all, nightly or backfill. History jobs run in batches, so each night fills in a little more. none skips the fetch"
         default: all
 
 permissions:
@@ -19,7 +22,6 @@ concurrency:
   group: nightly-snapshot
 
 env:
-  AS_OF: "9999-12-31"
   NEARBLOCKS_API_KEY: ${{ secrets.NEARBLOCKS_API_KEY }}
   FASTNEAR_API_KEY: ${{ secrets.FASTNEAR_API_KEY }}
   INTENTS_EXPLORER_JWT: ${{ secrets.INTENTS_EXPLORER_JWT }}
@@ -37,31 +39,37 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      - name: Switch to data/nightly and bring in main
+      - name: Bring in the data collected so far
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          if git ls-remote --exit-code --heads origin data/nightly >/dev/null; then
-            git switch data/nightly
-            # Generated files on this branch win; they are rebuilt below anyway. Code comes from main.
-            git merge --no-edit -X ours origin/main
-          else
-            git switch -c data/nightly
+          if git rev-parse -q --verify origin/data/nightly; then
+            git checkout origin/data/nightly -- data
           fi
       - run: make setup PYTHON=python
       - name: Fetch
+        if: inputs.profile != 'none'
         run: .venv/bin/python -m ingest run --profile "${{ inputs.profile || 'all' }}"
       - name: Build, document and fingerprint
-        run: make warehouse fingerprints catalog
+        run: |
+          date -u +%F > data/PINNED
+          make warehouse fingerprints catalog
       - name: Verify
         id: verify
         continue-on-error: true
         run: make verify
       - name: Commit what was fetched, even if a check failed
         run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add data docs README.md
-          git diff --cached --quiet || git commit -m "Snapshot $(date -u +%F)"
-          git push origin data/nightly
+          git rm -r -q --cached .github
+          tree=$(git write-tree)
+          parent=$(git rev-parse -q --verify origin/data/nightly || true)
+          if [ "$tree" = "$(git rev-parse -q --verify "$parent^{tree}" || true)" ]; then
+            echo "Nothing new to commit"
+          else
+            commit=$(git commit-tree "$tree" ${parent:+-p "$parent"} -m "Snapshot $(date -u +%F)")
+            git push origin "$commit:refs/heads/data/nightly"
+          fi
       - name: Report a failed check
         if: steps.verify.outcome == 'failure'
         run: |
