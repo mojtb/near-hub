@@ -1,0 +1,38 @@
+{
+ "1csfundsadmin.sputnik-dao.near": {
+  "at_tail": true,
+  "pages": 8,
+  "resume_token": "7660943196056413499329517583",
+  "rows": 500
+ },
+ "auroraliqsupport.near": {
+  "at_tail": true,
+  "pages": 3,
+  "resume_token": "7595692846003850594950884592",
+  "rows": 200
+ },
+ "buybacks.multisignature.near": {
+  "at_tail": true,
+  "pages": 34,
+  "resume_token": "7703130824532336211203879167",
+  "rows": 3100
+ },
+ "fefundsadmin.sputnik-dao.near": {
+  "at_tail": true,
+  "pages": 30,
+  "resume_token": "7701373678940525145922759887",
+  "rows": 2700
+ },
+ "multisignature.near": {
+  "at_tail": true,
+  "pages": 4,
+  "resume_token": "7519888046187779904137376399",
+  "rows": 100
+ },
+ "treasury.near": {
+  "at_tail": true,
+  "pages": 52,
+  "resume_token": "7700060122078715091731143052",
+  "rows": 5000
+ }
+}

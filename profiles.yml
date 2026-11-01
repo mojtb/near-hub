@@ -1,0 +1,11 @@
+near_thesis:
+  target: local
+  outputs:
+    local:
+      type: duckdb
+      path: data/warehouse.duckdb
+      threads: 4
+      schema: main
+      # One worker per query, so floating-point sums come out the same on every build.
+      settings:
+        threads: 1

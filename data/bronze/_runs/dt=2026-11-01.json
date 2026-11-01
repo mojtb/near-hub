@@ -1,0 +1,344 @@
+{
+ "coinbase/candles": {
+  "detail": "",
+  "files": 6,
+  "seconds": 4.4,
+  "status": "ok"
+ },
+ "coinmetrics/asset_metrics": {
+  "detail": "",
+  "files": 7,
+  "seconds": 39.9,
+  "status": "ok"
+ },
+ "defillama/chain_dex_volume": {
+  "detail": "",
+  "files": 7,
+  "seconds": 6.8,
+  "status": "ok"
+ },
+ "defillama/chain_fees": {
+  "detail": "",
+  "files": 14,
+  "seconds": 21.7,
+  "status": "ok"
+ },
+ "defillama/chain_tvl": {
+  "detail": "",
+  "files": 7,
+  "seconds": 3.4,
+  "status": "ok"
+ },
+ "defillama/chains": {
+  "detail": "",
+  "files": 1,
+  "seconds": 2.3,
+  "status": "ok"
+ },
+ "defillama/intents_fees": {
+  "detail": "",
+  "files": 5,
+  "seconds": 4.7,
+  "status": "ok"
+ },
+ "defillama/intents_volume": {
+  "detail": "",
+  "files": 1,
+  "seconds": 1.0,
+  "status": "ok"
+ },
+ "defillama/peer_price": {
+  "detail": "",
+  "files": 49,
+  "seconds": 53.5,
+  "status": "ok"
+ },
+ "defillama/protocols": {
+  "detail": "",
+  "files": 26,
+  "seconds": 244.4,
+  "status": "ok"
+ },
+ "defillama/stablecoin_assets": {
+  "detail": "",
+  "files": 1,
+  "seconds": 0.4,
+  "status": "ok"
+ },
+ "defillama/stablecoin_chain": {
+  "detail": "",
+  "files": 7,
+  "seconds": 5.6,
+  "status": "ok"
+ },
+ "defillama/yield_pools": {
+  "detail": "",
+  "files": 1,
+  "seconds": 3.7,
+  "status": "ok"
+ },
+ "fastnear/ft_top_holders": {
+  "detail": "",
+  "files": 0,
+  "seconds": 39.5,
+  "status": "ok"
+ },
+ "fastnear/transfers": {
+  "detail": "",
+  "files": 8,
+  "seconds": 46.4,
+  "status": "ok"
+ },
+ "github/commit_activity": {
+  "detail": "",
+  "files": 18,
+  "seconds": 35.1,
+  "status": "ok"
+ },
+ "github/contributors": {
+  "detail": "",
+  "files": 0,
+  "seconds": 29.7,
+  "status": "ok"
+ },
+ "github/repos": {
+  "detail": "",
+  "files": 18,
+  "seconds": 14.5,
+  "status": "ok"
+ },
+ "gov/topics": {
+  "detail": "",
+  "files": 9,
+  "seconds": 16.9,
+  "status": "ok"
+ },
+ "metapool/metrics": {
+  "detail": "",
+  "files": 1,
+  "seconds": 2.1,
+  "status": "ok"
+ },
+ "nearblocks/address_stats": {
+  "detail": "",
+  "files": 1,
+  "seconds": 10.5,
+  "status": "ok"
+ },
+ "nearblocks/block_stats": {
+  "detail": "",
+  "files": 1,
+  "seconds": 10.7,
+  "status": "ok"
+ },
+ "nearblocks/blocks_24h": {
+  "detail": "",
+  "files": 1,
+  "seconds": 10.5,
+  "status": "ok"
+ },
+ "nearblocks/charts_v1": {
+  "detail": "",
+  "files": 1,
+  "seconds": 9.2,
+  "status": "ok"
+ },
+ "nearblocks/contract_txns": {
+  "detail": "",
+  "files": 39,
+  "seconds": 409.8,
+  "status": "ok"
+ },
+ "nearblocks/intents_accounts": {
+  "detail": "",
+  "files": 1,
+  "seconds": 10.5,
+  "status": "ok"
+ },
+ "nearblocks/intents_chains": {
+  "detail": "",
+  "files": 1,
+  "seconds": 10.6,
+  "status": "ok"
+ },
+ "nearblocks/intents_swaps": {
+  "detail": "",
+  "files": 1,
+  "seconds": 10.6,
+  "status": "ok"
+ },
+ "nearblocks/intents_tokens": {
+  "detail": "",
+  "files": 1,
+  "seconds": 10.4,
+  "status": "ok"
+ },
+ "nearblocks/intents_totals": {
+  "detail": "",
+  "files": 1,
+  "seconds": 11.3,
+  "status": "ok"
+ },
+ "nearblocks/intents_volume": {
+  "detail": "",
+  "files": 1,
+  "seconds": 10.5,
+  "status": "ok"
+ },
+ "nearblocks/intents_volume_by_asset": {
+  "detail": "",
+  "files": 1,
+  "seconds": 12.7,
+  "status": "ok"
+ },
+ "nearblocks/intents_volume_by_chain": {
+  "detail": "",
+  "files": 1,
+  "seconds": 10.5,
+  "status": "ok"
+ },
+ "nearblocks/mpc_operators": {
+  "detail": "",
+  "files": 1,
+  "seconds": 9.9,
+  "status": "ok"
+ },
+ "nearblocks/price_stats": {
+  "detail": "",
+  "files": 1,
+  "seconds": 10.3,
+  "status": "ok"
+ },
+ "nearblocks/signatures_24h": {
+  "detail": "",
+  "files": 1,
+  "seconds": 10.4,
+  "status": "ok"
+ },
+ "nearblocks/signer_stats": {
+  "detail": "",
+  "files": 1,
+  "seconds": 10.5,
+  "status": "ok"
+ },
+ "nearblocks/signer_totals": {
+  "detail": "",
+  "files": 1,
+  "seconds": 10.5,
+  "status": "ok"
+ },
+ "nearblocks/stats": {
+  "detail": "",
+  "files": 1,
+  "seconds": 1.9,
+  "status": "ok"
+ },
+ "nearblocks/stats_v1": {
+  "detail": "",
+  "files": 1,
+  "seconds": 9.2,
+  "status": "ok"
+ },
+ "nearblocks/tvl_stats": {
+  "detail": "",
+  "files": 1,
+  "seconds": 10.6,
+  "status": "ok"
+ },
+ "nearblocks/txn_stats": {
+  "detail": "",
+  "files": 1,
+  "seconds": 10.4,
+  "status": "ok"
+ },
+ "nearblocks/txns_24h": {
+  "detail": "",
+  "files": 1,
+  "seconds": 10.5,
+  "status": "ok"
+ },
+ "nearblocks/wallet_balance": {
+  "detail": "",
+  "files": 6,
+  "seconds": 63.5,
+  "status": "ok"
+ },
+ "nearcatalog/projects": {
+  "detail": "",
+  "files": 1,
+  "seconds": 3.0,
+  "status": "ok"
+ },
+ "oneclick/tokens": {
+  "detail": "",
+  "files": 1,
+  "seconds": 1.8,
+  "status": "ok"
+ },
+ "revenue_page/page": {
+  "detail": "",
+  "files": 2,
+  "seconds": 2.6,
+  "status": "ok"
+ },
+ "rhea/token_prices": {
+  "detail": "",
+  "files": 1,
+  "seconds": 4.6,
+  "status": "ok"
+ },
+ "rhea/top_pools": {
+  "detail": "",
+  "files": 1,
+  "seconds": 11.2,
+  "status": "ok"
+ },
+ "rpc/accounts": {
+  "detail": "",
+  "files": 0,
+  "seconds": 47.9,
+  "status": "ok"
+ },
+ "rpc/block_day": {
+  "detail": "HTTP 422 from https://archival-rpc.mainnet.fastnear.com: {\"jsonrpc\":\"2.0\",\"error\":{\"name\":\"HANDLER_ERROR\",\"cause\":{\"info\":{},\"name\":\"UNKNOWN_BLOCK\"},\"code\":-32000,\"message\":\"Server error\",\"data\":\"DB Not Found Error: B",
+  "files": 0,
+  "seconds": 3.9,
+  "status": "failed"
+ },
+ "rpc/contract_views": {
+  "detail": "",
+  "files": 2,
+  "seconds": 15.9,
+  "status": "ok"
+ },
+ "rpc/gas_price": {
+  "detail": "",
+  "files": 0,
+  "seconds": 1.1,
+  "status": "ok"
+ },
+ "rpc/hos_proposals": {
+  "detail": "",
+  "files": 1,
+  "seconds": 3.3,
+  "status": "ok"
+ },
+ "rpc/protocol_config": {
+  "detail": "",
+  "files": 0,
+  "seconds": 0.5,
+  "status": "ok"
+ },
+ "rpc/status": {
+  "detail": "",
+  "files": 0,
+  "seconds": 1.8,
+  "status": "ok"
+ },
+ "rpc/validators_current": {
+  "detail": "",
+  "files": 0,
+  "seconds": 1.1,
+  "status": "ok"
+ }
+}

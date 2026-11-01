@@ -1,0 +1,8 @@
+chain_id,chain_name,llama_chain,coingecko_id,coinmetrics_asset,why_compare
+near,NEAR,Near,near,near,subject of the thesis
+solana,Solana,Solana,solana,sol,high-throughput L1; largest non-EVM ecosystem
+sui,Sui,Sui,sui,sui,object-model L1 of similar market size
+aptos,Aptos,Aptos,aptos,apt,Move L1 of similar market size
+avalanche,Avalanche,Avalanche,avalanche-2,avax,multi-chain L1 of similar age
+ton,TON,TON,the-open-network,ton,consumer distribution through Telegram; comparable to NEAR's relayed users
+ethereum,Ethereum,Ethereum,ethereum,eth,reference point for fee and valuation multiples

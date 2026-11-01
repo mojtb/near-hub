@@ -1,0 +1,17 @@
+event_date,event_type,title,detail,source_url,status
+2024-12-10,product,NEAR Intents fee data begins,First date with fee data in NEAR's Dune datasets per DefiLlama's adapter,https://github.com/DefiLlama/dimension-adapters/blob/master/fees/near-intents/index.ts,happened
+2025-06-20,governance,Proposal to cut inflation from 5% to 2.5%,Governance thread Reduce Inflation for NEAR Protocol; the date marks the thread's month,https://gov.near.org/t/reduce-inflation-for-near-protocol/41140,happened
+2025-10-13,governance,House of Stake launches on mainnet,veNEAR governance goes live,https://www.chaincatcher.com/en/article/2212198,happened
+2026-02-23,tokenomics,Intents fee switch and buybacks begin,Captured Intents revenue is used to buy back NEAR from this date,https://github.com/DefiLlama/dimension-adapters/blob/master/fees/near-intents/index.ts,happened
+2026-03-24,data_infrastructure,NEAR Lake stops indexing,NEAR docs say the AWS S3 lake no longer indexes new blocks,https://docs.near.org/data-infrastructure/big-query,happened
+2026-06-28,governance,Vote opens to remove the NEAR Developer Gas Rebate,vote.dao proposal 27 succeeded. The protocol config still read a 30% contract reward on 2026-11-01; check fct_protocol_config for the change taking effect,https://gov.near.org/,happened
+2026-07-08,report,State of NEAR Q2 2026 published,NEAR's own quarterly report; promotional,https://near.org/blog,happened
+2026-07-20,protocol,nearcore 2.13 on mainnet,Dynamic resharding and post-quantum signing per Nansen's Q3 report,https://www.nansen.ai/post/near-q3-2026-report,happened
+2026-09-21,product,Top Level Accounts and Recovery Keys,NEAR blog announcement,https://near.org/blog,happened
+2026-09-22,product,Tokenized stocks on near.com through Ondo,Reported in Nansen's Q3 report,https://www.nansen.ai/post/near-q3-2026-report,happened
+2026-09-29,market,Bitwise NEAR ETF launches,Reported in Nansen's Q3 report; verify flows on the issuer's pages before using,https://www.nansen.ai/post/near-q3-2026-report,happened
+2026-09-30,governance,Discussion opens on reducing issuance to 1.6%,Governance thread,https://gov.near.org/t/42595,happened
+2026-10-07,governance,HSP-029 proposes a 24-month ramp to 1.6%,Proposal posted on the forum; on-chain voting opened 2026-10-19 as vote.dao proposal 29. See fct_governance_proposals for its live status,https://gov.near.org/t/42644,voting
+2026-10-15,governance,MPC emissions program announced,HSP-007 funds MPC nodes from emissions: up to 4600 NEAR per node per month and up to 21 nodes,https://github.com/houseofstake/proposals/blob/main/HSPs/hsp-007.md,happened
+2026-10-20,report,Nansen Q3 2026 NEAR report,Independent quarterly report,https://www.nansen.ai/post/near-q3-2026-report,happened
+2026-10-23,protocol,Chain Signatures run entirely inside TEEs,NEAR blog announcement,https://near.org/blog,happened

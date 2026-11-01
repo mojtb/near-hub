@@ -1,0 +1,49 @@
+account_id,entity,category,role,tier,track_holdings,track_contract_stats,crawl_transfers,evidence_level,source_url,note
+intents.near,NEAR Intents,intents_revenue,Verifier contract that holds user balances and settles intents,1,1,1,0,documented,https://docs.near-intents.org/near-intents/fees,too many transfers to crawl; use daily stats instead
+7066024d3f20f94de601c003163367873cca78507eeca4df66d9be645f197f05,NEAR Intents,intents_revenue,Protocol fee collector for the 1-pip fee,1,0,0,0,chain,https://docs.near-intents.org/near-intents/fees,named by intents.near fee_collector; holds balances inside intents.near and has no native account
+fefundsadmin.sputnik-dao.near,NEAR revenue wallets,intents_revenue,Front-end fee fund,1,1,0,1,documented,https://revenue.near.org/,also named in DefiLlama's fee adapter
+1csfundsadmin.sputnik-dao.near,NEAR revenue wallets,intents_revenue,1Click fee fund,1,1,0,1,documented,https://revenue.near.org/,also named in DefiLlama's fee adapter
+buybacks.multisignature.near,NEAR revenue wallets,intents_revenue,Buyback wallet,1,1,0,1,documented,https://revenue.near.org/,also named in DefiLlama's fee adapter
+multisignature.near,Unlabelled,intents_revenue,Parent account of the buyback wallet,1,0,0,1,observed,https://nearblocks.io/address/multisignature.near,seen as predecessor of the buyback wallet's first transfer
+nf-payments.near,Unlabelled,treasury,Counterparty and signer seen on the buyback wallet,1,0,0,0,observed,https://nearblocks.io/address/nf-payments.near,the name suggests NEAR Foundation; not confirmed; pays out to named people so its transfers are deliberately not crawled
+treasury.near,NEAR Protocol,treasury,Protocol treasury account named in the protocol config,1,1,0,1,chain,https://docs.near.org/api/rpc/protocol,gets the protocol reward share; that share is 0 in today's config
+v1.signer,Chain Signatures,chain_signatures,MPC signer contract,2,0,1,0,documented,https://docs.near.org/chain-abstraction/chain-signatures,
+meta-pool.near,Meta Pool,staking,Liquid staking contract and stNEAR token,2,1,1,0,observed,https://validators.narwallets.com/metrics,contract state matches Meta Pool's published metrics
+linear-protocol.near,LiNEAR,staking,Liquid staking contract and LiNEAR token,2,1,1,0,third_party_code,https://github.com/DefiLlama/DefiLlama-Adapters/blob/main/projects/helper/coreAssets.json,
+lst.rhealab.near,Rhea,staking,Liquid staking contract and rNEAR token,2,1,1,0,documented,https://guide.rhea.finance/developers/contracts,
+venear.dao,House of Stake,governance,veNEAR vote-escrow contract,2,0,1,0,documented,https://github.com/houseofstake/agora-near/blob/main/src/lib/contractConstants.ts,
+vote.dao,House of Stake,governance,Voting contract,2,0,1,0,documented,https://github.com/houseofstake/agora-near/blob/main/src/lib/contractConstants.ts,
+rewards.hos-dao.near,House of Stake,governance,Rewards claim contract,2,0,0,0,documented,https://github.com/houseofstake/agora-near/blob/main/src/lib/contractConstants.ts,
+sputnik-dao.near,Sputnik DAO,governance,DAO factory,2,0,1,0,documented,https://github.com/near-daos/sputnik-dao-contract,
+v2.ref-finance.near,Rhea,defi,AMM exchange contract,3,1,1,0,documented,https://guide.rhea.finance/developers/contracts,
+dclv2.ref-labs.near,Rhea,defi,Concentrated liquidity contract,3,1,1,0,documented,https://guide.rhea.finance/developers/contracts,
+contract.main.burrow.near,Rhea,defi,Lending contract,3,1,1,0,documented,https://guide.rhea.finance/developers/contracts,formerly Burrow
+boostfarm.ref-labs.near,Rhea,defi,Liquidity farming contract,3,0,1,0,documented,https://guide.rhea.finance/developers/contracts,
+multica.near,Rhea,defi,Multi-chain lending account registry,3,0,1,0,documented,https://guide.rhea.finance/developers/contracts,
+token.rhealab.near,Rhea,token,RHEA token,3,0,1,0,documented,https://guide.rhea.finance/developers/contracts,
+wrap.near,NEAR Protocol,token,Wrapped NEAR,3,0,1,0,token_list,https://1click.chaindefuser.com/v0/tokens,
+usdt.tether-token.near,Tether,stablecoin,USDT token,3,0,1,0,token_list,https://1click.chaindefuser.com/v0/tokens,
+17208628f84f5d6ad33f0da3bbbeb27ffcb398eac501a31bd6ad2011e36133a1,Circle,stablecoin,USDC token,3,0,1,0,token_list,https://1click.chaindefuser.com/v0/tokens,
+omni.bridge.near,Omni Bridge,bridge,Omni Bridge contract,3,1,1,0,documented,https://docs.near.org/chain-abstraction/omnibridge/overview,
+factory.bridge.near,Rainbow Bridge,bridge,Bridged token factory,3,0,1,0,third_party_code,https://github.com/DefiLlama/DefiLlama-Adapters/blob/main/registries/sumTokens/data1.js,
+aurora,Aurora,bridge,Aurora EVM engine,3,0,1,0,documented,https://doc.aurora.dev/,
+pyth-oracle.near,Pyth,oracle,Price oracle contract,4,0,1,0,third_party_code,https://github.com/DefiLlama/dimension-adapters/blob/master/fees/pyth-network/index.ts,
+omft.near,NEAR Intents,intents_revenue,Multichain token factory; Intents token ids end in this account,1,0,1,0,observed,https://api.nearblocks.io/v3/intents/volume-stats/assets,token ids such as eth-0x...omft.near appear in Intents volume
+sweat-relayer.near,Sweat Economy,relayer,Largest receipt receiver in the sample,4,0,1,0,name_only,https://nearblocks.io/address/sweat-relayer.near,entity inferred from the account name
+token.sweat,Sweat Economy,consumer_app,SWEAT token,4,0,1,0,token_list,https://1click.chaindefuser.com/v0/tokens,
+v2.jars.sweat,Sweat Economy,consumer_app,Top receiver in the sample,4,0,1,0,name_only,https://nearblocks.io/address/v2.jars.sweat,entity inferred from the account name
+jars-oracle.sweat,Sweat Economy,oracle,Top transaction receiver in the sample,4,0,1,0,name_only,https://nearblocks.io/address/jars-oracle.sweat,entity inferred from the account name
+oracle.sweat,Sweat Economy,oracle,Top transaction receiver in the sample,4,0,1,0,name_only,https://nearblocks.io/address/oracle.sweat,entity inferred from the account name
+spin.sweat,Sweat Economy,consumer_app,Top transaction receiver in the sample,4,0,1,0,name_only,https://nearblocks.io/address/spin.sweat,entity inferred from the account name
+claim.sweat,Sweat Economy,consumer_app,Top receipt receiver in the sample,4,0,1,0,name_only,https://nearblocks.io/address/claim.sweat,entity inferred from the account name
+sweat_welcome.near,Sweat Economy,consumer_app,Top transaction receiver in the sample,4,0,1,0,name_only,https://nearblocks.io/address/sweat_welcome.near,entity inferred from the account name
+game.hot.tg,HOT,consumer_app,Largest non-Intents transaction receiver in the sample,4,0,1,0,name_only,https://nearblocks.io/address/game.hot.tg,entity inferred from the account name
+0here.tg,Unlabelled,consumer_app,Top receipt receiver in the sample,4,0,1,0,observed,https://nearblocks.io/address/0here.tg,
+omni-relayer.bridge.near,Omni Bridge,relayer,Top receipt receiver in the sample,4,0,1,0,name_only,https://nearblocks.io/address/omni-relayer.bridge.near,entity inferred from the account name
+bridge-mng.near,Unlabelled,bridge,Top receipt receiver in the sample,4,0,1,0,observed,https://nearblocks.io/address/bridge-mng.near,
+btc-connector.bridge.near,Omni Bridge,bridge,Top transaction receiver in the sample,4,0,1,0,name_only,https://nearblocks.io/address/btc-connector.bridge.near,entity inferred from the account name
+meteor-relayer.near,Meteor Wallet,relayer,Top receipt receiver in the sample,4,0,1,0,name_only,https://nearblocks.io/address/meteor-relayer.near,entity inferred from the account name
+fast-auth.near,FastAuth,wallet_infra,Top transaction receiver in the sample,4,0,1,0,name_only,https://nearblocks.io/address/fast-auth.near,entity inferred from the account name
+aggregate-oracle.near,Unlabelled,oracle,Top transaction receiver in the sample,4,0,1,0,observed,https://nearblocks.io/address/aggregate-oracle.near,
+escrow.ai.near,NEAR AI,ai,Top receipt receiver in the sample,4,0,1,0,name_only,https://nearblocks.io/address/escrow.ai.near,entity inferred from the account name
+auroraliqsupport.near,Unlabelled,treasury,Sends NEAR to the front-end fee fund against USDC,1,0,0,1,observed,https://nearblocks.io/address/auroraliqsupport.near,about $2M each way; the name suggests Aurora; not confirmed

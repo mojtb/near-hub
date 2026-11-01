@@ -1,0 +1,10 @@
+query_id,title,evidence_url,note
+5175176,NEAR Intents volume metrics,https://dune.com/near/near-intents,query behind the dashboard; reads a dataset uploaded by NEAR
+5175161,NEAR Intents dashboard query,https://dune.com/near/near-intents,query behind the dashboard
+5175173,NEAR Intents dashboard query,https://dune.com/near/near-intents,query behind the dashboard
+5179085,NEAR Intents dashboard query,https://dune.com/near/near-intents,query behind the dashboard
+6162606,NEAR Intents dashboard query,https://dune.com/near/near-intents,query behind the dashboard
+7586891,NEAR Intents dashboard query,https://dune.com/near/near-intents,query behind the dashboard
+6162763,Total generated fees,https://github.com/DefiLlama/dimension-adapters/blob/master/fees/near-intents/index.ts,named in DefiLlama's adapter as mirroring revenue.near.org
+6740088,Net captured revenue into revenue wallets,https://github.com/DefiLlama/dimension-adapters/blob/master/fees/near-intents/index.ts,named in DefiLlama's adapter as NEAR's own query
+6732239,Revenue wallet designations,https://github.com/DefiLlama/dimension-adapters/blob/master/fees/near-intents/index.ts,named in DefiLlama's adapter as NEAR's own query

@@ -1,0 +1,3498 @@
+[
+ {
+  "area": "Calendar and registry",
+  "table": "dim_date",
+  "description": "Calendar spine covering every day with chain or Intents data.",
+  "grain": "date_day",
+  "sources": "derived",
+  "path": "data/gold/dim_date.parquet",
+  "columns": [
+   {
+    "name": "date_day",
+    "type": "DATE",
+    "unit": "date",
+    "description": "UTC calendar day."
+   },
+   {
+    "name": "week_start",
+    "type": "DATE",
+    "unit": "date",
+    "description": "Monday of the week, UTC."
+   },
+   {
+    "name": "month_start",
+    "type": "DATE",
+    "unit": "date",
+    "description": "First day of the month."
+   },
+   {
+    "name": "quarter_start",
+    "type": "DATE",
+    "unit": "date",
+    "description": "First day of the quarter."
+   },
+   {
+    "name": "calendar_year",
+    "type": "BIGINT",
+    "unit": "year",
+    "description": "Calendar year."
+   },
+   {
+    "name": "is_fee_switch_active",
+    "type": "BOOLEAN",
+    "unit": "boolean",
+    "description": "True from 2026-02-23, the first day of Intents buybacks per DefiLlama's adapter."
+   }
+  ],
+  "rows": 2294,
+  "first": "2020-07-21",
+  "last": "2026-10-31"
+ },
+ {
+  "area": "Calendar and registry",
+  "table": "dim_entity",
+  "description": "The reviewed wallet registry joined to what the chain reports today. Every label carries an evidence level and a source URL.",
+  "grain": "account_id",
+  "sources": "registry/entities.csv, RPC, FastNear",
+  "path": "data/gold/dim_entity.parquet",
+  "columns": [
+   {
+    "name": "account_id",
+    "type": "VARCHAR",
+    "unit": "account id",
+    "description": "NEAR account."
+   },
+   {
+    "name": "entity",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "Organization that runs the account, as far as the evidence shows. Unlabelled means not established."
+   },
+   {
+    "name": "category",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "Functional group."
+   },
+   {
+    "name": "role",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "What the account does."
+   },
+   {
+    "name": "tier",
+    "type": "INTEGER",
+    "unit": "integer",
+    "description": "Depth priority: 1 Intents and revenue, 2 security and staking, 3 DeFi and stablecoins, 4 usage heavyweights."
+   },
+   {
+    "name": "tracks_holdings",
+    "type": "BOOLEAN",
+    "unit": "boolean",
+    "description": "Holdings are snapshotted nightly."
+   },
+   {
+    "name": "tracks_contract_stats",
+    "type": "BOOLEAN",
+    "unit": "boolean",
+    "description": "Daily contract stats are fetched."
+   },
+   {
+    "name": "crawls_transfers",
+    "type": "BOOLEAN",
+    "unit": "boolean",
+    "description": "All transfers are crawled."
+   },
+   {
+    "name": "evidence_level",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "Strength of the label: documented, chain, token_list, third_party_code, observed or name_only."
+   },
+   {
+    "name": "source_url",
+    "type": "VARCHAR",
+    "unit": "url",
+    "description": "Where the evidence can be checked."
+   },
+   {
+    "name": "note",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "Caveat on this label."
+   },
+   {
+    "name": "account_exists",
+    "type": "BOOLEAN",
+    "unit": "boolean",
+    "description": "Whether the chain knows this account. False is expected for implicit accounts that only hold balances inside intents.near."
+   },
+   {
+    "name": "has_contract",
+    "type": "BOOLEAN",
+    "unit": "boolean",
+    "description": "Whether code is deployed on the account."
+   },
+   {
+    "name": "balance_near",
+    "type": "DOUBLE",
+    "unit": "NEAR",
+    "description": "Native balance."
+   },
+   {
+    "name": "staked_near",
+    "type": "DOUBLE",
+    "unit": "NEAR",
+    "description": "Locked for staking."
+   },
+   {
+    "name": "storage_bytes",
+    "type": "BIGINT",
+    "unit": "bytes",
+    "description": "Storage used."
+   },
+   {
+    "name": "cumulative_txns",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "Transactions touching the account since genesis, per FastNear."
+   },
+   {
+    "name": "checked_on",
+    "type": "DATE",
+    "unit": "date",
+    "description": "Date of the on-chain check."
+   }
+  ],
+  "rows": 48,
+  "first": null,
+  "last": null
+ },
+ {
+  "area": "Calendar and registry",
+  "table": "dim_token",
+  "description": "Registry tokens with decimals and a live price from 1Click where listed.",
+  "grain": "token_id",
+  "sources": "registry/tokens.csv, 1Click",
+  "path": "data/gold/dim_token.parquet",
+  "columns": [
+   {
+    "name": "token_id",
+    "type": "VARCHAR",
+    "unit": "token id",
+    "description": "Token contract, or Intents asset id."
+   },
+   {
+    "name": "symbol",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "Token symbol."
+   },
+   {
+    "name": "token_class",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "Kind of token."
+   },
+   {
+    "name": "tracks_holders",
+    "type": "BOOLEAN",
+    "unit": "boolean",
+    "description": "Top holders are snapshotted nightly."
+   },
+   {
+    "name": "evidence_level",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "Strength of the label: documented, chain, token_list, third_party_code, observed or name_only."
+   },
+   {
+    "name": "source_url",
+    "type": "VARCHAR",
+    "unit": "url",
+    "description": "Where the evidence can be checked."
+   },
+   {
+    "name": "note",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "Caveat on this row."
+   },
+   {
+    "name": "decimals",
+    "type": "INTEGER",
+    "unit": "integer",
+    "description": "Token decimals, per 1Click. Empty if 1Click does not list it."
+   },
+   {
+    "name": "price_usd",
+    "type": "DOUBLE",
+    "unit": "USD",
+    "description": "Price."
+   },
+   {
+    "name": "coingecko_id",
+    "type": "VARCHAR",
+    "unit": "id",
+    "description": "CoinGecko identifier."
+   },
+   {
+    "name": "priced_on",
+    "type": "DATE",
+    "unit": "date",
+    "description": "Date the price was read."
+   }
+  ],
+  "rows": 12,
+  "first": null,
+  "last": null
+ },
+ {
+  "area": "Calendar and registry",
+  "table": "dim_event",
+  "description": "Dated protocol, governance, product and market events, each with a source URL. Use for chart annotations and event studies.",
+  "grain": "event_date, title",
+  "sources": "registry/events.csv",
+  "path": "data/gold/dim_event.parquet",
+  "columns": [
+   {
+    "name": "event_date",
+    "type": "DATE",
+    "unit": "date",
+    "description": "Date of the event."
+   },
+   {
+    "name": "event_type",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "Kind of event."
+   },
+   {
+    "name": "title",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "Short title."
+   },
+   {
+    "name": "detail",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "One line of detail."
+   },
+   {
+    "name": "source_url",
+    "type": "VARCHAR",
+    "unit": "url",
+    "description": "Where the evidence can be checked."
+   },
+   {
+    "name": "status",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "happened, or voting while the vote is open."
+   }
+  ],
+  "rows": 16,
+  "first": "2024-12-10",
+  "last": "2026-10-23"
+ },
+ {
+  "area": "Calendar and registry",
+  "table": "dim_block_day",
+  "description": "One block per UTC day from the archival node: monthly from 2020-08, daily from 2025-01. Each block falls within 120 seconds after 00:00 UTC.",
+  "grain": "date_day",
+  "sources": "archival RPC",
+  "path": "data/gold/dim_block_day.parquet",
+  "columns": [
+   {
+    "name": "date_day",
+    "type": "DATE",
+    "unit": "date",
+    "description": "UTC day this block represents."
+   },
+   {
+    "name": "block_height",
+    "type": "BIGINT",
+    "unit": "blocks",
+    "description": "Block height."
+   },
+   {
+    "name": "block_hash",
+    "type": "VARCHAR",
+    "unit": "hash",
+    "description": "Block hash."
+   },
+   {
+    "name": "block_timestamp_ns",
+    "type": "HUGEINT",
+    "unit": "nanoseconds since epoch",
+    "description": "Block timestamp."
+   },
+   {
+    "name": "total_supply_near",
+    "type": "DOUBLE",
+    "unit": "NEAR",
+    "description": "Total supply in this block."
+   },
+   {
+    "name": "gas_price_yocto",
+    "type": "HUGEINT",
+    "unit": "yoctoNEAR per gas",
+    "description": "Gas price in the block."
+   },
+   {
+    "name": "epoch_id",
+    "type": "VARCHAR",
+    "unit": "hash",
+    "description": "Epoch identifier."
+   },
+   {
+    "name": "protocol_version",
+    "type": "INTEGER",
+    "unit": "integer",
+    "description": "Protocol version."
+   }
+  ],
+  "rows": 297,
+  "first": "2020-08-01",
+  "last": "2026-11-01"
+ },
+ {
+  "area": "Calendar and registry",
+  "table": "dim_protocol",
+  "description": "Protocols DefiLlama lists on NEAR, as of the newest reading. Exchange wallets are marked with is_cex.",
+  "grain": "protocol_slug",
+  "sources": "DefiLlama /protocols",
+  "path": "data/gold/dim_protocol.parquet",
+  "columns": [
+   {
+    "name": "protocol_slug",
+    "type": "VARCHAR",
+    "unit": "id",
+    "description": "DefiLlama protocol identifier."
+   },
+   {
+    "name": "protocol_name",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "Protocol name."
+   },
+   {
+    "name": "category",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "DefiLlama category."
+   },
+   {
+    "name": "url",
+    "type": "VARCHAR",
+    "unit": "url",
+    "description": "Protocol website."
+   },
+   {
+    "name": "parent_protocol",
+    "type": "VARCHAR",
+    "unit": "id",
+    "description": "DefiLlama parent protocol."
+   },
+   {
+    "name": "near_tvl_usd",
+    "type": "DOUBLE",
+    "unit": "USD",
+    "description": "TVL on NEAR."
+   },
+   {
+    "name": "total_tvl_usd",
+    "type": "DOUBLE",
+    "unit": "USD",
+    "description": "TVL across all chains."
+   },
+   {
+    "name": "is_cex",
+    "type": "BOOLEAN",
+    "unit": "boolean",
+    "description": "True for exchange wallets, which DefiLlama leaves out of chain TVL."
+   },
+   {
+    "name": "read_on",
+    "type": "DATE",
+    "unit": "date",
+    "description": "Date of the reading."
+   }
+  ],
+  "rows": 46,
+  "first": null,
+  "last": null
+ },
+ {
+  "area": "Calendar and registry",
+  "table": "dim_source",
+  "description": "Every data source with its access, limits and terms.",
+  "grain": "source",
+  "sources": "registry/sources.csv",
+  "path": "data/gold/dim_source.parquet",
+  "columns": [
+   {
+    "name": "source",
+    "type": "VARCHAR",
+    "unit": "id",
+    "description": "Source name, as used in bronze paths."
+   },
+   {
+    "name": "provides",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "What the source is used for."
+   },
+   {
+    "name": "access",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "Whether a key is needed."
+   },
+   {
+    "name": "limit_observed",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "Rate limit as published or observed."
+   },
+   {
+    "name": "terms_url",
+    "type": "VARCHAR",
+    "unit": "url",
+    "description": "Where the terms are."
+   },
+   {
+    "name": "terms_summary",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "What the terms say, as far as they were read. Not legal advice."
+   },
+   {
+    "name": "before_going_public",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "What to settle before the repository is made public."
+   }
+  ],
+  "rows": 19,
+  "first": null,
+  "last": null
+ },
+ {
+  "area": "Chain usage, supply and parameters",
+  "table": "fct_chain_daily",
+  "description": "Chain usage per UTC day. NearBlocks v1 and v3 keep separate columns where their definitions differ.",
+  "grain": "date_day",
+  "sources": "NearBlocks /v1/charts, /v3/txn-stats, /v3/address-stats",
+  "path": "data/gold/fct_chain_daily.parquet",
+  "columns": [
+   {
+    "name": "date_day",
+    "type": "DATE",
+    "unit": "date",
+    "description": "UTC calendar day."
+   },
+   {
+    "name": "txns",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "Transactions: v3 where available, else v1."
+   },
+   {
+    "name": "txns_v1",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "Transactions per NearBlocks /v1/charts."
+   },
+   {
+    "name": "txns_v3",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "Transactions per NearBlocks /v3/txn-stats."
+   },
+   {
+    "name": "meta_txns",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "Meta-transactions, where a relayer pays gas for the user."
+   },
+   {
+    "name": "meta_txn_share",
+    "type": "DOUBLE",
+    "unit": "fraction",
+    "description": "meta_txns divided by txns_v3."
+   },
+   {
+    "name": "receipts",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "Receipts."
+   },
+   {
+    "name": "blocks",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "Blocks."
+   },
+   {
+    "name": "chunks",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "Chunks across all shards. Last 365 days of reads only."
+   },
+   {
+    "name": "shards",
+    "type": "INTEGER",
+    "unit": "count",
+    "description": "Shards that day. Last 365 days of reads only."
+   },
+   {
+    "name": "gas_price_yocto",
+    "type": "DOUBLE",
+    "unit": "yoctoNEAR per gas",
+    "description": "Gas price per NearBlocks. Last 365 days of reads only."
+   },
+   {
+    "name": "active_accounts_v1",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "Active accounts per /v1/charts. About half of the v3 figure; NearBlocks does not document either definition."
+   },
+   {
+    "name": "active_accounts_v3",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "Active accounts per /v3/address-stats. See active_accounts_v1."
+   },
+   {
+    "name": "active_contracts_v1",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "Active contracts per /v1/charts."
+   },
+   {
+    "name": "active_contracts_v3",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "Active contracts per /v3/address-stats."
+   },
+   {
+    "name": "new_accounts",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "Accounts created."
+   },
+   {
+    "name": "deleted_accounts",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "Accounts deleted."
+   },
+   {
+    "name": "new_contracts",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "Contracts deployed."
+   },
+   {
+    "name": "unique_contracts",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "Distinct contract code hashes deployed, per /v1/charts."
+   },
+   {
+    "name": "meta_accounts",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "Accounts sending meta-transactions."
+   },
+   {
+    "name": "meta_relayers",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "Relayers submitting meta-transactions."
+   },
+   {
+    "name": "multichain_txns",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "Multichain transactions per /v1/charts."
+   },
+   {
+    "name": "gas_used",
+    "type": "DOUBLE",
+    "unit": "gas units",
+    "description": "Gas used."
+   },
+   {
+    "name": "gas_fee_near",
+    "type": "DOUBLE",
+    "unit": "NEAR",
+    "description": "Gas fees per /v1/charts."
+   },
+   {
+    "name": "txn_fee_near_v1",
+    "type": "DOUBLE",
+    "unit": "NEAR",
+    "description": "Transaction fees per /v1/charts."
+   },
+   {
+    "name": "txn_fee_near_v3",
+    "type": "DOUBLE",
+    "unit": "NEAR",
+    "description": "Transaction fees per /v3/txn-stats."
+   },
+   {
+    "name": "txn_fee_usd",
+    "type": "DOUBLE",
+    "unit": "USD",
+    "description": "Transaction fees per /v1/charts."
+   },
+   {
+    "name": "txn_volume_near",
+    "type": "DOUBLE",
+    "unit": "NEAR",
+    "description": "NEAR moved by transactions."
+   },
+   {
+    "name": "txn_volume_usd",
+    "type": "DOUBLE",
+    "unit": "USD",
+    "description": "Value moved by transactions."
+   }
+  ],
+  "rows": 2294,
+  "first": "2020-07-21",
+  "last": "2026-10-31"
+ },
+ {
+  "area": "Chain usage, supply and parameters",
+  "table": "fct_supply_daily",
+  "description": "Supply and implied issuance per UTC day. Epochs end at uneven times, so one day's minted_near is lumpy; use averages of 30 days or more.",
+  "grain": "date_day",
+  "sources": "NearBlocks /v1/charts, archival RPC, protocol config",
+  "path": "data/gold/fct_supply_daily.parquet",
+  "columns": [
+   {
+    "name": "date_day",
+    "type": "DATE",
+    "unit": "date",
+    "description": "UTC calendar day."
+   },
+   {
+    "name": "total_supply_near",
+    "type": "DOUBLE",
+    "unit": "NEAR",
+    "description": "Total supply at day end per NearBlocks."
+   },
+   {
+    "name": "circulating_supply_near",
+    "type": "DOUBLE",
+    "unit": "NEAR",
+    "description": "Circulating supply per /v1/charts. The v3 stats endpoint reports this wrongly, so it is not used."
+   },
+   {
+    "name": "onchain_supply_end_of_day_near",
+    "type": "DOUBLE",
+    "unit": "NEAR",
+    "description": "Supply in the first block of the next day, read from the archival node. Empty where no daily block exists."
+   },
+   {
+    "name": "protocol_version",
+    "type": "INTEGER",
+    "unit": "integer",
+    "description": "Protocol version."
+   },
+   {
+    "name": "gas_fee_near",
+    "type": "DOUBLE",
+    "unit": "NEAR",
+    "description": "Gas fees per /v1/charts."
+   },
+   {
+    "name": "supply_change_near",
+    "type": "DOUBLE",
+    "unit": "NEAR",
+    "description": "Change in total supply from the previous day."
+   },
+   {
+    "name": "burn_near",
+    "type": "DOUBLE",
+    "unit": "NEAR",
+    "description": "gas_fee_near times the gas burn rate. A lower bound, because the contract reward applies only to function-call gas."
+   },
+   {
+    "name": "treasury_reward_near",
+    "type": "DOUBLE",
+    "unit": "NEAR",
+    "description": "EpochRewards received by treasury.near that day, from wallet transfers. Part of minted_near, not on top of it."
+   },
+   {
+    "name": "minted_near",
+    "type": "DOUBLE",
+    "unit": "NEAR",
+    "description": "supply_change_near plus burn_near: issuance implied by the chain."
+   },
+   {
+    "name": "minted_annualized_rate",
+    "type": "DOUBLE",
+    "unit": "fraction per year",
+    "description": "minted_near times 365, divided by total supply. Noisy for a single day."
+   }
+  ],
+  "rows": 2294,
+  "first": "2020-07-21",
+  "last": "2026-10-31"
+ },
+ {
+  "area": "Chain usage, supply and parameters",
+  "table": "fct_protocol_config",
+  "description": "Protocol parameters as read on each snapshot date. A change between rows is a protocol change.",
+  "grain": "snapshot_date",
+  "sources": "RPC EXPERIMENTAL_protocol_config",
+  "path": "data/gold/fct_protocol_config.parquet",
+  "columns": [
+   {
+    "name": "snapshot_date",
+    "type": "DATE",
+    "unit": "date",
+    "description": "Date the source was read."
+   },
+   {
+    "name": "protocol_version",
+    "type": "INTEGER",
+    "unit": "integer",
+    "description": "Protocol version."
+   },
+   {
+    "name": "max_inflation_rate",
+    "type": "DOUBLE",
+    "unit": "fraction per year",
+    "description": "Maximum annual inflation parameter."
+   },
+   {
+    "name": "protocol_reward_rate",
+    "type": "DOUBLE",
+    "unit": "fraction",
+    "description": "Share of issuance sent to the protocol treasury."
+   },
+   {
+    "name": "contract_gas_reward_rate",
+    "type": "DOUBLE",
+    "unit": "fraction",
+    "description": "Share of function-call gas paid to the called contract."
+   },
+   {
+    "name": "gas_burn_rate",
+    "type": "DOUBLE",
+    "unit": "fraction",
+    "description": "One minus contract_gas_reward_rate."
+   },
+   {
+    "name": "epoch_length_blocks",
+    "type": "BIGINT",
+    "unit": "blocks",
+    "description": "Epoch length."
+   },
+   {
+    "name": "block_producer_seats",
+    "type": "INTEGER",
+    "unit": "count",
+    "description": "Block producer seats."
+   },
+   {
+    "name": "blocks_per_year_setting",
+    "type": "BIGINT",
+    "unit": "blocks",
+    "description": "Blocks per year used in the reward formula."
+   },
+   {
+    "name": "shard_count",
+    "type": "UBIGINT",
+    "unit": "count",
+    "description": "Number of shards."
+   },
+   {
+    "name": "storage_yocto_per_byte",
+    "type": "HUGEINT",
+    "unit": "yoctoNEAR per byte",
+    "description": "Storage staking cost."
+   },
+   {
+    "name": "min_gas_price_yocto",
+    "type": "HUGEINT",
+    "unit": "yoctoNEAR per gas",
+    "description": "Minimum gas price parameter."
+   },
+   {
+    "name": "protocol_treasury_account",
+    "type": "VARCHAR",
+    "unit": "account id",
+    "description": "Account that receives the protocol reward share."
+   }
+  ],
+  "rows": 2,
+  "first": "2026-10-28",
+  "last": "2026-11-01"
+ },
+ {
+  "area": "Chain usage, supply and parameters",
+  "table": "fct_contract_daily",
+  "description": "Daily transactions and unique callers per registry contract.",
+  "grain": "date_day, account_id",
+  "sources": "NearBlocks /v3/accounts/{id}/stats/txns",
+  "path": "data/gold/fct_contract_daily.parquet",
+  "columns": [
+   {
+    "name": "date_day",
+    "type": "DATE",
+    "unit": "date",
+    "description": "UTC calendar day."
+   },
+   {
+    "name": "account_id",
+    "type": "VARCHAR",
+    "unit": "account id",
+    "description": "NEAR account."
+   },
+   {
+    "name": "entity",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "Organization that runs the account, as far as the evidence shows. Unlabelled means not established."
+   },
+   {
+    "name": "category",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "Functional group."
+   },
+   {
+    "name": "txns",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "Transactions: v3 where available, else v1."
+   },
+   {
+    "name": "unique_callers",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "Distinct accounts calling the contract."
+   },
+   {
+    "name": "unique_receivers",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "Distinct accounts the contract sent to."
+   }
+  ],
+  "rows": 13445,
+  "first": "2023-12-01",
+  "last": "2026-10-31"
+ },
+ {
+  "area": "Chain usage, supply and parameters",
+  "table": "fct_receiver_sample_daily",
+  "description": "Activity per receiver, estimated from evenly spaced sample blocks. These are estimates, and a day's sample density is in blocks_sampled.",
+  "grain": "date_day, account_id",
+  "sources": "Neardata",
+  "path": "data/gold/fct_receiver_sample_daily.parquet",
+  "columns": [
+   {
+    "name": "date_day",
+    "type": "DATE",
+    "unit": "date",
+    "description": "UTC calendar day."
+   },
+   {
+    "name": "account_id",
+    "type": "VARCHAR",
+    "unit": "account id",
+    "description": "NEAR account."
+   },
+   {
+    "name": "entity",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "Organization that runs the account, as far as the evidence shows. Unlabelled means not established."
+   },
+   {
+    "name": "category",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "Functional group."
+   },
+   {
+    "name": "sampled_txns",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "Transactions to this receiver in the sample."
+   },
+   {
+    "name": "sampled_receipts",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "Receipts to this receiver in the sample."
+   },
+   {
+    "name": "sampled_distinct_signers",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "Distinct transaction signers in the sample."
+   },
+   {
+    "name": "txn_share",
+    "type": "DOUBLE",
+    "unit": "fraction",
+    "description": "Share of sampled transactions."
+   },
+   {
+    "name": "receipt_share",
+    "type": "DOUBLE",
+    "unit": "fraction",
+    "description": "Share of sampled receipts."
+   },
+   {
+    "name": "estimated_daily_receipts",
+    "type": "DOUBLE",
+    "unit": "count",
+    "description": "sampled_receipts scaled up by blocks_in_day over blocks_sampled."
+   },
+   {
+    "name": "estimated_daily_txns",
+    "type": "DOUBLE",
+    "unit": "count",
+    "description": "sampled_txns scaled up by blocks_in_day over blocks_sampled."
+   },
+   {
+    "name": "sampled_tokens_burnt_near",
+    "type": "DOUBLE",
+    "unit": "NEAR",
+    "description": "Tokens burnt in sampled receipts."
+   },
+   {
+    "name": "blocks_sampled",
+    "type": "INTEGER",
+    "unit": "count",
+    "description": "Blocks sampled that day."
+   },
+   {
+    "name": "blocks_in_day",
+    "type": "BIGINT",
+    "unit": "blocks",
+    "description": "Block height span of the day."
+   }
+  ],
+  "rows": 323,
+  "first": "2026-10-31",
+  "last": "2026-10-31"
+ },
+ {
+  "area": "NEAR Intents and revenue",
+  "table": "fct_intents_daily",
+  "description": "NEAR Intents per UTC day, one column per source. DefiLlama and revenue.near.org include confidential Intents and read the same NEAR-uploaded data; NearBlocks counts public Intents only.",
+  "grain": "date_day",
+  "sources": "DefiLlama, NearBlocks, revenue.near.org",
+  "path": "data/gold/fct_intents_daily.parquet",
+  "columns": [
+   {
+    "name": "date_day",
+    "type": "DATE",
+    "unit": "date",
+    "description": "UTC calendar day."
+   },
+   {
+    "name": "volume_usd_defillama",
+    "type": "DOUBLE",
+    "unit": "USD",
+    "description": "Volume per DefiLlama; includes confidential Intents."
+   },
+   {
+    "name": "volume_usd_nearblocks",
+    "type": "DOUBLE",
+    "unit": "USD",
+    "description": "Volume per NearBlocks; public Intents only."
+   },
+   {
+    "name": "volume_usd_revenue_page",
+    "type": "DOUBLE",
+    "unit": "USD",
+    "description": "Volume per revenue.near.org; includes confidential Intents."
+   },
+   {
+    "name": "cumulative_volume_usd_nearblocks",
+    "type": "DOUBLE",
+    "unit": "USD",
+    "description": "All-time volume per NearBlocks."
+   },
+   {
+    "name": "cumulative_volume_usd_revenue_page",
+    "type": "DOUBLE",
+    "unit": "USD",
+    "description": "All-time volume per revenue.near.org."
+   },
+   {
+    "name": "swaps_nearblocks",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "Swaps per NearBlocks."
+   },
+   {
+    "name": "accounts_nearblocks",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "Distinct swapping accounts per NearBlocks."
+   },
+   {
+    "name": "tokens_nearblocks",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "Distinct tokens swapped per NearBlocks."
+   },
+   {
+    "name": "chains_nearblocks",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "Distinct blockchains active per NearBlocks."
+   },
+   {
+    "name": "fees_usd_defillama",
+    "type": "DOUBLE",
+    "unit": "USD",
+    "description": "Gross fees per DefiLlama."
+   },
+   {
+    "name": "fees_usd_revenue_page",
+    "type": "DOUBLE",
+    "unit": "USD",
+    "description": "Gross fees per revenue.near.org."
+   },
+   {
+    "name": "fees_near_revenue_page",
+    "type": "DOUBLE",
+    "unit": "NEAR",
+    "description": "Gross fees in NEAR per revenue.near.org."
+   },
+   {
+    "name": "revenue_usd_defillama",
+    "type": "DOUBLE",
+    "unit": "USD",
+    "description": "Captured revenue per DefiLlama: NEAR and wNEAR swept into the revenue wallets. Sweeps are periodic, so one day can exceed that day's fees."
+   },
+   {
+    "name": "holders_revenue_usd_defillama",
+    "type": "DOUBLE",
+    "unit": "USD",
+    "description": "Captured revenue from 2026-02-23, which DefiLlama treats as used for buybacks."
+   },
+   {
+    "name": "treasury_revenue_usd_defillama",
+    "type": "DOUBLE",
+    "unit": "USD",
+    "description": "Captured revenue before 2026-02-23, held by the treasury."
+   },
+   {
+    "name": "supply_side_revenue_usd_defillama",
+    "type": "DOUBLE",
+    "unit": "USD",
+    "description": "Gross fees minus captured revenue: kept by solvers and distribution channels."
+   },
+   {
+    "name": "confidential_tvl_usd",
+    "type": "DOUBLE",
+    "unit": "USD",
+    "description": "Confidential Intents TVL per revenue.near.org. Self-reported by NEAR."
+   }
+  ],
+  "rows": 691,
+  "first": "2024-12-10",
+  "last": "2026-10-31"
+ },
+ {
+  "area": "NEAR Intents and revenue",
+  "table": "fct_intents_chain_daily",
+  "description": "Public Intents volume per blockchain per day.",
+  "grain": "date_day, blockchain",
+  "sources": "NearBlocks /v3/intents/volume-stats/blockchains",
+  "path": "data/gold/fct_intents_chain_daily.parquet",
+  "columns": [
+   {
+    "name": "date_day",
+    "type": "DATE",
+    "unit": "date",
+    "description": "UTC calendar day."
+   },
+   {
+    "name": "blockchain",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "Source chain, as NearBlocks names it."
+   },
+   {
+    "name": "volume_usd",
+    "type": "DOUBLE",
+    "unit": "USD",
+    "description": "Public Intents volume."
+   },
+   {
+    "name": "swaps",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "Swaps."
+   }
+  ],
+  "rows": 10463,
+  "first": "2025-10-29",
+  "last": "2026-10-31"
+ },
+ {
+  "area": "NEAR Intents and revenue",
+  "table": "fct_intents_asset_daily",
+  "description": "Public Intents volume per asset per day.",
+  "grain": "date_day, token_id",
+  "sources": "NearBlocks /v3/intents/volume-stats/assets",
+  "path": "data/gold/fct_intents_asset_daily.parquet",
+  "columns": [
+   {
+    "name": "date_day",
+    "type": "DATE",
+    "unit": "date",
+    "description": "UTC calendar day."
+   },
+   {
+    "name": "token_id",
+    "type": "VARCHAR",
+    "unit": "token id",
+    "description": "Token contract, or Intents asset id."
+   },
+   {
+    "name": "symbol",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "Token symbol."
+   },
+   {
+    "name": "blockchain",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "Source chain, as NearBlocks names it."
+   },
+   {
+    "name": "volume_token",
+    "type": "DOUBLE",
+    "unit": "token units",
+    "description": "Volume in token units."
+   },
+   {
+    "name": "volume_usd",
+    "type": "DOUBLE",
+    "unit": "USD",
+    "description": "Public Intents volume."
+   },
+   {
+    "name": "swaps",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "Swaps."
+   }
+  ],
+  "rows": 39135,
+  "first": "2025-11-02",
+  "last": "2026-10-31"
+ },
+ {
+  "area": "NEAR Intents and revenue",
+  "table": "fct_intents_swaps",
+  "description": "One row per 1Click swap. Covers 1Click only, not all Intents. Empty until INTENTS_EXPLORER_JWT is set.",
+  "grain": "deposit_address, deposit_memo, created_at_unix",
+  "sources": "Intents Explorer API",
+  "path": "data/gold/fct_intents_swaps.parquet",
+  "columns": [
+   {
+    "name": "date_day",
+    "type": "DATE",
+    "unit": "date",
+    "description": "UTC calendar day."
+   },
+   {
+    "name": "created_at_unix",
+    "type": "BIGINT",
+    "unit": "unix seconds",
+    "description": "Swap creation time."
+   },
+   {
+    "name": "deposit_address",
+    "type": "VARCHAR",
+    "unit": "address",
+    "description": "1Click deposit address."
+   },
+   {
+    "name": "deposit_memo",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "Deposit memo, where the route uses one."
+   },
+   {
+    "name": "origin_asset",
+    "type": "VARCHAR",
+    "unit": "asset id",
+    "description": "Asset paid in."
+   },
+   {
+    "name": "destination_asset",
+    "type": "VARCHAR",
+    "unit": "asset id",
+    "description": "Asset paid out."
+   },
+   {
+    "name": "status",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "Swap status per the Explorer API."
+   },
+   {
+    "name": "referral",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "Front-end or partner that sent the swap."
+   },
+   {
+    "name": "amount_in_usd",
+    "type": "DOUBLE",
+    "unit": "USD",
+    "description": "Value paid in."
+   },
+   {
+    "name": "amount_out_usd",
+    "type": "DOUBLE",
+    "unit": "USD",
+    "description": "Value paid out."
+   }
+  ],
+  "rows": 0,
+  "first": null,
+  "last": null
+ },
+ {
+  "area": "NEAR Intents and revenue",
+  "table": "fct_intents_fee_channels",
+  "description": "All-time gross fees per referral channel, read from NEAR's public Dune dashboard. NEAR uploads the data behind it, and the page lists only the top 100 channels.",
+  "grain": "snapshot_date, referral",
+  "sources": "Dune public page",
+  "path": "data/gold/fct_intents_fee_channels.parquet",
+  "columns": [
+   {
+    "name": "snapshot_date",
+    "type": "DATE",
+    "unit": "date",
+    "description": "Date the source was read."
+   },
+   {
+    "name": "referral",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "Front-end or partner that sent the swap."
+   },
+   {
+    "name": "fees_usd",
+    "type": "DOUBLE",
+    "unit": "USD",
+    "description": "All-time gross fees for this channel."
+   },
+   {
+    "name": "share_of_listed_fees",
+    "type": "DOUBLE",
+    "unit": "fraction",
+    "description": "Share of the fees across listed channels."
+   },
+   {
+    "name": "channel_rank",
+    "type": "BIGINT",
+    "unit": "integer",
+    "description": "Rank by fees, largest first."
+   }
+  ],
+  "rows": 100,
+  "first": "2026-11-01",
+  "last": "2026-11-01"
+ },
+ {
+  "area": "NEAR Intents and revenue",
+  "table": "fct_intents_dashboard_readings",
+  "description": "Headline tiles read from NEAR's public Dune dashboard, by scope: all, public or confidential.",
+  "grain": "snapshot_date, scope, metric",
+  "sources": "Dune public page",
+  "path": "data/gold/fct_intents_dashboard_readings.parquet",
+  "columns": [
+   {
+    "name": "snapshot_date",
+    "type": "DATE",
+    "unit": "date",
+    "description": "Date the source was read."
+   },
+   {
+    "name": "scope",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "all, public or confidential."
+   },
+   {
+    "name": "metric",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "What is being measured."
+   },
+   {
+    "name": "value_usd",
+    "type": "DOUBLE",
+    "unit": "USD",
+    "description": "Displayed value, rounded to whole dollars."
+   }
+  ],
+  "rows": 18,
+  "first": "2026-11-01",
+  "last": "2026-11-01"
+ },
+ {
+  "area": "NEAR Intents and revenue",
+  "table": "fct_revenue_capture",
+  "description": "Share of gross fees captured as revenue, per mechanism and window, as NEAR publishes it.",
+  "grain": "snapshot_date, mechanism, time_window",
+  "sources": "revenue.near.org",
+  "path": "data/gold/fct_revenue_capture.parquet",
+  "columns": [
+   {
+    "name": "snapshot_date",
+    "type": "DATE",
+    "unit": "date",
+    "description": "Date the source was read."
+   },
+   {
+    "name": "mechanism",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "How the fee is collected: front_end, b2b_partners or quote_improvement."
+   },
+   {
+    "name": "time_window",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "d7, d30, ytd or all_time."
+   },
+   {
+    "name": "capture_rate",
+    "type": "DOUBLE",
+    "unit": "fraction",
+    "description": "Share of gross fees captured as net revenue."
+   }
+  ],
+  "rows": 12,
+  "first": "2026-11-01",
+  "last": "2026-11-01"
+ },
+ {
+  "area": "NEAR Intents and revenue",
+  "table": "fct_revenue_page_emissions",
+  "description": "NEAR's own year-to-date revenue and emissions. Kept apart from fct_supply_daily so the two can be compared.",
+  "grain": "date_day",
+  "sources": "revenue.near.org",
+  "path": "data/gold/fct_revenue_page_emissions.parquet",
+  "columns": [
+   {
+    "name": "date_day",
+    "type": "DATE",
+    "unit": "date",
+    "description": "UTC calendar day."
+   },
+   {
+    "name": "emissions_ytd_near",
+    "type": "DOUBLE",
+    "unit": "NEAR",
+    "description": "Emissions this year per revenue.near.org."
+   },
+   {
+    "name": "revenue_ytd_near",
+    "type": "DOUBLE",
+    "unit": "NEAR",
+    "description": "Revenue this year per revenue.near.org."
+   },
+   {
+    "name": "reference_supply_near",
+    "type": "DOUBLE",
+    "unit": "NEAR",
+    "description": "Supply the page uses as its denominator."
+   },
+   {
+    "name": "gross_issuance_pct",
+    "type": "DOUBLE",
+    "unit": "percent",
+    "description": "Year-to-date emissions as a percentage of reference supply."
+   },
+   {
+    "name": "net_issuance_pct",
+    "type": "DOUBLE",
+    "unit": "percent",
+    "description": "Gross issuance minus the revenue offset."
+   },
+   {
+    "name": "offset_pct",
+    "type": "DOUBLE",
+    "unit": "percent",
+    "description": "Year-to-date revenue as a percentage of reference supply."
+   }
+  ],
+  "rows": 304,
+  "first": "2026-01-01",
+  "last": "2026-10-31"
+ },
+ {
+  "area": "NEAR Intents and revenue",
+  "table": "fct_revenue_page_monthly",
+  "description": "NEAR's own monthly revenue series. The newest month may be incomplete.",
+  "grain": "month_start",
+  "sources": "revenue.near.org",
+  "path": "data/gold/fct_revenue_page_monthly.parquet",
+  "columns": [
+   {
+    "name": "month_start",
+    "type": "DATE",
+    "unit": "date",
+    "description": "First day of the month."
+   },
+   {
+    "name": "revenue_usd",
+    "type": "DOUBLE",
+    "unit": "USD",
+    "description": "Revenue that month per revenue.near.org."
+   },
+   {
+    "name": "revenue_near",
+    "type": "DOUBLE",
+    "unit": "NEAR",
+    "description": "Revenue that month in NEAR per revenue.near.org."
+   },
+   {
+    "name": "cumulative_revenue_usd",
+    "type": "DOUBLE",
+    "unit": "USD",
+    "description": "Revenue since the series began in 2025-08."
+   },
+   {
+    "name": "cumulative_revenue_near",
+    "type": "DOUBLE",
+    "unit": "NEAR",
+    "description": "Revenue since the series began in 2025-08, in NEAR."
+   }
+  ],
+  "rows": 16,
+  "first": "2025-08-01",
+  "last": "2026-11-01"
+ },
+ {
+  "area": "Wallets",
+  "table": "fct_wallet_transfers",
+  "description": "Every transfer touching a crawled wallet. Amounts are signed from the wallet's point of view, so outflows are negative.",
+  "grain": "account_id, block_height, transaction_id, receipt_id, action_index, log_index, transfer_index, asset_id, amount_raw",
+  "sources": "FastNear Transfers API",
+  "path": "data/gold/fct_wallet_transfers.parquet",
+  "columns": [
+   {
+    "name": "date_day",
+    "type": "DATE",
+    "unit": "date",
+    "description": "UTC calendar day."
+   },
+   {
+    "name": "block_height",
+    "type": "BIGINT",
+    "unit": "blocks",
+    "description": "Block height."
+   },
+   {
+    "name": "block_timestamp_ns",
+    "type": "HUGEINT",
+    "unit": "nanoseconds since epoch",
+    "description": "Block timestamp."
+   },
+   {
+    "name": "account_id",
+    "type": "VARCHAR",
+    "unit": "account id",
+    "description": "NEAR account."
+   },
+   {
+    "name": "account_entity",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "Entity of the wallet."
+   },
+   {
+    "name": "direction",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "in or out, from the wallet's point of view."
+   },
+   {
+    "name": "counterparty_id",
+    "type": "VARCHAR",
+    "unit": "account id",
+    "description": "The other account in the transfer."
+   },
+   {
+    "name": "counterparty_entity",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "Entity of the counterparty, if it is in the registry."
+   },
+   {
+    "name": "counterparty_category",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "Category of the counterparty, if it is in the registry."
+   },
+   {
+    "name": "is_between_revenue_wallets",
+    "type": "BOOLEAN",
+    "unit": "boolean",
+    "description": "Both sides are revenue wallets, so no new revenue arrived."
+   },
+   {
+    "name": "asset_id",
+    "type": "VARCHAR",
+    "unit": "asset id",
+    "description": "Asset, such as native:near or nep141:wrap.near."
+   },
+   {
+    "name": "asset_type",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "Near, Ft or Mt."
+   },
+   {
+    "name": "transfer_type",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "Kind of transfer per FastNear."
+   },
+   {
+    "name": "method_name",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "Contract method, if any."
+   },
+   {
+    "name": "amount_raw",
+    "type": "VARCHAR",
+    "unit": "raw units",
+    "description": "Signed amount in the token's smallest unit, as a string so no digits are lost."
+   },
+   {
+    "name": "amount_token",
+    "type": "DOUBLE",
+    "unit": "token units",
+    "description": "Signed amount in whole tokens."
+   },
+   {
+    "name": "amount_usd",
+    "type": "DOUBLE",
+    "unit": "USD",
+    "description": "Signed value at transfer time, per FastNear."
+   },
+   {
+    "name": "transaction_id",
+    "type": "VARCHAR",
+    "unit": "hash",
+    "description": "Transaction hash. Empty for protocol transfers with no transaction, such as epoch rewards to treasury.near."
+   },
+   {
+    "name": "receipt_id",
+    "type": "VARCHAR",
+    "unit": "hash",
+    "description": "Receipt id."
+   },
+   {
+    "name": "action_index",
+    "type": "INTEGER",
+    "unit": "integer",
+    "description": "Action position in the receipt."
+   },
+   {
+    "name": "log_index",
+    "type": "INTEGER",
+    "unit": "integer",
+    "description": "Log position in the receipt."
+   },
+   {
+    "name": "transfer_index",
+    "type": "BIGINT",
+    "unit": "integer",
+    "description": "FastNear's transfer position."
+   },
+   {
+    "name": "signer_id",
+    "type": "VARCHAR",
+    "unit": "account id",
+    "description": "Transaction signer."
+   },
+   {
+    "name": "predecessor_id",
+    "type": "VARCHAR",
+    "unit": "account id",
+    "description": "Account that sent the receipt."
+   }
+  ],
+  "rows": 11836,
+  "first": "2020-07-22",
+  "last": "2026-11-01"
+ },
+ {
+  "area": "Wallets",
+  "table": "fct_wallet_flows_daily",
+  "description": "Transfers summed per wallet, day, asset and direction, with hops between revenue wallets split out.",
+  "grain": "date_day, account_id, asset_id, direction, is_between_revenue_wallets",
+  "sources": "fct_wallet_transfers",
+  "path": "data/gold/fct_wallet_flows_daily.parquet",
+  "columns": [
+   {
+    "name": "date_day",
+    "type": "DATE",
+    "unit": "date",
+    "description": "UTC calendar day."
+   },
+   {
+    "name": "account_id",
+    "type": "VARCHAR",
+    "unit": "account id",
+    "description": "NEAR account."
+   },
+   {
+    "name": "asset_id",
+    "type": "VARCHAR",
+    "unit": "asset id",
+    "description": "Asset, such as native:near or nep141:wrap.near."
+   },
+   {
+    "name": "direction",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "in or out, from the wallet's point of view."
+   },
+   {
+    "name": "is_between_revenue_wallets",
+    "type": "BOOLEAN",
+    "unit": "boolean",
+    "description": "Both sides are revenue wallets, so no new revenue arrived."
+   },
+   {
+    "name": "transfers",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "Transfers."
+   },
+   {
+    "name": "counterparties",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "Distinct counterparties."
+   },
+   {
+    "name": "amount_token",
+    "type": "DOUBLE",
+    "unit": "token units",
+    "description": "Signed amount in whole tokens."
+   },
+   {
+    "name": "amount_usd",
+    "type": "DOUBLE",
+    "unit": "USD",
+    "description": "Signed value at transfer time, per FastNear."
+   }
+  ],
+  "rows": 3227,
+  "first": "2020-07-22",
+  "last": "2026-11-01"
+ },
+ {
+  "area": "Wallets",
+  "table": "fct_wallet_counterparties",
+  "description": "Who each crawled wallet deals with. Counterparties outside the registry stay unlabelled until there is evidence of who they are, so an empty entity means unknown, not unimportant.",
+  "grain": "account_id, counterparty_id",
+  "sources": "fct_wallet_transfers",
+  "path": "data/gold/fct_wallet_counterparties.parquet",
+  "columns": [
+   {
+    "name": "account_id",
+    "type": "VARCHAR",
+    "unit": "account id",
+    "description": "Crawled wallet."
+   },
+   {
+    "name": "counterparty_id",
+    "type": "VARCHAR",
+    "unit": "account id",
+    "description": "The other account."
+   },
+   {
+    "name": "counterparty_entity",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "Entity of the counterparty, if it is in the registry."
+   },
+   {
+    "name": "counterparty_category",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "Category of the counterparty, if it is in the registry."
+   },
+   {
+    "name": "transfers",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "Transfers between the two."
+   },
+   {
+    "name": "usd_in",
+    "type": "DOUBLE",
+    "unit": "USD",
+    "description": "Value received by the wallet, at transfer time."
+   },
+   {
+    "name": "usd_out",
+    "type": "DOUBLE",
+    "unit": "USD",
+    "description": "Value sent by the wallet, at transfer time, as a positive number."
+   },
+   {
+    "name": "first_seen",
+    "type": "DATE",
+    "unit": "date",
+    "description": "First transfer between the two."
+   },
+   {
+    "name": "last_seen",
+    "type": "DATE",
+    "unit": "date",
+    "description": "Latest transfer between the two."
+   }
+  ],
+  "rows": 180,
+  "first": null,
+  "last": null
+ },
+ {
+  "area": "Wallets",
+  "table": "fct_revenue_inflows_daily",
+  "description": "NEAR's captured revenue rebuilt from wallet transfers using DefiLlama's published method: NEAR and wNEAR received by the three revenue wallets, excluding hops between them. An independent check that needs no NEAR-uploaded data.",
+  "grain": "date_day, account_id",
+  "sources": "fct_wallet_transfers",
+  "path": "data/gold/fct_revenue_inflows_daily.parquet",
+  "columns": [
+   {
+    "name": "date_day",
+    "type": "DATE",
+    "unit": "date",
+    "description": "UTC calendar day."
+   },
+   {
+    "name": "account_id",
+    "type": "VARCHAR",
+    "unit": "account id",
+    "description": "NEAR account."
+   },
+   {
+    "name": "transfers",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "Transfers."
+   },
+   {
+    "name": "received_near",
+    "type": "DOUBLE",
+    "unit": "NEAR",
+    "description": "NEAR and wNEAR received."
+   },
+   {
+    "name": "received_usd",
+    "type": "DOUBLE",
+    "unit": "USD",
+    "description": "Value received, at transfer time."
+   }
+  ],
+  "rows": 491,
+  "first": "2025-09-22",
+  "last": "2026-11-01"
+ },
+ {
+  "area": "Wallets",
+  "table": "fct_wallet_balance_daily",
+  "description": "Native NEAR balance per crawled wallet per day: the last running balance reported that day, carried forward over days without transfers.",
+  "grain": "date_day, account_id",
+  "sources": "FastNear Transfers API, NearBlocks",
+  "path": "data/gold/fct_wallet_balance_daily.parquet",
+  "columns": [
+   {
+    "name": "date_day",
+    "type": "DATE",
+    "unit": "date",
+    "description": "UTC calendar day."
+   },
+   {
+    "name": "account_id",
+    "type": "VARCHAR",
+    "unit": "account id",
+    "description": "NEAR account."
+   },
+   {
+    "name": "balance_near",
+    "type": "DOUBLE",
+    "unit": "NEAR",
+    "description": "Native balance at day end per FastNear's running balance."
+   },
+   {
+    "name": "has_transfer_on_day",
+    "type": "BOOLEAN",
+    "unit": "boolean",
+    "description": "False means the balance was carried forward from an earlier day."
+   },
+   {
+    "name": "balance_near_nearblocks",
+    "type": "DOUBLE",
+    "unit": "NEAR",
+    "description": "Same balance per NearBlocks, as a check."
+   }
+  ],
+  "rows": 4922,
+  "first": "2020-07-22",
+  "last": "2026-10-31"
+ },
+ {
+  "area": "Wallets",
+  "table": "fct_wallet_holdings",
+  "description": "Point in time: tokens and native NEAR per tracked account, per snapshot. This cannot be backfilled, so history starts with the first snapshot.",
+  "grain": "snapshot_date, account_id, token_id",
+  "sources": "FastNear /v1/account/{id}/full",
+  "path": "data/gold/fct_wallet_holdings.parquet",
+  "columns": [
+   {
+    "name": "snapshot_date",
+    "type": "DATE",
+    "unit": "date",
+    "description": "Date the source was read."
+   },
+   {
+    "name": "account_id",
+    "type": "VARCHAR",
+    "unit": "account id",
+    "description": "NEAR account."
+   },
+   {
+    "name": "token_id",
+    "type": "VARCHAR",
+    "unit": "token id",
+    "description": "Token contract, or Intents asset id."
+   },
+   {
+    "name": "symbol",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "Token symbol."
+   },
+   {
+    "name": "balance_raw",
+    "type": "VARCHAR",
+    "unit": "raw units",
+    "description": "Balance in the token's smallest unit, as a string so no digits are lost."
+   },
+   {
+    "name": "amount_token",
+    "type": "DOUBLE",
+    "unit": "token units",
+    "description": "Signed amount in whole tokens."
+   },
+   {
+    "name": "last_update_height",
+    "type": "BIGINT",
+    "unit": "blocks",
+    "description": "Block of the last balance change."
+   }
+  ],
+  "rows": 8776,
+  "first": "2026-10-28",
+  "last": "2026-11-01"
+ },
+ {
+  "area": "Wallets",
+  "table": "fct_token_holders",
+  "description": "Point in time: the 100 largest holders per registry token, per snapshot. Protocol accounts are labelled; other holders stay unlabelled because this warehouse does not try to identify individuals.",
+  "grain": "snapshot_date, token_id, holder_account_id",
+  "sources": "FastNear /v1/ft/{token}/top",
+  "path": "data/gold/fct_token_holders.parquet",
+  "columns": [
+   {
+    "name": "snapshot_date",
+    "type": "DATE",
+    "unit": "date",
+    "description": "Date the source was read."
+   },
+   {
+    "name": "token_id",
+    "type": "VARCHAR",
+    "unit": "token id",
+    "description": "Token contract, or Intents asset id."
+   },
+   {
+    "name": "symbol",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "Token symbol."
+   },
+   {
+    "name": "holder_rank",
+    "type": "BIGINT",
+    "unit": "integer",
+    "description": "Rank by balance, largest first."
+   },
+   {
+    "name": "holder_account_id",
+    "type": "VARCHAR",
+    "unit": "account id",
+    "description": "Holder account."
+   },
+   {
+    "name": "holder_entity",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "Entity of the holder, if it is in the registry."
+   },
+   {
+    "name": "holder_category",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "Category of the holder, if it is in the registry."
+   },
+   {
+    "name": "balance_raw",
+    "type": "VARCHAR",
+    "unit": "raw units",
+    "description": "Balance in the token's smallest unit, as a string so no digits are lost."
+   },
+   {
+    "name": "amount_token",
+    "type": "DOUBLE",
+    "unit": "token units",
+    "description": "Signed amount in whole tokens."
+   },
+   {
+    "name": "share_of_top_100",
+    "type": "DOUBLE",
+    "unit": "fraction",
+    "description": "Share of the balance held by the top 100. Not a share of total supply."
+   }
+  ],
+  "rows": 700,
+  "first": "2026-11-01",
+  "last": "2026-11-01"
+ },
+ {
+  "area": "Security and staking",
+  "table": "fct_validator_epoch",
+  "description": "Validator set per epoch. An epoch read after it ended has final production counts; a nightly read of the current epoch is partial.",
+  "grain": "epoch_height, validator_account_id",
+  "sources": "RPC validators",
+  "path": "data/gold/fct_validator_epoch.parquet",
+  "columns": [
+   {
+    "name": "epoch_height",
+    "type": "BIGINT",
+    "unit": "integer",
+    "description": "Epoch number."
+   },
+   {
+    "name": "epoch_start_height",
+    "type": "BIGINT",
+    "unit": "blocks",
+    "description": "First block of the epoch."
+   },
+   {
+    "name": "validator_account_id",
+    "type": "VARCHAR",
+    "unit": "account id",
+    "description": "Validator pool account."
+   },
+   {
+    "name": "stake_near",
+    "type": "DOUBLE",
+    "unit": "NEAR",
+    "description": "Stake."
+   },
+   {
+    "name": "stake_share",
+    "type": "DOUBLE",
+    "unit": "fraction",
+    "description": "Share of the epoch's total stake."
+   },
+   {
+    "name": "stake_rank",
+    "type": "BIGINT",
+    "unit": "integer",
+    "description": "Rank by stake, largest first."
+   },
+   {
+    "name": "is_slashed",
+    "type": "BOOLEAN",
+    "unit": "boolean",
+    "description": "Whether the validator was slashed."
+   },
+   {
+    "name": "blocks_produced",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "Blocks produced."
+   },
+   {
+    "name": "blocks_expected",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "Blocks expected."
+   },
+   {
+    "name": "chunks_produced",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "Chunks produced."
+   },
+   {
+    "name": "chunks_expected",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "Chunks expected."
+   },
+   {
+    "name": "endorsements_produced",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "Chunk endorsements produced."
+   },
+   {
+    "name": "endorsements_expected",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "Chunk endorsements expected."
+   },
+   {
+    "name": "read_from",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "nightly for a mid-epoch read, archival for an epoch read after it ended."
+   }
+  ],
+  "rows": 751,
+  "first": null,
+  "last": null
+ },
+ {
+  "area": "Security and staking",
+  "table": "fct_validator_summary",
+  "description": "Decentralization per epoch: validator count, stake concentration and Nakamoto coefficients.",
+  "grain": "epoch_height",
+  "sources": "fct_validator_epoch, dim_block_day",
+  "path": "data/gold/fct_validator_summary.parquet",
+  "columns": [
+   {
+    "name": "epoch_height",
+    "type": "BIGINT",
+    "unit": "integer",
+    "description": "Epoch number."
+   },
+   {
+    "name": "epoch_start_height",
+    "type": "BIGINT",
+    "unit": "blocks",
+    "description": "First block of the epoch."
+   },
+   {
+    "name": "validators",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "Validators in the epoch."
+   },
+   {
+    "name": "total_stake_near",
+    "type": "DOUBLE",
+    "unit": "NEAR",
+    "description": "Total stake."
+   },
+   {
+    "name": "top_validator_share",
+    "type": "DOUBLE",
+    "unit": "fraction",
+    "description": "Largest validator's share of stake."
+   },
+   {
+    "name": "top_10_share",
+    "type": "DOUBLE",
+    "unit": "fraction",
+    "description": "Ten largest validators' share of stake."
+   },
+   {
+    "name": "stake_hhi",
+    "type": "DOUBLE",
+    "unit": "index 0 to 1",
+    "description": "Herfindahl index of stake shares: 0 is even, 1 is one validator."
+   },
+   {
+    "name": "nakamoto_33",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "Fewest validators holding over one third of stake, the share that can halt finality."
+   },
+   {
+    "name": "nakamoto_67",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "Fewest validators holding over two thirds of stake."
+   },
+   {
+    "name": "approx_date_day",
+    "type": "DATE",
+    "unit": "date",
+    "description": "Date of the epoch's start, from the nearest daily block. Empty if none is within a day."
+   },
+   {
+    "name": "total_supply_near",
+    "type": "DOUBLE",
+    "unit": "NEAR",
+    "description": "Total supply from the nearest daily block."
+   },
+   {
+    "name": "staking_ratio",
+    "type": "DOUBLE",
+    "unit": "fraction",
+    "description": "total_stake_near divided by total supply."
+   }
+  ],
+  "rows": 2,
+  "first": null,
+  "last": null
+ },
+ {
+  "area": "Security and staking",
+  "table": "fct_chain_signatures_daily",
+  "description": "Chain Signatures activity per day, from NearBlocks' signer statistics.",
+  "grain": "date_day",
+  "sources": "NearBlocks /v3/signer-stats",
+  "path": "data/gold/fct_chain_signatures_daily.parquet",
+  "columns": [
+   {
+    "name": "date_day",
+    "type": "DATE",
+    "unit": "date",
+    "description": "UTC calendar day."
+   },
+   {
+    "name": "txns",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "Transactions to the signer contract."
+   },
+   {
+    "name": "signers",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "Distinct accounts requesting signatures."
+   },
+   {
+    "name": "gas_burnt",
+    "type": "HUGEINT",
+    "unit": "gas units",
+    "description": "Gas burnt by the signer contract."
+   }
+  ],
+  "rows": 365,
+  "first": "2025-11-01",
+  "last": "2026-10-31"
+ },
+ {
+  "area": "Security and staking",
+  "table": "fct_mpc_state",
+  "description": "Chain Signatures contract state per snapshot, read directly from v1.signer.",
+  "grain": "snapshot_date",
+  "sources": "RPC v1.signer state",
+  "path": "data/gold/fct_mpc_state.parquet",
+  "columns": [
+   {
+    "name": "snapshot_date",
+    "type": "DATE",
+    "unit": "date",
+    "description": "Date the source was read."
+   },
+   {
+    "name": "participants",
+    "type": "UBIGINT",
+    "unit": "count",
+    "description": "MPC participants."
+   },
+   {
+    "name": "threshold",
+    "type": "INTEGER",
+    "unit": "count",
+    "description": "Signers required."
+   },
+   {
+    "name": "signature_domains",
+    "type": "UBIGINT",
+    "unit": "count",
+    "description": "Signature schemes supported."
+   },
+   {
+    "name": "keyset_epoch",
+    "type": "BIGINT",
+    "unit": "integer",
+    "description": "MPC key generation epoch."
+   }
+  ],
+  "rows": 2,
+  "first": "2026-10-28",
+  "last": "2026-11-01"
+ },
+ {
+  "area": "Security and staking",
+  "table": "fct_mpc_participants",
+  "description": "MPC operators per snapshot, read directly from v1.signer.",
+  "grain": "snapshot_date, operator_account_id",
+  "sources": "RPC v1.signer state",
+  "path": "data/gold/fct_mpc_participants.parquet",
+  "columns": [
+   {
+    "name": "snapshot_date",
+    "type": "DATE",
+    "unit": "date",
+    "description": "Date the source was read."
+   },
+   {
+    "name": "operator_account_id",
+    "type": "VARCHAR",
+    "unit": "account id",
+    "description": "MPC operator account."
+   },
+   {
+    "name": "participant_id",
+    "type": "INTEGER",
+    "unit": "integer",
+    "description": "Operator's id in the contract."
+   }
+  ],
+  "rows": 32,
+  "first": "2026-10-28",
+  "last": "2026-11-01"
+ },
+ {
+  "area": "Security and staking",
+  "table": "fct_mpc_operators",
+  "description": "MPC operators as NearBlocks reports them, per snapshot, with the TEE status it shows. Read fct_mpc_participants for what the contract itself says.",
+  "grain": "snapshot_date, operator_account_id",
+  "sources": "NearBlocks /v3/multichain/mpcs",
+  "path": "data/gold/fct_mpc_operators.parquet",
+  "columns": [
+   {
+    "name": "snapshot_date",
+    "type": "DATE",
+    "unit": "date",
+    "description": "Date the source was read."
+   },
+   {
+    "name": "operator_account_id",
+    "type": "VARCHAR",
+    "unit": "account id",
+    "description": "MPC operator account."
+   },
+   {
+    "name": "threshold",
+    "type": "INTEGER",
+    "unit": "count",
+    "description": "Signers required."
+   },
+   {
+    "name": "is_validator",
+    "type": "BOOLEAN",
+    "unit": "boolean",
+    "description": "Whether NearBlocks marks the operator as a validator."
+   },
+   {
+    "name": "tee_status",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "TEE status as NearBlocks shows it. A blank or none value means NearBlocks has no attestation for it, which does not prove the node runs outside a TEE."
+   },
+   {
+    "name": "tee_expiry",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "TEE attestation expiry, if shown."
+   },
+   {
+    "name": "tee_image_hash",
+    "type": "VARCHAR",
+    "unit": "hash",
+    "description": "TEE image hash, if shown."
+   },
+   {
+    "name": "node_url",
+    "type": "VARCHAR",
+    "unit": "url",
+    "description": "Operator's public node address."
+   }
+  ],
+  "rows": 16,
+  "first": "2026-11-01",
+  "last": "2026-11-01"
+ },
+ {
+  "area": "Security and staking",
+  "table": "fct_lst_snapshot",
+  "description": "Liquid staking per snapshot, read directly from each contract.",
+  "grain": "snapshot_date, token",
+  "sources": "RPC contract views",
+  "path": "data/gold/fct_lst_snapshot.parquet",
+  "columns": [
+   {
+    "name": "snapshot_date",
+    "type": "DATE",
+    "unit": "date",
+    "description": "Date the source was read."
+   },
+   {
+    "name": "token",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "Liquid staking token."
+   },
+   {
+    "name": "contract",
+    "type": "VARCHAR",
+    "unit": "account id",
+    "description": "Token contract."
+   },
+   {
+    "name": "price_near",
+    "type": "DOUBLE",
+    "unit": "NEAR per token",
+    "description": "NEAR redeemable per token."
+   },
+   {
+    "name": "token_supply",
+    "type": "DOUBLE",
+    "unit": "token units",
+    "description": "Tokens outstanding."
+   },
+   {
+    "name": "staked_near",
+    "type": "DOUBLE",
+    "unit": "NEAR",
+    "description": "NEAR staked by the contract. Empty where the contract has no such view."
+   }
+  ],
+  "rows": 3,
+  "first": "2026-11-01",
+  "last": "2026-11-01"
+ },
+ {
+  "area": "Capital and DeFi",
+  "table": "fct_protocol_tvl_daily",
+  "description": "TVL on NEAR per protocol per day, excluding exchange wallets. Liquid staking and lending can count the same NEAR twice, so do not sum categories into a chain total.",
+  "grain": "date_day, protocol_slug",
+  "sources": "DefiLlama /protocol/{slug}",
+  "path": "data/gold/fct_protocol_tvl_daily.parquet",
+  "columns": [
+   {
+    "name": "date_day",
+    "type": "DATE",
+    "unit": "date",
+    "description": "UTC calendar day."
+   },
+   {
+    "name": "protocol_slug",
+    "type": "VARCHAR",
+    "unit": "id",
+    "description": "DefiLlama protocol identifier."
+   },
+   {
+    "name": "protocol_name",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "Protocol name."
+   },
+   {
+    "name": "category",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "DefiLlama category."
+   },
+   {
+    "name": "tvl_usd",
+    "type": "DOUBLE",
+    "unit": "USD",
+    "description": "Total value locked."
+   }
+  ],
+  "rows": 16713,
+  "first": "2021-08-20",
+  "last": "2026-10-31"
+ },
+ {
+  "area": "Capital and DeFi",
+  "table": "fct_protocol_fees_snapshot",
+  "description": "Fees and revenue per protocol on NEAR, as of each DefiLlama reading.",
+  "grain": "snapshot_date, measure, protocol_name",
+  "sources": "DefiLlama /overview/fees/Near",
+  "path": "data/gold/fct_protocol_fees_snapshot.parquet",
+  "columns": [
+   {
+    "name": "snapshot_date",
+    "type": "DATE",
+    "unit": "date",
+    "description": "Date the source was read."
+   },
+   {
+    "name": "measure",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "fees or revenue."
+   },
+   {
+    "name": "protocol_name",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "Protocol name."
+   },
+   {
+    "name": "protocol_slug",
+    "type": "VARCHAR",
+    "unit": "id",
+    "description": "DefiLlama protocol identifier."
+   },
+   {
+    "name": "category",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "DefiLlama category."
+   },
+   {
+    "name": "total_24h_usd",
+    "type": "DOUBLE",
+    "unit": "USD",
+    "description": "Trailing 24 hours."
+   },
+   {
+    "name": "total_7d_usd",
+    "type": "DOUBLE",
+    "unit": "USD",
+    "description": "Trailing 7 days."
+   },
+   {
+    "name": "total_30d_usd",
+    "type": "DOUBLE",
+    "unit": "USD",
+    "description": "Trailing 30 days."
+   },
+   {
+    "name": "total_1y_usd",
+    "type": "DOUBLE",
+    "unit": "USD",
+    "description": "Trailing year."
+   },
+   {
+    "name": "total_all_time_usd",
+    "type": "DOUBLE",
+    "unit": "USD",
+    "description": "All time."
+   }
+  ],
+  "rows": 42,
+  "first": "2026-10-28",
+  "last": "2026-11-01"
+ },
+ {
+  "area": "Capital and DeFi",
+  "table": "fct_stablecoin_assets",
+  "description": "Supply per stablecoin per chain, as of each DefiLlama reading.",
+  "grain": "snapshot_date, chain_id, symbol, asset_name",
+  "sources": "DefiLlama /stablecoins",
+  "path": "data/gold/fct_stablecoin_assets.parquet",
+  "columns": [
+   {
+    "name": "snapshot_date",
+    "type": "DATE",
+    "unit": "date",
+    "description": "Date the source was read."
+   },
+   {
+    "name": "chain_id",
+    "type": "VARCHAR",
+    "unit": "id",
+    "description": "Chain identifier from registry/peers.csv."
+   },
+   {
+    "name": "symbol",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "Stablecoin symbol."
+   },
+   {
+    "name": "asset_name",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "Stablecoin name."
+   },
+   {
+    "name": "peg_type",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "What the stablecoin is pegged to."
+   },
+   {
+    "name": "circulating",
+    "type": "DOUBLE",
+    "unit": "pegged units",
+    "description": "Circulating supply on the chain, in pegged units."
+   }
+  ],
+  "rows": 383,
+  "first": "2026-11-01",
+  "last": "2026-11-01"
+ },
+ {
+  "area": "Capital and DeFi",
+  "table": "fct_yield_pools",
+  "description": "Yield pools on NEAR, as of each DefiLlama reading.",
+  "grain": "snapshot_date, pool_id",
+  "sources": "DefiLlama /pools",
+  "path": "data/gold/fct_yield_pools.parquet",
+  "columns": [
+   {
+    "name": "snapshot_date",
+    "type": "DATE",
+    "unit": "date",
+    "description": "Date the source was read."
+   },
+   {
+    "name": "pool_id",
+    "type": "VARCHAR",
+    "unit": "id",
+    "description": "Pool identifier."
+   },
+   {
+    "name": "project",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "Protocol running the pool."
+   },
+   {
+    "name": "symbol",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "Pool tokens."
+   },
+   {
+    "name": "tvl_usd",
+    "type": "DOUBLE",
+    "unit": "USD",
+    "description": "Pool TVL."
+   },
+   {
+    "name": "apy_pct",
+    "type": "DOUBLE",
+    "unit": "percent",
+    "description": "Total APY as DefiLlama reports it."
+   },
+   {
+    "name": "apy_base_pct",
+    "type": "DOUBLE",
+    "unit": "percent",
+    "description": "Base APY."
+   },
+   {
+    "name": "apy_reward_pct",
+    "type": "DOUBLE",
+    "unit": "percent",
+    "description": "Reward APY."
+   }
+  ],
+  "rows": 10,
+  "first": "2026-11-01",
+  "last": "2026-11-01"
+ },
+ {
+  "area": "Market and peers",
+  "table": "fct_market_daily",
+  "description": "NEAR price and market cap per day, aligned to the close of the UTC day. price_usd prefers CoinMetrics; each source keeps its own column.",
+  "grain": "date_day",
+  "sources": "CoinMetrics, Coinbase, DefiLlama, NearBlocks",
+  "path": "data/gold/fct_market_daily.parquet",
+  "columns": [
+   {
+    "name": "date_day",
+    "type": "DATE",
+    "unit": "date",
+    "description": "UTC calendar day."
+   },
+   {
+    "name": "price_usd",
+    "type": "DOUBLE",
+    "unit": "USD",
+    "description": "NEAR close: CoinMetrics, else DefiLlama, else NearBlocks."
+   },
+   {
+    "name": "market_cap_usd",
+    "type": "DOUBLE",
+    "unit": "USD",
+    "description": "Market cap: CoinMetrics, else NearBlocks."
+   },
+   {
+    "name": "price_usd_coinmetrics",
+    "type": "DOUBLE",
+    "unit": "USD",
+    "description": "CoinMetrics reference rate at the day's close."
+   },
+   {
+    "name": "price_usd_coinbase_close",
+    "type": "DOUBLE",
+    "unit": "USD",
+    "description": "Coinbase NEAR-USD close."
+   },
+   {
+    "name": "price_usd_defillama",
+    "type": "DOUBLE",
+    "unit": "USD",
+    "description": "DefiLlama price, moved back one day from its 00:00 stamp to align with the close."
+   },
+   {
+    "name": "price_usd_nearblocks",
+    "type": "DOUBLE",
+    "unit": "USD",
+    "description": "NearBlocks price, moved back one day from its 00:00 stamp to align with the close."
+   },
+   {
+    "name": "open_usd",
+    "type": "DOUBLE",
+    "unit": "USD",
+    "description": "Coinbase open."
+   },
+   {
+    "name": "high_usd",
+    "type": "DOUBLE",
+    "unit": "USD",
+    "description": "Coinbase high."
+   },
+   {
+    "name": "low_usd",
+    "type": "DOUBLE",
+    "unit": "USD",
+    "description": "Coinbase low."
+   },
+   {
+    "name": "coinbase_volume_near",
+    "type": "DOUBLE",
+    "unit": "NEAR",
+    "description": "Coinbase traded volume."
+   },
+   {
+    "name": "reported_spot_volume_usd",
+    "type": "DOUBLE",
+    "unit": "USD",
+    "description": "Reported spot volume per CoinMetrics."
+   },
+   {
+    "name": "circulating_supply_near",
+    "type": "DOUBLE",
+    "unit": "NEAR",
+    "description": "Circulating supply per /v1/charts. The v3 stats endpoint reports this wrongly, so it is not used."
+   }
+  ],
+  "rows": 2294,
+  "first": "2020-07-21",
+  "last": "2026-10-31"
+ },
+ {
+  "area": "Market and peers",
+  "table": "fct_peer_daily",
+  "description": "NEAR and peer chains per day on the same definitions. An empty cell means the source has no value for that day.",
+  "grain": "date_day, chain_id",
+  "sources": "DefiLlama, CoinMetrics",
+  "path": "data/gold/fct_peer_daily.parquet",
+  "columns": [
+   {
+    "name": "date_day",
+    "type": "DATE",
+    "unit": "date",
+    "description": "UTC calendar day."
+   },
+   {
+    "name": "chain_id",
+    "type": "VARCHAR",
+    "unit": "id",
+    "description": "Chain identifier from registry/peers.csv."
+   },
+   {
+    "name": "price_usd",
+    "type": "DOUBLE",
+    "unit": "USD",
+    "description": "Close: CoinMetrics, else DefiLlama."
+   },
+   {
+    "name": "market_cap_usd",
+    "type": "DOUBLE",
+    "unit": "USD",
+    "description": "Market cap per CoinMetrics. Empty for TON, which has no community series."
+   },
+   {
+    "name": "tvl_usd",
+    "type": "DOUBLE",
+    "unit": "USD",
+    "description": "Chain TVL per DefiLlama."
+   },
+   {
+    "name": "fees_usd",
+    "type": "DOUBLE",
+    "unit": "USD",
+    "description": "Fees paid by users on the chain per DefiLlama."
+   },
+   {
+    "name": "revenue_usd",
+    "type": "DOUBLE",
+    "unit": "USD",
+    "description": "Chain revenue per DefiLlama."
+   },
+   {
+    "name": "dex_volume_usd",
+    "type": "DOUBLE",
+    "unit": "USD",
+    "description": "DEX volume on the chain per DefiLlama."
+   },
+   {
+    "name": "stablecoins_usd",
+    "type": "DOUBLE",
+    "unit": "USD",
+    "description": "Stablecoins on the chain per DefiLlama."
+   }
+  ],
+  "rows": 15053,
+  "first": "2017-09-27",
+  "last": "2026-10-31"
+ },
+ {
+  "area": "Developers and governance",
+  "table": "fct_dev_activity_weekly",
+  "description": "Commits and active authors per tracked repository per week. A fixed repository list, not a whole-ecosystem count; GitHub's author list covers each repository's top 100.",
+  "grain": "week_start, repo",
+  "sources": "GitHub statistics API",
+  "path": "data/gold/fct_dev_activity_weekly.parquet",
+  "columns": [
+   {
+    "name": "week_start",
+    "type": "DATE",
+    "unit": "date",
+    "description": "Monday of the week, UTC."
+   },
+   {
+    "name": "repo",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "GitHub repository as owner/name."
+   },
+   {
+    "name": "ecosystem",
+    "type": "VARCHAR",
+    "unit": "id",
+    "description": "Chain the repository belongs to."
+   },
+   {
+    "name": "repo_group",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "Kind of repository."
+   },
+   {
+    "name": "commits",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "Commits that week."
+   },
+   {
+    "name": "active_authors",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "Authors with at least one commit that week, among GitHub's top 100 for the repository."
+   }
+  ],
+  "rows": 936,
+  "first": "2025-11-09",
+  "last": "2026-11-01"
+ },
+ {
+  "area": "Developers and governance",
+  "table": "fct_repo_snapshot",
+  "description": "Stars, forks and last push per tracked repository, per read.",
+  "grain": "snapshot_date, repo",
+  "sources": "GitHub",
+  "path": "data/gold/fct_repo_snapshot.parquet",
+  "columns": [
+   {
+    "name": "snapshot_date",
+    "type": "DATE",
+    "unit": "date",
+    "description": "Date the source was read."
+   },
+   {
+    "name": "repo",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "GitHub repository as owner/name."
+   },
+   {
+    "name": "ecosystem",
+    "type": "VARCHAR",
+    "unit": "id",
+    "description": "Chain the repository belongs to."
+   },
+   {
+    "name": "repo_group",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "Kind of repository."
+   },
+   {
+    "name": "stars",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "GitHub stars."
+   },
+   {
+    "name": "forks",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "GitHub forks."
+   },
+   {
+    "name": "open_issues",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "Open issues and pull requests."
+   },
+   {
+    "name": "last_push_date",
+    "type": "DATE",
+    "unit": "date",
+    "description": "Date of the last push."
+   },
+   {
+    "name": "created_date",
+    "type": "DATE",
+    "unit": "date",
+    "description": "Creation date."
+   }
+  ],
+  "rows": 18,
+  "first": "2026-11-01",
+  "last": "2026-11-01"
+ },
+ {
+  "area": "Developers and governance",
+  "table": "fct_catalog_projects",
+  "description": "NEAR Catalog entries per read, for counting projects by tag over time.",
+  "grain": "snapshot_date, slug",
+  "sources": "NEAR Catalog",
+  "path": "data/gold/fct_catalog_projects.parquet",
+  "columns": [
+   {
+    "name": "snapshot_date",
+    "type": "DATE",
+    "unit": "date",
+    "description": "Date the source was read."
+   },
+   {
+    "name": "slug",
+    "type": "VARCHAR",
+    "unit": "id",
+    "description": "Catalog identifier."
+   },
+   {
+    "name": "project_name",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "Project name."
+   },
+   {
+    "name": "tagline",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "Catalog tagline."
+   },
+   {
+    "name": "tags_json",
+    "type": "JSON",
+    "unit": "json",
+    "description": "Catalog tags, as JSON."
+   }
+  ],
+  "rows": 340,
+  "first": "2026-11-01",
+  "last": "2026-11-01"
+ },
+ {
+  "area": "Developers and governance",
+  "table": "fct_governance_threads",
+  "description": "Engagement on the tracked governance threads, per read. Governance outcomes belong in dim_event.",
+  "grain": "snapshot_date, topic_id",
+  "sources": "gov.near.org",
+  "path": "data/gold/fct_governance_threads.parquet",
+  "columns": [
+   {
+    "name": "snapshot_date",
+    "type": "DATE",
+    "unit": "date",
+    "description": "Date the source was read."
+   },
+   {
+    "name": "topic_id",
+    "type": "BIGINT",
+    "unit": "id",
+    "description": "Forum thread id."
+   },
+   {
+    "name": "title",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "Short title."
+   },
+   {
+    "name": "created_date",
+    "type": "DATE",
+    "unit": "date",
+    "description": "Creation date."
+   },
+   {
+    "name": "last_post_date",
+    "type": "DATE",
+    "unit": "date",
+    "description": "Date of the last post."
+   },
+   {
+    "name": "posts",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "Posts in the thread."
+   },
+   {
+    "name": "views",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "Thread views."
+   },
+   {
+    "name": "likes",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "Thread likes."
+   },
+   {
+    "name": "is_closed",
+    "type": "BOOLEAN",
+    "unit": "boolean",
+    "description": "Whether the thread is closed."
+   }
+  ],
+  "rows": 4,
+  "first": "2026-11-01",
+  "last": "2026-11-01"
+ },
+ {
+  "area": "Developers and governance",
+  "table": "fct_governance_proposals",
+  "description": "House of Stake proposals read directly from vote.dao, as of the newest snapshot. A status of Voting means the numbers are still moving. Test and spam proposals are kept; filter them on status or title.",
+  "grain": "proposal_id",
+  "sources": "RPC vote.dao get_proposals",
+  "path": "data/gold/fct_governance_proposals.parquet",
+  "columns": [
+   {
+    "name": "proposal_id",
+    "type": "INTEGER",
+    "unit": "integer",
+    "description": "Proposal number in the contract."
+   },
+   {
+    "name": "title",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "Proposal title."
+   },
+   {
+    "name": "status",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "Contract status, such as Created, Rejected, Voting, Succeeded or Defeated."
+   },
+   {
+    "name": "flow",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "Voting flow, such as Classic."
+   },
+   {
+    "name": "proposer_id",
+    "type": "VARCHAR",
+    "unit": "account id",
+    "description": "Account that created the proposal."
+   },
+   {
+    "name": "link",
+    "type": "VARCHAR",
+    "unit": "url",
+    "description": "Discussion link given in the proposal."
+   },
+   {
+    "name": "created_date",
+    "type": "DATE",
+    "unit": "date",
+    "description": "Date the proposal was created."
+   },
+   {
+    "name": "voting_start_date",
+    "type": "DATE",
+    "unit": "date",
+    "description": "Date voting opened. Empty if it never opened."
+   },
+   {
+    "name": "voting_end_date",
+    "type": "DATE",
+    "unit": "date",
+    "description": "Date voting closes or closed."
+   },
+   {
+    "name": "for_venear",
+    "type": "DOUBLE",
+    "unit": "veNEAR",
+    "description": "veNEAR voting for: the first option in the contract's vote list."
+   },
+   {
+    "name": "against_venear",
+    "type": "DOUBLE",
+    "unit": "veNEAR",
+    "description": "veNEAR voting against: the second option."
+   },
+   {
+    "name": "abstain_venear",
+    "type": "DOUBLE",
+    "unit": "veNEAR",
+    "description": "veNEAR abstaining: the third option."
+   },
+   {
+    "name": "voters",
+    "type": "INTEGER",
+    "unit": "count",
+    "description": "Accounts that voted."
+   },
+   {
+    "name": "votes_venear",
+    "type": "DOUBLE",
+    "unit": "veNEAR",
+    "description": "Total veNEAR voted."
+   },
+   {
+    "name": "eligible_venear",
+    "type": "DOUBLE",
+    "unit": "veNEAR",
+    "description": "Total veNEAR in the proposal's snapshot."
+   },
+   {
+    "name": "turnout",
+    "type": "DOUBLE",
+    "unit": "fraction",
+    "description": "votes_venear divided by eligible_venear."
+   },
+   {
+    "name": "quorum_threshold",
+    "type": "DOUBLE",
+    "unit": "fraction",
+    "description": "Share of eligible veNEAR required for quorum."
+   },
+   {
+    "name": "approval_threshold",
+    "type": "DOUBLE",
+    "unit": "fraction",
+    "description": "Share of votes required to pass."
+   },
+   {
+    "name": "read_on",
+    "type": "DATE",
+    "unit": "date",
+    "description": "Date of the reading."
+   }
+  ],
+  "rows": 30,
+  "first": null,
+  "last": null
+ },
+ {
+  "area": "Developers and governance",
+  "table": "fct_venear_snapshot",
+  "description": "House of Stake participation per snapshot, read directly from venear.dao.",
+  "grain": "snapshot_date",
+  "sources": "RPC venear.dao",
+  "path": "data/gold/fct_venear_snapshot.parquet",
+  "columns": [
+   {
+    "name": "snapshot_date",
+    "type": "DATE",
+    "unit": "date",
+    "description": "Date the source was read."
+   },
+   {
+    "name": "total_venear",
+    "type": "DOUBLE",
+    "unit": "veNEAR",
+    "description": "veNEAR outstanding."
+   },
+   {
+    "name": "accounts",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "Accounts holding veNEAR."
+   }
+  ],
+  "rows": 1,
+  "first": "2026-11-01",
+  "last": "2026-11-01"
+ },
+ {
+  "area": "Data quality",
+  "table": "dq_reconciliation",
+  "description": "Every place two sources should agree, side by side. A gap beyond tolerance must have a written explanation, or make verify fails.",
+  "grain": "check_id, subject",
+  "sources": "gold tables",
+  "path": "data/gold/dq_reconciliation.parquet",
+  "columns": [
+   {
+    "name": "check_id",
+    "type": "VARCHAR",
+    "unit": "id",
+    "description": "Name of the check."
+   },
+   {
+    "name": "metric",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "What is being measured."
+   },
+   {
+    "name": "subject",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "What the check is about, when it runs per account."
+   },
+   {
+    "name": "source_a",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "First source."
+   },
+   {
+    "name": "value_a",
+    "type": "DOUBLE",
+    "unit": "see metric",
+    "description": "Value from the first source."
+   },
+   {
+    "name": "source_b",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "Second source."
+   },
+   {
+    "name": "value_b",
+    "type": "DOUBLE",
+    "unit": "see metric",
+    "description": "Value from the second source."
+   },
+   {
+    "name": "diff_pct",
+    "type": "DOUBLE",
+    "unit": "percent",
+    "description": "Absolute gap as a percentage of the larger value."
+   },
+   {
+    "name": "tolerance_pct",
+    "type": "DECIMAL(4,2)",
+    "unit": "percent",
+    "description": "Largest gap treated as agreement."
+   },
+   {
+    "name": "independence",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "independent, or same_upstream when both sources read the same data, so agreement proves little."
+   },
+   {
+    "name": "status",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "agree, differs or not_available."
+   },
+   {
+    "name": "explanation",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "Why the gap exists, from registry/reconciliation_notes.csv."
+   }
+  ],
+  "rows": 36,
+  "first": null,
+  "last": null
+ },
+ {
+  "area": "Data quality",
+  "table": "dq_freshness",
+  "description": "How current each daily dataset is, relative to the newest snapshot the build can see.",
+  "grain": "model",
+  "sources": "silver tables",
+  "path": "data/gold/dq_freshness.parquet",
+  "columns": [
+   {
+    "name": "dataset",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "Readable dataset name."
+   },
+   {
+    "name": "model",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "Silver model name."
+   },
+   {
+    "name": "latest_snapshot",
+    "type": "DATE",
+    "unit": "date",
+    "description": "Newest snapshot holding this dataset."
+   },
+   {
+    "name": "latest_data_day",
+    "type": "DATE",
+    "unit": "date",
+    "description": "Newest day of data."
+   },
+   {
+    "name": "as_of",
+    "type": "DATE",
+    "unit": "date",
+    "description": "Newest snapshot across all datasets."
+   },
+   {
+    "name": "days_behind",
+    "type": "BIGINT",
+    "unit": "days",
+    "description": "Days between latest_data_day and as_of."
+   },
+   {
+    "name": "rows_all_snapshots",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "Rows across all snapshots."
+   }
+  ],
+  "rows": 20,
+  "first": null,
+  "last": null
+ },
+ {
+  "area": "Data quality",
+  "table": "dq_revisions",
+  "description": "Values a source changed after first publishing them, comparing the oldest and newest snapshot of the same key.",
+  "grain": "model, value_column, series_key, date_day",
+  "sources": "silver tables",
+  "path": "data/gold/dq_revisions.parquet",
+  "columns": [
+   {
+    "name": "model",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "Silver model name."
+   },
+   {
+    "name": "value_column",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "Column being compared."
+   },
+   {
+    "name": "series_key",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "Which series within the model."
+   },
+   {
+    "name": "date_day",
+    "type": "DATE",
+    "unit": "date",
+    "description": "UTC calendar day."
+   },
+   {
+    "name": "first_snapshot",
+    "type": "DATE",
+    "unit": "date",
+    "description": "Oldest snapshot holding this key."
+   },
+   {
+    "name": "last_snapshot",
+    "type": "DATE",
+    "unit": "date",
+    "description": "Newest snapshot holding this key."
+   },
+   {
+    "name": "first_value",
+    "type": "DOUBLE",
+    "unit": "see value_column",
+    "description": "Value in the oldest snapshot."
+   },
+   {
+    "name": "last_value",
+    "type": "DOUBLE",
+    "unit": "see value_column",
+    "description": "Value in the newest snapshot."
+   },
+   {
+    "name": "change_pct",
+    "type": "DOUBLE",
+    "unit": "percent",
+    "description": "Change from first to last, as a percentage."
+   }
+  ],
+  "rows": 4,
+  "first": "2026-10-27",
+  "last": "2026-10-27"
+ },
+ {
+  "area": "Data quality",
+  "table": "dq_ingest_runs",
+  "description": "How each dataset fared on each run date: ok, partial, skipped or failed, and why.",
+  "grain": "snapshot_date, dataset",
+  "sources": "data/bronze/_runs",
+  "path": "data/gold/dq_ingest_runs.parquet",
+  "columns": [
+   {
+    "name": "snapshot_date",
+    "type": "DATE",
+    "unit": "date",
+    "description": "Date of the run."
+   },
+   {
+    "name": "dataset",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "source/dataset."
+   },
+   {
+    "name": "status",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "ok, partial, skipped or failed."
+   },
+   {
+    "name": "detail",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "Why, when it was not ok."
+   },
+   {
+    "name": "files",
+    "type": "INTEGER",
+    "unit": "count",
+    "description": "Files saved."
+   },
+   {
+    "name": "seconds",
+    "type": "DOUBLE",
+    "unit": "seconds",
+    "description": "Time taken."
+   }
+  ],
+  "rows": 57,
+  "first": "2026-11-01",
+  "last": "2026-11-01"
+ },
+ {
+  "area": "Data quality",
+  "table": "dq_provenance",
+  "description": "Where the data came from, per dataset and snapshot. Cite this next to a chart so a reader can find the exact responses behind it.",
+  "grain": "source, dataset, snapshot_date",
+  "sources": "data/bronze/_manifest",
+  "path": "data/gold/dq_provenance.parquet",
+  "columns": [
+   {
+    "name": "source",
+    "type": "VARCHAR",
+    "unit": "id",
+    "description": "Source name."
+   },
+   {
+    "name": "dataset",
+    "type": "VARCHAR",
+    "unit": "id",
+    "description": "Dataset name."
+   },
+   {
+    "name": "snapshot_date",
+    "type": "DATE",
+    "unit": "date",
+    "description": "Date the source was read."
+   },
+   {
+    "name": "files",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "Bronze files."
+   },
+   {
+    "name": "bytes",
+    "type": "HUGEINT",
+    "unit": "bytes",
+    "description": "Uncompressed size."
+   },
+   {
+    "name": "declared_rows",
+    "type": "HUGEINT",
+    "unit": "count",
+    "description": "Rows, where the fetcher recorded them."
+   },
+   {
+    "name": "example_url",
+    "type": "VARCHAR",
+    "unit": "url",
+    "description": "One URL read for this dataset."
+   },
+   {
+    "name": "first_fetched_at",
+    "type": "VARCHAR",
+    "unit": "timestamp",
+    "description": "When the first file was fetched."
+   },
+   {
+    "name": "last_fetched_at",
+    "type": "VARCHAR",
+    "unit": "timestamp",
+    "description": "When the last file was fetched."
+   },
+   {
+    "name": "note",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "Any change made before saving, such as trimming."
+   }
+  ],
+  "rows": 92,
+  "first": "2026-10-28",
+  "last": "2026-11-01"
+ }
+]

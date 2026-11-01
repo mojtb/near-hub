@@ -1,0 +1,879 @@
+version: 2
+
+# Every gold table and column, with its grain and unit. `make verify` fails if a column is missing here.
+models:
+  - name: dim_block_day
+    description: "One block per UTC day from the archival node: monthly from 2020-08, daily from 2025-01. Each block falls within 120 seconds after 00:00 UTC."
+    config:
+      meta: {grain: "date_day", sources: "archival RPC"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["date_day"]}}
+      - min_rows: {arguments: {n: 20}}
+    columns:
+      - {name: date_day, description: "UTC day this block represents.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: block_height, description: "Block height.", meta: {unit: "blocks"}}
+      - {name: block_hash, description: "Block hash.", meta: {unit: "hash"}}
+      - {name: block_timestamp_ns, description: "Block timestamp.", meta: {unit: "nanoseconds since epoch"}}
+      - {name: total_supply_near, description: "Total supply in this block.", meta: {unit: "NEAR"}}
+      - {name: gas_price_yocto, description: "Gas price in the block.", meta: {unit: "yoctoNEAR per gas"}}
+      - {name: epoch_id, description: "Epoch identifier.", meta: {unit: "hash"}}
+      - {name: protocol_version, description: "Protocol version.", meta: {unit: "integer"}}
+  - name: dim_date
+    description: "Calendar spine covering every day with chain or Intents data."
+    config:
+      meta: {grain: "date_day", sources: "derived"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["date_day"]}}
+      - min_rows: {arguments: {n: 2000}}
+    columns:
+      - {name: date_day, description: "UTC calendar day.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: week_start, description: "Monday of the week, UTC.", meta: {unit: "date"}}
+      - {name: month_start, description: "First day of the month.", meta: {unit: "date"}}
+      - {name: quarter_start, description: "First day of the quarter.", meta: {unit: "date"}}
+      - {name: calendar_year, description: "Calendar year.", meta: {unit: "year"}}
+      - {name: is_fee_switch_active, description: "True from 2026-02-23, the first day of Intents buybacks per DefiLlama's adapter.", meta: {unit: "boolean"}}
+  - name: dim_entity
+    description: "The reviewed wallet registry joined to what the chain reports today. Every label carries an evidence level and a source URL."
+    config:
+      meta: {grain: "account_id", sources: "registry/entities.csv, RPC, FastNear"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["account_id"]}}
+      - min_rows: {arguments: {n: 40}}
+    columns:
+      - {name: account_id, description: "NEAR account.", meta: {unit: "account id"}, data_tests: [not_null]}
+      - {name: entity, description: "Organization that runs the account, as far as the evidence shows. Unlabelled means not established.", meta: {unit: "text"}}
+      - {name: category, description: "Functional group.", meta: {unit: "text"}}
+      - {name: role, description: "What the account does.", meta: {unit: "text"}}
+      - {name: tier, description: "Depth priority: 1 Intents and revenue, 2 security and staking, 3 DeFi and stablecoins, 4 usage heavyweights.", meta: {unit: "integer"}}
+      - {name: tracks_holdings, description: "Holdings are snapshotted nightly.", meta: {unit: "boolean"}}
+      - {name: tracks_contract_stats, description: "Daily contract stats are fetched.", meta: {unit: "boolean"}}
+      - {name: crawls_transfers, description: "All transfers are crawled.", meta: {unit: "boolean"}}
+      - {name: evidence_level, description: "Strength of the label: documented, chain, token_list, third_party_code, observed or name_only.", meta: {unit: "text"}}
+      - {name: source_url, description: "Where the evidence can be checked.", meta: {unit: "url"}}
+      - {name: note, description: "Caveat on this label.", meta: {unit: "text"}}
+      - {name: account_exists, description: "Whether the chain knows this account. False is expected for implicit accounts that only hold balances inside intents.near.", meta: {unit: "boolean"}}
+      - {name: has_contract, description: "Whether code is deployed on the account.", meta: {unit: "boolean"}}
+      - {name: balance_near, description: "Native balance.", meta: {unit: "NEAR"}}
+      - {name: staked_near, description: "Locked for staking.", meta: {unit: "NEAR"}}
+      - {name: storage_bytes, description: "Storage used.", meta: {unit: "bytes"}}
+      - {name: cumulative_txns, description: "Transactions touching the account since genesis, per FastNear.", meta: {unit: "count"}}
+      - {name: checked_on, description: "Date of the on-chain check.", meta: {unit: "date"}}
+  - name: dim_event
+    description: "Dated protocol, governance, product and market events, each with a source URL. Use for chart annotations and event studies."
+    config:
+      meta: {grain: "event_date, title", sources: "registry/events.csv"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["event_date", "title"]}}
+      - min_rows: {arguments: {n: 10}}
+    columns:
+      - {name: event_date, description: "Date of the event.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: event_type, description: "Kind of event.", meta: {unit: "text"}}
+      - {name: title, description: "Short title.", meta: {unit: "text"}, data_tests: [not_null]}
+      - {name: detail, description: "One line of detail.", meta: {unit: "text"}}
+      - {name: source_url, description: "Where the evidence can be checked.", meta: {unit: "url"}}
+      - {name: status, description: "happened, or voting while the vote is open.", meta: {unit: "text"}}
+  - name: dim_protocol
+    description: "Protocols DefiLlama lists on NEAR, as of the newest reading. Exchange wallets are marked with is_cex."
+    config:
+      meta: {grain: "protocol_slug", sources: "DefiLlama /protocols"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["protocol_slug"]}}
+      - min_rows: {arguments: {n: 30}}
+    columns:
+      - {name: protocol_slug, description: "DefiLlama protocol identifier.", meta: {unit: "id"}, data_tests: [not_null]}
+      - {name: protocol_name, description: "Protocol name.", meta: {unit: "text"}}
+      - {name: category, description: "DefiLlama category.", meta: {unit: "text"}}
+      - {name: url, description: "Protocol website.", meta: {unit: "url"}}
+      - {name: parent_protocol, description: "DefiLlama parent protocol.", meta: {unit: "id"}}
+      - {name: near_tvl_usd, description: "TVL on NEAR.", meta: {unit: "USD"}}
+      - {name: total_tvl_usd, description: "TVL across all chains.", meta: {unit: "USD"}}
+      - {name: is_cex, description: "True for exchange wallets, which DefiLlama leaves out of chain TVL.", meta: {unit: "boolean"}}
+      - {name: read_on, description: "Date of the reading.", meta: {unit: "date"}}
+  - name: dim_token
+    description: "Registry tokens with decimals and a live price from 1Click where listed."
+    config:
+      meta: {grain: "token_id", sources: "registry/tokens.csv, 1Click"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["token_id"]}}
+      - min_rows: {arguments: {n: 10}}
+    columns:
+      - {name: token_id, description: "Token contract, or Intents asset id.", meta: {unit: "token id"}, data_tests: [not_null]}
+      - {name: symbol, description: "Token symbol.", meta: {unit: "text"}}
+      - {name: token_class, description: "Kind of token.", meta: {unit: "text"}}
+      - {name: tracks_holders, description: "Top holders are snapshotted nightly.", meta: {unit: "boolean"}}
+      - {name: evidence_level, description: "Strength of the label: documented, chain, token_list, third_party_code, observed or name_only.", meta: {unit: "text"}}
+      - {name: source_url, description: "Where the evidence can be checked.", meta: {unit: "url"}}
+      - {name: note, description: "Caveat on this row.", meta: {unit: "text"}}
+      - {name: decimals, description: "Token decimals, per 1Click. Empty if 1Click does not list it.", meta: {unit: "integer"}}
+      - {name: price_usd, description: "Price.", meta: {unit: "USD"}}
+      - {name: coingecko_id, description: "CoinGecko identifier.", meta: {unit: "id"}}
+      - {name: priced_on, description: "Date the price was read.", meta: {unit: "date"}}
+  - name: dq_freshness
+    description: "How current each daily dataset is, relative to the newest snapshot the build can see."
+    config:
+      meta: {grain: "model", sources: "silver tables"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["model"]}}
+      - min_rows: {arguments: {n: 10}}
+    columns:
+      - {name: dataset, description: "Readable dataset name.", meta: {unit: "text"}}
+      - {name: model, description: "Silver model name.", meta: {unit: "text"}, data_tests: [not_null]}
+      - {name: latest_snapshot, description: "Newest snapshot holding this dataset.", meta: {unit: "date"}}
+      - {name: latest_data_day, description: "Newest day of data.", meta: {unit: "date"}}
+      - {name: as_of, description: "Newest snapshot across all datasets.", meta: {unit: "date"}}
+      - {name: days_behind, description: "Days between latest_data_day and as_of.", meta: {unit: "days"}}
+      - {name: rows_all_snapshots, description: "Rows across all snapshots.", meta: {unit: "count"}}
+  - name: dq_reconciliation
+    description: "Every place two sources should agree, side by side. A gap beyond tolerance must have a written explanation, or make verify fails."
+    config:
+      meta: {grain: "check_id, subject", sources: "gold tables"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["check_id", "subject"]}}
+      - min_rows: {arguments: {n: 15}}
+    columns:
+      - {name: check_id, description: "Name of the check.", meta: {unit: "id"}, data_tests: [not_null]}
+      - {name: metric, description: "What is being measured.", meta: {unit: "text"}}
+      - {name: subject, description: "What the check is about, when it runs per account.", meta: {unit: "text"}}
+      - {name: source_a, description: "First source.", meta: {unit: "text"}}
+      - {name: value_a, description: "Value from the first source.", meta: {unit: "see metric"}}
+      - {name: source_b, description: "Second source.", meta: {unit: "text"}}
+      - {name: value_b, description: "Value from the second source.", meta: {unit: "see metric"}}
+      - {name: diff_pct, description: "Absolute gap as a percentage of the larger value.", meta: {unit: "percent"}}
+      - {name: tolerance_pct, description: "Largest gap treated as agreement.", meta: {unit: "percent"}}
+      - {name: independence, description: "independent, or same_upstream when both sources read the same data, so agreement proves little.", meta: {unit: "text"}}
+      - {name: status, description: "agree, differs or not_available.", meta: {unit: "text"}}
+      - {name: explanation, description: "Why the gap exists, from registry/reconciliation_notes.csv.", meta: {unit: "text"}}
+  - name: dq_revisions
+    description: "Values a source changed after first publishing them, comparing the oldest and newest snapshot of the same key."
+    config:
+      meta: {grain: "model, value_column, series_key, date_day", sources: "silver tables"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["model", "value_column", "series_key", "date_day"]}}
+    columns:
+      - {name: model, description: "Silver model name.", meta: {unit: "text"}, data_tests: [not_null]}
+      - {name: value_column, description: "Column being compared.", meta: {unit: "text"}, data_tests: [not_null]}
+      - {name: series_key, description: "Which series within the model.", meta: {unit: "text"}, data_tests: [not_null]}
+      - {name: date_day, description: "UTC calendar day.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: first_snapshot, description: "Oldest snapshot holding this key.", meta: {unit: "date"}}
+      - {name: last_snapshot, description: "Newest snapshot holding this key.", meta: {unit: "date"}}
+      - {name: first_value, description: "Value in the oldest snapshot.", meta: {unit: "see value_column"}}
+      - {name: last_value, description: "Value in the newest snapshot.", meta: {unit: "see value_column"}}
+      - {name: change_pct, description: "Change from first to last, as a percentage.", meta: {unit: "percent"}}
+  - name: fct_catalog_projects
+    description: "NEAR Catalog entries per read, for counting projects by tag over time."
+    config:
+      meta: {grain: "snapshot_date, slug", sources: "NEAR Catalog"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["snapshot_date", "slug"]}}
+      - min_rows: {arguments: {n: 100}}
+    columns:
+      - {name: snapshot_date, description: "Date the source was read.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: slug, description: "Catalog identifier.", meta: {unit: "id"}, data_tests: [not_null]}
+      - {name: project_name, description: "Project name.", meta: {unit: "text"}}
+      - {name: tagline, description: "Catalog tagline.", meta: {unit: "text"}}
+      - {name: tags_json, description: "Catalog tags, as JSON.", meta: {unit: "json"}}
+  - name: fct_chain_daily
+    description: "Chain usage per UTC day. NearBlocks v1 and v3 keep separate columns where their definitions differ."
+    config:
+      meta: {grain: "date_day", sources: "NearBlocks /v1/charts, /v3/txn-stats, /v3/address-stats"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["date_day"]}}
+      - min_rows: {arguments: {n: 2000}}
+    columns:
+      - {name: date_day, description: "UTC calendar day.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: txns, description: "Transactions: v3 where available, else v1.", meta: {unit: "count"}}
+      - {name: txns_v1, description: "Transactions per NearBlocks /v1/charts.", meta: {unit: "count"}}
+      - {name: txns_v3, description: "Transactions per NearBlocks /v3/txn-stats.", meta: {unit: "count"}}
+      - {name: meta_txns, description: "Meta-transactions, where a relayer pays gas for the user.", meta: {unit: "count"}}
+      - {name: meta_txn_share, description: "meta_txns divided by txns_v3.", meta: {unit: "fraction"}}
+      - {name: receipts, description: "Receipts.", meta: {unit: "count"}}
+      - {name: blocks, description: "Blocks.", meta: {unit: "count"}}
+      - {name: chunks, description: "Chunks across all shards. Last 365 days of reads only.", meta: {unit: "count"}}
+      - {name: shards, description: "Shards that day. Last 365 days of reads only.", meta: {unit: "count"}}
+      - {name: gas_price_yocto, description: "Gas price per NearBlocks. Last 365 days of reads only.", meta: {unit: "yoctoNEAR per gas"}}
+      - {name: active_accounts_v1, description: "Active accounts per /v1/charts. About half of the v3 figure; NearBlocks does not document either definition.", meta: {unit: "count"}}
+      - {name: active_accounts_v3, description: "Active accounts per /v3/address-stats. See active_accounts_v1.", meta: {unit: "count"}}
+      - {name: active_contracts_v1, description: "Active contracts per /v1/charts.", meta: {unit: "count"}}
+      - {name: active_contracts_v3, description: "Active contracts per /v3/address-stats.", meta: {unit: "count"}}
+      - {name: new_accounts, description: "Accounts created.", meta: {unit: "count"}}
+      - {name: deleted_accounts, description: "Accounts deleted.", meta: {unit: "count"}}
+      - {name: new_contracts, description: "Contracts deployed.", meta: {unit: "count"}}
+      - {name: unique_contracts, description: "Distinct contract code hashes deployed, per /v1/charts.", meta: {unit: "count"}}
+      - {name: meta_accounts, description: "Accounts sending meta-transactions.", meta: {unit: "count"}}
+      - {name: meta_relayers, description: "Relayers submitting meta-transactions.", meta: {unit: "count"}}
+      - {name: multichain_txns, description: "Multichain transactions per /v1/charts.", meta: {unit: "count"}}
+      - {name: gas_used, description: "Gas used.", meta: {unit: "gas units"}}
+      - {name: gas_fee_near, description: "Gas fees per /v1/charts.", meta: {unit: "NEAR"}}
+      - {name: txn_fee_near_v1, description: "Transaction fees per /v1/charts.", meta: {unit: "NEAR"}}
+      - {name: txn_fee_near_v3, description: "Transaction fees per /v3/txn-stats.", meta: {unit: "NEAR"}}
+      - {name: txn_fee_usd, description: "Transaction fees per /v1/charts.", meta: {unit: "USD"}}
+      - {name: txn_volume_near, description: "NEAR moved by transactions.", meta: {unit: "NEAR"}}
+      - {name: txn_volume_usd, description: "Value moved by transactions.", meta: {unit: "USD"}}
+  - name: fct_contract_daily
+    description: "Daily transactions and unique callers per registry contract."
+    config:
+      meta: {grain: "date_day, account_id", sources: "NearBlocks /v3/accounts/{id}/stats/txns"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["date_day", "account_id"]}}
+      - min_rows: {arguments: {n: 300}}
+    columns:
+      - {name: date_day, description: "UTC calendar day.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: account_id, description: "NEAR account.", meta: {unit: "account id"}, data_tests: [not_null]}
+      - {name: entity, description: "Organization that runs the account, as far as the evidence shows. Unlabelled means not established.", meta: {unit: "text"}}
+      - {name: category, description: "Functional group.", meta: {unit: "text"}}
+      - {name: txns, description: "Transactions: v3 where available, else v1.", meta: {unit: "count"}}
+      - {name: unique_callers, description: "Distinct accounts calling the contract.", meta: {unit: "count"}}
+      - {name: unique_receivers, description: "Distinct accounts the contract sent to.", meta: {unit: "count"}}
+  - name: fct_dev_activity_weekly
+    description: "Commits and active authors per tracked repository per week. A fixed repository list, not a whole-ecosystem count; GitHub's author list covers each repository's top 100."
+    config:
+      meta: {grain: "week_start, repo", sources: "GitHub statistics API"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["week_start", "repo"]}}
+    columns:
+      - {name: week_start, description: "Monday of the week, UTC.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: repo, description: "GitHub repository as owner/name.", meta: {unit: "text"}, data_tests: [not_null]}
+      - {name: ecosystem, description: "Chain the repository belongs to.", meta: {unit: "id"}}
+      - {name: repo_group, description: "Kind of repository.", meta: {unit: "text"}}
+      - {name: commits, description: "Commits that week.", meta: {unit: "count"}}
+      - {name: active_authors, description: "Authors with at least one commit that week, among GitHub's top 100 for the repository.", meta: {unit: "count"}}
+  - name: fct_governance_threads
+    description: "Engagement on the tracked governance threads, per read. Governance outcomes belong in dim_event."
+    config:
+      meta: {grain: "snapshot_date, topic_id", sources: "gov.near.org"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["snapshot_date", "topic_id"]}}
+      - min_rows: {arguments: {n: 1}}
+    columns:
+      - {name: snapshot_date, description: "Date the source was read.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: topic_id, description: "Forum thread id.", meta: {unit: "id"}, data_tests: [not_null]}
+      - {name: title, description: "Short title.", meta: {unit: "text"}}
+      - {name: created_date, description: "Creation date.", meta: {unit: "date"}}
+      - {name: last_post_date, description: "Date of the last post.", meta: {unit: "date"}}
+      - {name: posts, description: "Posts in the thread.", meta: {unit: "count"}}
+      - {name: views, description: "Thread views.", meta: {unit: "count"}}
+      - {name: likes, description: "Thread likes.", meta: {unit: "count"}}
+      - {name: is_closed, description: "Whether the thread is closed.", meta: {unit: "boolean"}}
+  - name: fct_intents_asset_daily
+    description: "Public Intents volume per asset per day."
+    config:
+      meta: {grain: "date_day, token_id", sources: "NearBlocks /v3/intents/volume-stats/assets"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["date_day", "token_id"]}}
+      - min_rows: {arguments: {n: 5000}}
+    columns:
+      - {name: date_day, description: "UTC calendar day.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: token_id, description: "Token contract, or Intents asset id.", meta: {unit: "token id"}, data_tests: [not_null]}
+      - {name: symbol, description: "Token symbol.", meta: {unit: "text"}}
+      - {name: blockchain, description: "Source chain, as NearBlocks names it.", meta: {unit: "text"}}
+      - {name: volume_token, description: "Volume in token units.", meta: {unit: "token units"}}
+      - {name: volume_usd, description: "Public Intents volume.", meta: {unit: "USD"}}
+      - {name: swaps, description: "Swaps.", meta: {unit: "count"}}
+  - name: fct_intents_chain_daily
+    description: "Public Intents volume per blockchain per day."
+    config:
+      meta: {grain: "date_day, blockchain", sources: "NearBlocks /v3/intents/volume-stats/blockchains"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["date_day", "blockchain"]}}
+      - min_rows: {arguments: {n: 5000}}
+    columns:
+      - {name: date_day, description: "UTC calendar day.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: blockchain, description: "Source chain, as NearBlocks names it.", meta: {unit: "text"}, data_tests: [not_null]}
+      - {name: volume_usd, description: "Public Intents volume.", meta: {unit: "USD"}}
+      - {name: swaps, description: "Swaps.", meta: {unit: "count"}}
+  - name: fct_intents_daily
+    description: "NEAR Intents per UTC day, one column per source. DefiLlama and revenue.near.org include confidential Intents and read the same NEAR-uploaded data; NearBlocks counts public Intents only."
+    config:
+      meta: {grain: "date_day", sources: "DefiLlama, NearBlocks, revenue.near.org"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["date_day"]}}
+      - min_rows: {arguments: {n: 500}}
+    columns:
+      - {name: date_day, description: "UTC calendar day.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: volume_usd_defillama, description: "Volume per DefiLlama; includes confidential Intents.", meta: {unit: "USD"}}
+      - {name: volume_usd_nearblocks, description: "Volume per NearBlocks; public Intents only.", meta: {unit: "USD"}}
+      - {name: volume_usd_revenue_page, description: "Volume per revenue.near.org; includes confidential Intents.", meta: {unit: "USD"}}
+      - {name: cumulative_volume_usd_nearblocks, description: "All-time volume per NearBlocks.", meta: {unit: "USD"}}
+      - {name: cumulative_volume_usd_revenue_page, description: "All-time volume per revenue.near.org.", meta: {unit: "USD"}}
+      - {name: swaps_nearblocks, description: "Swaps per NearBlocks.", meta: {unit: "count"}}
+      - {name: accounts_nearblocks, description: "Distinct swapping accounts per NearBlocks.", meta: {unit: "count"}}
+      - {name: tokens_nearblocks, description: "Distinct tokens swapped per NearBlocks.", meta: {unit: "count"}}
+      - {name: chains_nearblocks, description: "Distinct blockchains active per NearBlocks.", meta: {unit: "count"}}
+      - {name: fees_usd_defillama, description: "Gross fees per DefiLlama.", meta: {unit: "USD"}}
+      - {name: fees_usd_revenue_page, description: "Gross fees per revenue.near.org.", meta: {unit: "USD"}}
+      - {name: fees_near_revenue_page, description: "Gross fees in NEAR per revenue.near.org.", meta: {unit: "NEAR"}}
+      - {name: revenue_usd_defillama, description: "Captured revenue per DefiLlama: NEAR and wNEAR swept into the revenue wallets. Sweeps are periodic, so one day can exceed that day's fees.", meta: {unit: "USD"}}
+      - {name: holders_revenue_usd_defillama, description: "Captured revenue from 2026-02-23, which DefiLlama treats as used for buybacks.", meta: {unit: "USD"}}
+      - {name: treasury_revenue_usd_defillama, description: "Captured revenue before 2026-02-23, held by the treasury.", meta: {unit: "USD"}}
+      - {name: supply_side_revenue_usd_defillama, description: "Gross fees minus captured revenue: kept by solvers and distribution channels.", meta: {unit: "USD"}}
+      - {name: confidential_tvl_usd, description: "Confidential Intents TVL per revenue.near.org. Self-reported by NEAR.", meta: {unit: "USD"}}
+  - name: fct_intents_dashboard_readings
+    description: "Headline tiles read from NEAR's public Dune dashboard, by scope: all, public or confidential."
+    config:
+      meta: {grain: "snapshot_date, scope, metric", sources: "Dune public page"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["snapshot_date", "scope", "metric"]}}
+      - min_rows: {arguments: {n: 10}}
+    columns:
+      - {name: snapshot_date, description: "Date the source was read.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: scope, description: "all, public or confidential.", meta: {unit: "text"}, data_tests: [not_null]}
+      - {name: metric, description: "What is being measured.", meta: {unit: "text"}, data_tests: [not_null]}
+      - {name: value_usd, description: "Displayed value, rounded to whole dollars.", meta: {unit: "USD"}}
+  - name: fct_intents_fee_channels
+    description: "All-time gross fees per referral channel, read from NEAR's public Dune dashboard. NEAR uploads the data behind it, and the page lists only the top 100 channels."
+    config:
+      meta: {grain: "snapshot_date, referral", sources: "Dune public page"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["snapshot_date", "referral"]}}
+      - min_rows: {arguments: {n: 50}}
+    columns:
+      - {name: snapshot_date, description: "Date the source was read.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: referral, description: "Front-end or partner that sent the swap.", meta: {unit: "text"}, data_tests: [not_null]}
+      - {name: fees_usd, description: "All-time gross fees for this channel.", meta: {unit: "USD"}}
+      - {name: share_of_listed_fees, description: "Share of the fees across listed channels.", meta: {unit: "fraction"}}
+      - {name: channel_rank, description: "Rank by fees, largest first.", meta: {unit: "integer"}}
+  - name: fct_intents_swaps
+    description: "One row per 1Click swap. Covers 1Click only, not all Intents. Empty until INTENTS_EXPLORER_JWT is set."
+    config:
+      meta: {grain: "deposit_address, deposit_memo, created_at_unix", sources: "Intents Explorer API"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["deposit_address", "deposit_memo", "created_at_unix"]}}
+    columns:
+      - {name: date_day, description: "UTC calendar day.", meta: {unit: "date"}}
+      - {name: created_at_unix, description: "Swap creation time.", meta: {unit: "unix seconds"}, data_tests: [not_null]}
+      - {name: deposit_address, description: "1Click deposit address.", meta: {unit: "address"}, data_tests: [not_null]}
+      - {name: deposit_memo, description: "Deposit memo, where the route uses one.", meta: {unit: "text"}}
+      - {name: origin_asset, description: "Asset paid in.", meta: {unit: "asset id"}}
+      - {name: destination_asset, description: "Asset paid out.", meta: {unit: "asset id"}}
+      - {name: status, description: "Swap status per the Explorer API.", meta: {unit: "text"}}
+      - {name: referral, description: "Front-end or partner that sent the swap.", meta: {unit: "text"}}
+      - {name: amount_in_usd, description: "Value paid in.", meta: {unit: "USD"}}
+      - {name: amount_out_usd, description: "Value paid out.", meta: {unit: "USD"}}
+  - name: fct_lst_snapshot
+    description: "Liquid staking per snapshot, read directly from each contract."
+    config:
+      meta: {grain: "snapshot_date, token", sources: "RPC contract views"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["snapshot_date", "token"]}}
+      - min_rows: {arguments: {n: 3}}
+    columns:
+      - {name: snapshot_date, description: "Date the source was read.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: token, description: "Liquid staking token.", meta: {unit: "text"}, data_tests: [not_null]}
+      - {name: contract, description: "Token contract.", meta: {unit: "account id"}}
+      - {name: price_near, description: "NEAR redeemable per token.", meta: {unit: "NEAR per token"}}
+      - {name: token_supply, description: "Tokens outstanding.", meta: {unit: "token units"}}
+      - {name: staked_near, description: "NEAR staked by the contract. Empty where the contract has no such view.", meta: {unit: "NEAR"}}
+  - name: fct_market_daily
+    description: "NEAR price and market cap per day, aligned to the close of the UTC day. price_usd prefers CoinMetrics; each source keeps its own column."
+    config:
+      meta: {grain: "date_day", sources: "CoinMetrics, Coinbase, DefiLlama, NearBlocks"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["date_day"]}}
+      - min_rows: {arguments: {n: 2000}}
+    columns:
+      - {name: date_day, description: "UTC calendar day.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: price_usd, description: "NEAR close: CoinMetrics, else DefiLlama, else NearBlocks.", meta: {unit: "USD"}}
+      - {name: market_cap_usd, description: "Market cap: CoinMetrics, else NearBlocks.", meta: {unit: "USD"}}
+      - {name: price_usd_coinmetrics, description: "CoinMetrics reference rate at the day's close.", meta: {unit: "USD"}}
+      - {name: price_usd_coinbase_close, description: "Coinbase NEAR-USD close.", meta: {unit: "USD"}}
+      - {name: price_usd_defillama, description: "DefiLlama price, moved back one day from its 00:00 stamp to align with the close.", meta: {unit: "USD"}}
+      - {name: price_usd_nearblocks, description: "NearBlocks price, moved back one day from its 00:00 stamp to align with the close.", meta: {unit: "USD"}}
+      - {name: open_usd, description: "Coinbase open.", meta: {unit: "USD"}}
+      - {name: high_usd, description: "Coinbase high.", meta: {unit: "USD"}}
+      - {name: low_usd, description: "Coinbase low.", meta: {unit: "USD"}}
+      - {name: coinbase_volume_near, description: "Coinbase traded volume.", meta: {unit: "NEAR"}}
+      - {name: reported_spot_volume_usd, description: "Reported spot volume per CoinMetrics.", meta: {unit: "USD"}}
+      - {name: circulating_supply_near, description: "Circulating supply per /v1/charts. The v3 stats endpoint reports this wrongly, so it is not used.", meta: {unit: "NEAR"}}
+  - name: fct_mpc_participants
+    description: "MPC operators per snapshot, read directly from v1.signer."
+    config:
+      meta: {grain: "snapshot_date, operator_account_id", sources: "RPC v1.signer state"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["snapshot_date", "operator_account_id"]}}
+      - min_rows: {arguments: {n: 10}}
+    columns:
+      - {name: snapshot_date, description: "Date the source was read.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: operator_account_id, description: "MPC operator account.", meta: {unit: "account id"}, data_tests: [not_null]}
+      - {name: participant_id, description: "Operator's id in the contract.", meta: {unit: "integer"}}
+  - name: fct_mpc_state
+    description: "Chain Signatures contract state per snapshot, read directly from v1.signer."
+    config:
+      meta: {grain: "snapshot_date", sources: "RPC v1.signer state"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["snapshot_date"]}}
+      - min_rows: {arguments: {n: 1}}
+    columns:
+      - {name: snapshot_date, description: "Date the source was read.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: participants, description: "MPC participants.", meta: {unit: "count"}}
+      - {name: threshold, description: "Signers required.", meta: {unit: "count"}}
+      - {name: signature_domains, description: "Signature schemes supported.", meta: {unit: "count"}}
+      - {name: keyset_epoch, description: "MPC key generation epoch.", meta: {unit: "integer"}}
+  - name: fct_peer_daily
+    description: "NEAR and peer chains per day on the same definitions. An empty cell means the source has no value for that day."
+    config:
+      meta: {grain: "date_day, chain_id", sources: "DefiLlama, CoinMetrics"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["date_day", "chain_id"]}}
+      - min_rows: {arguments: {n: 5000}}
+    columns:
+      - {name: date_day, description: "UTC calendar day.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: chain_id, description: "Chain identifier from registry/peers.csv.", meta: {unit: "id"}, data_tests: [not_null]}
+      - {name: price_usd, description: "Close: CoinMetrics, else DefiLlama.", meta: {unit: "USD"}}
+      - {name: market_cap_usd, description: "Market cap per CoinMetrics. Empty for TON, which has no community series.", meta: {unit: "USD"}}
+      - {name: tvl_usd, description: "Chain TVL per DefiLlama.", meta: {unit: "USD"}}
+      - {name: fees_usd, description: "Fees paid by users on the chain per DefiLlama.", meta: {unit: "USD"}}
+      - {name: revenue_usd, description: "Chain revenue per DefiLlama.", meta: {unit: "USD"}}
+      - {name: dex_volume_usd, description: "DEX volume on the chain per DefiLlama.", meta: {unit: "USD"}}
+      - {name: stablecoins_usd, description: "Stablecoins on the chain per DefiLlama.", meta: {unit: "USD"}}
+  - name: fct_protocol_config
+    description: "Protocol parameters as read on each snapshot date. A change between rows is a protocol change."
+    config:
+      meta: {grain: "snapshot_date", sources: "RPC EXPERIMENTAL_protocol_config"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["snapshot_date"]}}
+      - min_rows: {arguments: {n: 1}}
+    columns:
+      - {name: snapshot_date, description: "Date the source was read.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: protocol_version, description: "Protocol version.", meta: {unit: "integer"}}
+      - {name: max_inflation_rate, description: "Maximum annual inflation parameter.", meta: {unit: "fraction per year"}}
+      - {name: protocol_reward_rate, description: "Share of issuance sent to the protocol treasury.", meta: {unit: "fraction"}}
+      - {name: contract_gas_reward_rate, description: "Share of function-call gas paid to the called contract.", meta: {unit: "fraction"}}
+      - {name: gas_burn_rate, description: "One minus contract_gas_reward_rate.", meta: {unit: "fraction"}}
+      - {name: epoch_length_blocks, description: "Epoch length.", meta: {unit: "blocks"}}
+      - {name: block_producer_seats, description: "Block producer seats.", meta: {unit: "count"}}
+      - {name: blocks_per_year_setting, description: "Blocks per year used in the reward formula.", meta: {unit: "blocks"}}
+      - {name: shard_count, description: "Number of shards.", meta: {unit: "count"}}
+      - {name: storage_yocto_per_byte, description: "Storage staking cost.", meta: {unit: "yoctoNEAR per byte"}}
+      - {name: min_gas_price_yocto, description: "Minimum gas price parameter.", meta: {unit: "yoctoNEAR per gas"}}
+      - {name: protocol_treasury_account, description: "Account that receives the protocol reward share.", meta: {unit: "account id"}}
+  - name: fct_protocol_fees_snapshot
+    description: "Fees and revenue per protocol on NEAR, as of each DefiLlama reading."
+    config:
+      meta: {grain: "snapshot_date, measure, protocol_name", sources: "DefiLlama /overview/fees/Near"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["snapshot_date", "measure", "protocol_name"]}}
+      - min_rows: {arguments: {n: 10}}
+    columns:
+      - {name: snapshot_date, description: "Date the source was read.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: measure, description: "fees or revenue.", meta: {unit: "text"}, data_tests: [not_null]}
+      - {name: protocol_name, description: "Protocol name.", meta: {unit: "text"}, data_tests: [not_null]}
+      - {name: protocol_slug, description: "DefiLlama protocol identifier.", meta: {unit: "id"}}
+      - {name: category, description: "DefiLlama category.", meta: {unit: "text"}}
+      - {name: total_24h_usd, description: "Trailing 24 hours.", meta: {unit: "USD"}}
+      - {name: total_7d_usd, description: "Trailing 7 days.", meta: {unit: "USD"}}
+      - {name: total_30d_usd, description: "Trailing 30 days.", meta: {unit: "USD"}}
+      - {name: total_1y_usd, description: "Trailing year.", meta: {unit: "USD"}}
+      - {name: total_all_time_usd, description: "All time.", meta: {unit: "USD"}}
+  - name: fct_protocol_tvl_daily
+    description: "TVL on NEAR per protocol per day, excluding exchange wallets. Liquid staking and lending can count the same NEAR twice, so do not sum categories into a chain total."
+    config:
+      meta: {grain: "date_day, protocol_slug", sources: "DefiLlama /protocol/{slug}"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["date_day", "protocol_slug"]}}
+      - min_rows: {arguments: {n: 5000}}
+    columns:
+      - {name: date_day, description: "UTC calendar day.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: protocol_slug, description: "DefiLlama protocol identifier.", meta: {unit: "id"}, data_tests: [not_null]}
+      - {name: protocol_name, description: "Protocol name.", meta: {unit: "text"}}
+      - {name: category, description: "DefiLlama category.", meta: {unit: "text"}}
+      - {name: tvl_usd, description: "Total value locked.", meta: {unit: "USD"}}
+  - name: fct_receiver_sample_daily
+    description: "Activity per receiver, estimated from evenly spaced sample blocks. These are estimates, and a day's sample density is in blocks_sampled."
+    config:
+      meta: {grain: "date_day, account_id", sources: "Neardata"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["date_day", "account_id"]}}
+    columns:
+      - {name: date_day, description: "UTC calendar day.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: account_id, description: "NEAR account.", meta: {unit: "account id"}, data_tests: [not_null]}
+      - {name: entity, description: "Organization that runs the account, as far as the evidence shows. Unlabelled means not established.", meta: {unit: "text"}}
+      - {name: category, description: "Functional group.", meta: {unit: "text"}}
+      - {name: sampled_txns, description: "Transactions to this receiver in the sample.", meta: {unit: "count"}}
+      - {name: sampled_receipts, description: "Receipts to this receiver in the sample.", meta: {unit: "count"}}
+      - {name: sampled_distinct_signers, description: "Distinct transaction signers in the sample.", meta: {unit: "count"}}
+      - {name: txn_share, description: "Share of sampled transactions.", meta: {unit: "fraction"}}
+      - {name: receipt_share, description: "Share of sampled receipts.", meta: {unit: "fraction"}}
+      - {name: estimated_daily_receipts, description: "sampled_receipts scaled up by blocks_in_day over blocks_sampled.", meta: {unit: "count"}}
+      - {name: estimated_daily_txns, description: "sampled_txns scaled up by blocks_in_day over blocks_sampled.", meta: {unit: "count"}}
+      - {name: sampled_tokens_burnt_near, description: "Tokens burnt in sampled receipts.", meta: {unit: "NEAR"}}
+      - {name: blocks_sampled, description: "Blocks sampled that day.", meta: {unit: "count"}}
+      - {name: blocks_in_day, description: "Block height span of the day.", meta: {unit: "blocks"}}
+  - name: fct_repo_snapshot
+    description: "Stars, forks and last push per tracked repository, per read."
+    config:
+      meta: {grain: "snapshot_date, repo", sources: "GitHub"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["snapshot_date", "repo"]}}
+    columns:
+      - {name: snapshot_date, description: "Date the source was read.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: repo, description: "GitHub repository as owner/name.", meta: {unit: "text"}, data_tests: [not_null]}
+      - {name: ecosystem, description: "Chain the repository belongs to.", meta: {unit: "id"}}
+      - {name: repo_group, description: "Kind of repository.", meta: {unit: "text"}}
+      - {name: stars, description: "GitHub stars.", meta: {unit: "count"}}
+      - {name: forks, description: "GitHub forks.", meta: {unit: "count"}}
+      - {name: open_issues, description: "Open issues and pull requests.", meta: {unit: "count"}}
+      - {name: last_push_date, description: "Date of the last push.", meta: {unit: "date"}}
+      - {name: created_date, description: "Creation date.", meta: {unit: "date"}}
+  - name: fct_revenue_capture
+    description: "Share of gross fees captured as revenue, per mechanism and window, as NEAR publishes it."
+    config:
+      meta: {grain: "snapshot_date, mechanism, time_window", sources: "revenue.near.org"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["snapshot_date", "mechanism", "time_window"]}}
+      - min_rows: {arguments: {n: 6}}
+    columns:
+      - {name: snapshot_date, description: "Date the source was read.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: mechanism, description: "How the fee is collected: front_end, b2b_partners or quote_improvement.", meta: {unit: "text"}, data_tests: [not_null]}
+      - {name: time_window, description: "d7, d30, ytd or all_time.", meta: {unit: "text"}, data_tests: [not_null]}
+      - {name: capture_rate, description: "Share of gross fees captured as net revenue.", meta: {unit: "fraction"}}
+  - name: fct_revenue_inflows_daily
+    description: "NEAR's captured revenue rebuilt from wallet transfers using DefiLlama's published method: NEAR and wNEAR received by the three revenue wallets, excluding hops between them. An independent check that needs no NEAR-uploaded data."
+    config:
+      meta: {grain: "date_day, account_id", sources: "fct_wallet_transfers"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["date_day", "account_id"]}}
+    columns:
+      - {name: date_day, description: "UTC calendar day.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: account_id, description: "NEAR account.", meta: {unit: "account id"}, data_tests: [not_null]}
+      - {name: transfers, description: "Transfers.", meta: {unit: "count"}}
+      - {name: received_near, description: "NEAR and wNEAR received.", meta: {unit: "NEAR"}}
+      - {name: received_usd, description: "Value received, at transfer time.", meta: {unit: "USD"}}
+  - name: fct_revenue_page_emissions
+    description: "NEAR's own year-to-date revenue and emissions. Kept apart from fct_supply_daily so the two can be compared."
+    config:
+      meta: {grain: "date_day", sources: "revenue.near.org"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["date_day"]}}
+      - min_rows: {arguments: {n: 100}}
+    columns:
+      - {name: date_day, description: "UTC calendar day.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: emissions_ytd_near, description: "Emissions this year per revenue.near.org.", meta: {unit: "NEAR"}}
+      - {name: revenue_ytd_near, description: "Revenue this year per revenue.near.org.", meta: {unit: "NEAR"}}
+      - {name: reference_supply_near, description: "Supply the page uses as its denominator.", meta: {unit: "NEAR"}}
+      - {name: gross_issuance_pct, description: "Year-to-date emissions as a percentage of reference supply.", meta: {unit: "percent"}}
+      - {name: net_issuance_pct, description: "Gross issuance minus the revenue offset.", meta: {unit: "percent"}}
+      - {name: offset_pct, description: "Year-to-date revenue as a percentage of reference supply.", meta: {unit: "percent"}}
+  - name: fct_revenue_page_monthly
+    description: "NEAR's own monthly revenue series. The newest month may be incomplete."
+    config:
+      meta: {grain: "month_start", sources: "revenue.near.org"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["month_start"]}}
+      - min_rows: {arguments: {n: 10}}
+    columns:
+      - {name: month_start, description: "First day of the month.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: revenue_usd, description: "Revenue that month per revenue.near.org.", meta: {unit: "USD"}}
+      - {name: revenue_near, description: "Revenue that month in NEAR per revenue.near.org.", meta: {unit: "NEAR"}}
+      - {name: cumulative_revenue_usd, description: "Revenue since the series began in 2025-08.", meta: {unit: "USD"}}
+      - {name: cumulative_revenue_near, description: "Revenue since the series began in 2025-08, in NEAR.", meta: {unit: "NEAR"}}
+  - name: fct_stablecoin_assets
+    description: "Supply per stablecoin per chain, as of each DefiLlama reading."
+    config:
+      meta: {grain: "snapshot_date, chain_id, symbol, asset_name", sources: "DefiLlama /stablecoins"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["snapshot_date", "chain_id", "symbol", "asset_name"]}}
+      - min_rows: {arguments: {n: 50}}
+    columns:
+      - {name: snapshot_date, description: "Date the source was read.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: chain_id, description: "Chain identifier from registry/peers.csv.", meta: {unit: "id"}, data_tests: [not_null]}
+      - {name: symbol, description: "Stablecoin symbol.", meta: {unit: "text"}}
+      - {name: asset_name, description: "Stablecoin name.", meta: {unit: "text"}}
+      - {name: peg_type, description: "What the stablecoin is pegged to.", meta: {unit: "text"}}
+      - {name: circulating, description: "Circulating supply on the chain, in pegged units.", meta: {unit: "pegged units"}}
+  - name: fct_supply_daily
+    description: "Supply and implied issuance per UTC day. Epochs end at uneven times, so one day's minted_near is lumpy; use averages of 30 days or more."
+    config:
+      meta: {grain: "date_day", sources: "NearBlocks /v1/charts, archival RPC, protocol config"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["date_day"]}}
+      - min_rows: {arguments: {n: 2000}}
+    columns:
+      - {name: date_day, description: "UTC calendar day.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: total_supply_near, description: "Total supply at day end per NearBlocks.", meta: {unit: "NEAR"}}
+      - {name: circulating_supply_near, description: "Circulating supply per /v1/charts. The v3 stats endpoint reports this wrongly, so it is not used.", meta: {unit: "NEAR"}}
+      - {name: onchain_supply_end_of_day_near, description: "Supply in the first block of the next day, read from the archival node. Empty where no daily block exists.", meta: {unit: "NEAR"}}
+      - {name: protocol_version, description: "Protocol version.", meta: {unit: "integer"}}
+      - {name: gas_fee_near, description: "Gas fees per /v1/charts.", meta: {unit: "NEAR"}}
+      - {name: supply_change_near, description: "Change in total supply from the previous day.", meta: {unit: "NEAR"}}
+      - {name: burn_near, description: "gas_fee_near times the gas burn rate. A lower bound, because the contract reward applies only to function-call gas.", meta: {unit: "NEAR"}}
+      - {name: treasury_reward_near, description: "EpochRewards received by treasury.near that day, from wallet transfers. Part of minted_near, not on top of it.", meta: {unit: "NEAR"}}
+      - {name: minted_near, description: "supply_change_near plus burn_near: issuance implied by the chain.", meta: {unit: "NEAR"}}
+      - {name: minted_annualized_rate, description: "minted_near times 365, divided by total supply. Noisy for a single day.", meta: {unit: "fraction per year"}}
+  - name: fct_token_holders
+    description: "Point in time: the 100 largest holders per registry token, per snapshot. Protocol accounts are labelled; other holders stay unlabelled because this warehouse does not try to identify individuals."
+    config:
+      meta: {grain: "snapshot_date, token_id, holder_account_id", sources: "FastNear /v1/ft/{token}/top"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["snapshot_date", "token_id", "holder_account_id"]}}
+      - min_rows: {arguments: {n: 100}}
+    columns:
+      - {name: snapshot_date, description: "Date the source was read.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: token_id, description: "Token contract, or Intents asset id.", meta: {unit: "token id"}, data_tests: [not_null]}
+      - {name: symbol, description: "Token symbol.", meta: {unit: "text"}}
+      - {name: holder_rank, description: "Rank by balance, largest first.", meta: {unit: "integer"}}
+      - {name: holder_account_id, description: "Holder account.", meta: {unit: "account id"}, data_tests: [not_null]}
+      - {name: holder_entity, description: "Entity of the holder, if it is in the registry.", meta: {unit: "text"}}
+      - {name: holder_category, description: "Category of the holder, if it is in the registry.", meta: {unit: "text"}}
+      - {name: balance_raw, description: "Balance in the token's smallest unit, as a string so no digits are lost.", meta: {unit: "raw units"}}
+      - {name: amount_token, description: "Signed amount in whole tokens.", meta: {unit: "token units"}}
+      - {name: share_of_top_100, description: "Share of the balance held by the top 100. Not a share of total supply.", meta: {unit: "fraction"}}
+  - name: fct_validator_epoch
+    description: "Validator set per epoch. An epoch read after it ended has final production counts; a nightly read of the current epoch is partial."
+    config:
+      meta: {grain: "epoch_height, validator_account_id", sources: "RPC validators"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["epoch_height", "validator_account_id"]}}
+      - min_rows: {arguments: {n: 300}}
+    columns:
+      - {name: epoch_height, description: "Epoch number.", meta: {unit: "integer"}, data_tests: [not_null]}
+      - {name: epoch_start_height, description: "First block of the epoch.", meta: {unit: "blocks"}}
+      - {name: validator_account_id, description: "Validator pool account.", meta: {unit: "account id"}, data_tests: [not_null]}
+      - {name: stake_near, description: "Stake.", meta: {unit: "NEAR"}}
+      - {name: stake_share, description: "Share of the epoch's total stake.", meta: {unit: "fraction"}}
+      - {name: stake_rank, description: "Rank by stake, largest first.", meta: {unit: "integer"}}
+      - {name: is_slashed, description: "Whether the validator was slashed.", meta: {unit: "boolean"}}
+      - {name: blocks_produced, description: "Blocks produced.", meta: {unit: "count"}}
+      - {name: blocks_expected, description: "Blocks expected.", meta: {unit: "count"}}
+      - {name: chunks_produced, description: "Chunks produced.", meta: {unit: "count"}}
+      - {name: chunks_expected, description: "Chunks expected.", meta: {unit: "count"}}
+      - {name: endorsements_produced, description: "Chunk endorsements produced.", meta: {unit: "count"}}
+      - {name: endorsements_expected, description: "Chunk endorsements expected.", meta: {unit: "count"}}
+      - {name: read_from, description: "nightly for a mid-epoch read, archival for an epoch read after it ended.", meta: {unit: "text"}}
+  - name: fct_validator_summary
+    description: "Decentralization per epoch: validator count, stake concentration and Nakamoto coefficients."
+    config:
+      meta: {grain: "epoch_height", sources: "fct_validator_epoch, dim_block_day"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["epoch_height"]}}
+      - min_rows: {arguments: {n: 1}}
+    columns:
+      - {name: epoch_height, description: "Epoch number.", meta: {unit: "integer"}, data_tests: [not_null]}
+      - {name: epoch_start_height, description: "First block of the epoch.", meta: {unit: "blocks"}}
+      - {name: validators, description: "Validators in the epoch.", meta: {unit: "count"}}
+      - {name: total_stake_near, description: "Total stake.", meta: {unit: "NEAR"}}
+      - {name: top_validator_share, description: "Largest validator's share of stake.", meta: {unit: "fraction"}}
+      - {name: top_10_share, description: "Ten largest validators' share of stake.", meta: {unit: "fraction"}}
+      - {name: stake_hhi, description: "Herfindahl index of stake shares: 0 is even, 1 is one validator.", meta: {unit: "index 0 to 1"}}
+      - {name: nakamoto_33, description: "Fewest validators holding over one third of stake, the share that can halt finality.", meta: {unit: "count"}}
+      - {name: nakamoto_67, description: "Fewest validators holding over two thirds of stake.", meta: {unit: "count"}}
+      - {name: approx_date_day, description: "Date of the epoch's start, from the nearest daily block. Empty if none is within a day.", meta: {unit: "date"}}
+      - {name: total_supply_near, description: "Total supply from the nearest daily block.", meta: {unit: "NEAR"}}
+      - {name: staking_ratio, description: "total_stake_near divided by total supply.", meta: {unit: "fraction"}}
+  - name: fct_wallet_balance_daily
+    description: "Native NEAR balance per crawled wallet per day: the last running balance reported that day, carried forward over days without transfers."
+    config:
+      meta: {grain: "date_day, account_id", sources: "FastNear Transfers API, NearBlocks"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["date_day", "account_id"]}}
+    columns:
+      - {name: date_day, description: "UTC calendar day.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: account_id, description: "NEAR account.", meta: {unit: "account id"}, data_tests: [not_null]}
+      - {name: balance_near, description: "Native balance at day end per FastNear's running balance.", meta: {unit: "NEAR"}}
+      - {name: has_transfer_on_day, description: "False means the balance was carried forward from an earlier day.", meta: {unit: "boolean"}}
+      - {name: balance_near_nearblocks, description: "Same balance per NearBlocks, as a check.", meta: {unit: "NEAR"}}
+  - name: fct_wallet_flows_daily
+    description: "Transfers summed per wallet, day, asset and direction, with hops between revenue wallets split out."
+    config:
+      meta: {grain: "date_day, account_id, asset_id, direction, is_between_revenue_wallets", sources: "fct_wallet_transfers"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["date_day", "account_id", "asset_id", "direction", "is_between_revenue_wallets"]}}
+    columns:
+      - {name: date_day, description: "UTC calendar day.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: account_id, description: "NEAR account.", meta: {unit: "account id"}, data_tests: [not_null]}
+      - {name: asset_id, description: "Asset, such as native:near or nep141:wrap.near.", meta: {unit: "asset id"}, data_tests: [not_null]}
+      - {name: direction, description: "in or out, from the wallet's point of view.", meta: {unit: "text"}, data_tests: [not_null]}
+      - {name: is_between_revenue_wallets, description: "Both sides are revenue wallets, so no new revenue arrived.", meta: {unit: "boolean"}, data_tests: [not_null]}
+      - {name: transfers, description: "Transfers.", meta: {unit: "count"}}
+      - {name: counterparties, description: "Distinct counterparties.", meta: {unit: "count"}}
+      - {name: amount_token, description: "Signed amount in whole tokens.", meta: {unit: "token units"}}
+      - {name: amount_usd, description: "Signed value at transfer time, per FastNear.", meta: {unit: "USD"}}
+  - name: fct_wallet_holdings
+    description: "Point in time: tokens and native NEAR per tracked account, per snapshot. This cannot be backfilled, so history starts with the first snapshot."
+    config:
+      meta: {grain: "snapshot_date, account_id, token_id", sources: "FastNear /v1/account/{id}/full"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["snapshot_date", "account_id", "token_id"]}}
+      - min_rows: {arguments: {n: 100}}
+    columns:
+      - {name: snapshot_date, description: "Date the source was read.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: account_id, description: "NEAR account.", meta: {unit: "account id"}, data_tests: [not_null]}
+      - {name: token_id, description: "Token contract, or Intents asset id.", meta: {unit: "token id"}, data_tests: [not_null]}
+      - {name: symbol, description: "Token symbol.", meta: {unit: "text"}}
+      - {name: balance_raw, description: "Balance in the token's smallest unit, as a string so no digits are lost.", meta: {unit: "raw units"}}
+      - {name: amount_token, description: "Signed amount in whole tokens.", meta: {unit: "token units"}}
+      - {name: last_update_height, description: "Block of the last balance change.", meta: {unit: "blocks"}}
+  - name: fct_wallet_transfers
+    description: "Every transfer touching a crawled wallet. Amounts are signed from the wallet's point of view, so outflows are negative."
+    config:
+      meta: {grain: "account_id, block_height, transaction_id, receipt_id, action_index, log_index, transfer_index, asset_id, amount_raw", sources: "FastNear Transfers API"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["account_id", "block_height", "transaction_id", "receipt_id", "action_index", "log_index", "transfer_index", "asset_id", "amount_raw"]}}
+    columns:
+      - {name: date_day, description: "UTC calendar day.", meta: {unit: "date"}}
+      - {name: block_height, description: "Block height.", meta: {unit: "blocks"}, data_tests: [not_null]}
+      - {name: block_timestamp_ns, description: "Block timestamp.", meta: {unit: "nanoseconds since epoch"}}
+      - {name: account_id, description: "NEAR account.", meta: {unit: "account id"}, data_tests: [not_null]}
+      - {name: account_entity, description: "Entity of the wallet.", meta: {unit: "text"}}
+      - {name: direction, description: "in or out, from the wallet's point of view.", meta: {unit: "text"}}
+      - {name: counterparty_id, description: "The other account in the transfer.", meta: {unit: "account id"}}
+      - {name: counterparty_entity, description: "Entity of the counterparty, if it is in the registry.", meta: {unit: "text"}}
+      - {name: counterparty_category, description: "Category of the counterparty, if it is in the registry.", meta: {unit: "text"}}
+      - {name: is_between_revenue_wallets, description: "Both sides are revenue wallets, so no new revenue arrived.", meta: {unit: "boolean"}}
+      - {name: asset_id, description: "Asset, such as native:near or nep141:wrap.near.", meta: {unit: "asset id"}, data_tests: [not_null]}
+      - {name: asset_type, description: "Near, Ft or Mt.", meta: {unit: "text"}}
+      - {name: transfer_type, description: "Kind of transfer per FastNear.", meta: {unit: "text"}}
+      - {name: method_name, description: "Contract method, if any.", meta: {unit: "text"}}
+      - {name: amount_raw, description: "Signed amount in the token's smallest unit, as a string so no digits are lost.", meta: {unit: "raw units"}}
+      - {name: amount_token, description: "Signed amount in whole tokens.", meta: {unit: "token units"}}
+      - {name: amount_usd, description: "Signed value at transfer time, per FastNear.", meta: {unit: "USD"}}
+      - {name: transaction_id, description: "Transaction hash. Empty for protocol transfers with no transaction, such as epoch rewards to treasury.near.", meta: {unit: "hash"}}
+      - {name: receipt_id, description: "Receipt id.", meta: {unit: "hash"}}
+      - {name: action_index, description: "Action position in the receipt.", meta: {unit: "integer"}}
+      - {name: log_index, description: "Log position in the receipt.", meta: {unit: "integer"}}
+      - {name: transfer_index, description: "FastNear's transfer position.", meta: {unit: "integer"}}
+      - {name: signer_id, description: "Transaction signer.", meta: {unit: "account id"}}
+      - {name: predecessor_id, description: "Account that sent the receipt.", meta: {unit: "account id"}}
+  - name: fct_yield_pools
+    description: "Yield pools on NEAR, as of each DefiLlama reading."
+    config:
+      meta: {grain: "snapshot_date, pool_id", sources: "DefiLlama /pools"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["snapshot_date", "pool_id"]}}
+      - min_rows: {arguments: {n: 1}}
+    columns:
+      - {name: snapshot_date, description: "Date the source was read.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: pool_id, description: "Pool identifier.", meta: {unit: "id"}, data_tests: [not_null]}
+      - {name: project, description: "Protocol running the pool.", meta: {unit: "text"}}
+      - {name: symbol, description: "Pool tokens.", meta: {unit: "text"}}
+      - {name: tvl_usd, description: "Pool TVL.", meta: {unit: "USD"}}
+      - {name: apy_pct, description: "Total APY as DefiLlama reports it.", meta: {unit: "percent"}}
+      - {name: apy_base_pct, description: "Base APY.", meta: {unit: "percent"}}
+      - {name: apy_reward_pct, description: "Reward APY.", meta: {unit: "percent"}}
+  - name: fct_chain_signatures_daily
+    description: "Chain Signatures activity per day, from NearBlocks' signer statistics."
+    config:
+      meta: {grain: "date_day", sources: "NearBlocks /v3/signer-stats"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["date_day"]}}
+      - min_rows: {arguments: {n: 300}}
+    columns:
+      - {name: date_day, description: "UTC calendar day.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: txns, description: "Transactions to the signer contract.", meta: {unit: "count"}}
+      - {name: signers, description: "Distinct accounts requesting signatures.", meta: {unit: "count"}}
+      - {name: gas_burnt, description: "Gas burnt by the signer contract.", meta: {unit: "gas units"}}
+  - name: fct_mpc_operators
+    description: "MPC operators as NearBlocks reports them, per snapshot, with the TEE status it shows. Read fct_mpc_participants for what the contract itself says."
+    config:
+      meta: {grain: "snapshot_date, operator_account_id", sources: "NearBlocks /v3/multichain/mpcs"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["snapshot_date", "operator_account_id"]}}
+      - min_rows: {arguments: {n: 10}}
+    columns:
+      - {name: snapshot_date, description: "Date the source was read.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: operator_account_id, description: "MPC operator account.", meta: {unit: "account id"}, data_tests: [not_null]}
+      - {name: threshold, description: "Signers required.", meta: {unit: "count"}}
+      - {name: is_validator, description: "Whether NearBlocks marks the operator as a validator.", meta: {unit: "boolean"}}
+      - {name: tee_status, description: "TEE status as NearBlocks shows it. A blank or none value means NearBlocks has no attestation for it, which does not prove the node runs outside a TEE.", meta: {unit: "text"}}
+      - {name: tee_expiry, description: "TEE attestation expiry, if shown.", meta: {unit: "text"}}
+      - {name: tee_image_hash, description: "TEE image hash, if shown.", meta: {unit: "hash"}}
+      - {name: node_url, description: "Operator's public node address.", meta: {unit: "url"}}
+  - name: fct_governance_proposals
+    description: "House of Stake proposals read directly from vote.dao, as of the newest snapshot. A status of Voting means the numbers are still moving. Test and spam proposals are kept; filter them on status or title."
+    config:
+      meta: {grain: "proposal_id", sources: "RPC vote.dao get_proposals"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["proposal_id"]}}
+      - min_rows: {arguments: {n: 20}}
+    columns:
+      - {name: proposal_id, description: "Proposal number in the contract.", meta: {unit: "integer"}, data_tests: [not_null]}
+      - {name: title, description: "Proposal title.", meta: {unit: "text"}}
+      - {name: status, description: "Contract status, such as Created, Rejected, Voting, Succeeded or Defeated.", meta: {unit: "text"}}
+      - {name: flow, description: "Voting flow, such as Classic.", meta: {unit: "text"}}
+      - {name: proposer_id, description: "Account that created the proposal.", meta: {unit: "account id"}}
+      - {name: link, description: "Discussion link given in the proposal.", meta: {unit: "url"}}
+      - {name: created_date, description: "Date the proposal was created.", meta: {unit: "date"}}
+      - {name: voting_start_date, description: "Date voting opened. Empty if it never opened.", meta: {unit: "date"}}
+      - {name: voting_end_date, description: "Date voting closes or closed.", meta: {unit: "date"}}
+      - {name: for_venear, description: "veNEAR voting for: the first option in the contract's vote list.", meta: {unit: "veNEAR"}}
+      - {name: against_venear, description: "veNEAR voting against: the second option.", meta: {unit: "veNEAR"}}
+      - {name: abstain_venear, description: "veNEAR abstaining: the third option.", meta: {unit: "veNEAR"}}
+      - {name: voters, description: "Accounts that voted.", meta: {unit: "count"}}
+      - {name: votes_venear, description: "Total veNEAR voted.", meta: {unit: "veNEAR"}}
+      - {name: eligible_venear, description: "Total veNEAR in the proposal's snapshot.", meta: {unit: "veNEAR"}}
+      - {name: turnout, description: "votes_venear divided by eligible_venear.", meta: {unit: "fraction"}}
+      - {name: quorum_threshold, description: "Share of eligible veNEAR required for quorum.", meta: {unit: "fraction"}}
+      - {name: approval_threshold, description: "Share of votes required to pass.", meta: {unit: "fraction"}}
+      - {name: read_on, description: "Date of the reading.", meta: {unit: "date"}}
+  - name: fct_venear_snapshot
+    description: "House of Stake participation per snapshot, read directly from venear.dao."
+    config:
+      meta: {grain: "snapshot_date", sources: "RPC venear.dao"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["snapshot_date"]}}
+    columns:
+      - {name: snapshot_date, description: "Date the source was read.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: total_venear, description: "veNEAR outstanding.", meta: {unit: "veNEAR"}}
+      - {name: accounts, description: "Accounts holding veNEAR.", meta: {unit: "count"}}
+  - name: dim_source
+    description: "Every data source with its access, limits and terms."
+    config:
+      meta: {grain: "source", sources: "registry/sources.csv"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["source"]}}
+      - min_rows: {arguments: {n: 15}}
+    columns:
+      - {name: source, description: "Source name, as used in bronze paths.", meta: {unit: "id"}, data_tests: [not_null]}
+      - {name: provides, description: "What the source is used for.", meta: {unit: "text"}}
+      - {name: access, description: "Whether a key is needed.", meta: {unit: "text"}}
+      - {name: limit_observed, description: "Rate limit as published or observed.", meta: {unit: "text"}}
+      - {name: terms_url, description: "Where the terms are.", meta: {unit: "url"}}
+      - {name: terms_summary, description: "What the terms say, as far as they were read. Not legal advice.", meta: {unit: "text"}}
+      - {name: before_going_public, description: "What to settle before the repository is made public.", meta: {unit: "text"}}
+  - name: dq_ingest_runs
+    description: "How each dataset fared on each run date: ok, partial, skipped or failed, and why."
+    config:
+      meta: {grain: "snapshot_date, dataset", sources: "data/bronze/_runs"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["snapshot_date", "dataset"]}}
+      - min_rows: {arguments: {n: 10}}
+    columns:
+      - {name: snapshot_date, description: "Date of the run.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: dataset, description: "source/dataset.", meta: {unit: "text"}, data_tests: [not_null]}
+      - {name: status, description: "ok, partial, skipped or failed.", meta: {unit: "text"}}
+      - {name: detail, description: "Why, when it was not ok.", meta: {unit: "text"}}
+      - {name: files, description: "Files saved.", meta: {unit: "count"}}
+      - {name: seconds, description: "Time taken.", meta: {unit: "seconds"}}
+  - name: dq_provenance
+    description: "Where the data came from, per dataset and snapshot. Cite this next to a chart so a reader can find the exact responses behind it."
+    config:
+      meta: {grain: "source, dataset, snapshot_date", sources: "data/bronze/_manifest"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["source", "dataset", "snapshot_date"]}}
+      - min_rows: {arguments: {n: 30}}
+    columns:
+      - {name: source, description: "Source name.", meta: {unit: "id"}, data_tests: [not_null]}
+      - {name: dataset, description: "Dataset name.", meta: {unit: "id"}, data_tests: [not_null]}
+      - {name: snapshot_date, description: "Date the source was read.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: files, description: "Bronze files.", meta: {unit: "count"}}
+      - {name: bytes, description: "Uncompressed size.", meta: {unit: "bytes"}}
+      - {name: declared_rows, description: "Rows, where the fetcher recorded them.", meta: {unit: "count"}}
+      - {name: example_url, description: "One URL read for this dataset.", meta: {unit: "url"}}
+      - {name: first_fetched_at, description: "When the first file was fetched.", meta: {unit: "timestamp"}}
+      - {name: last_fetched_at, description: "When the last file was fetched.", meta: {unit: "timestamp"}}
+      - {name: note, description: "Any change made before saving, such as trimming.", meta: {unit: "text"}}
+  - name: fct_wallet_counterparties
+    description: "Who each crawled wallet deals with. Counterparties outside the registry stay unlabelled until there is evidence of who they are, so an empty entity means unknown, not unimportant."
+    config:
+      meta: {grain: "account_id, counterparty_id", sources: "fct_wallet_transfers"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["account_id", "counterparty_id"]}}
+    columns:
+      - {name: account_id, description: "Crawled wallet.", meta: {unit: "account id"}, data_tests: [not_null]}
+      - {name: counterparty_id, description: "The other account.", meta: {unit: "account id"}}
+      - {name: counterparty_entity, description: "Entity of the counterparty, if it is in the registry.", meta: {unit: "text"}}
+      - {name: counterparty_category, description: "Category of the counterparty, if it is in the registry.", meta: {unit: "text"}}
+      - {name: transfers, description: "Transfers between the two.", meta: {unit: "count"}}
+      - {name: usd_in, description: "Value received by the wallet, at transfer time.", meta: {unit: "USD"}}
+      - {name: usd_out, description: "Value sent by the wallet, at transfer time, as a positive number.", meta: {unit: "USD"}}
+      - {name: first_seen, description: "First transfer between the two.", meta: {unit: "date"}}
+      - {name: last_seen, description: "Latest transfer between the two.", meta: {unit: "date"}}

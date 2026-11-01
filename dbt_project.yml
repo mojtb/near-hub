@@ -1,0 +1,48 @@
+name: near_thesis
+version: "1.0.0"
+profile: near_thesis
+config-version: 2
+
+flags:
+  send_anonymous_usage_stats: false
+  version_check: false
+
+model-paths: ["warehouse/models"]
+macro-paths: ["warehouse/macros"]
+test-paths: ["warehouse/tests"]
+seed-paths: ["registry"]
+
+models:
+  near_thesis:
+    silver:
+      +schema: silver
+      +materialized: table
+    gold:
+      +schema: gold
+      +materialized: table
+
+seeds:
+  near_thesis:
+    +schema: registry
+    entities:
+      +column_types:
+        account_id: varchar
+        tier: integer
+        track_holdings: integer
+        track_contract_stats: integer
+        crawl_transfers: integer
+    tokens:
+      +column_types:
+        token_id: varchar
+        track_holders: integer
+    dune_queries:
+      +column_types:
+        query_id: bigint
+    events:
+      +column_types:
+        event_date: date
+
+vars:
+  # Latest snapshot the build may read. Later snapshots are ignored, so a pinned build never drifts.
+  # `make warehouse` passes the date from data/PINNED when that file exists.
+  as_of: "9999-12-31"

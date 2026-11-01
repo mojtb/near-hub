@@ -1,0 +1,22 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+.DS_Store
+.pytest_cache/
+.logs/
+
+# dbt build output
+warehouse/target/
+warehouse/logs/
+logs/
+dbt_packages/
+
+# The warehouse file is rebuilt by `make warehouse`; gold exports are committed instead.
+data/warehouse.duckdb
+data/warehouse.duckdb.wal
+data/bronze/_manifest/*.lock
+data/bronze/_manifest/*.tmp
+
+# dbt writes this anonymous id file next to profiles.yml
+.user.yml

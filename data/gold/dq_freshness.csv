@@ -1,0 +1,21 @@
+dataset,model,latest_snapshot,latest_data_day,as_of,days_behind,rows_all_snapshots
+Archival RPC daily block,stg_rpc__block_day,2026-11-01,2026-11-01,2026-11-01,0,297
+CoinMetrics,stg_coinmetrics__asset_metrics,2026-11-01,2026-10-31,2026-11-01,1,12222
+Coinbase candles,stg_coinbase__candles,2026-11-01,2026-10-31,2026-11-01,1,1527
+DefiLlama Intents fees,stg_defillama__intents_fees,2026-11-01,2026-10-31,2026-11-01,1,4844
+DefiLlama Intents volume,stg_defillama__intents_volume,2026-11-01,2026-10-31,2026-11-01,1,1378
+DefiLlama chain TVL,stg_defillama__chain_tvl,2026-11-01,2026-10-31,2026-11-01,1,15442
+DefiLlama chain fees,stg_defillama__chain_fees,2026-11-01,2026-10-31,2026-11-01,1,23323
+DefiLlama prices,stg_defillama__peer_price,2026-11-01,2026-10-31,2026-11-01,1,13681
+DefiLlama protocol TVL,stg_defillama__protocol_tvl,2026-11-01,2026-10-31,2026-11-01,1,22551
+DefiLlama stablecoins,stg_defillama__stablecoin_chain,2026-11-01,2026-10-31,2026-11-01,1,13498
+NearBlocks Intents by asset,stg_nearblocks__intents_volume_by_asset,2026-11-01,2026-10-31,2026-11-01,1,39135
+NearBlocks Intents by chain,stg_nearblocks__intents_volume_by_chain,2026-11-01,2026-10-31,2026-11-01,1,10742
+NearBlocks Intents daily,stg_nearblocks__intents_daily,2026-11-01,2026-10-31,2026-11-01,1,1859
+NearBlocks daily accounts,stg_nearblocks__address_stats,2026-11-01,2026-10-31,2026-11-01,1,379
+NearBlocks daily transactions,stg_nearblocks__txn_stats,2026-11-01,2026-10-31,2026-11-01,1,379
+NearBlocks legacy daily charts,stg_nearblocks__charts_v1,2026-11-01,2026-10-31,2026-11-01,1,4584
+NearBlocks per-contract daily,stg_nearblocks__contract_txns,2026-11-01,2026-10-31,2026-11-01,1,13455
+NearBlocks wallet balances,stg_nearblocks__wallet_balance,2026-11-01,2026-10-31,2026-11-01,1,915
+revenue.near.org fees,stg_revenue_page__fees_daily,2026-11-01,2026-10-31,2026-11-01,1,538
+revenue.near.org volume,stg_revenue_page__volume_daily,2026-11-01,2026-10-31,2026-11-01,1,662
