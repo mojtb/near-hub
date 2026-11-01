@@ -8,9 +8,7 @@ walks newest to oldest using the last deposit address as a cursor, one request p
 """
 from __future__ import annotations
 
-import json
-from datetime import datetime, timedelta, timezone
-from typing import Dict
+from typing import Dict, Optional
 
 from ..http import HttpError
 from ..parsers.revenue_page import parse as parse_revenue_page
@@ -46,42 +44,54 @@ def _explorer_headers() -> Dict[str, str]:
 
 @dataset("intents_explorer", "transactions", requires=("INTENTS_EXPLORER_JWT",))
 def explorer_transactions(ctx: Context) -> None:
-    """Swaps from newest to oldest. Stops at rows already seen, and resumes an unfinished backfill."""
-    url = f"{EXPLORER}/api/v0/transactions"
-    state = ctx.load_state("intents_explorer__transactions", {"oldest_cursor": None, "newest_seen": None, "backfill_done": False, "pages": 0})
-    # Part 1: new swaps since the last run. Part 2: continue the historical backfill from its cursor.
-    new_newest = None
-    cursor = None
-    for _ in range(EXPLORER_NIGHTLY_PAGES):
-        params = {"numberOfTransactions": EXPLORER_PAGE_SIZE, "direction": "next"}
-        if cursor:
-            params.update(cursor)
-        try:
-            reply = ctx.http.get(url, params=params, headers=_explorer_headers())
-        except HttpError as e:
-            ctx.warn(str(e))
-            break
-        rows = reply.json()
-        rows = rows.get("data", rows) if isinstance(rows, dict) else rows
-        if not rows:
-            break
-        state["pages"] += 1
-        ctx.bronze.save("intents_explorer", "transactions", f"page_{state['pages']:06d}", reply.content, url=url, params=params, rows=len(rows))
-        if new_newest is None:
-            new_newest = rows[0].get("createdAtTimestamp")
-        last = rows[-1]
-        cursor = {"lastDepositAddress": last.get("depositAddress"), "lastDepositMemo": last.get("depositMemo")}
-        cursor = {k: v for k, v in cursor.items() if v}
-        reached_seen = state["newest_seen"] and (last.get("createdAtTimestamp") or 0) <= state["newest_seen"]
-        if reached_seen and state["backfill_done"]:
-            break
-        if reached_seen and state["oldest_cursor"]:
-            cursor = state["oldest_cursor"]
-        state["oldest_cursor"] = cursor
-        if len(rows) < EXPLORER_PAGE_SIZE:
-            state["backfill_done"] = True
-            break
-        ctx.save_state("intents_explorer__transactions", state)
-    if new_newest:
-        state["newest_seen"] = max(new_newest, state["newest_seen"] or 0)
+    """Two walks, both from newer to older: first any swaps new since the last run, then the unfinished backfill.
+
+    The API answers an array, newest first. `direction=next` means older, and the cursor is the last row's
+    deposit address and memo. This has not run against the live API yet, because it needs a JWT.
+    """
+    state = ctx.load_state("intents_explorer__transactions",
+                           {"newest_seen": 0, "backfill_cursor": None, "backfill_done": False, "pages": 0})
+
+    def walk(cursor, stop_at, pages_left):
+        newest, last_cursor = 0, cursor
+        for _ in range(pages_left):
+            rows = _explorer_page(ctx, last_cursor, state)
+            if rows is None:
+                return newest, last_cursor, False
+            if not rows:
+                return newest, last_cursor, True
+            newest = max(newest, max(int(r.get("createdAtTimestamp") or 0) for r in rows))
+            last = rows[-1]
+            last_cursor = {k: v for k, v in (("lastDepositAddress", last.get("depositAddress")),
+                                             ("lastDepositMemo", last.get("depositMemo"))) if v}
+            ctx.save_state("intents_explorer__transactions", state)
+            if len(rows) < EXPLORER_PAGE_SIZE or int(last.get("createdAtTimestamp") or 0) <= stop_at:
+                return newest, last_cursor, True
+        return newest, last_cursor, False
+
+    first_run = state["newest_seen"] == 0
+    newest, first_cursor, reached_end = walk(None, state["newest_seen"], EXPLORER_NIGHTLY_PAGES // 2)
+    if first_run:
+        # With nothing seen before, the first walk is the start of the backfill.
+        state["backfill_cursor"], state["backfill_done"] = first_cursor, reached_end
+    state["newest_seen"] = max(state["newest_seen"], newest)
+    if not state["backfill_done"]:
+        _, cursor, finished = walk(state["backfill_cursor"], 0, EXPLORER_NIGHTLY_PAGES // 2)
+        state["backfill_cursor"], state["backfill_done"] = cursor, finished
     ctx.save_state("intents_explorer__transactions", state)
+
+
+def _explorer_page(ctx: Context, cursor, state) -> Optional[list]:
+    url = f"{EXPLORER}/api/v0/transactions"
+    params = {"numberOfTransactions": EXPLORER_PAGE_SIZE, "direction": "next", **(cursor or {})}
+    try:
+        reply = ctx.http.get(url, params=params, headers=_explorer_headers())
+    except HttpError as e:
+        ctx.warn(str(e))
+        return None
+    rows = reply.json()
+    if rows:
+        state["pages"] += 1
+        ctx.bronze.save("intents_explorer", "transactions", f"page_{state['pages']:06d}", reply.content,
+                        url=url, params=params, rows=len(rows))
+    return rows

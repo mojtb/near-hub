@@ -8,13 +8,14 @@ are decoded to JSON before saving. Both changes are recorded in the manifest not
 from __future__ import annotations
 
 import base64
+import gzip
 import json
 from datetime import date, datetime, timedelta, timezone
 from typing import Any, Dict, List, Optional, Tuple
 
 from ..http import HttpError
 from ..pipeline import Context, Skip, dataset
-from ..settings import read_registry
+from ..settings import BRONZE, read_registry
 from ._common import fetch
 
 SOURCE = "rpc"
@@ -27,6 +28,7 @@ TOLERANCE_NS = 120 * 10**9
 NS_PER_S = 10**9
 BLOCK_DAYS_PER_RUN = 400  # keyless archival calls are slow, so a long backfill spreads over several runs
 RECENT_DAYS = 14
+VALIDATOR_EPOCHS_PER_RUN = 40
 FEE_COLLECTOR = "7066024d3f20f94de601c003163367873cca78507eeca4df66d9be645f197f05"
 
 # (contract, method, args). Each result is decoded and saved as one file per night.
@@ -260,19 +262,15 @@ def _flush_block_days(ctx: Context, rows: List[Dict[str, Any]], known: Dict[str,
 
 @dataset(SOURCE, "validators_epoch", profile="backfill")
 def validators_epoch(ctx: Context) -> None:
-    """Validator set per epoch, using the epoch ids seen in block_day. Older epochs may be unavailable."""
-    from ..settings import BRONZE
-    import gzip
-
+    """Validator set per epoch, newest first, a batch per run. Older epochs may be unavailable from the node."""
     state = ctx.load_state("rpc__validators_epoch", {"done": [], "unavailable": []})
     epochs: Dict[str, str] = {}
     for path in sorted(BRONZE.glob("rpc/block_day/dt=*/*.json.gz")):
         for row in json.loads(gzip.decompress(path.read_bytes())):
             epochs.setdefault(row["epoch_id"], row["day"])
     skip = set(state["done"]) | set(state["unavailable"])
-    for epoch_id, day in sorted(epochs.items(), key=lambda kv: kv[1], reverse=True):
-        if epoch_id in skip or day < "2025-01-01":
-            continue
+    todo = [(e, d) for e, d in sorted(epochs.items(), key=lambda kv: kv[1], reverse=True) if e not in skip and d >= "2025-01-01"]
+    for epoch_id, day in todo[:VALIDATOR_EPOCHS_PER_RUN]:
         result = _result(ctx, ARCHIVAL, "validators", {"epoch_id": epoch_id})
         if result is None:
             state["unavailable"].append(epoch_id)

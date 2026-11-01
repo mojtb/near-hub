@@ -231,3 +231,28 @@ def test_rpc_error_as_http_422_means_no_result():
     ctx = Context("2026-11-01", client([missing, found]), None)
     ctx.http.policies["archival-rpc.mainnet.fastnear.com"] = HostPolicy()
     assert _existing_header(ctx, 11)["height"] == 12
+
+
+def _swap(ts, address):
+    return {"createdAtTimestamp": ts, "depositAddress": address, "depositMemo": None}
+
+
+def test_explorer_walks_new_swaps_then_backfill(tmp_path, monkeypatch):
+    from ingest import sources  # noqa: F401
+    from ingest.sources import intents
+
+    monkeypatch.setattr("ingest.pipeline.STATE", tmp_path)
+    monkeypatch.setattr(intents, "EXPLORER_PAGE_SIZE", 2)
+    monkeypatch.setenv("INTENTS_EXPLORER_JWT", "test-value")
+    pages = [json.dumps([_swap(100, "a"), _swap(90, "b")]).encode(),
+             json.dumps([_swap(80, "c")]).encode()]
+    http = client([FakeResponse(200, p) for p in pages])
+    http.policies["explorer.near-intents.org"] = HostPolicy()
+    writer = BronzeWriter("2026-11-01", root=tmp_path / "bronze")
+    ctx = Context("2026-11-01", http, writer)
+    intents.explorer_transactions(ctx)
+    state = ctx.load_state("intents_explorer__transactions")
+    assert state["newest_seen"] == 100
+    assert state["backfill_done"] is True
+    assert state["pages"] == 2
+    assert http.session.calls[1][2]["params"]["lastDepositAddress"] == "b"

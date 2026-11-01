@@ -9,8 +9,8 @@ on:
   workflow_dispatch:
     inputs:
       profile:
-        description: "nightly, or backfill for the long history jobs"
-        default: nightly
+        description: "all, nightly or backfill. History jobs run in batches, so each night fills in a little more"
+        default: all
 
 permissions:
   contents: write
@@ -50,7 +50,7 @@ jobs:
           fi
       - run: make setup PYTHON=python
       - name: Fetch
-        run: .venv/bin/python -m ingest run --profile "${{ inputs.profile || 'nightly' }}"
+        run: .venv/bin/python -m ingest run --profile "${{ inputs.profile || 'all' }}"
       - name: Build, document and fingerprint
         run: make warehouse fingerprints catalog
       - name: Verify

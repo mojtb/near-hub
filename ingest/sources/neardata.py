@@ -20,6 +20,7 @@ SOURCE = "neardata"
 BASE = "https://mainnet.neardata.xyz/v0/block"
 BLOCKS_PER_DAY = 96
 BACKFILL_BLOCKS_PER_DAY = 24
+BACKFILL_DAYS_PER_RUN = 20
 
 
 def _day_heights() -> Dict[str, int]:
@@ -120,9 +121,8 @@ def receiver_sample_backfill(ctx: Context) -> None:
     done = ctx.load_state("neardata__receiver_sample", {})
     today = date.fromisoformat(ctx.snapshot)
     days = [today - timedelta(days=b) for b in range(1, 366)]
-    for day in days:
-        if day.isoformat() in done or (day + timedelta(days=1)).isoformat() not in heights or day.isoformat() not in heights:
-            continue
+    todo = [d for d in days if d.isoformat() not in done and d.isoformat() in heights and (d + timedelta(days=1)).isoformat() in heights]
+    for day in todo[:BACKFILL_DAYS_PER_RUN]:
         if _sample_day(ctx, day, heights, BACKFILL_BLOCKS_PER_DAY):
             done[day.isoformat()] = BACKFILL_BLOCKS_PER_DAY
             ctx.save_state("neardata__receiver_sample", done)
