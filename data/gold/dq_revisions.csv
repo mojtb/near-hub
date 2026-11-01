@@ -1,0 +1,5 @@
+model,value_column,series_key,date_day,first_snapshot,last_snapshot,first_value,last_value,change_pct
+stg_defillama__chain_fees,value_usd,Near:dailyFees,2026-10-27,2026-10-28,2026-11-01,178452.29,178474.29,0.012328225095906586
+stg_defillama__intents_fees,value_usd,dailyFees,2026-10-27,2026-10-28,2026-11-01,158058.0,158080.0,0.013918941148186108
+stg_defillama__intents_fees,value_usd,dailyHoldersRevenue,2026-10-27,2026-10-28,2026-11-01,75616.0,76747.0,1.4957151925518408
+stg_defillama__intents_fees,value_usd,dailyRevenue,2026-10-27,2026-10-28,2026-11-01,75616.0,76747.0,1.4957151925518408
