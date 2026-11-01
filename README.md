@@ -28,13 +28,13 @@ These lines are generated from the warehouse, and `make verify` fails if they st
 
 <!-- expected:start -->
 - Data through: **2026-11-01**
-- Gold tables and columns: **52** and **470**
-- Reconciliation: **32** comparisons agree, **4** differ, each with a written explanation
+- Gold tables and columns: **54** and **489**
+- Reconciliation: **34** comparisons agree, **4** differ, each with a written explanation
 - Issuance over the last 30 days, from supply change plus burn: **2.49%** a year, against **2.50%** in the protocol config
 - Captured Intents revenue, all time: **$9.29M** per DefiLlama, **$9.28M** rebuilt from wallet transfers
-- Public Intents volume, all time: **$33.30B** per NearBlocks, **$32.93B** per NEAR's dashboard
+- Public Intents volume, all time: **$33.30B** per NearBlocks, **$32.93B** per NEAR's dashboard on Dune
 - Chain Signatures: **16** MPC participants with a threshold of **11**
-- Largest Intents fee channel: **swapkit**, with **73%** of listed fees
+- Largest Intents fee channel, per NEAR's dashboard on Dune: **swapkit**, with **73%** of listed fees
 <!-- expected:end -->
 
 ## What's inside
@@ -42,7 +42,7 @@ These lines are generated from the warehouse, and `make verify` fails if they st
 | Area | Main tables in `gold` | Main sources |
 |---|---|---|
 | Chain usage, supply | `fct_chain_daily`, `fct_supply_daily`, `fct_protocol_config`, `fct_contract_daily`, `fct_receiver_sample_daily` | NearBlocks, archival RPC, Neardata |
-| NEAR Intents, revenue | `fct_intents_daily`, `fct_intents_chain_daily`, `fct_intents_asset_daily`, `fct_intents_fee_channels`, `fct_revenue_capture` | DefiLlama, NearBlocks, revenue.near.org, Dune |
+| NEAR Intents, revenue | `fct_intents_daily`, `fct_intents_chain_daily`, `fct_intents_asset_daily`, `fct_intents_fee_channels`, `fct_dune_intents_asset_daily`, `fct_dune_dashboard_results`, `fct_revenue_capture` | DefiLlama, NearBlocks, revenue.near.org, NEAR's dashboard on Dune |
 | Wallets | `fct_wallet_transfers`, `fct_wallet_counterparties`, `fct_revenue_inflows_daily`, `fct_wallet_balance_daily`, `fct_wallet_holdings`, `fct_token_holders`, `dim_entity` | FastNear, RPC |
 | Security, staking | `fct_validator_summary`, `fct_chain_signatures_daily`, `fct_mpc_state`, `fct_lst_snapshot` | RPC, NearBlocks |
 | Capital, DeFi | `fct_protocol_tvl_daily`, `fct_protocol_fees_snapshot`, `fct_stablecoin_assets`, `fct_yield_pools` | DefiLlama |
@@ -70,7 +70,7 @@ The warehouse reads NEAR directly through RPC and archival RPC, including contra
 - **Libraries:** dbt-core, dbt-duckdb, DuckDB, requests and pytest, pinned in `requirements.lock`.
 - **AI assistance:** written with Claude Code.
 - **Data:** this repository's MIT license covers code only. Data remains under each source's terms, listed in [registry/sources.csv](registry/sources.csv).
-- **One reading of Dune** in `data/bronze/dune_public` was taken from NEAR's public dashboard by an AI-driven browser at the author's request. The manifest says so.
+- **Data derived from Dune:** everything in `data/bronze/dune_public`, and every gold table with a `derived_from` column, comes from the [NEAR Intents dashboard](https://dune.com/near/near-intents) on Dune, created by @near. NEAR uploads the data behind it, so these numbers are self-reported. Readings are taken by hand in a browser and never on a schedule, with one exception: the first reading, in `near_intents_dashboard`, was taken by an AI-driven browser at the author's request. The manifest says how each was read.
 
 ## Data credits
 

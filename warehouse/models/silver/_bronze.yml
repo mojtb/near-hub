@@ -73,4 +73,5 @@ sources:
       - {name: neardata__receiver_sample, identifier: neardata/receiver_sample, description: "Per-receiver activity counted from evenly spaced sample blocks."}
       - {name: dune__query_results, identifier: dune/query_results, description: "Latest stored results of public Dune queries, through the official API."}
       - {name: dune_public__near_intents_dashboard, identifier: dune_public/near_intents_dashboard, description: "Dated readings of the public NEAR Intents dashboard page."}
+      - {name: dune_public__query_results, identifier: dune_public/query_results, description: "Widget responses from the public NEAR Intents dashboard, read by hand and saved exactly as received."}
       - {name: intents_explorer__transactions, identifier: intents_explorer/transactions, description: "1Click swaps from the Intents Explorer API."}

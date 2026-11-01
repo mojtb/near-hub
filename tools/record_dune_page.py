@@ -5,6 +5,7 @@ route to these numbers is to read the public page. Dune's terms bar bots and scr
 stay a manual step: a person reads the page and writes a JSON file with `tiles` and `fee_channels`.
 Never schedule it or drive it from a script. Prefer `dune/query_results` once a key is available.
 This tool validates the file's shape, then stores it with a note saying how it was obtained.
+tools/record_dune_reading.py keeps each widget's raw response instead, so use that for new readings.
 
 Usage: python -m tools.record_dune_page <reading.json> <snapshot-date> "<how it was read>"
 """

@@ -11,6 +11,8 @@ dune as (
     where snapshot_date = (select max(snapshot_date) from {{ ref('fct_intents_dashboard_readings') }})
 ),
 
+dune_assets as (select * from {{ ref('fct_dune_intents_asset_daily') }}),
+
 last_intents_day as (select max(date_day) as d from intents where volume_usd_defillama is not null),
 
 supply_both as (
@@ -115,6 +117,16 @@ checks as (
             where snapshot_date = (select max(snapshot_date) from {{ ref('fct_intents_fee_channels') }})),
         'Dune public page, total', (select value_usd from dune where metric = 'total_generated_fees' and scope = 'all'),
         5.0, 'same_upstream'
+
+    union all select 'intents_volume_dune_assets_vs_defillama', 'Intents volume over the days read per asset, USD', null,
+        'Dune public page, sum of assets', (select sum(volume_usd) from dune_assets),
+        'DefiLlama, same days', (select sum(volume_usd_defillama) from intents where date_day in (select date_day from dune_assets)),
+        1.0, 'same_upstream'
+
+    union all select 'intents_volume_30d_dune_assets_vs_tile', 'Intents trailing 30-day volume, USD', null,
+        'Dune public page, sum of assets', (select sum(volume_usd) from dune_assets where date_day > (select max(date_day) from dune_assets) - 30),
+        'Dune public page, all scopes', (select value_usd from dune where metric = 'volume_30d' and scope = 'all'),
+        1.0, 'same_upstream'
 
     union all select 'intents_revenue_all_time_defillama_vs_wallets', 'Intents captured revenue, USD', null,
         'DefiLlama, sum of daily', (select sum(revenue_usd_defillama) from intents),

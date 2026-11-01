@@ -62,9 +62,19 @@ The strongest checks are the ones that cross families. See [RECONCILIATION.md](R
 - Pagination follows the last deposit address. This fetcher has not run against the live API yet because it needs a JWT, so expect to adjust it when the key arrives.
 
 ### Dune
+- Everything from Dune is derived from the [NEAR Intents dashboard](https://dune.com/near/near-intents), created by @near, and says so: gold tables carry a `derived_from` column, and each manifest note repeats it. NEAR uploads the data behind the dashboard, so nothing here checks it independently.
+- Results are public and readable without logging in, but [Dune's terms](https://dune.com/terms) bar bots, scrapers and access other than its own interface. They allow copying public content with credit to its creator, and they don't say whether that covers query results. So readings are dated, credited and taken by hand, and nothing fetches the dashboard on a schedule.
+- To take a reading:
+  1. Open the dashboard in your own browser, with the Network tab of the developer tools open.
+  2. Scroll until every widget has loaded.
+  3. Save the Network tab as a HAR file, using the sanitized option if your browser offers it.
+  4. Run `python -m tools.record_dune_reading <file.har> <date> "<how it was read>"`. See how many widgets were saved, and how many were partial.
+- The tool keeps each widget's response exactly as received, and leaves headers, cookies and the page's signature behind. The date can't be later than `data/PINNED`, so move the pin first if it is. Keep the HAR file out of the repository; `.gitignore` covers it.
+- `fct_dune_dashboard_results` holds every row of every widget. Widgets that matter get a typed table such as `fct_dune_intents_asset_daily`.
+- Each reading of the asset widget covers about 30 days, so one reading every few weeks keeps that series continuous.
 - Free access is view-only with no API, so the official fetcher needs a key on a plan or trial with API access. It skips cleanly without one.
 - `near.balances` and `near.circulating_supply` were stale as of the 2026-10 research, and a NEAR data gap ran from 2026-02-28 to 03-19. Check before querying them.
-- The one stored reading of the public dashboard is an exception and comes with a caveat: see `registry/sources.csv`.
+- The first stored reading, in `dune_public/near_intents_dashboard`, was taken by an AI-driven browser and should be replaced by hand: see `registry/sources.csv`.
 
 ## Tried and rejected
 

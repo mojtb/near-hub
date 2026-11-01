@@ -42,10 +42,7 @@ jobs:
         with:
           python-version: "3.11"
       - name: Bring in the data collected so far
-        run: |
-          if git rev-parse -q --verify origin/data/nightly; then
-            git checkout origin/data/nightly -- data
-          fi
+        run: python -m tools.bring_in_nightly
       - run: make setup PYTHON=python
       - name: Fetch
         if: inputs.profile != 'none'
