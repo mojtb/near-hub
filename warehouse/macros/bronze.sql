@@ -52,3 +52,10 @@
 {% macro unix_day(expr) -%}
     cast(make_timestamp(cast({{ expr }} as bigint) * 1000000) as date)
 {%- endmacro %}
+
+
+{# Credit for anything derived from NEAR's Intents dashboard on Dune. Dune's terms ask for credit to the creator
+   of public content, and as a column this travels with every export. #}
+{% macro dune_credit() -%}
+    'NEAR Intents dashboard on Dune by @near, https://dune.com/near/near-intents'
+{%- endmacro %}

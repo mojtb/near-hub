@@ -6,6 +6,9 @@ __pycache__/
 .pytest_cache/
 .logs/
 
+# A browser's HAR file can hold cookies. tools/record_dune_reading.py keeps only the responses it needs.
+*.har
+
 # dbt build output
 warehouse/target/
 warehouse/logs/

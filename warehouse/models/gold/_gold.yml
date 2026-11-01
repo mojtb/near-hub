@@ -307,10 +307,43 @@ models:
       - {name: treasury_revenue_usd_defillama, description: "Captured revenue before 2026-02-23, held by the treasury.", meta: {unit: "USD"}}
       - {name: supply_side_revenue_usd_defillama, description: "Gross fees minus captured revenue: kept by solvers and distribution channels.", meta: {unit: "USD"}}
       - {name: confidential_tvl_usd, description: "Confidential Intents TVL per revenue.near.org. Self-reported by NEAR.", meta: {unit: "USD"}}
-  - name: fct_intents_dashboard_readings
-    description: "Headline tiles read from NEAR's public Dune dashboard, by scope: all, public or confidential."
+  - name: fct_dune_dashboard_results
+    description: "Derived from NEAR's Intents dashboard on Dune: every row of every widget read by hand, as the widget returned it, so nothing waits for a typed table. NEAR uploads the data behind the dashboard, so it is self-reported."
     config:
-      meta: {grain: "snapshot_date, scope, metric", sources: "Dune public page"}
+      meta: {grain: "snapshot_date, reading_id, row_index", sources: "NEAR Intents dashboard on Dune by @near, read by hand"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["snapshot_date", "reading_id", "row_index"]}}
+      - min_rows: {arguments: {n: 1000}}
+    columns:
+      - {name: snapshot_date, description: "Date the widget was read.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: reading_id, description: "The widget: query id, dashboard filter values and a hash of the columns asked for.", meta: {unit: "text"}, data_tests: [not_null]}
+      - {name: query_id, description: "Dune query behind the widget.", meta: {unit: "Dune query id"}, data_tests: [not_null]}
+      - {name: query_title, description: "Query title, where registry/dune_queries.csv lists it.", meta: {unit: "text"}}
+      - {name: query_url, description: "Public page of the query on Dune.", meta: {unit: "URL"}}
+      - {name: selection, description: "Dashboard filter values in force, such as blockchain-ALL__symbol-ALL.", meta: {unit: "text"}}
+      - {name: generated_at, description: "When Dune generated the stored result.", meta: {unit: "UTC timestamp"}}
+      - {name: is_complete, description: "False when the widget returned only part of the query's rows.", meta: {unit: "boolean"}}
+      - {name: row_index, description: "Position of the row in the response, from 1.", meta: {unit: "integer"}}
+      - {name: row_json, description: "The row as JSON, with the query's own column names.", meta: {unit: "JSON text"}}
+      - {name: derived_from, description: "Credit to the dashboard and its creator.", meta: {unit: "text"}, data_tests: [not_null]}
+  - name: fct_dune_intents_asset_daily
+    description: "Derived from NEAR's Intents dashboard on Dune: all Intents volume per asset per day, public and confidential together. NEAR uploads the data behind the dashboard, so it is self-reported. fct_intents_asset_daily is the public-only view from NearBlocks, and symbols differ in places, such as BTC here and NBTC there."
+    config:
+      meta: {grain: "date_day, symbol", sources: "NEAR Intents dashboard on Dune by @near, query 5175131, read by hand"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["date_day", "symbol"]}}
+      - min_rows: {arguments: {n: 1000}}
+    columns:
+      - {name: date_day, description: "UTC calendar day.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: symbol, description: "Asset symbol, as the dashboard names it.", meta: {unit: "text"}, data_tests: [not_null]}
+      - {name: volume_usd, description: "All Intents volume in this asset: public and confidential.", meta: {unit: "USD"}}
+      - {name: share_of_day, description: "Share of that day's volume across assets.", meta: {unit: "fraction"}}
+      - {name: snapshot_date, description: "Date of the reading this value comes from.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: derived_from, description: "Credit to the dashboard and its creator.", meta: {unit: "text"}, data_tests: [not_null]}
+  - name: fct_intents_dashboard_readings
+    description: "Derived from NEAR's Intents dashboard on Dune: headline tiles, by scope: all, public or confidential."
+    config:
+      meta: {grain: "snapshot_date, scope, metric", sources: "NEAR Intents dashboard on Dune by @near"}
     data_tests:
       - unique_grain: {arguments: {columns: ["snapshot_date", "scope", "metric"]}}
       - min_rows: {arguments: {n: 10}}
@@ -319,10 +352,11 @@ models:
       - {name: scope, description: "all, public or confidential.", meta: {unit: "text"}, data_tests: [not_null]}
       - {name: metric, description: "What is being measured.", meta: {unit: "text"}, data_tests: [not_null]}
       - {name: value_usd, description: "Displayed value, rounded to whole dollars.", meta: {unit: "USD"}}
+      - {name: derived_from, description: "Credit to the dashboard and its creator.", meta: {unit: "text"}, data_tests: [not_null]}
   - name: fct_intents_fee_channels
-    description: "All-time gross fees per referral channel, read from NEAR's public Dune dashboard. NEAR uploads the data behind it, and the page lists only the top 100 channels."
+    description: "Derived from NEAR's Intents dashboard on Dune: all-time gross fees per referral channel. NEAR uploads the data behind it, and the page lists only the top 100 channels."
     config:
-      meta: {grain: "snapshot_date, referral", sources: "Dune public page"}
+      meta: {grain: "snapshot_date, referral", sources: "NEAR Intents dashboard on Dune by @near"}
     data_tests:
       - unique_grain: {arguments: {columns: ["snapshot_date", "referral"]}}
       - min_rows: {arguments: {n: 50}}
@@ -332,6 +366,7 @@ models:
       - {name: fees_usd, description: "All-time gross fees for this channel.", meta: {unit: "USD"}}
       - {name: share_of_listed_fees, description: "Share of the fees across listed channels.", meta: {unit: "fraction"}}
       - {name: channel_rank, description: "Rank by fees, largest first.", meta: {unit: "integer"}}
+      - {name: derived_from, description: "Credit to the dashboard and its creator.", meta: {unit: "text"}, data_tests: [not_null]}
   - name: fct_intents_swaps
     description: "One row per 1Click swap. Covers 1Click only, not all Intents. Empty until INTENTS_EXPLORER_JWT is set."
     config:

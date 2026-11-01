@@ -26,7 +26,7 @@
  },
  "dim_source": {
   "columns": 7,
-  "hash": "936259eacc296ba682ef998c9c7e0849",
+  "hash": "24e756e19f2ecbb9ab3540004dcbdd7b",
   "rows": 19
  },
  "dim_token": {
@@ -36,8 +36,8 @@
  },
  "dq_freshness": {
   "columns": 7,
-  "hash": "65f3cf03afa0db9d999ddcd0c0b27a96",
-  "rows": 20
+  "hash": "83f6b3462601125b5e796bf804fc2d09",
+  "rows": 21
  },
  "dq_ingest_runs": {
   "columns": 6,
@@ -46,13 +46,13 @@
  },
  "dq_provenance": {
   "columns": 10,
-  "hash": "78f93b68f1102a9f32b9f1b2e29d2157",
-  "rows": 92
+  "hash": "54915ce9f14fdef2eb1fe1d9fb42c100",
+  "rows": 93
  },
  "dq_reconciliation": {
   "columns": 12,
-  "hash": "6499ed8fffe33e0ae8fd449f1c53caeb",
-  "rows": 36
+  "hash": "1af6efa4e64831f0f8baaad2fefe5b95",
+  "rows": 38
  },
  "dq_revisions": {
   "columns": 9,
@@ -84,6 +84,16 @@
   "hash": "2febd1081b75898bc4ed153983481e53",
   "rows": 936
  },
+ "fct_dune_dashboard_results": {
+  "columns": 11,
+  "hash": "906c47e4d89d73f937b68916788e3285",
+  "rows": 2541
+ },
+ "fct_dune_intents_asset_daily": {
+  "columns": 6,
+  "hash": "c1326d2ba23fd48a38a84b3ef8c4f11e",
+  "rows": 2541
+ },
  "fct_governance_proposals": {
   "columns": 19,
   "hash": "0c23c7494fc0d5a92c918d791315dc46",
@@ -110,13 +120,13 @@
   "rows": 691
  },
  "fct_intents_dashboard_readings": {
-  "columns": 4,
-  "hash": "fad4a74572ce880641253456b11b4de6",
+  "columns": 5,
+  "hash": "b03a1b7cf8dce874132a6e1d844d5dd6",
   "rows": 18
  },
  "fct_intents_fee_channels": {
-  "columns": 5,
-  "hash": "3c9569087cb4f78c8b9effe87ac1ce8b",
+  "columns": 6,
+  "hash": "37d8543753b3856b56509b0bc2df62a3",
   "rows": 100
  },
  "fct_intents_swaps": {

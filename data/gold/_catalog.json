@@ -1278,9 +1278,9 @@
  {
   "area": "NEAR Intents and revenue",
   "table": "fct_intents_fee_channels",
-  "description": "All-time gross fees per referral channel, read from NEAR's public Dune dashboard. NEAR uploads the data behind it, and the page lists only the top 100 channels.",
+  "description": "Derived from NEAR's Intents dashboard on Dune: all-time gross fees per referral channel. NEAR uploads the data behind it, and the page lists only the top 100 channels.",
   "grain": "snapshot_date, referral",
-  "sources": "Dune public page",
+  "sources": "NEAR Intents dashboard on Dune by @near",
   "path": "data/gold/fct_intents_fee_channels.parquet",
   "columns": [
    {
@@ -1312,6 +1312,12 @@
     "type": "BIGINT",
     "unit": "integer",
     "description": "Rank by fees, largest first."
+   },
+   {
+    "name": "derived_from",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "Credit to the dashboard and its creator."
    }
   ],
   "rows": 100,
@@ -1321,9 +1327,9 @@
  {
   "area": "NEAR Intents and revenue",
   "table": "fct_intents_dashboard_readings",
-  "description": "Headline tiles read from NEAR's public Dune dashboard, by scope: all, public or confidential.",
+  "description": "Derived from NEAR's Intents dashboard on Dune: headline tiles, by scope: all, public or confidential.",
   "grain": "snapshot_date, scope, metric",
-  "sources": "Dune public page",
+  "sources": "NEAR Intents dashboard on Dune by @near",
   "path": "data/gold/fct_intents_dashboard_readings.parquet",
   "columns": [
    {
@@ -1349,9 +1355,143 @@
     "type": "DOUBLE",
     "unit": "USD",
     "description": "Displayed value, rounded to whole dollars."
+   },
+   {
+    "name": "derived_from",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "Credit to the dashboard and its creator."
    }
   ],
   "rows": 18,
+  "first": "2026-11-01",
+  "last": "2026-11-01"
+ },
+ {
+  "area": "NEAR Intents and revenue",
+  "table": "fct_dune_intents_asset_daily",
+  "description": "Derived from NEAR's Intents dashboard on Dune: all Intents volume per asset per day, public and confidential together. NEAR uploads the data behind the dashboard, so it is self-reported. fct_intents_asset_daily is the public-only view from NearBlocks, and symbols differ in places, such as BTC here and NBTC there.",
+  "grain": "date_day, symbol",
+  "sources": "NEAR Intents dashboard on Dune by @near, query 5175131, read by hand",
+  "path": "data/gold/fct_dune_intents_asset_daily.parquet",
+  "columns": [
+   {
+    "name": "date_day",
+    "type": "DATE",
+    "unit": "date",
+    "description": "UTC calendar day."
+   },
+   {
+    "name": "symbol",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "Asset symbol, as the dashboard names it."
+   },
+   {
+    "name": "volume_usd",
+    "type": "DOUBLE",
+    "unit": "USD",
+    "description": "All Intents volume in this asset: public and confidential."
+   },
+   {
+    "name": "share_of_day",
+    "type": "DOUBLE",
+    "unit": "fraction",
+    "description": "Share of that day's volume across assets."
+   },
+   {
+    "name": "snapshot_date",
+    "type": "DATE",
+    "unit": "date",
+    "description": "Date of the reading this value comes from."
+   },
+   {
+    "name": "derived_from",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "Credit to the dashboard and its creator."
+   }
+  ],
+  "rows": 2541,
+  "first": "2026-10-02",
+  "last": "2026-10-31"
+ },
+ {
+  "area": "NEAR Intents and revenue",
+  "table": "fct_dune_dashboard_results",
+  "description": "Derived from NEAR's Intents dashboard on Dune: every row of every widget read by hand, as the widget returned it, so nothing waits for a typed table. NEAR uploads the data behind the dashboard, so it is self-reported.",
+  "grain": "snapshot_date, reading_id, row_index",
+  "sources": "NEAR Intents dashboard on Dune by @near, read by hand",
+  "path": "data/gold/fct_dune_dashboard_results.parquet",
+  "columns": [
+   {
+    "name": "snapshot_date",
+    "type": "DATE",
+    "unit": "date",
+    "description": "Date the widget was read."
+   },
+   {
+    "name": "reading_id",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "The widget: query id, dashboard filter values and a hash of the columns asked for."
+   },
+   {
+    "name": "query_id",
+    "type": "BIGINT",
+    "unit": "Dune query id",
+    "description": "Dune query behind the widget."
+   },
+   {
+    "name": "query_title",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "Query title, where registry/dune_queries.csv lists it."
+   },
+   {
+    "name": "query_url",
+    "type": "VARCHAR",
+    "unit": "URL",
+    "description": "Public page of the query on Dune."
+   },
+   {
+    "name": "selection",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "Dashboard filter values in force, such as blockchain-ALL__symbol-ALL."
+   },
+   {
+    "name": "generated_at",
+    "type": "TIMESTAMP",
+    "unit": "UTC timestamp",
+    "description": "When Dune generated the stored result."
+   },
+   {
+    "name": "is_complete",
+    "type": "BOOLEAN",
+    "unit": "boolean",
+    "description": "False when the widget returned only part of the query's rows."
+   },
+   {
+    "name": "row_index",
+    "type": "BIGINT",
+    "unit": "integer",
+    "description": "Position of the row in the response, from 1."
+   },
+   {
+    "name": "row_json",
+    "type": "VARCHAR",
+    "unit": "JSON text",
+    "description": "The row as JSON, with the query's own column names."
+   },
+   {
+    "name": "derived_from",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "Credit to the dashboard and its creator."
+   }
+  ],
+  "rows": 2541,
   "first": "2026-11-01",
   "last": "2026-11-01"
  },
@@ -3247,7 +3387,7 @@
     "description": "Why the gap exists, from registry/reconciliation_notes.csv."
    }
   ],
-  "rows": 36,
+  "rows": 38,
   "first": null,
   "last": null
  },
@@ -3302,7 +3442,7 @@
     "description": "Rows across all snapshots."
    }
   ],
-  "rows": 20,
+  "rows": 21,
   "first": null,
   "last": null
  },
@@ -3491,7 +3631,7 @@
     "description": "Any change made before saving, such as trimming."
    }
   ],
-  "rows": 92,
+  "rows": 93,
   "first": "2026-10-28",
   "last": "2026-11-01"
  }

@@ -1,4 +1,5 @@
 query_id,title,evidence_url,note
+5175131,NEAR Intents volume per asset per day,https://dune.com/queries/5175131/8775850,query behind the dashboard; has blockchain and symbol filters
 5175176,NEAR Intents volume metrics,https://dune.com/near/near-intents,query behind the dashboard; reads a dataset uploaded by NEAR
 5175161,NEAR Intents dashboard query,https://dune.com/near/near-intents,query behind the dashboard
 5175173,NEAR Intents dashboard query,https://dune.com/near/near-intents,query behind the dashboard
