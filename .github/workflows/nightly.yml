@@ -4,6 +4,8 @@
 #
 # Each snapshot commit holds that night's code and data, pinned to that night, so it rebuilds by itself.
 # It leaves out .github, because GitHub refuses a push from this job's token if it changes a workflow file.
+#
+# To test everything except the fetch in about two minutes: gh workflow run nightly.yml -f profile=none
 name: Nightly snapshot
 
 on:
