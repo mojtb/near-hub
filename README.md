@@ -54,11 +54,11 @@ Every table and column is described in [docs/DATA_CATALOG.md](docs/DATA_CATALOG.
 
 ## Refresh the data
 
-Run `make ingest`. See a status table with one line per dataset. It needs network access and takes about 40 minutes, because it stays within free-tier limits. Keys in `.env` are optional and raise those limits; copy `.env.example` to start. Without a key, a keyed source is skipped with a clear message.
+Run `make ingest`. See a status table with one line per dataset. It needs network access and can take about 90 minutes, because it stays within free-tier limits and fills in history in batches. Keys in `.env` are optional and raise those limits; copy `.env.example` to start. Without a key, a keyed source is skipped with a clear message.
 
 Run `make backfill` for the long history jobs. They run in batches, so run it again for more; they can be stopped and restarted.
 
-A GitHub Action takes a snapshot every night on the `data/nightly` branch. `main` stays on the date in `data/PINNED`, so the expected results above do not drift.
+A GitHub Action takes a snapshot every night on the `data/nightly` branch. `main` stays on the date in `data/PINNED`, so the expected results above do not drift. Each commit on that branch holds that night's code and data, so the same three steps rebuild it.
 
 ## NEAR technologies used
 
