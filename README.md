@@ -43,12 +43,12 @@ These lines are generated from the warehouse, and `make verify` fails if they st
 |---|---|---|
 | Chain usage, supply | `fct_chain_daily`, `fct_supply_daily`, `fct_protocol_config`, `fct_contract_daily`, `fct_receiver_sample_daily` | NearBlocks, archival RPC, Neardata |
 | NEAR Intents, revenue | `fct_intents_daily`, `fct_intents_chain_daily`, `fct_intents_asset_daily`, `fct_intents_fee_channels`, `fct_revenue_capture` | DefiLlama, NearBlocks, revenue.near.org, Dune |
-| Wallets | `fct_wallet_transfers`, `fct_revenue_inflows_daily`, `fct_wallet_balance_daily`, `fct_wallet_holdings`, `fct_token_holders`, `dim_entity` | FastNear, RPC |
+| Wallets | `fct_wallet_transfers`, `fct_wallet_counterparties`, `fct_revenue_inflows_daily`, `fct_wallet_balance_daily`, `fct_wallet_holdings`, `fct_token_holders`, `dim_entity` | FastNear, RPC |
 | Security, staking | `fct_validator_summary`, `fct_chain_signatures_daily`, `fct_mpc_state`, `fct_lst_snapshot` | RPC, NearBlocks |
 | Capital, DeFi | `fct_protocol_tvl_daily`, `fct_protocol_fees_snapshot`, `fct_stablecoin_assets`, `fct_yield_pools` | DefiLlama |
 | Market, peers | `fct_market_daily`, `fct_peer_daily` | CoinMetrics, Coinbase, DefiLlama |
-| Developers, governance | `fct_dev_activity_weekly`, `fct_repo_snapshot`, `fct_governance_threads`, `dim_event` | GitHub, gov.near.org |
-| Data quality | `dq_reconciliation`, `dq_freshness`, `dq_revisions` | All of the above |
+| Developers, governance | `fct_dev_activity_weekly`, `fct_repo_snapshot`, `fct_governance_proposals`, `fct_venear_snapshot`, `fct_governance_threads`, `dim_event` | GitHub, RPC, gov.near.org |
+| Data quality | `dq_reconciliation`, `dq_freshness`, `dq_revisions`, `dq_ingest_runs`, `dq_provenance` | All of the above |
 
 Every table and column is described in [docs/DATA_CATALOG.md](docs/DATA_CATALOG.md). Every table is also in `data/gold/` as Parquet, so you can read it without building anything. How it fits together is in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md), and what each source can and can't tell you is in [docs/SOURCES.md](docs/SOURCES.md).
 
