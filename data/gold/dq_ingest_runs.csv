@@ -53,6 +53,7 @@ snapshot_date,dataset,status,detail,files,seconds
 2026-11-01,rpc/contract_views,ok,"",2,15.9
 2026-11-01,rpc/gas_price,ok,"",0,1.1
 2026-11-01,rpc/hos_proposals,ok,"",1,3.3
+2026-11-01,rpc/nrr_pool_daily,ok,"",1,52.0
 2026-11-01,rpc/protocol_config,ok,"",0,0.5
 2026-11-01,rpc/status,ok,"",0,1.8
 2026-11-01,rpc/validators_current,ok,"",0,1.1

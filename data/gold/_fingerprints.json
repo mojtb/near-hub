@@ -26,8 +26,8 @@
  },
  "dim_source": {
   "columns": 7,
-  "hash": "aaa5fded5e32c9a41d2f2c1d08b8aa10",
-  "rows": 19
+  "hash": "79f37181450211dd4ff0895eec19dbff",
+  "rows": 21
  },
  "dim_token": {
   "columns": 11,
@@ -36,23 +36,23 @@
  },
  "dq_freshness": {
   "columns": 7,
-  "hash": "f39373e3172942a465a563bd038b42d4",
-  "rows": 22
+  "hash": "46a652ed702f17ce8239fe77cb4655dd",
+  "rows": 24
  },
  "dq_ingest_runs": {
   "columns": 6,
-  "hash": "000a027596fa899d2673d7719ddf26bf",
-  "rows": 57
+  "hash": "37603dbfe2cd51492a484556e88b69d6",
+  "rows": 58
  },
  "dq_provenance": {
   "columns": 10,
-  "hash": "54915ce9f14fdef2eb1fe1d9fb42c100",
-  "rows": 93
+  "hash": "8880cfa1a491f299715cba32e77326af",
+  "rows": 94
  },
  "dq_reconciliation": {
   "columns": 12,
-  "hash": "1af6efa4e64831f0f8baaad2fefe5b95",
-  "rows": 38
+  "hash": "8137801d83211d0ab87cca31a8b367ea",
+  "rows": 41
  },
  "dq_revisions": {
   "columns": 9,
@@ -93,6 +93,16 @@
   "columns": 6,
   "hash": "c1326d2ba23fd48a38a84b3ef8c4f11e",
   "rows": 2541
+ },
+ "fct_etf_nrr_chain_daily": {
+  "columns": 15,
+  "hash": "a918cca67d67ed5ed62ae2e654701b66",
+  "rows": 34
+ },
+ "fct_etf_nrr_daily": {
+  "columns": 24,
+  "hash": "9939e76134b4d72470b2d2afe5f70c43",
+  "rows": 25
  },
  "fct_governance_proposals": {
   "columns": 19,

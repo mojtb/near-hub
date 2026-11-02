@@ -26,7 +26,7 @@ AREAS = [
     ("Wallets", ["fct_wallet_transfers", "fct_wallet_flows_daily", "fct_wallet_counterparties", "fct_revenue_inflows_daily", "fct_wallet_balance_daily", "fct_wallet_holdings", "fct_token_holders"]),
     ("Security and staking", ["fct_validator_epoch", "fct_validator_summary", "fct_chain_signatures_daily", "fct_mpc_state", "fct_mpc_participants", "fct_mpc_operators", "fct_lst_snapshot"]),
     ("Capital and DeFi", ["fct_protocol_tvl_daily", "fct_protocol_fees_snapshot", "fct_stablecoin_assets", "fct_yield_pools"]),
-    ("Market and peers", ["fct_market_daily", "fct_peer_daily"]),
+    ("Market and peers", ["fct_market_daily", "fct_peer_daily", "fct_etf_nrr_daily", "fct_etf_nrr_chain_daily"]),
     ("Developers and governance", ["fct_dev_activity_weekly", "fct_repo_snapshot", "fct_catalog_projects", "fct_governance_threads", "fct_governance_proposals", "fct_venear_snapshot"]),
     ("Data quality", ["dq_reconciliation", "dq_freshness", "dq_revisions", "dq_ingest_runs", "dq_provenance"]),
 ]
@@ -130,6 +130,7 @@ def expected_results(con: duckdb.DuckDBPyConnection) -> str:
     nb, dune = one("select value_a, value_b from gold.dq_reconciliation where check_id = 'intents_volume_all_time_nearblocks_vs_dune_public'")
     participants, threshold = one("select participants, threshold from gold.fct_mpc_state order by snapshot_date desc limit 1")
     channel, share = one("select referral, share_of_listed_fees from gold.fct_intents_fee_channels order by snapshot_date desc, channel_rank limit 1")
+    chain_shares, fund_shares = one("select value_a, value_b from gold.dq_reconciliation where check_id = 'etf_nrr_shares_chain_vs_fund'")
     lines = [
         f"- Data through: **{as_of}**",
         f"- Gold tables and columns: **{tables}** and **{columns}**",
@@ -139,6 +140,7 @@ def expected_results(con: duckdb.DuckDBPyConnection) -> str:
         f"- Public Intents volume, all time: **${nb / 1e9:.2f}B** per NearBlocks, **${dune / 1e9:.2f}B** per NEAR's dashboard on Dune",
         f"- Chain Signatures: **{participants}** MPC participants with a threshold of **{threshold}**",
         f"- Largest Intents fee channel, per NEAR's dashboard on Dune: **{channel}**, with **{share * 100:.0f}%** of listed fees",
+        f"- Bitwise NEAR ETF shares outstanding: **{fund_shares:,.0f}** per the fund, **{chain_shares:,.0f}** counted on chain in whole baskets",
     ]
     return "\n".join(lines)
 

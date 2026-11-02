@@ -6,6 +6,7 @@
 # It leaves out .github, because GitHub refuses a push from this job's token if it changes a workflow file.
 #
 # To test everything except the fetch in about two minutes: gh workflow run nightly.yml -f profile=none
+# To fetch only some sources: gh workflow run nightly.yml -f sources=nrr_fund,rpc
 name: Nightly snapshot
 
 on:
@@ -16,6 +17,9 @@ on:
       profile:
         description: "all, nightly or backfill. History jobs run in batches, so each night fills in a little more. none skips the fetch"
         default: all
+      sources:
+        description: "Comma-separated sources to fetch. Empty fetches them all"
+        default: ""
 
 permissions:
   contents: write
@@ -47,7 +51,9 @@ jobs:
       - run: make setup PYTHON=python
       - name: Fetch
         if: inputs.profile != 'none'
-        run: .venv/bin/python -m ingest run --profile "${{ inputs.profile || 'all' }}"
+        env:
+          SOURCES: ${{ inputs.sources }}
+        run: .venv/bin/python -m ingest run --profile "${{ inputs.profile || 'all' }}" ${SOURCES:+--sources "$SOURCES"}
       - name: Build, document and fingerprint
         run: |
           date -u +%F > data/PINNED

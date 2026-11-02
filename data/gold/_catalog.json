@@ -476,7 +476,7 @@
     "description": "What to settle before the repository is made public."
    }
   ],
-  "rows": 19,
+  "rows": 21,
   "first": null,
   "last": null
  },
@@ -3168,6 +3168,266 @@
   "last": "2026-10-31"
  },
  {
+  "area": "Market and peers",
+  "table": "fct_etf_nrr_daily",
+  "description": "The Bitwise NEAR ETF (NRR) per trading day. Flow is the change in shares times that day's NAV, the same maths as the flows SoSoValue reports. flow_basis says how each row's change was reached. A creation does not prove NEAR was bought on the market that day, because shares can be created for cash or for NEAR. Bitwise's terms limit copying its figures: see registry/sources.csv.",
+  "grain": "date_day",
+  "sources": "Bitwise's page, SoSoValue through news reports, archival RPC",
+  "path": "data/gold/fct_etf_nrr_daily.parquet",
+  "columns": [
+   {
+    "name": "date_day",
+    "type": "DATE",
+    "unit": "date",
+    "description": "US trading day. The first row, 2026-09-28, is the seed capital, the day before trading began."
+   },
+   {
+    "name": "nav_usd",
+    "type": "DOUBLE",
+    "unit": "USD per share",
+    "description": "Net asset value per share, from the chart on Bitwise's page. On a day the chart has not reached, net assets divided by shares."
+   },
+   {
+    "name": "market_price_usd",
+    "type": "DOUBLE",
+    "unit": "USD per share",
+    "description": "Closing market price per share, from the same chart."
+   },
+   {
+    "name": "premium_discount_pct",
+    "type": "DOUBLE",
+    "unit": "percent",
+    "description": "Market price above NAV, or below it if negative."
+   },
+   {
+    "name": "volume_shares",
+    "type": "BIGINT",
+    "unit": "shares",
+    "description": "Shares traded that day. Starts with the first saved snapshot, because the page shows only the latest day."
+   },
+   {
+    "name": "shares_outstanding",
+    "type": "HUGEINT",
+    "unit": "shares",
+    "description": "Shares at the close. Built from flow_shares through the history file, then taken from Bitwise's page. Empty on a day no snapshot saw."
+   },
+   {
+    "name": "fund_page_shares",
+    "type": "BIGINT",
+    "unit": "shares",
+    "description": "The share count on Bitwise's page for that day, where a snapshot saw it. A data test holds shares_outstanding to it."
+   },
+   {
+    "name": "net_assets_usd",
+    "type": "DOUBLE",
+    "unit": "USD",
+    "description": "Net assets from Bitwise's page where a snapshot saw that day, otherwise shares_outstanding times nav_usd."
+   },
+   {
+    "name": "near_in_trust",
+    "type": "DOUBLE",
+    "unit": "NEAR",
+    "description": "NEAR the fund holds. Known where a snapshot saw that day, plus two dates in the history file; on 2026-09-28 it is the seed deposit seen on chain."
+   },
+   {
+    "name": "near_per_share",
+    "type": "DOUBLE",
+    "unit": "NEAR per share",
+    "description": "near_in_trust divided by shares_outstanding, carried forward from the last day it was known."
+   },
+   {
+    "name": "flow_shares",
+    "type": "HUGEINT",
+    "unit": "shares",
+    "description": "Shares created, or redeemed if negative, that day. If a night was missed, the next reading's change covers the days between."
+   },
+   {
+    "name": "flow_baskets",
+    "type": "HUGEINT",
+    "unit": "count",
+    "description": "flow_shares in baskets of 10,000 shares, the size set in the prospectus."
+   },
+   {
+    "name": "flow_usd",
+    "type": "DOUBLE",
+    "unit": "USD",
+    "description": "flow_shares times nav_usd. Empty for the seed capital, because the reported cumulative figures fit only without it."
+   },
+   {
+    "name": "flow_near",
+    "type": "DOUBLE",
+    "unit": "NEAR",
+    "description": "flow_shares times near_per_share: the NEAR those shares stand for."
+   },
+   {
+    "name": "cumulative_flow_usd",
+    "type": "DOUBLE",
+    "unit": "USD",
+    "description": "flow_usd added up since launch."
+   },
+   {
+    "name": "flow_basis",
+    "type": "VARCHAR",
+    "unit": "label",
+    "description": "How flow_shares was reached. fund_page: the change in Bitwise's share count. reported: a flow reported by SoSoValue, divided by NAV. cumulative_difference: the gap between two reported cumulative figures. chain_settlement: whole baskets settled on chain the next trading day, an estimate. seed_capital: the prospectus's seed baskets."
+   },
+   {
+    "name": "trading_days_covered",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "Trading days this row's change spans. Above 1 means a night without a snapshot came before it."
+   },
+   {
+    "name": "reported_flow_usd",
+    "type": "DOUBLE",
+    "unit": "USD",
+    "description": "Daily net flow reported by SoSoValue, read from a news report. A cross-check, except where flow_basis is reported."
+   },
+   {
+    "name": "reported_cumulative_usd",
+    "type": "DOUBLE",
+    "unit": "USD",
+    "description": "Cumulative net inflow reported by SoSoValue, read from a news report."
+   },
+   {
+    "name": "reported_net_assets_usd",
+    "type": "DOUBLE",
+    "unit": "USD",
+    "description": "Net assets reported by SoSoValue, read from a news report. A data test holds them to shares_outstanding times nav_usd."
+   },
+   {
+    "name": "staked_share",
+    "type": "DOUBLE",
+    "unit": "fraction",
+    "description": "Share of the fund's NEAR that is staked, from Bitwise's page."
+   },
+   {
+    "name": "net_staking_rate",
+    "type": "DOUBLE",
+    "unit": "fraction per year",
+    "description": "Staking reward rate after the fund's staking expenses, from Bitwise's page."
+   },
+   {
+    "name": "source_url",
+    "type": "VARCHAR",
+    "unit": "url",
+    "description": "The report or filing behind this row in the history file."
+   },
+   {
+    "name": "note",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "How this row in the history file was reached."
+   }
+  ],
+  "rows": 25,
+  "first": "2026-09-28",
+  "last": "2026-10-30"
+ },
+ {
+  "area": "Market and peers",
+  "table": "fct_etf_nrr_chain_daily",
+  "description": "The Bitwise NEAR ETF's (NRR) NEAR as seen on chain, per UTC day: the wallets Bitwise lists, read inside the fund's staking pool at the first block of the next day. NEAR that moves is rounded to baskets of 10,000 shares. The chain settles about one trading day after the trade and nets orders against each other, so use fct_etf_nrr_daily for what traded on a day. NEAR outside the pool is not counted.",
+  "grain": "date_day",
+  "sources": "archival RPC, with the wallet list from Bitwise's page",
+  "path": "data/gold/fct_etf_nrr_chain_daily.parquet",
+  "columns": [
+   {
+    "name": "date_day",
+    "type": "DATE",
+    "unit": "date",
+    "description": "UTC calendar day the balances close."
+   },
+   {
+    "name": "block_height",
+    "type": "BIGINT",
+    "unit": "block",
+    "description": "The block read: the first of the next UTC day."
+   },
+   {
+    "name": "wallets_in_pool",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "Listed wallets holding at least 1 NEAR in the pool."
+   },
+   {
+    "name": "near_in_wallets",
+    "type": "DOUBLE",
+    "unit": "NEAR",
+    "description": "NEAR staked or unstaking in the pool across the listed wallets."
+   },
+   {
+    "name": "near_unstaking",
+    "type": "DOUBLE",
+    "unit": "NEAR",
+    "description": "The part of near_in_wallets that has been unstaked and not yet withdrawn."
+   },
+   {
+    "name": "rewards_near",
+    "type": "DOUBLE",
+    "unit": "NEAR",
+    "description": "Growth in wallets that changed by under 0.1% that day, which is staking rewards."
+   },
+   {
+    "name": "moved_near",
+    "type": "DOUBLE",
+    "unit": "NEAR",
+    "description": "All other change in those balances: NEAR deposited, or withdrawn if negative."
+   },
+   {
+    "name": "settled_shares",
+    "type": "BIGINT",
+    "unit": "shares",
+    "description": "moved_near as whole baskets of 10,000 shares. Redemptions are negative."
+   },
+   {
+    "name": "left_over_near",
+    "type": "DOUBLE",
+    "unit": "NEAR",
+    "description": "The part of moved_near that does not make a whole basket, such as a small rebalance."
+   },
+   {
+    "name": "running_settled_shares",
+    "type": "HUGEINT",
+    "unit": "shares",
+    "description": "settled_shares added up since launch, to compare with the fund's share count."
+   },
+   {
+    "name": "moved_value_usd",
+    "type": "DOUBLE",
+    "unit": "USD",
+    "description": "moved_near at that day's NEAR price from fct_market_daily. Empty until the price is in."
+   },
+   {
+    "name": "pool_near",
+    "type": "DOUBLE",
+    "unit": "NEAR",
+    "description": "All NEAR delegated to the pool, including other delegators."
+   },
+   {
+    "name": "share_of_pool",
+    "type": "DOUBLE",
+    "unit": "fraction",
+    "description": "near_in_wallets divided by pool_near."
+   },
+   {
+    "name": "share_of_circulating_supply",
+    "type": "DOUBLE",
+    "unit": "fraction",
+    "description": "near_in_wallets divided by circulating supply from fct_market_daily."
+   },
+   {
+    "name": "snapshot_date",
+    "type": "DATE",
+    "unit": "date",
+    "description": "Snapshot the day was read in. Past blocks do not change, so a later read gives the same balances."
+   }
+  ],
+  "rows": 34,
+  "first": "2026-09-28",
+  "last": "2026-10-31"
+ },
+ {
   "area": "Developers and governance",
   "table": "fct_dev_activity_weekly",
   "description": "Commits and active authors per tracked repository per week. A fixed repository list, not a whole-ecosystem count; GitHub's author list covers each repository's top 100.",
@@ -3632,7 +3892,7 @@
     "description": "Why the gap exists, from registry/reconciliation_notes.csv."
    }
   ],
-  "rows": 38,
+  "rows": 41,
   "first": null,
   "last": null
  },
@@ -3687,7 +3947,7 @@
     "description": "Rows across all snapshots."
    }
   ],
-  "rows": 22,
+  "rows": 24,
   "first": null,
   "last": null
  },
@@ -3803,7 +4063,7 @@
     "description": "Time taken."
    }
   ],
-  "rows": 57,
+  "rows": 58,
   "first": "2026-11-01",
   "last": "2026-11-01"
  },
@@ -3876,7 +4136,7 @@
     "description": "Any change made before saving, such as trimming."
    }
   ],
-  "rows": 93,
+  "rows": 94,
   "first": "2026-10-28",
   "last": "2026-11-01"
  }

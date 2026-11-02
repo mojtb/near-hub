@@ -21,7 +21,9 @@
     ('stg_coinbase__candles', 'Coinbase candles'),
     ('stg_coinmetrics__asset_metrics', 'CoinMetrics'),
     ('stg_defillama__peer_price', 'DefiLlama prices'),
-    ('stg_rpc__block_day', 'Archival RPC daily block')
+    ('stg_rpc__block_day', 'Archival RPC daily block'),
+    ('stg_nrr_fund__prices', 'Bitwise NEAR ETF NAV and market price'),
+    ('stg_rpc__nrr_pool_daily', 'Bitwise NEAR ETF wallets on chain')
 ] %}
 
 with readings as (

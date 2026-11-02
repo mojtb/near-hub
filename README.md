@@ -28,13 +28,14 @@ These lines are generated from the warehouse, and `make verify` fails if they st
 
 <!-- expected:start -->
 - Data through: **2026-11-01**
-- Gold tables and columns: **59** and **519**
-- Reconciliation: **34** comparisons agree, **4** differ, each with a written explanation
+- Gold tables and columns: **61** and **558**
+- Reconciliation: **37** comparisons agree, **4** differ, each with a written explanation
 - Issuance over the last 30 days, from supply change plus burn: **2.49%** a year, against **2.50%** in the protocol config
 - Captured Intents revenue, all time: **$9.29M** per DefiLlama, **$9.28M** rebuilt from wallet transfers
 - Public Intents volume, all time: **$33.30B** per NearBlocks, **$32.93B** per NEAR's dashboard on Dune
 - Chain Signatures: **16** MPC participants with a threshold of **11**
 - Largest Intents fee channel, per NEAR's dashboard on Dune: **swapkit**, with **73%** of listed fees
+- Bitwise NEAR ETF shares outstanding: **3,220,000** per the fund, **3,220,000** counted on chain in whole baskets
 <!-- expected:end -->
 
 ## What's inside
@@ -47,6 +48,7 @@ These lines are generated from the warehouse, and `make verify` fails if they st
 | Security, staking | `fct_validator_summary`, `fct_chain_signatures_daily`, `fct_mpc_state`, `fct_lst_snapshot` | RPC, NearBlocks |
 | Capital, DeFi | `fct_protocol_tvl_daily`, `fct_protocol_fees_snapshot`, `fct_stablecoin_assets`, `fct_yield_pools` | DefiLlama |
 | Market, peers | `fct_market_daily`, `fct_peer_daily` | CoinMetrics, Coinbase, DefiLlama |
+| Bitwise NEAR ETF flows | `fct_etf_nrr_daily`, `fct_etf_nrr_chain_daily` | Bitwise's page, archival RPC, SoSoValue through news reports |
 | Developers, governance | `fct_dev_activity_weekly`, `fct_repo_snapshot`, `fct_governance_proposals`, `fct_venear_snapshot`, `fct_governance_threads`, `dim_event` | GitHub, RPC, gov.near.org |
 | Data quality | `dq_reconciliation`, `dq_freshness`, `dq_revisions`, `dq_ingest_runs`, `dq_provenance` | All of the above |
 
@@ -62,7 +64,7 @@ A GitHub Action takes a snapshot every night on the `data/nightly` branch. `main
 
 ## NEAR technologies used
 
-The warehouse reads NEAR directly through RPC and archival RPC, including contract views on `v1.signer` (Chain Signatures), `intents.near` (NEAR Intents), `meta-pool.near`, `linear-protocol.near`, `lst.rhealab.near` and `venear.dao` (House of Stake). It tracks NEAR Intents volume, fees and fee capture, and traces the revenue wallets named on revenue.near.org. No contract is deployed and no transaction is sent.
+The warehouse reads NEAR directly through RPC and archival RPC, including contract views on `v1.signer` (Chain Signatures), `intents.near` (NEAR Intents), `meta-pool.near`, `linear-protocol.near`, `lst.rhealab.near` and `venear.dao` (House of Stake). It tracks NEAR Intents volume, fees and fee capture, traces the revenue wallets named on revenue.near.org, and reads the Bitwise NEAR ETF's holdings from its staking pool, `bitwise_2.poolv1.near`. No contract is deployed and no transaction is sent.
 
 ## Disclosures
 
@@ -71,7 +73,8 @@ The warehouse reads NEAR directly through RPC and archival RPC, including contra
 - **AI assistance:** written with Claude Code.
 - **Data:** this repository's MIT license covers code only. Data remains under each source's terms, listed in [registry/sources.csv](registry/sources.csv).
 - **Data derived from Dune:** everything in `data/bronze/dune_public`, and every gold table with a `derived_from` column, comes from the [NEAR Intents dashboard](https://dune.com/near/near-intents) on Dune, created by @near. NEAR uploads the data behind it, so these numbers are self-reported. Readings are taken by hand in a browser and never on a schedule, with one exception: the first reading, in `near_intents_dashboard`, was taken by an AI-driven browser at the author's request. The manifest says how each was read.
+- **Bitwise NEAR ETF data:** figures and the wallet list come from [Bitwise's page](https://nrretf.com), whose terms limit copying site content, so the page itself is not stored. Flows before the first saved snapshot come from `registry/etf_nrr_history.csv`, and some of them are estimates; each row says how it was reached.
 
 ## Data credits
 
-NearBlocks, DefiLlama, FastNear, Neardata, revenue.near.org, Coin Metrics (community data, [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/)), Coinbase, Rhea, Meta Pool, GitHub, NEAR Catalog, gov.near.org, and the [NEAR Intents dashboard](https://dune.com/near/near-intents) by @near on Dune.
+NearBlocks, DefiLlama, FastNear, Neardata, revenue.near.org, Coin Metrics (community data, [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/)), Coinbase, Rhea, Meta Pool, GitHub, NEAR Catalog, gov.near.org, the [NEAR Intents dashboard](https://dune.com/near/near-intents) by @near on Dune, Bitwise, and SoSoValue through the news reports linked in `registry/etf_nrr_history.csv`.
