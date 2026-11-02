@@ -338,6 +338,14 @@ def test_explorer_keeps_a_finished_day_when_a_later_call_fails(tmp_path, monkeyp
     assert ctx.warnings and "2026-10-30" in ctx.warnings[0]
 
 
+def test_block_heights_are_found_before_the_block_sampler_needs_them():
+    from ingest import sources  # noqa: F401
+    from ingest.pipeline import select
+
+    names = [f"{d.source}/{d.name}" for d in select("all", None, None)]
+    assert names.index("rpc/block_day") < names.index("neardata/receiver_sample")
+
+
 def test_rpc_sends_the_fastnear_key_when_there_is_one(monkeypatch):
     from ingest.sources import rpc
 
