@@ -293,7 +293,7 @@
     "description": "happened, or voting while the vote is open."
    }
   ],
-  "rows": 16,
+  "rows": 17,
   "first": "2024-12-10",
   "last": "2026-10-23"
  },
@@ -483,7 +483,7 @@
  {
   "area": "Chain usage, supply and parameters",
   "table": "fct_chain_daily",
-  "description": "Chain usage per UTC day. NearBlocks v1 and v3 keep separate columns where their definitions differ.",
+  "description": "Chain usage per UTC day. NearBlocks v1 and v3 keep separate columns where their definitions differ. Levels of txns, receipts, v3 accounts, contracts, new accounts and meta columns cannot be compared across 2026-04-02: see docs/USAGE_BREAK_2026-04-02.md.",
   "grain": "date_day",
   "sources": "NearBlocks /v1/charts, /v3/txn-stats, /v3/address-stats",
   "path": "data/gold/fct_chain_daily.parquet",
@@ -558,13 +558,13 @@
     "name": "active_accounts_v1",
     "type": "BIGINT",
     "unit": "count",
-    "description": "Active accounts per /v1/charts. About half of the v3 figure; NearBlocks does not document either definition."
+    "description": "Active accounts per /v1/charts. NearBlocks does not document it, but it matches Nansen's published distinct signers, so it leaves out users whose transactions a relayer signs."
    },
    {
     "name": "active_accounts_v3",
     "type": "BIGINT",
     "unit": "count",
-    "description": "Active accounts per /v3/address-stats. See active_accounts_v1."
+    "description": "Active accounts per /v3/address-stats. NearBlocks does not document it, but it stays within 2% of active_accounts_v1 plus meta_accounts. About 1.8x v1 in the latest 30 days, and 9x to 18x in monthly averages before 2026-04-02."
    },
    {
     "name": "active_contracts_v1",

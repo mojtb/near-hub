@@ -6,7 +6,7 @@ A reproducible data warehouse for a long-term investment thesis on NEAR, built f
 
 ## The problem
 
-Evidence about NEAR is scattered across a dozen services, and they disagree. Active accounts differ by 1.8x between two versions of one API. Some "independent" sources read the same NEAR-uploaded dataset. Price series are stamped a day apart. Free tiers and endpoints change or disappear. A thesis built on that is hard to check and easy to fool yourself with.
+Evidence about NEAR is scattered across a dozen services, and they disagree. Active accounts differ by 1.8x between two versions of one API today, and differed by 9x to 18x before April 2026. Some "independent" sources read the same NEAR-uploaded dataset. Price series are stamped a day apart. Free tiers and endpoints change or disappear. A thesis built on that is hard to check and easy to fool yourself with.
 
 This warehouse keeps every raw response, types it, joins it into shared tables, and publishes where sources disagree instead of picking the convenient number.
 

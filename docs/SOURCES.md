@@ -26,7 +26,7 @@ The strongest checks are the ones that cross families. See [RECONCILIATION.md](R
 - v3 daily endpoints return at most 365 days per call. `limit` counts days, not rows, and `date=` returns a single day. History therefore grows with each stored snapshot.
 - Legacy `/v1/charts` is the only full daily history back to 2020-07-21, and `/v1` is marked for eventual removal. The bronze copy protects against that.
 - v3 `stats.circulating_supply` equals total supply, which is wrong. Circulating supply comes from `/v1` instead.
-- v1 and v3 `active_accounts` disagree by about 1.8x and neither is documented. Gold keeps both and calls neither "daily active users".
+- v1 and v3 `active_accounts` are undocumented, and the gap between them is not stable: about 1.8x over the latest 30 days, but 9x to 18x in monthly averages from October 2025 to March 2026. The numbers show what each counts. v1 matches Nansen's published distinct signers, and v3 stays within 2% of v1 plus `meta_accounts`, so it also counts users whose transactions a relayer signs. Gold keeps both and calls neither "daily active users". `txns` and v3 cannot be compared across 2026-04-02: see [USAGE_BREAK_2026-04-02.md](USAGE_BREAK_2026-04-02.md).
 - Prices are stamped at 00:00 UTC, which makes the value on day D the close of day D-1. Gold moves them back one day, after which they match the other price sources within about 0.1%.
 - `tvl-stats` is a different measure from DefiLlama's chain TVL, about a third of it.
 - All 16 MPC operators show `tee.status = none` at NearBlocks, while NEAR says Chain Signatures run inside TEEs. A blank here may only mean NearBlocks has no attestation data. Check the contract before claiming anything.

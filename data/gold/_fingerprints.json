@@ -16,8 +16,8 @@
  },
  "dim_event": {
   "columns": 6,
-  "hash": "8882186ddff8ac0dfa20a35456f73042",
-  "rows": 16
+  "hash": "08f544bbc6b9b5ac5f14d38a335e7c2d",
+  "rows": 17
  },
  "dim_protocol": {
   "columns": 9,
@@ -51,7 +51,7 @@
  },
  "dq_reconciliation": {
   "columns": 12,
-  "hash": "8137801d83211d0ab87cca31a8b367ea",
+  "hash": "34d202c9e83526c7b03524ce9c754e4b",
   "rows": 41
  },
  "dq_revisions": {
