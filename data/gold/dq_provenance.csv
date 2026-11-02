@@ -125,6 +125,7 @@ nearcatalog,projects,2026-11-01,1,158219,,https://api.nearcatalog.xyz/projects,2
 nearcatalog,projects,2026-11-02,1,158219,,https://api.nearcatalog.xyz/projects,2026-11-02T07:49:22+00:00,2026-11-02T07:49:22+00:00,""
 neardata,receiver_sample,2026-11-01,1,48363,,neardata/receiver_sample,2026-11-01T21:04:22+00:00,2026-11-01T21:04:22+00:00,"manifest line rebuilt before the first commit, after a concurrent-write bug during the first run; fetch time is the file's modified time"
 neardata,receiver_sample,2026-11-02,13,317370,2138,https://mainnet.neardata.xyz/v0/block,2026-11-02T08:07:24+00:00,2026-11-02T08:32:37+00:00,aggregated from 96 evenly spaced blocks; raw blocks discarded
+nrr_fund,figures,2026-11-02,1,11436,77,https://nrretf.com/,2026-11-02T13:53:18+00:00,2026-11-02T13:53:18+00:00,assembled: figures read from the page's embedded data; the page itself is not kept
 oneclick,tokens,2026-11-01,1,53346,,https://1click.chaindefuser.com/v0/tokens,2026-11-01T20:23:03+00:00,2026-11-01T20:23:03+00:00,""
 oneclick,tokens,2026-11-02,1,53377,,https://1click.chaindefuser.com/v0/tokens,2026-11-02T07:59:17+00:00,2026-11-02T07:59:17+00:00,""
 revenue_page,html,2026-11-01,1,488949,,https://revenue.near.org/,2026-11-01T20:23:05+00:00,2026-11-01T20:23:05+00:00,""
@@ -136,24 +137,26 @@ rhea,token_prices,2026-11-02,1,631763,,https://indexer.ref.finance/list-token-pr
 rhea,top_pools,2026-11-01,1,1257721,,https://api.ref.finance/list-top-pools,2026-11-01T20:17:32+00:00,2026-11-01T20:17:32+00:00,""
 rhea,top_pools,2026-11-02,1,1258403,,https://api.ref.finance/list-top-pools,2026-11-02T07:46:35+00:00,2026-11-02T07:46:35+00:00,""
 rpc,accounts,2026-11-01,1,14228,48,https://free.rpc.fastnear.com,2026-11-01T20:54:05+00:00,2026-11-01T20:54:05+00:00,assembled: one view_account call per registry account
-rpc,accounts,2026-11-02,1,14224,48,https://free.rpc.fastnear.com,2026-11-02T08:45:22+00:00,2026-11-02T08:45:22+00:00,assembled: one view_account call per registry account
+rpc,accounts,2026-11-02,1,14228,48,https://free.rpc.fastnear.com,2026-11-02T13:50:07+00:00,2026-11-02T13:50:07+00:00,assembled: one view_account call per registry account
 rpc,block_day,2026-11-01,3,83698,297,https://archival-rpc.mainnet.fastnear.com,2026-11-01T20:48:17+00:00,2026-11-01T21:05:42+00:00,"assembled: header fields of one block per UTC day, within 120 s after 00:00"
-rpc,block_day,2026-11-02,1,113041,401,https://archival-rpc.mainnet.fastnear.com,2026-11-02T09:31:55+00:00,2026-11-02T09:31:55+00:00,"assembled: header fields of one block per UTC day, within 120 s after 00:00"
+rpc,block_day,2026-11-02,2,120374,427,https://archival-rpc.mainnet.fastnear.com,2026-11-02T09:31:55+00:00,2026-11-02T13:52:18+00:00,"assembled: header fields of one block per UTC day, within 120 s after 00:00"
 rpc,contract_views,2026-10-28,1,3930,,https://free.rpc.fastnear.com,2026-11-01T20:18:23+00:00,2026-11-01T20:18:23+00:00,"imported from the near-deflation-clock scaffold (re-serialised JSON, original fetch time 2026-10-28T23:25:14+00:00)"
 rpc,contract_views,2026-11-01,16,21667,,https://free.rpc.fastnear.com,2026-11-01T20:52:59+00:00,2026-11-01T20:53:14+00:00,result bytes decoded to JSON
-rpc,contract_views,2026-11-02,16,21696,,https://free.rpc.fastnear.com,2026-11-02T08:44:16+00:00,2026-11-02T08:44:31+00:00,result bytes decoded to JSON
+rpc,contract_views,2026-11-02,16,21667,,https://free.rpc.fastnear.com,2026-11-02T13:49:57+00:00,2026-11-02T13:49:59+00:00,result bytes decoded to JSON
 rpc,gas_price,2026-10-28,1,78,,https://free.rpc.fastnear.com,2026-11-01T20:18:23+00:00,2026-11-01T20:18:23+00:00,"imported from the near-deflation-clock scaffold (re-serialised JSON, original fetch time 2026-10-28T23:25:12+00:00)"
 rpc,gas_price,2026-11-01,1,71,,https://free.rpc.fastnear.com,2026-11-01T20:52:57+00:00,2026-11-01T20:52:57+00:00,""
-rpc,gas_price,2026-11-02,1,71,,https://free.rpc.fastnear.com,2026-11-02T08:44:14+00:00,2026-11-02T08:44:14+00:00,""
+rpc,gas_price,2026-11-02,1,71,,https://free.rpc.fastnear.com,2026-11-02T13:49:57+00:00,2026-11-02T13:49:57+00:00,""
 rpc,hos_proposals,2026-11-01,1,169528,30,https://free.rpc.fastnear.com,2026-11-01T20:53:18+00:00,2026-11-01T20:53:18+00:00,assembled from get_proposals pages; result bytes decoded to JSON
-rpc,hos_proposals,2026-11-02,1,169528,30,https://free.rpc.fastnear.com,2026-11-02T08:44:34+00:00,2026-11-02T08:44:34+00:00,assembled from get_proposals pages; result bytes decoded to JSON
+rpc,hos_proposals,2026-11-02,1,169528,30,https://free.rpc.fastnear.com,2026-11-02T13:50:00+00:00,2026-11-02T13:50:00+00:00,assembled from get_proposals pages; result bytes decoded to JSON
+rpc,nrr_pool_daily,2026-11-01,1,262394,35,https://archival-rpc.mainnet.fastnear.com,2026-11-02T13:45:09+00:00,2026-11-02T13:45:09+00:00,"assembled: the wallets Bitwise lists for NRR at the first block of each UTC day, read at past blocks; other delegators kept only as a total"
+rpc,nrr_pool_daily,2026-11-02,1,30349,3,https://archival-rpc.mainnet.fastnear.com,2026-11-02T13:53:22+00:00,2026-11-02T13:53:22+00:00,"assembled: the wallets Bitwise lists for NRR at the first block of each UTC day, read at past blocks; other delegators kept only as a total"
 rpc,protocol_config,2026-10-28,1,12217,,https://free.rpc.fastnear.com,2026-11-01T20:18:23+00:00,2026-11-01T20:18:23+00:00,"imported from the near-deflation-clock scaffold (re-serialised JSON, original fetch time 2026-10-28T23:25:08+00:00)"
 rpc,protocol_config,2026-11-01,1,9638,,https://free.rpc.fastnear.com,2026-11-01T20:52:56+00:00,2026-11-01T20:52:56+00:00,""
-rpc,protocol_config,2026-11-02,1,9638,,https://free.rpc.fastnear.com,2026-11-02T08:44:13+00:00,2026-11-02T08:44:13+00:00,""
+rpc,protocol_config,2026-11-02,1,9638,,https://free.rpc.fastnear.com,2026-11-02T13:49:57+00:00,2026-11-02T13:49:57+00:00,""
 rpc,status,2026-10-28,1,6403,,https://free.rpc.fastnear.com,2026-11-01T20:18:23+00:00,2026-11-01T20:18:23+00:00,"imported from the near-deflation-clock scaffold (re-serialised JSON, original fetch time 2026-10-28T23:25:06+00:00)"
 rpc,status,2026-11-01,1,4869,,https://free.rpc.fastnear.com,2026-11-01T20:52:56+00:00,2026-11-01T20:52:56+00:00,""
-rpc,status,2026-11-02,1,4870,,https://free.rpc.fastnear.com,2026-11-02T08:44:12+00:00,2026-11-02T08:44:12+00:00,""
+rpc,status,2026-11-02,1,4875,,https://free.rpc.fastnear.com,2026-11-02T13:49:57+00:00,2026-11-02T13:49:57+00:00,""
 rpc,validators_current,2026-10-28,1,131048,,https://free.rpc.fastnear.com,2026-11-01T20:18:23+00:00,2026-11-01T20:18:23+00:00,"imported from the near-deflation-clock scaffold (re-serialised JSON, original fetch time 2026-10-28T23:25:10+00:00); trimmed: per-shard arrays and public keys dropped"
 rpc,validators_current,2026-11-01,1,130394,375,https://free.rpc.fastnear.com,2026-11-01T20:52:58+00:00,2026-11-01T20:52:58+00:00,trimmed: per-shard arrays and public keys dropped
-rpc,validators_current,2026-11-02,1,130621,376,https://free.rpc.fastnear.com,2026-11-02T08:44:15+00:00,2026-11-02T08:44:15+00:00,trimmed: per-shard arrays and public keys dropped
-rpc,validators_epoch,2026-11-02,40,5648479,16223,https://archival-rpc.mainnet.fastnear.com,2026-11-02T09:31:57+00:00,2026-11-02T09:33:36+00:00,trimmed: per-shard arrays and public keys dropped
+rpc,validators_current,2026-11-02,1,129292,372,https://free.rpc.fastnear.com,2026-11-02T13:49:57+00:00,2026-11-02T13:49:57+00:00,trimmed: per-shard arrays and public keys dropped
+rpc,validators_epoch,2026-11-02,80,11404029,32757,https://archival-rpc.mainnet.fastnear.com,2026-11-02T09:31:57+00:00,2026-11-02T13:53:18+00:00,trimmed: per-shard arrays and public keys dropped

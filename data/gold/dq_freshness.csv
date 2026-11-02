@@ -1,5 +1,7 @@
 dataset,model,latest_snapshot,latest_data_day,as_of,days_behind,rows_all_snapshots
-Archival RPC daily block,stg_rpc__block_day,2026-11-02,2026-11-02,2026-11-02,0,698
+Archival RPC daily block,stg_rpc__block_day,2026-11-02,2026-11-02,2026-11-02,0,724
+Bitwise NEAR ETF NAV and market price,stg_nrr_fund__prices,2026-11-02,2026-10-29,2026-11-02,4,23
+Bitwise NEAR ETF wallets on chain,stg_rpc__nrr_pool_daily,2026-11-02,2026-11-01,2026-11-02,1,2074
 CoinMetrics,stg_coinmetrics__asset_metrics,2026-11-02,2026-11-01,2026-11-02,1,12306
 Coinbase candles,stg_coinbase__candles,2026-11-02,2026-11-01,2026-11-02,1,1541
 DefiLlama Intents fees,stg_defillama__intents_fees,2026-11-02,2026-11-01,2026-11-02,1,7549

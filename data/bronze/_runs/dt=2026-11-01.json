@@ -323,6 +323,12 @@
   "seconds": 3.3,
   "status": "ok"
  },
+ "rpc/nrr_pool_daily": {
+  "detail": "",
+  "files": 1,
+  "seconds": 52.0,
+  "status": "ok"
+ },
  "rpc/protocol_config": {
   "detail": "",
   "files": 0,

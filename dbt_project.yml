@@ -41,6 +41,16 @@ seeds:
     events:
       +column_types:
         event_date: date
+    etf_nrr_history:
+      +column_types:
+        date_day: date
+        nav_usd: double
+        market_price_usd: double
+        flow_shares: bigint
+        reported_flow_usd: double
+        reported_cumulative_usd: double
+        reported_net_assets_usd: double
+        near_in_trust: double
 
 vars:
   # Latest snapshot the build may read. Later snapshots are ignored, so a pinned build never drifts.

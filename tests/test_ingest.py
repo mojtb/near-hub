@@ -338,6 +338,14 @@ def test_explorer_keeps_a_finished_day_when_a_later_call_fails(tmp_path, monkeyp
     assert ctx.warnings and "2026-10-30" in ctx.warnings[0]
 
 
+def test_block_heights_are_found_before_the_block_sampler_needs_them():
+    from ingest import sources  # noqa: F401
+    from ingest.pipeline import select
+
+    names = [f"{d.source}/{d.name}" for d in select("all", None, None)]
+    assert names.index("rpc/block_day") < names.index("neardata/receiver_sample")
+
+
 def test_rpc_sends_the_fastnear_key_when_there_is_one(monkeypatch):
     from ingest.sources import rpc
 
@@ -349,3 +357,130 @@ def test_rpc_sends_the_fastnear_key_when_there_is_one(monkeypatch):
     monkeypatch.setenv("FASTNEAR_API_KEY", "test-value")
     assert rpc._result(ctx, "https://example.test/rpc", "status", []) == 2
     assert http.session.calls[1][2]["headers"] == {"Authorization": "Bearer test-value"}
+
+
+def _nrr_page(**changes):
+    data = {
+        "updatedAt": "2026-11-02T12:55:58Z",
+        "fundDetails": {"asOfDate": "2026-10-30", "sharesOutstanding": 3220000, "netAssets": 72197954.46,
+                        "stakingMetrics": {"grossStakingRewardRate": 0.05, "netStakingRewardRate": 0.033, "currentPercentageOfAssetsStaked": 0.999, "asOfDate": "2026-10-31"}},
+        "holdings": {"asOfDate": "2026-10-30", "basket": [{"companyName": "NEAR", "shares": 16830051.85}]},
+        "premiumDiscount": {"asOfDate": "2026-10-29", "volume": 326922},
+        "navAndMarketPrice": {"chart": {"nav": [[1790712000000, 26.46], [1793304000000, 22.999999999999993]], "marketPrice": [[1790712000000, 26.15], [1793304000000, 23.03]]}},
+        "wallets": {"updatedAt": "2026-11-02T12:21:52Z", "walletBalances": [{"address": "a" * 64, "balance": 100.5, "active": True}]},
+    }
+    data.update(changes)
+    doc = {"props": {"pageProps": {"fundData": {"data": data}, "marketing": "not a figure"}}}
+    return f'<html><body><h1>Marketing copy</h1><script id="__NEXT_DATA__" type="application/json">{json.dumps(doc)}</script></body></html>'
+
+
+def test_nrr_page_keeps_the_figures_and_cleans_chart_values():
+    from ingest.parsers import nrr_page
+
+    parsed = nrr_page.parse(_nrr_page())
+    assert parsed["as_of"] == "2026-10-30" and parsed["shares_outstanding"] == 3220000
+    assert parsed["nav_chart"] == [{"day": "2026-09-29", "value": 26.46}, {"day": "2026-10-29", "value": 23.0}]
+    assert parsed["wallets"] == [{"address": "a" * 64, "balance": 100.5, "active": True}]
+
+
+@pytest.mark.parametrize("page", [
+    "<html>a redesign without the embedded data</html>",
+    _nrr_page(fundDetails={"asOfDate": "2026-10-30"}),
+    _nrr_page(holdings={"asOfDate": "2026-10-30", "basket": [{"companyName": "Something else", "shares": 1.0}]}),
+    _nrr_page(wallets={"updatedAt": "2026-11-02T12:21:52Z", "walletBalances": []}),
+])
+def test_nrr_page_fails_loudly_when_it_changes(page):
+    from ingest.parsers import nrr_page
+
+    with pytest.raises(ValueError, match="NRR page"):
+        nrr_page.parse(page)
+
+
+def _nrr_context(tmp_path, monkeypatch, replies, snapshot="2026-10-01"):
+    from ingest import sources  # noqa: F401
+    from ingest.sources import etf
+
+    monkeypatch.setattr("ingest.pipeline.STATE", tmp_path)
+    monkeypatch.delenv("FASTNEAR_API_KEY", raising=False)
+    http = client(replies)
+    http.policies["nrretf.com"] = HostPolicy()
+    http.policies["archival-rpc.mainnet.fastnear.com"] = HostPolicy()
+    return etf, Context(snapshot, http, BronzeWriter(snapshot, root=tmp_path / "bronze")), http
+
+
+def test_nrr_figures_save_no_page_and_remember_every_wallet_seen(tmp_path, monkeypatch):
+    etf, ctx, _ = _nrr_context(tmp_path, monkeypatch, [FakeResponse(200, _nrr_page().encode())])
+    ctx.save_state("nrr_fund__wallets", ["b" * 64])
+    etf.nrr_figures(ctx)
+    saved = gzip.decompress((tmp_path / "bronze/nrr_fund/figures/dt=2026-10-01/page.json.gz").read_bytes()).decode()
+    assert "Marketing copy" not in saved and "not a figure" not in saved
+    assert json.loads(saved)["shares_outstanding"] == 3220000
+    assert ctx.load_state("nrr_fund__wallets") == ["a" * 64, "b" * 64]
+
+
+def _pool_reply(*accounts):
+    rows = [{"account_id": a, "staked_balance": str(staked), "unstaked_balance": str(unstaked), "can_withdraw": True} for a, staked, unstaked in accounts]
+    return FakeResponse(200, json.dumps({"result": {"block_height": 1, "result": list(json.dumps(rows).encode())}}).encode())
+
+
+def test_nrr_pool_keeps_the_funds_wallets_and_only_a_total_for_others(tmp_path, monkeypatch):
+    etf, ctx, http = _nrr_context(tmp_path, monkeypatch, [_pool_reply(("fund.near", 5, 2), ("person.near", 10**30, 3), ("other.near", 7, 0))])
+    monkeypatch.setattr(etf, "FIRST_BLOCK_DAY", date(2026, 10, 1))
+    ctx.save_state("nrr_fund__wallets", ["fund.near"])
+    ctx.save_state("rpc__block_day", {"2026-10-01": 500})
+    etf.nrr_pool_daily(ctx)
+    saved = json.loads(gzip.decompress((tmp_path / "bronze/rpc/nrr_pool_daily/dt=2026-10-01/from_2026-09-30.json.gz").read_bytes()))
+    assert saved == [{"closes_day": "2026-09-30", "height": 500, "delegators": 3, "other_delegators_yocto": str(10**30 + 10),
+                      "wallets": [{"account_id": "fund.near", "staked": "5", "unstaked": "2"}]}]
+    assert "person.near" not in json.dumps(saved)
+    params = json.loads(json.dumps(http.session.calls[0][2]["json"]))["params"]
+    assert params["block_id"] == 500 and params["account_id"] == etf.POOL and params["method_name"] == "get_accounts"
+
+
+def test_nrr_pool_reads_every_page_of_delegators(tmp_path, monkeypatch):
+    etf, ctx, http = _nrr_context(tmp_path, monkeypatch, [_pool_reply(("a", 1, 0), ("b", 1, 0)), _pool_reply(("c", 1, 0))])
+    monkeypatch.setattr(etf, "FIRST_BLOCK_DAY", date(2026, 10, 1))
+    monkeypatch.setattr(etf, "ACCOUNTS_PER_CALL", 2)
+    ctx.save_state("nrr_fund__wallets", ["a", "c"])
+    ctx.save_state("rpc__block_day", {"2026-10-01": 500})
+    etf.nrr_pool_daily(ctx)
+    saved = json.loads(gzip.decompress((tmp_path / "bronze/rpc/nrr_pool_daily/dt=2026-10-01/from_2026-09-30.json.gz").read_bytes()))
+    assert saved[0]["delegators"] == 3 and [w["account_id"] for w in saved[0]["wallets"]] == ["a", "c"]
+
+
+def test_nrr_pool_reads_recent_days_again_and_older_days_only_once(tmp_path, monkeypatch):
+    etf, ctx, http = _nrr_context(tmp_path, monkeypatch, [_pool_reply(("fund.near", 1, 0)) for _ in range(4)], snapshot="2026-10-10")
+    monkeypatch.setattr(etf, "FIRST_BLOCK_DAY", date(2026, 10, 1))
+    ctx.save_state("nrr_fund__wallets", ["fund.near"])
+    ctx.save_state("rpc__block_day", {d: 100 + i for i, d in enumerate(["2026-10-01", "2026-10-02", "2026-10-08", "2026-10-09", "2026-10-10"])})
+    ctx.save_state("rpc__nrr_pool_daily", ["2026-10-01", "2026-10-08", "2026-10-09"] + [f"2026-10-0{d}" for d in range(3, 8)])
+    etf.nrr_pool_daily(ctx)
+    read = [json.loads(json.dumps(call[2]["json"]))["params"]["block_id"] for call in http.session.calls]
+    assert read == [101, 102, 103, 104]  # 10-02 was never read; 10-08 to 10-10 are recent; 10-01 and 10-03 to 10-07 are finished
+    assert ctx.warnings == []
+    assert "2026-10-02" in ctx.load_state("rpc__nrr_pool_daily")
+
+
+def test_nrr_pool_warns_when_a_days_height_is_unknown(tmp_path, monkeypatch):
+    etf, ctx, http = _nrr_context(tmp_path, monkeypatch, [])
+    monkeypatch.setattr(etf, "FIRST_BLOCK_DAY", date(2026, 10, 1))
+    ctx.save_state("nrr_fund__wallets", ["fund.near"])
+    ctx.save_state("rpc__block_day", {})
+    etf.nrr_pool_daily(ctx)
+    assert ctx.warnings == ["2026-10-01: no block height known yet"]
+    assert ctx.load_state("rpc__nrr_pool_daily") is None
+
+
+def test_nrr_pool_skips_until_there_is_a_wallet_list(tmp_path, monkeypatch):
+    etf, ctx, _ = _nrr_context(tmp_path, monkeypatch, [])
+    with pytest.raises(Skip):
+        etf.nrr_pool_daily(ctx)
+
+
+def test_block_heights_and_the_wallet_list_come_before_the_pool_read():
+    from ingest import sources  # noqa: F401
+    from ingest.pipeline import select
+
+    names = [f"{d.source}/{d.name}" for d in select("all", None, None)]
+    assert names.index("rpc/block_day") < names.index("rpc/nrr_pool_daily")
+    assert names.index("nrr_fund/figures") < names.index("rpc/nrr_pool_daily")

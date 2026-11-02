@@ -15,7 +15,7 @@ flowchart LR
 | Layer | Where | What it holds | Rule |
 |---|---|---|---|
 | Bronze | `data/bronze/<source>/<dataset>/dt=<date>/<key>.json.gz` | Responses as received | Never edited. Hashes in `data/bronze/_manifest/`. If a response is trimmed, its manifest note says how |
-| Registry | `registry/*.csv` | Reviewed labels: wallets, tokens, peers, events, source terms | Every label has an evidence level and a source URL |
+| Registry | `registry/*.csv` | Reviewed labels: wallets, tokens, peers, events, source terms, ETF flow history | Every label has an evidence level and a source URL |
 | Silver | `warehouse/models/silver/`, schema `silver` | One typed model per dataset, every snapshot kept, with `is_latest` on the newest value per key | Faithful to the source. Units converted, nothing joined |
 | Gold | `warehouse/models/gold/`, schema `gold` | Shared facts and dimensions | One stated grain per table, tested. Every column documented with a unit |
 | Exports | `data/gold/` | Gold as Parquet, CSV for tables up to 5,000 rows, fingerprints, catalog | Rebuilt by `make warehouse` |

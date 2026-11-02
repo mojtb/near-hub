@@ -81,6 +81,17 @@ page_wallets as (
     where snapshot_date = (select max(snapshot_date) from {{ ref('stg_revenue_page__wallets') }})
 ),
 
+etf_chain as (select * from {{ ref('fct_etf_nrr_chain_daily') }}),
+
+etf_holdings as (
+    select date_day, near_in_trust from {{ ref('fct_etf_nrr_daily') }} where near_in_trust is not null order by date_day desc limit 1
+),
+
+etf_reported as (
+    select cumulative_flow_usd, reported_cumulative_usd from {{ ref('fct_etf_nrr_daily') }}
+    where reported_cumulative_usd is not null order by date_day desc limit 1
+),
+
 checks as (
     select 'intents_volume_all_time_defillama_vs_page' as check_id, 'Intents all-time volume, USD' as metric, null as subject,
         'DefiLlama, sum of daily' as source_a, (select sum(volume_usd_defillama) from intents) as value_a,
@@ -223,6 +234,21 @@ checks as (
         'NearBlocks daily balance', balance_near_nearblocks,
         1.0, 'independent'
     from wallet_at_nearblocks_day
+
+    union all select 'etf_nrr_shares_chain_vs_fund', 'Bitwise NEAR ETF shares outstanding', null,
+        'Chain, whole baskets settled', (select arg_max(running_settled_shares, date_day) from etf_chain),
+        'Bitwise page and reports, last known', (select arg_max(shares_outstanding, date_day) from {{ ref('fct_etf_nrr_daily') }} where shares_outstanding is not null),
+        5.0, 'independent'
+
+    union all select 'etf_nrr_near_chain_vs_fund', 'NEAR held by the Bitwise NEAR ETF', null,
+        'Chain, listed wallets in the staking pool', (select arg_max(c.near_in_wallets, c.date_day) from etf_chain c, etf_holdings h where c.date_day <= h.date_day),
+        'Bitwise page, NEAR in trust', (select near_in_trust from etf_holdings),
+        1.0, 'independent'
+
+    union all select 'etf_nrr_cumulative_flow_vs_reported', 'Bitwise NEAR ETF cumulative net inflow, USD', null,
+        'Share changes times NAV', (select cumulative_flow_usd from etf_reported),
+        'SoSoValue, through news reports', (select reported_cumulative_usd from etf_reported),
+        1.0, 'same_upstream'
 )
 
 select

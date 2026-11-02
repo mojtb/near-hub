@@ -303,6 +303,12 @@
   "seconds": 1513.2,
   "status": "ok"
  },
+ "nrr_fund/figures": {
+  "detail": "",
+  "files": 1,
+  "seconds": 0.2,
+  "status": "ok"
+ },
  "oneclick/tokens": {
   "detail": "",
   "files": 1,
@@ -329,56 +335,62 @@
  },
  "rpc/accounts": {
   "detail": "",
-  "files": 1,
-  "seconds": 47.9,
+  "files": 0,
+  "seconds": 7.2,
   "status": "ok"
  },
  "rpc/block_day": {
   "detail": "",
   "files": 1,
-  "seconds": 2793.0,
+  "seconds": 130.6,
   "status": "ok"
  },
  "rpc/contract_views": {
   "detail": "",
-  "files": 16,
-  "seconds": 15.9,
+  "files": 0,
+  "seconds": 2.5,
   "status": "ok"
  },
  "rpc/gas_price": {
   "detail": "",
-  "files": 1,
-  "seconds": 1.0,
+  "files": 0,
+  "seconds": 0.1,
   "status": "ok"
  },
  "rpc/hos_proposals": {
   "detail": "",
+  "files": 0,
+  "seconds": 0.6,
+  "status": "ok"
+ },
+ "rpc/nrr_pool_daily": {
+  "detail": "",
   "files": 1,
-  "seconds": 3.1,
+  "seconds": 4.3,
   "status": "ok"
  },
  "rpc/protocol_config": {
   "detail": "",
-  "files": 1,
-  "seconds": 0.9,
+  "files": 0,
+  "seconds": 0.1,
   "status": "ok"
  },
  "rpc/status": {
   "detail": "",
-  "files": 1,
-  "seconds": 0.2,
+  "files": 0,
+  "seconds": 0.3,
   "status": "ok"
  },
  "rpc/validators_current": {
   "detail": "",
-  "files": 1,
-  "seconds": 1.1,
+  "files": 0,
+  "seconds": 0.2,
   "status": "ok"
  },
  "rpc/validators_epoch": {
   "detail": "",
   "files": 40,
-  "seconds": 101.2,
+  "seconds": 60.0,
   "status": "ok"
  }
 }

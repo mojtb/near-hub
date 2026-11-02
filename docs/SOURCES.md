@@ -14,6 +14,7 @@ This matters more than how many sources agree.
 | The chain, read directly | RPC, archival RPC, Neardata | Independent |
 | The chain, indexed by others | NearBlocks, FastNear | Independent of NEAR's uploads, but each is one company's indexer. Public Intents only. |
 | Markets | CoinMetrics, Coinbase, DefiLlama prices | Independent of the chain |
+| The Bitwise NEAR ETF's own numbers | Bitwise's page, SoSoValue's reported flows | SoSoValue's flows work out to Bitwise's share changes times NAV, so they are not a second opinion. The chain is. |
 
 Confidential Intents appear only in the NEAR family. Nothing here checks them independently, so treat them as self-reported.
 
@@ -95,6 +96,19 @@ No, but it can check part of it and adds detail the dashboard lacks. Figures bel
 - Free access is view-only with no API, so the official fetcher needs a key on a plan or trial with API access. It skips cleanly without one.
 - `near.balances` and `near.circulating_supply` were stale as of the 2026-10 research, and a NEAR data gap ran from 2026-02-28 to 03-19. Check before querying them.
 - The first stored reading, in `dune_public/near_intents_dashboard`, was taken by an AI-driven browser and should be replaced by hand: see `registry/sources.csv`.
+
+### Bitwise NEAR ETF (NRR)
+- [Bitwise's page](https://nrretf.com) embeds the share count, NEAR in trust, daily NAV and market price, and a list of the trust's wallets. It shows only the current share count and no history. Its dates can differ by section, so each figure is stored with its own date.
+- Flow is the change in shares times NAV. SoSoValue's reported flows work out to the same thing: on every day tested, the flow divided by NAV lands on a whole basket of 10,000 shares, the size set in the [prospectus](https://www.sec.gov/Archives/edgar/data/0002067111/000121390026103106/ea0306486-424b3_bitwise.htm).
+- Nearly all of the listed wallets delegate to `bitwise_2.poolv1.near`, and the fund is nearly the whole pool, so one `get_accounts` call at a past block reads its NEAR for that day. Only the listed wallets are stored. Other delegators are people's own wallets, so they are kept as a total.
+- The chain settles about one trading day after the trade and nets orders against each other. For example, +60,000 shares on 10-26 and −200,000 on 10-27 appear on chain as −150,000 on 10-28 and +10,000 on 10-29. So `fct_etf_nrr_daily` answers what traded on a day, and `fct_etf_nrr_chain_daily` answers what reached the chain.
+- Three checks tie these together. Whole baskets settled on chain add up to exactly the fund's share count, chain NEAR is within about 0.2% of the fund's figure, and the seed baskets in the prospectus appear on chain on 2026-09-28. The gap in NEAR may be fees the fund still owes on its rewards; that has not been confirmed.
+- History before the first saved snapshot is in `registry/etf_nrr_history.csv`, with a link and a basis on each row: 13 days use a flow reported by SoSoValue, 4 use the gap between two of its cumulative figures, and 7 use baskets settled on chain the next trading day. Those 7, from 10-01 to 10-09, are estimates: the total through 10-12 is $153,000, or 0.2%, below SoSoValue's. From the first snapshot on, flows come directly from Bitwise's share count.
+- A missed night loses that day's share count for good, and the next reading's flow covers both days. The chain table is unaffected, because a past block can be read later.
+- SoSoValue's own site refuses scripts, so its numbers come by hand from news reports. Those reports contain slips: ChainCatcher printed the 10-23 cumulative figure as $8.82629M and not $88.2629M. A data test holds each reported net-assets figure to shares times NAV.
+- The first pool read is stored in the 2026-11-01 snapshot even though it was read on 2026-11-02. It reads only blocks up to the pin, and past blocks do not change. The manifest's `fetched_at` shows the real date.
+- Bitwise's terms limit copying site content, so only figures and the wallet list are stored, never the page. See `registry/sources.csv` for what this means before going public.
+- Other NEAR products are not tracked: Bitwise's European staking ETP, 21Shares, Virtune, Valour and Grayscale's trust. No daily share count or wallet list was found for them, and their published asset figures were old and did not always agree. One wallet holds 17.9M NEAR in `bitwise_1.poolv1.near` and one holds 10.4M in `svrn_bitwise.poolv1.near`. They could be the European ETP and SVRN, but neither has been confirmed, so neither is counted here.
 
 ## Tried and rejected
 
