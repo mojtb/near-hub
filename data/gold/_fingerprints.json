@@ -26,7 +26,7 @@
  },
  "dim_source": {
   "columns": 7,
-  "hash": "24e756e19f2ecbb9ab3540004dcbdd7b",
+  "hash": "aaa5fded5e32c9a41d2f2c1d08b8aa10",
   "rows": 19
  },
  "dim_token": {
@@ -36,8 +36,8 @@
  },
  "dq_freshness": {
   "columns": 7,
-  "hash": "83f6b3462601125b5e796bf804fc2d09",
-  "rows": 21
+  "hash": "f39373e3172942a465a563bd038b42d4",
+  "rows": 22
  },
  "dq_ingest_runs": {
   "columns": 6,
@@ -104,6 +104,36 @@
   "hash": "22142f482217305a696047251b446484",
   "rows": 4
  },
+ "fct_intents_1click_channel_daily": {
+  "columns": 7,
+  "hash": "empty",
+  "rows": 0
+ },
+ "fct_intents_1click_daily": {
+  "columns": 10,
+  "hash": "empty",
+  "rows": 0
+ },
+ "fct_intents_1click_fee_recipient_daily": {
+  "columns": 4,
+  "hash": "empty",
+  "rows": 0
+ },
+ "fct_intents_1click_pair_daily": {
+  "columns": 10,
+  "hash": "empty",
+  "rows": 0
+ },
+ "fct_intents_1click_route_daily": {
+  "columns": 5,
+  "hash": "empty",
+  "rows": 0
+ },
+ "fct_intents_1click_size_daily": {
+  "columns": 4,
+  "hash": "empty",
+  "rows": 0
+ },
  "fct_intents_asset_daily": {
   "columns": 7,
   "hash": "3e5181a4cd68cc7af91b7f0e5f26e45f",
@@ -128,11 +158,6 @@
   "columns": 6,
   "hash": "37d8543753b3856b56509b0bc2df62a3",
   "rows": 100
- },
- "fct_intents_swaps": {
-  "columns": 10,
-  "hash": "empty",
-  "rows": 0
  },
  "fct_lst_snapshot": {
   "columns": 6,

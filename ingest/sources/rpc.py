@@ -15,7 +15,7 @@ from typing import Any, Dict, List, Optional, Tuple
 
 from ..http import HttpError
 from ..pipeline import Context, Skip, dataset
-from ..settings import BRONZE, read_registry
+from ..settings import BRONZE, read_registry, secret
 from ._common import fetch
 
 SOURCE = "rpc"
@@ -59,9 +59,14 @@ def body(method: str, params: Any) -> Dict[str, Any]:
     return {"jsonrpc": "2.0", "id": "near-thesis", "method": method, "params": params}
 
 
+def _headers() -> Optional[Dict[str, str]]:
+    key = secret("FASTNEAR_API_KEY")
+    return {"Authorization": f"Bearer {key}"} if key else None
+
+
 def _result(ctx: Context, url: str, method: str, params: Any) -> Optional[Any]:
     """Call and return `result`. An RPC-level error, which can arrive as HTTP 200 or 422, returns None."""
-    payload = ctx.http.post(url, body(method, params), ok=(200, 422)).json()
+    payload = ctx.http.post(url, body(method, params), ok=(200, 422), headers=_headers()).json()
     return payload.get("result")
 
 
@@ -150,7 +155,7 @@ def accounts(ctx: Context) -> None:
     for e in read_registry("entities"):
         params = {"request_type": "view_account", "finality": "final", "account_id": e["account_id"]}
         try:
-            payload = ctx.http.post(RPC, body("query", params)).json()
+            payload = ctx.http.post(RPC, body("query", params), headers=_headers()).json()
         except HttpError as err:
             ctx.warn(f"{e['account_id']}: {err}")
             continue

@@ -50,7 +50,7 @@ The strongest checks are the ones that cross families. See [RECONCILIATION.md](R
 ### Archival RPC
 - `block`, `view_account` and `call_function` work at old heights.
 - `validators` by `epoch_id` worked for an epoch in May 2026 and returned `UNKNOWN_EPOCH` for one in October 2024, so validator history is partial.
-- Keyless calls hit HTTP 429 quickly. A FastNear key makes the daily-block backfill much faster.
+- Calls hit HTTP 429 quickly. The free RPC host recognises a FastNear key, but the archival host shows no sign of it, so archival calls keep the keyless pace.
 
 ### Neardata
 - A block is about 265 KB, so raw blocks are counted and thrown away.
@@ -58,8 +58,27 @@ The strongest checks are the ones that cross families. See [RECONCILIATION.md](R
 - Sample results are estimates. `fct_receiver_sample_daily` keeps `blocks_sampled` on every row.
 
 ### Intents Explorer API
-- Covers 1Click swaps only, despite being the track's suggested volume source. For total Intents volume, use `fct_intents_daily`.
-- Pagination follows the last deposit address. This fetcher has not run against the live API yet because it needs a JWT, so expect to adjust it when the key arrives.
+- Covers 1Click swaps only, despite being the track's suggested volume source. On 2026-10-31 that was about 30% of all Intents volume. For total Intents volume, use `fct_intents_daily`.
+- Rows hold users' wallet addresses and run to about 14,000 a day, and raw pages would add about 450 KB per 1,000 rows. So each UTC day is walked once, counted and thrown away, and only the daily tally is stored.
+- The date filter's bounds are exclusive and can reach just past the day, so rows are checked against the day as well. Pagination follows the last row's deposit address and memo.
+- Statuses can still change, so the last 3 days are tallied again each night. Older days fill in newest first, 500 pages a night, because the limit is 1 request per 5 seconds.
+- `appFees` entries are read as basis points of the value paid in. A fee recipient is named only if `registry/entities.csv` lists it; the rest are summed as `(other)`.
+- A 1Click API key adds no market-wide data, so no fetcher uses one. Its quote and status endpoints serve a partner's own swaps, and account history needs a user session and an invitation.
+
+### Can the Explorer replace NEAR's Dune dashboard?
+
+No, but it can check part of it and adds detail the dashboard lacks. Figures below are for 2026-10-29 to 10-31, the first days compared.
+
+| On the dashboard | From the Explorer? | Evidence | Held elsewhere |
+|---|---|---|---|
+| Total volume | Only part | 1Click was 27.9% of all Intents volume | DefiLlama, revenue.near.org |
+| Public volume | Most of it | 1Click was 68.9% of NearBlocks' public volume | NearBlocks |
+| Confidential volume | No | On 10-31, no finished 1Click swap used a confidential route, against $47.42M on the dashboard | Only as all minus public |
+| Total fees | Most of it | 1Click app fees were 80.5% of all fees on the two complete days | DefiLlama, revenue.near.org |
+| Fees by channel | 1Click channels only | SwapKit was 75.5% of 1Click fees, against 73.5% of the dashboard's all-time list | Nowhere else |
+| Volume by asset | Only part | wNEAR: $1.5M paid in on 1Click, $13.6M on the dashboard | NearBlocks, public only |
+| Volume by blockchain | Only part | Chains can be read from asset ids, for 1Click only | NearBlocks, public only |
+| TVL, by asset and by type | No | The Explorer has no balances | DefiLlama, and revenue.near.org for confidential TVL |
 
 ### Dune
 - Everything from Dune is derived from the [NEAR Intents dashboard](https://dune.com/near/near-intents), created by @near, and says so: gold tables carry a `derived_from` column, and each manifest note repeats it. NEAR uploads the data behind the dashboard, so nothing here checks it independently.

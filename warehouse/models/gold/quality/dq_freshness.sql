@@ -7,6 +7,7 @@
     ('stg_nearblocks__intents_volume_by_chain', 'NearBlocks Intents by chain'),
     ('stg_nearblocks__intents_volume_by_asset', 'NearBlocks Intents by asset'),
     ('fct_dune_intents_asset_daily', 'Dune dashboard Intents by asset, read by hand'),
+    ('stg_intents_explorer__days', 'Intents Explorer daily tally'),
     ('stg_nearblocks__contract_txns', 'NearBlocks per-contract daily'),
     ('stg_nearblocks__wallet_balance', 'NearBlocks wallet balances'),
     ('stg_defillama__intents_volume', 'DefiLlama Intents volume'),
