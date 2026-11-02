@@ -5,7 +5,7 @@ series are embedded in the page, so the page is saved as received and parsed sep
 
 The Explorer API (JWT from partners.near-intents.org) covers 1Click swaps only, not all Intents. Its rows
 hold users' wallet addresses and run to about 14,000 a day, so each UTC day is walked once, counted and
-thrown away: only the daily tally is stored. At one request per 5 seconds, history fills in over several nights.
+thrown away: only the daily tally is stored. At one request per 5 seconds, history fills in over many nights.
 """
 from __future__ import annotations
 
@@ -24,8 +24,9 @@ EXPLORER = "https://explorer.near-intents.org"
 REVENUE_PAGE = "https://revenue.near.org/"
 EXPLORER_PAGE_SIZE = 1000
 EXPLORER_RECENT_DAYS = 3  # statuses can still change, so these days are tallied again each night
-EXPLORER_PAGES_PER_RUN = 500  # about 45 minutes at one request per 5.2 s
-EXPLORER_EMPTY_DAYS_TO_STOP = 30  # this many empty days in a row is taken as the start of the history
+EXPLORER_FULL_DAYS = 60  # walked first; after these comes one day a week, then the days between
+EXPLORER_FROM = date(2024, 11, 1)  # before the first volume on NEAR's dashboard
+EXPLORER_PAGES_PER_RUN = 600  # about an hour at one request per 5.6 s
 EXPLORER_MIN_PAIR_USD = 1000.0  # smaller asset pairs on a day are summed into one (other) row
 SIZE_BUCKETS = ((100.0, "under_100"), (1_000.0, "100_to_1k"), (10_000.0, "1k_to_10k"), (100_000.0, "10k_to_100k"), (float("inf"), "100k_and_over"))
 SECONDS_PER_DAY = 86400
@@ -145,38 +146,38 @@ def _walk_day(ctx: Context, day: date, pages_left: int) -> Optional[Tuple[List[d
     return None
 
 
+def explorer_walk_order(today: date) -> List[date]:
+    """The whole history would take over a month of nights, so the thesis gets its full range first: recent days
+    in full, newest first, then one day a week back to the start, then the days between."""
+    days = [today - timedelta(days=n) for n in range(1, (today - EXPLORER_FROM).days + 1)]
+    full, older = days[:EXPLORER_FULL_DAYS], days[EXPLORER_FULL_DAYS:]
+    return full + [d for d in older if d.toordinal() % 7 == 0] + [d for d in older if d.toordinal() % 7 != 0]
+
+
 @dataset("intents_explorer", "daily_tally", requires=("INTENTS_EXPLORER_JWT",))
 def explorer_daily_tally(ctx: Context) -> None:
-    """Recent days again each night, then older days newest first, until the page budget runs out."""
-    state = ctx.load_state("intents_explorer__daily_tally", {"days": {}, "history_starts": None})
+    """Recent days again each night, then days not yet tallied, until the page budget runs out."""
+    state = ctx.load_state("intents_explorer__daily_tally", {"days": {}})
     known = {e["account_id"] for e in read_registry("entities")}
     today = date.fromisoformat(ctx.snapshot)
-    floor = date.fromisoformat(state["history_starts"]) if state["history_starts"] else None
     pages_left = EXPLORER_PAGES_PER_RUN
-    empty_run = 0
-    day = today - timedelta(days=1)
-    while floor is None or day >= floor:
+    for day in explorer_walk_order(today):
         key = day.isoformat()
-        if key not in state["days"] or (today - day).days <= EXPLORER_RECENT_DAYS:
-            try:
-                walked = _walk_day(ctx, day, pages_left)
-            except HttpError as e:
-                ctx.warn(f"{key}: {e}")
-                break
-            if walked is None:
-                break
-            rows, pages = walked
-            pages_left -= pages
-            if rows:
-                ctx.bronze.save_json("intents_explorer", "daily_tally", key, tally_day(day, rows, pages, known),
-                                     url=f"{EXPLORER}/api/v0/transactions", params={"day": key, "pages": pages}, rows=len(rows),
-                                     note="assembled: counted from this UTC day's rows; no row or wallet address is kept")
-                ctx.bronze.flush()
-            state["days"][key] = len(rows)
-            ctx.save_state("intents_explorer__daily_tally", state)
-        empty_run = empty_run + 1 if state["days"][key] == 0 else 0
-        if floor is None and empty_run >= EXPLORER_EMPTY_DAYS_TO_STOP:
-            state["history_starts"] = (day + timedelta(days=empty_run)).isoformat()
-            ctx.save_state("intents_explorer__daily_tally", state)
+        if key in state["days"] and (today - day).days > EXPLORER_RECENT_DAYS:
+            continue
+        try:
+            walked = _walk_day(ctx, day, pages_left)
+        except HttpError as e:
+            ctx.warn(f"{key}: {e}")
             break
-        day -= timedelta(days=1)
+        if walked is None:
+            break
+        rows, pages = walked
+        pages_left -= pages
+        if rows:
+            ctx.bronze.save_json("intents_explorer", "daily_tally", key, tally_day(day, rows, pages, known),
+                                 url=f"{EXPLORER}/api/v0/transactions", params={"day": key, "pages": pages}, rows=len(rows),
+                                 note="assembled: counted from this UTC day's rows; no row or wallet address is kept")
+            ctx.bronze.flush()
+        state["days"][key] = len(rows)
+        ctx.save_state("intents_explorer__daily_tally", state)

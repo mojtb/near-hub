@@ -515,7 +515,7 @@ Derived from NEAR's Intents dashboard on Dune: every row of every widget read by
 
 ### fct_intents_1click_daily
 
-1Click per UTC day, from the Intents Explorer API. 1Click is one route into NEAR Intents, so its volume is part of the total in fct_intents_daily. Tallied per day, with no row or wallet address stored. Empty until INTENTS_EXPLORER_JWT is set and a snapshot is in the build.
+1Click per UTC day, from the Intents Explorer API. 1Click is one route into NEAR Intents, so its volume is part of the total in fct_intents_daily. Tallied per day, with no row or wallet address stored. History arrives out of order, so check which days are present before summing. Empty until INTENTS_EXPLORER_JWT is set and a snapshot is in the build.
 
 - **Grain:** date_day
 - **Sources:** Intents Explorer API

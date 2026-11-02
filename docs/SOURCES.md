@@ -61,7 +61,8 @@ The strongest checks are the ones that cross families. See [RECONCILIATION.md](R
 - Covers 1Click swaps only, despite being the track's suggested volume source. On 2026-10-31 that was about 30% of all Intents volume. For total Intents volume, use `fct_intents_daily`.
 - Rows hold users' wallet addresses and run to about 14,000 a day, and raw pages would add about 450 KB per 1,000 rows. So each UTC day is walked once, counted and thrown away, and only the daily tally is stored.
 - The date filter's bounds are exclusive and can reach just past the day, so rows are checked against the day as well. Pagination follows the last row's deposit address and memo.
-- Statuses can still change, so the last 3 days are tallied again each night. Older days fill in newest first, 500 pages a night, because the limit is 1 request per 5 seconds.
+- Statuses can still change, so the last 3 days are tallied again each night.
+- The limit is 1 request per 5 seconds, and the last year alone is roughly 16,000 pages. So history arrives in this order, at 600 pages a night: the last 60 days in full, then one day a week back to 2024-11, then the days between. Check which days are present before summing.
 - `appFees` entries are read as basis points of the value paid in. A fee recipient is named only if `registry/entities.csv` lists it; the rest are summed as `(other)`.
 - A 1Click API key adds no market-wide data, so no fetcher uses one. Its quote and status endpoints serve a partner's own swaps, and account history needs a user session and an invitation.
 
