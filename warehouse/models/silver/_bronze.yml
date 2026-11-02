@@ -74,4 +74,4 @@ sources:
       - {name: dune__query_results, identifier: dune/query_results, description: "Latest stored results of public Dune queries, through the official API."}
       - {name: dune_public__near_intents_dashboard, identifier: dune_public/near_intents_dashboard, description: "Dated readings of the public NEAR Intents dashboard page."}
       - {name: dune_public__query_results, identifier: dune_public/query_results, description: "Widget responses from the public NEAR Intents dashboard, read by hand and saved exactly as received."}
-      - {name: intents_explorer__transactions, identifier: intents_explorer/transactions, description: "1Click swaps from the Intents Explorer API."}
+      - {name: intents_explorer__daily_tally, identifier: intents_explorer/daily_tally, description: "1Click swaps counted per UTC day from the Intents Explorer API, with no row or wallet address kept."}

@@ -62,9 +62,9 @@ def default_policies() -> Dict[str, HostPolicy]:
         "tx.main.fastnear.com": HostPolicy(fastnear, base_backoff=fastnear_backoff),
         "transfers.main.fastnear.com": HostPolicy(fastnear, base_backoff=fastnear_backoff),
         "free.rpc.fastnear.com": HostPolicy(0.15 if secret("FASTNEAR_API_KEY") else 1.0, base_backoff=20.0),
-        "archival-rpc.mainnet.fastnear.com": HostPolicy(0.15 if secret("FASTNEAR_API_KEY") else 1.5, base_backoff=20.0),
+        "archival-rpc.mainnet.fastnear.com": HostPolicy(1.5, base_backoff=20.0),  # shows no sign of reading a key, so the keyless pace stays
         "mainnet.neardata.xyz": HostPolicy(1.0, base_backoff=30.0),  # published: 180 per minute per IP; 429s came sooner
-        "explorer.near-intents.org": HostPolicy(5.2, base_backoff=30.0),  # published: 1 per 5 s per partner
+        "explorer.near-intents.org": HostPolicy(5.6, base_backoff=30.0),  # published: 1 per 5 s per partner; 5.2 s still drew some 429s
         "api.exchange.coinbase.com": HostPolicy(0.5),
         "community-api.coinmetrics.io": HostPolicy(6.5, base_backoff=30.0),  # published: 10 per 6 s per IP
         "api.llama.fi": HostPolicy(0.5),

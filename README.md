@@ -28,7 +28,7 @@ These lines are generated from the warehouse, and `make verify` fails if they st
 
 <!-- expected:start -->
 - Data through: **2026-11-01**
-- Gold tables and columns: **54** and **489**
+- Gold tables and columns: **59** and **519**
 - Reconciliation: **34** comparisons agree, **4** differ, each with a written explanation
 - Issuance over the last 30 days, from supply change plus burn: **2.49%** a year, against **2.50%** in the protocol config
 - Captured Intents revenue, all time: **$9.29M** per DefiLlama, **$9.28M** rebuilt from wallet transfers
@@ -42,7 +42,7 @@ These lines are generated from the warehouse, and `make verify` fails if they st
 | Area | Main tables in `gold` | Main sources |
 |---|---|---|
 | Chain usage, supply | `fct_chain_daily`, `fct_supply_daily`, `fct_protocol_config`, `fct_contract_daily`, `fct_receiver_sample_daily` | NearBlocks, archival RPC, Neardata |
-| NEAR Intents, revenue | `fct_intents_daily`, `fct_intents_chain_daily`, `fct_intents_asset_daily`, `fct_intents_fee_channels`, `fct_dune_intents_asset_daily`, `fct_dune_dashboard_results`, `fct_revenue_capture` | DefiLlama, NearBlocks, revenue.near.org, NEAR's dashboard on Dune |
+| NEAR Intents, revenue | `fct_intents_daily`, `fct_intents_chain_daily`, `fct_intents_asset_daily`, `fct_intents_fee_channels`, `fct_dune_intents_asset_daily`, `fct_dune_dashboard_results`, `fct_intents_1click_daily`, `fct_intents_1click_channel_daily`, `fct_revenue_capture` | DefiLlama, NearBlocks, revenue.near.org, NEAR's dashboard on Dune, Intents Explorer API |
 | Wallets | `fct_wallet_transfers`, `fct_wallet_counterparties`, `fct_revenue_inflows_daily`, `fct_wallet_balance_daily`, `fct_wallet_holdings`, `fct_token_holders`, `dim_entity` | FastNear, RPC |
 | Security, staking | `fct_validator_summary`, `fct_chain_signatures_daily`, `fct_mpc_state`, `fct_lst_snapshot` | RPC, NearBlocks |
 | Capital, DeFi | `fct_protocol_tvl_daily`, `fct_protocol_fees_snapshot`, `fct_stablecoin_assets`, `fct_yield_pools` | DefiLlama |

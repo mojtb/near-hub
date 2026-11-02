@@ -19,9 +19,10 @@ DOCS = ROOT / "docs"
 AREAS = [
     ("Calendar and registry", ["dim_date", "dim_entity", "dim_token", "dim_event", "dim_block_day", "dim_protocol", "dim_source"]),
     ("Chain usage, supply and parameters", ["fct_chain_daily", "fct_supply_daily", "fct_protocol_config", "fct_contract_daily", "fct_receiver_sample_daily"]),
-    ("NEAR Intents and revenue", ["fct_intents_daily", "fct_intents_chain_daily", "fct_intents_asset_daily", "fct_intents_swaps", "fct_intents_fee_channels",
+    ("NEAR Intents and revenue", ["fct_intents_daily", "fct_intents_chain_daily", "fct_intents_asset_daily", "fct_intents_fee_channels",
                                   "fct_intents_dashboard_readings", "fct_dune_intents_asset_daily", "fct_dune_dashboard_results",
-                                  "fct_revenue_capture", "fct_revenue_page_emissions", "fct_revenue_page_monthly"]),
+                                  "fct_intents_1click_daily", "fct_intents_1click_channel_daily", "fct_intents_1click_pair_daily", "fct_intents_1click_route_daily", "fct_intents_1click_size_daily",
+                                  "fct_intents_1click_fee_recipient_daily", "fct_revenue_capture", "fct_revenue_page_emissions", "fct_revenue_page_monthly"]),
     ("Wallets", ["fct_wallet_transfers", "fct_wallet_flows_daily", "fct_wallet_counterparties", "fct_revenue_inflows_daily", "fct_wallet_balance_daily", "fct_wallet_holdings", "fct_token_holders"]),
     ("Security and staking", ["fct_validator_epoch", "fct_validator_summary", "fct_chain_signatures_daily", "fct_mpc_state", "fct_mpc_participants", "fct_mpc_operators", "fct_lst_snapshot"]),
     ("Capital and DeFi", ["fct_protocol_tvl_daily", "fct_protocol_fees_snapshot", "fct_stablecoin_assets", "fct_yield_pools"]),

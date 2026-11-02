@@ -4,6 +4,7 @@ from __future__ import annotations
 import gzip
 import hashlib
 import json
+from datetime import date
 from pathlib import Path
 
 import pytest
@@ -233,26 +234,101 @@ def test_rpc_error_as_http_422_means_no_result():
     assert _existing_header(ctx, 11)["height"] == 12
 
 
-def _swap(ts, address):
-    return {"createdAtTimestamp": ts, "depositAddress": address, "depositMemo": None}
+DAY_START = 1793404800  # 2026-10-31 00:00:00 UTC
 
 
-def test_explorer_walks_new_swaps_then_backfill(tmp_path, monkeypatch):
+def _swap(ts, address, status="SUCCESS", amount=100.0, referral="swapkit", fee=50, recipient="partner.near", origin="in", destination="out"):
+    return {"createdAtTimestamp": ts, "depositAddress": address, "depositMemo": None, "depositAddressAndMemo": address, "status": status,
+            "referral": referral, "originAsset": origin, "destinationAsset": destination, "amountInUsd": str(amount), "amountOutUsd": str(amount * 0.99),
+            "appFees": [{"recipient": recipient, "fee": fee}], "senders": [f"sender-{address}"], "recipient": f"recipient-{address}",
+            "depositType": "ORIGIN_CHAIN", "recipientType": "DESTINATION_CHAIN"}
+
+
+def _explorer_context(tmp_path, monkeypatch, pages, snapshot="2026-11-01"):
     from ingest import sources  # noqa: F401
     from ingest.sources import intents
 
     monkeypatch.setattr("ingest.pipeline.STATE", tmp_path)
     monkeypatch.setattr(intents, "EXPLORER_PAGE_SIZE", 2)
     monkeypatch.setenv("INTENTS_EXPLORER_JWT", "test-value")
-    pages = [json.dumps([_swap(100, "a"), _swap(90, "b")]).encode(),
-             json.dumps([_swap(80, "c")]).encode()]
-    http = client([FakeResponse(200, p) for p in pages])
+    http = client([FakeResponse(200, json.dumps(p).encode()) for p in pages])
     http.policies["explorer.near-intents.org"] = HostPolicy()
-    writer = BronzeWriter("2026-11-01", root=tmp_path / "bronze")
-    ctx = Context("2026-11-01", http, writer)
-    intents.explorer_transactions(ctx)
-    state = ctx.load_state("intents_explorer__transactions")
-    assert state["newest_seen"] == 100
-    assert state["backfill_done"] is True
-    assert state["pages"] == 2
-    assert http.session.calls[1][2]["params"]["lastDepositAddress"] == "b"
+    return intents, Context(snapshot, http, BronzeWriter(snapshot, root=tmp_path / "bronze")), http
+
+
+def test_explorer_tally_keeps_totals_and_no_wallet_address():
+    from ingest.sources import intents
+
+    rows = [_swap(1, "a", amount=2000.0), _swap(2, "b", amount=500.0, fee=20, recipient="buybacks.multisignature.near"),
+            _swap(3, "c", status="REFUNDED", amount=300.0), _swap(4, "d", amount=50.0, referral=None, origin="tiny")]
+    tally = intents.tally_day(date(2026, 10, 31), rows, 1, {"buybacks.multisignature.near"})
+    assert tally["swaps"] == 4 and tally["senders"] == 3 and tally["recipients"] == 3
+    swapkit = next(c for c in tally["channels"] if c["referral"] == "swapkit" and c["status"] == "SUCCESS")
+    assert swapkit["swaps"] == 2 and swapkit["amount_in_usd"] == 2500.0 and swapkit["app_fee_usd"] == pytest.approx(11.0)
+    assert {c["status"] for c in tally["channels"]} == {"SUCCESS", "REFUNDED"}
+    assert {p["origin_asset"]: p["amount_in_usd"] for p in tally["pairs"]} == {"in": 2500.0, "(other)": 50.0}
+    assert {s["bucket"]: s["swaps"] for s in tally["sizes"]} == {"1k_to_10k": 1, "100_to_1k": 1, "under_100": 1}
+    assert tally["routes"] == [{"deposit_type": "ORIGIN_CHAIN", "recipient_type": "DESTINATION_CHAIN", "swaps": 3, "amount_in_usd": 2550.0}]
+    assert {r["recipient"]: r["fee_usd"] for r in tally["fee_recipients"]} == {"buybacks.multisignature.near": pytest.approx(1.0), "(other)": pytest.approx(10.25)}
+    text = json.dumps(tally)
+    assert not any(secret_part in text for secret_part in ("sender-", "recipient-", "partner.near"))
+
+
+def test_explorer_walks_each_day_and_stops_at_the_page_budget(tmp_path, monkeypatch):
+    previous = DAY_START - 86400
+    pages = [[_swap(DAY_START + 9, "a"), _swap(DAY_START + 8, "b")],
+             [_swap(DAY_START + 7, "c"), _swap(DAY_START - 1, "outside")],
+             [],
+             [_swap(previous + 5, "d")],
+             ]
+    intents, ctx, http = _explorer_context(tmp_path, monkeypatch, pages)
+    monkeypatch.setattr(intents, "EXPLORER_PAGES_PER_RUN", 4)
+    intents.explorer_daily_tally(ctx)
+    state = ctx.load_state("intents_explorer__daily_tally")
+    assert state["days"] == {"2026-10-31": 3, "2026-10-30": 1}
+    first, second = http.session.calls[0][2]["params"], http.session.calls[1][2]["params"]
+    assert first["startTimestampUnix"] == DAY_START - 1 and first["endTimestampUnix"] == DAY_START + 86400
+    assert second["lastDepositAddress"] == "b" and "lastDepositMemo" not in second
+    saved = json.loads(gzip.decompress((tmp_path / "bronze/intents_explorer/daily_tally/dt=2026-11-01/2026-10-31.json.gz").read_bytes()))
+    assert saved["swaps"] == 3 and saved["pages"] == 3
+    assert len(http.session.calls) == 4
+
+
+def test_explorer_repeats_recent_days_and_skips_finished_older_ones(tmp_path, monkeypatch):
+    intents, ctx, http = _explorer_context(tmp_path, monkeypatch, [[_swap(DAY_START + 1, "a")], [_swap(DAY_START - 86400 * 2 + 1, "b")]])
+    monkeypatch.setattr(intents, "EXPLORER_RECENT_DAYS", 1)
+    monkeypatch.setattr(intents, "EXPLORER_PAGES_PER_RUN", 2)
+    ctx.save_state("intents_explorer__daily_tally", {"days": {"2026-10-31": 5, "2026-10-30": 5}, "history_starts": None})
+    intents.explorer_daily_tally(ctx)
+    state = ctx.load_state("intents_explorer__daily_tally")
+    assert state["days"] == {"2026-10-31": 1, "2026-10-30": 5, "2026-10-29": 1}
+
+
+def test_explorer_finds_where_history_starts_and_stays_above_it(tmp_path, monkeypatch):
+    intents, ctx, http = _explorer_context(tmp_path, monkeypatch, [[_swap(DAY_START + 1, "a")], [], []])
+    monkeypatch.setattr(intents, "EXPLORER_EMPTY_DAYS_TO_STOP", 2)
+    intents.explorer_daily_tally(ctx)
+    assert ctx.load_state("intents_explorer__daily_tally")["history_starts"] == "2026-10-31"
+    assert len(http.session.calls) == 3
+    assert not (tmp_path / "bronze/intents_explorer/daily_tally/dt=2026-11-01/2026-10-30.json.gz").exists()
+
+
+def test_explorer_keeps_a_finished_day_when_a_later_call_fails(tmp_path, monkeypatch):
+    intents, ctx, http = _explorer_context(tmp_path, monkeypatch, [[_swap(DAY_START + 1, "a")]])
+    http.session.replies.append(FakeResponse(400, b"bad request"))
+    intents.explorer_daily_tally(ctx)
+    assert ctx.load_state("intents_explorer__daily_tally")["days"] == {"2026-10-31": 1}
+    assert ctx.warnings and "2026-10-30" in ctx.warnings[0]
+
+
+def test_rpc_sends_the_fastnear_key_when_there_is_one(monkeypatch):
+    from ingest.sources import rpc
+
+    http = client([FakeResponse(200, b'{"result": 1}'), FakeResponse(200, b'{"result": 2}')])
+    ctx = Context("2026-11-01", http, None)
+    monkeypatch.delenv("FASTNEAR_API_KEY", raising=False)
+    assert rpc._result(ctx, "https://example.test/rpc", "status", []) == 1
+    assert not http.session.calls[0][2].get("headers")
+    monkeypatch.setenv("FASTNEAR_API_KEY", "test-value")
+    assert rpc._result(ctx, "https://example.test/rpc", "status", []) == 2
+    assert http.session.calls[1][2]["headers"] == {"Authorization": "Bearer test-value"}

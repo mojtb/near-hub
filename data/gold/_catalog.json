@@ -1204,79 +1204,6 @@
  },
  {
   "area": "NEAR Intents and revenue",
-  "table": "fct_intents_swaps",
-  "description": "One row per 1Click swap. Covers 1Click only, not all Intents. Empty until INTENTS_EXPLORER_JWT is set.",
-  "grain": "deposit_address, deposit_memo, created_at_unix",
-  "sources": "Intents Explorer API",
-  "path": "data/gold/fct_intents_swaps.parquet",
-  "columns": [
-   {
-    "name": "date_day",
-    "type": "DATE",
-    "unit": "date",
-    "description": "UTC calendar day."
-   },
-   {
-    "name": "created_at_unix",
-    "type": "BIGINT",
-    "unit": "unix seconds",
-    "description": "Swap creation time."
-   },
-   {
-    "name": "deposit_address",
-    "type": "VARCHAR",
-    "unit": "address",
-    "description": "1Click deposit address."
-   },
-   {
-    "name": "deposit_memo",
-    "type": "VARCHAR",
-    "unit": "text",
-    "description": "Deposit memo, where the route uses one."
-   },
-   {
-    "name": "origin_asset",
-    "type": "VARCHAR",
-    "unit": "asset id",
-    "description": "Asset paid in."
-   },
-   {
-    "name": "destination_asset",
-    "type": "VARCHAR",
-    "unit": "asset id",
-    "description": "Asset paid out."
-   },
-   {
-    "name": "status",
-    "type": "VARCHAR",
-    "unit": "text",
-    "description": "Swap status per the Explorer API."
-   },
-   {
-    "name": "referral",
-    "type": "VARCHAR",
-    "unit": "text",
-    "description": "Front-end or partner that sent the swap."
-   },
-   {
-    "name": "amount_in_usd",
-    "type": "DOUBLE",
-    "unit": "USD",
-    "description": "Value paid in."
-   },
-   {
-    "name": "amount_out_usd",
-    "type": "DOUBLE",
-    "unit": "USD",
-    "description": "Value paid out."
-   }
-  ],
-  "rows": 0,
-  "first": null,
-  "last": null
- },
- {
-  "area": "NEAR Intents and revenue",
   "table": "fct_intents_fee_channels",
   "description": "Derived from NEAR's Intents dashboard on Dune: all-time gross fees per referral channel. NEAR uploads the data behind it, and the page lists only the top 100 channels.",
   "grain": "snapshot_date, referral",
@@ -1494,6 +1421,324 @@
   "rows": 2541,
   "first": "2026-11-01",
   "last": "2026-11-01"
+ },
+ {
+  "area": "NEAR Intents and revenue",
+  "table": "fct_intents_1click_daily",
+  "description": "1Click per UTC day, from the Intents Explorer API. 1Click is one route into NEAR Intents, so its volume is part of the total in fct_intents_daily. Tallied per day, with no row or wallet address stored. Empty until INTENTS_EXPLORER_JWT is set and a snapshot is in the build.",
+  "grain": "date_day",
+  "sources": "Intents Explorer API",
+  "path": "data/gold/fct_intents_1click_daily.parquet",
+  "columns": [
+   {
+    "name": "date_day",
+    "type": "DATE",
+    "unit": "date",
+    "description": "UTC calendar day."
+   },
+   {
+    "name": "swaps",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "Swaps created that day, in every status."
+   },
+   {
+    "name": "finished_swaps",
+    "type": "HUGEINT",
+    "unit": "count",
+    "description": "Swaps with status SUCCESS."
+   },
+   {
+    "name": "refunded_swaps",
+    "type": "HUGEINT",
+    "unit": "count",
+    "description": "Swaps with status REFUNDED."
+   },
+   {
+    "name": "volume_usd",
+    "type": "DOUBLE",
+    "unit": "USD",
+    "description": "Value paid in on finished swaps."
+   },
+   {
+    "name": "amount_out_usd",
+    "type": "DOUBLE",
+    "unit": "USD",
+    "description": "Value paid out on finished swaps."
+   },
+   {
+    "name": "app_fees_usd",
+    "type": "DOUBLE",
+    "unit": "USD",
+    "description": "App fees on finished swaps: appFees read as basis points of the value paid in."
+   },
+   {
+    "name": "senders",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "Distinct sending wallets on finished swaps. Only the count is stored."
+   },
+   {
+    "name": "recipients",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "Distinct receiving wallets on finished swaps. Only the count is stored."
+   },
+   {
+    "name": "share_of_all_intents_volume",
+    "type": "DOUBLE",
+    "unit": "fraction",
+    "description": "volume_usd divided by DefiLlama's volume for all of Intents that day."
+   }
+  ],
+  "rows": 0,
+  "first": null,
+  "last": null
+ },
+ {
+  "area": "NEAR Intents and revenue",
+  "table": "fct_intents_1click_channel_daily",
+  "description": "1Click volume and app fees per UTC day, referral channel and status, from the Intents Explorer API. Empty until a snapshot with INTENTS_EXPLORER_JWT is in the build.",
+  "grain": "date_day, referral, status",
+  "sources": "Intents Explorer API",
+  "path": "data/gold/fct_intents_1click_channel_daily.parquet",
+  "columns": [
+   {
+    "name": "date_day",
+    "type": "DATE",
+    "unit": "date",
+    "description": "UTC calendar day."
+   },
+   {
+    "name": "referral",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "Front-end or partner that sent the swap, or (none)."
+   },
+   {
+    "name": "status",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "Swap status per the Explorer API."
+   },
+   {
+    "name": "swaps",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "Swaps."
+   },
+   {
+    "name": "amount_in_usd",
+    "type": "DOUBLE",
+    "unit": "USD",
+    "description": "Value paid in."
+   },
+   {
+    "name": "amount_out_usd",
+    "type": "DOUBLE",
+    "unit": "USD",
+    "description": "Value paid out."
+   },
+   {
+    "name": "app_fee_usd",
+    "type": "DOUBLE",
+    "unit": "USD",
+    "description": "App fees: appFees read as basis points of the value paid in."
+   }
+  ],
+  "rows": 0,
+  "first": null,
+  "last": null
+ },
+ {
+  "area": "NEAR Intents and revenue",
+  "table": "fct_intents_1click_pair_daily",
+  "description": "Finished 1Click swaps per UTC day and asset pair, from the Intents Explorer API. Pairs under $1,000 on a day are summed into one (other) row, so each day's total stays right.",
+  "grain": "date_day, origin_asset, destination_asset",
+  "sources": "Intents Explorer API",
+  "path": "data/gold/fct_intents_1click_pair_daily.parquet",
+  "columns": [
+   {
+    "name": "date_day",
+    "type": "DATE",
+    "unit": "date",
+    "description": "UTC calendar day."
+   },
+   {
+    "name": "origin_asset",
+    "type": "VARCHAR",
+    "unit": "asset id",
+    "description": "Asset paid in, or (other)."
+   },
+   {
+    "name": "origin_symbol",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "Symbol of the asset paid in, per the 1Click token list."
+   },
+   {
+    "name": "origin_blockchain",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "Chain of the asset paid in, per the 1Click token list."
+   },
+   {
+    "name": "destination_asset",
+    "type": "VARCHAR",
+    "unit": "asset id",
+    "description": "Asset paid out, or (other)."
+   },
+   {
+    "name": "destination_symbol",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "Symbol of the asset paid out, per the 1Click token list."
+   },
+   {
+    "name": "destination_blockchain",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "Chain of the asset paid out, per the 1Click token list."
+   },
+   {
+    "name": "swaps",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "Finished swaps."
+   },
+   {
+    "name": "amount_in_usd",
+    "type": "DOUBLE",
+    "unit": "USD",
+    "description": "Value paid in."
+   },
+   {
+    "name": "amount_out_usd",
+    "type": "DOUBLE",
+    "unit": "USD",
+    "description": "Value paid out."
+   }
+  ],
+  "rows": 0,
+  "first": null,
+  "last": null
+ },
+ {
+  "area": "NEAR Intents and revenue",
+  "table": "fct_intents_1click_route_daily",
+  "description": "Finished 1Click swaps per UTC day, by how funds came in and went out, from the Intents Explorer API.",
+  "grain": "date_day, deposit_type, recipient_type",
+  "sources": "Intents Explorer API",
+  "path": "data/gold/fct_intents_1click_route_daily.parquet",
+  "columns": [
+   {
+    "name": "date_day",
+    "type": "DATE",
+    "unit": "date",
+    "description": "UTC calendar day."
+   },
+   {
+    "name": "deposit_type",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "How funds came in: ORIGIN_CHAIN, INTENTS or CONFIDENTIAL_INTENTS."
+   },
+   {
+    "name": "recipient_type",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "How funds went out: DESTINATION_CHAIN, INTENTS or CONFIDENTIAL_INTENTS."
+   },
+   {
+    "name": "swaps",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "Finished swaps."
+   },
+   {
+    "name": "amount_in_usd",
+    "type": "DOUBLE",
+    "unit": "USD",
+    "description": "Value paid in."
+   }
+  ],
+  "rows": 0,
+  "first": null,
+  "last": null
+ },
+ {
+  "area": "NEAR Intents and revenue",
+  "table": "fct_intents_1click_size_daily",
+  "description": "Finished 1Click swaps per UTC day and size band, from the Intents Explorer API.",
+  "grain": "date_day, size_band",
+  "sources": "Intents Explorer API",
+  "path": "data/gold/fct_intents_1click_size_daily.parquet",
+  "columns": [
+   {
+    "name": "date_day",
+    "type": "DATE",
+    "unit": "date",
+    "description": "UTC calendar day."
+   },
+   {
+    "name": "size_band",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "Value paid in, in USD: under_100, 100_to_1k, 1k_to_10k, 10k_to_100k or 100k_and_over."
+   },
+   {
+    "name": "swaps",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "Finished swaps."
+   },
+   {
+    "name": "amount_in_usd",
+    "type": "DOUBLE",
+    "unit": "USD",
+    "description": "Value paid in."
+   }
+  ],
+  "rows": 0,
+  "first": null,
+  "last": null
+ },
+ {
+  "area": "NEAR Intents and revenue",
+  "table": "fct_intents_1click_fee_recipient_daily",
+  "description": "App fees on finished 1Click swaps per UTC day and recipient, from the Intents Explorer API. A recipient is named only if registry/entities.csv lists it; every other recipient is summed into (other).",
+  "grain": "date_day, recipient",
+  "sources": "Intents Explorer API",
+  "path": "data/gold/fct_intents_1click_fee_recipient_daily.parquet",
+  "columns": [
+   {
+    "name": "date_day",
+    "type": "DATE",
+    "unit": "date",
+    "description": "UTC calendar day."
+   },
+   {
+    "name": "recipient",
+    "type": "VARCHAR",
+    "unit": "account id",
+    "description": "Registry account paid the fee, or (other)."
+   },
+   {
+    "name": "entries",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "Fee entries paid to this recipient."
+   },
+   {
+    "name": "fee_usd",
+    "type": "DOUBLE",
+    "unit": "USD",
+    "description": "Fees: appFees read as basis points of the value paid in."
+   }
+  ],
+  "rows": 0,
+  "first": null,
+  "last": null
  },
  {
   "area": "NEAR Intents and revenue",
@@ -3442,7 +3687,7 @@
     "description": "Rows across all snapshots."
    }
   ],
-  "rows": 21,
+  "rows": 22,
   "first": null,
   "last": null
  },

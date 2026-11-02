@@ -367,23 +367,88 @@ models:
       - {name: share_of_listed_fees, description: "Share of the fees across listed channels.", meta: {unit: "fraction"}}
       - {name: channel_rank, description: "Rank by fees, largest first.", meta: {unit: "integer"}}
       - {name: derived_from, description: "Credit to the dashboard and its creator.", meta: {unit: "text"}, data_tests: [not_null]}
-  - name: fct_intents_swaps
-    description: "One row per 1Click swap. Covers 1Click only, not all Intents. Empty until INTENTS_EXPLORER_JWT is set."
+  - name: fct_intents_1click_daily
+    description: "1Click per UTC day, from the Intents Explorer API. 1Click is one route into NEAR Intents, so its volume is part of the total in fct_intents_daily. Tallied per day, with no row or wallet address stored. Empty until INTENTS_EXPLORER_JWT is set and a snapshot is in the build."
     config:
-      meta: {grain: "deposit_address, deposit_memo, created_at_unix", sources: "Intents Explorer API"}
+      meta: {grain: "date_day", sources: "Intents Explorer API"}
     data_tests:
-      - unique_grain: {arguments: {columns: ["deposit_address", "deposit_memo", "created_at_unix"]}}
+      - unique_grain: {arguments: {columns: ["date_day"]}}
     columns:
-      - {name: date_day, description: "UTC calendar day.", meta: {unit: "date"}}
-      - {name: created_at_unix, description: "Swap creation time.", meta: {unit: "unix seconds"}, data_tests: [not_null]}
-      - {name: deposit_address, description: "1Click deposit address.", meta: {unit: "address"}, data_tests: [not_null]}
-      - {name: deposit_memo, description: "Deposit memo, where the route uses one.", meta: {unit: "text"}}
-      - {name: origin_asset, description: "Asset paid in.", meta: {unit: "asset id"}}
-      - {name: destination_asset, description: "Asset paid out.", meta: {unit: "asset id"}}
+      - {name: date_day, description: "UTC calendar day.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: swaps, description: "Swaps created that day, in every status.", meta: {unit: "count"}}
+      - {name: finished_swaps, description: "Swaps with status SUCCESS.", meta: {unit: "count"}}
+      - {name: refunded_swaps, description: "Swaps with status REFUNDED.", meta: {unit: "count"}}
+      - {name: volume_usd, description: "Value paid in on finished swaps.", meta: {unit: "USD"}}
+      - {name: amount_out_usd, description: "Value paid out on finished swaps.", meta: {unit: "USD"}}
+      - {name: app_fees_usd, description: "App fees on finished swaps: appFees read as basis points of the value paid in.", meta: {unit: "USD"}}
+      - {name: senders, description: "Distinct sending wallets on finished swaps. Only the count is stored.", meta: {unit: "count"}}
+      - {name: recipients, description: "Distinct receiving wallets on finished swaps. Only the count is stored.", meta: {unit: "count"}}
+      - {name: share_of_all_intents_volume, description: "volume_usd divided by DefiLlama's volume for all of Intents that day.", meta: {unit: "fraction"}}
+  - name: fct_intents_1click_channel_daily
+    description: "1Click volume and app fees per UTC day, referral channel and status, from the Intents Explorer API. Empty until a snapshot with INTENTS_EXPLORER_JWT is in the build."
+    config:
+      meta: {grain: "date_day, referral, status", sources: "Intents Explorer API"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["date_day", "referral", "status"]}}
+    columns:
+      - {name: date_day, description: "UTC calendar day.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: referral, description: "Front-end or partner that sent the swap, or (none).", meta: {unit: "text"}, data_tests: [not_null]}
       - {name: status, description: "Swap status per the Explorer API.", meta: {unit: "text"}}
-      - {name: referral, description: "Front-end or partner that sent the swap.", meta: {unit: "text"}}
+      - {name: swaps, description: "Swaps.", meta: {unit: "count"}}
       - {name: amount_in_usd, description: "Value paid in.", meta: {unit: "USD"}}
       - {name: amount_out_usd, description: "Value paid out.", meta: {unit: "USD"}}
+      - {name: app_fee_usd, description: "App fees: appFees read as basis points of the value paid in.", meta: {unit: "USD"}}
+  - name: fct_intents_1click_pair_daily
+    description: "Finished 1Click swaps per UTC day and asset pair, from the Intents Explorer API. Pairs under $1,000 on a day are summed into one (other) row, so each day's total stays right."
+    config:
+      meta: {grain: "date_day, origin_asset, destination_asset", sources: "Intents Explorer API"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["date_day", "origin_asset", "destination_asset"]}}
+    columns:
+      - {name: date_day, description: "UTC calendar day.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: origin_asset, description: "Asset paid in, or (other).", meta: {unit: "asset id"}, data_tests: [not_null]}
+      - {name: origin_symbol, description: "Symbol of the asset paid in, per the 1Click token list.", meta: {unit: "text"}}
+      - {name: origin_blockchain, description: "Chain of the asset paid in, per the 1Click token list.", meta: {unit: "text"}}
+      - {name: destination_asset, description: "Asset paid out, or (other).", meta: {unit: "asset id"}, data_tests: [not_null]}
+      - {name: destination_symbol, description: "Symbol of the asset paid out, per the 1Click token list.", meta: {unit: "text"}}
+      - {name: destination_blockchain, description: "Chain of the asset paid out, per the 1Click token list.", meta: {unit: "text"}}
+      - {name: swaps, description: "Finished swaps.", meta: {unit: "count"}}
+      - {name: amount_in_usd, description: "Value paid in.", meta: {unit: "USD"}}
+      - {name: amount_out_usd, description: "Value paid out.", meta: {unit: "USD"}}
+  - name: fct_intents_1click_route_daily
+    description: "Finished 1Click swaps per UTC day, by how funds came in and went out, from the Intents Explorer API."
+    config:
+      meta: {grain: "date_day, deposit_type, recipient_type", sources: "Intents Explorer API"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["date_day", "deposit_type", "recipient_type"]}}
+    columns:
+      - {name: date_day, description: "UTC calendar day.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: deposit_type, description: "How funds came in: ORIGIN_CHAIN, INTENTS or CONFIDENTIAL_INTENTS.", meta: {unit: "text"}}
+      - {name: recipient_type, description: "How funds went out: DESTINATION_CHAIN, INTENTS or CONFIDENTIAL_INTENTS.", meta: {unit: "text"}}
+      - {name: swaps, description: "Finished swaps.", meta: {unit: "count"}}
+      - {name: amount_in_usd, description: "Value paid in.", meta: {unit: "USD"}}
+  - name: fct_intents_1click_size_daily
+    description: "Finished 1Click swaps per UTC day and size band, from the Intents Explorer API."
+    config:
+      meta: {grain: "date_day, size_band", sources: "Intents Explorer API"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["date_day", "size_band"]}}
+    columns:
+      - {name: date_day, description: "UTC calendar day.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: size_band, description: "Value paid in, in USD: under_100, 100_to_1k, 1k_to_10k, 10k_to_100k or 100k_and_over.", meta: {unit: "text"}, data_tests: [not_null]}
+      - {name: swaps, description: "Finished swaps.", meta: {unit: "count"}}
+      - {name: amount_in_usd, description: "Value paid in.", meta: {unit: "USD"}}
+  - name: fct_intents_1click_fee_recipient_daily
+    description: "App fees on finished 1Click swaps per UTC day and recipient, from the Intents Explorer API. A recipient is named only if registry/entities.csv lists it; every other recipient is summed into (other)."
+    config:
+      meta: {grain: "date_day, recipient", sources: "Intents Explorer API"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["date_day", "recipient"]}}
+    columns:
+      - {name: date_day, description: "UTC calendar day.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: recipient, description: "Registry account paid the fee, or (other).", meta: {unit: "account id"}, data_tests: [not_null]}
+      - {name: entries, description: "Fee entries paid to this recipient.", meta: {unit: "count"}}
+      - {name: fee_usd, description: "Fees: appFees read as basis points of the value paid in.", meta: {unit: "USD"}}
   - name: fct_lst_snapshot
     description: "Liquid staking per snapshot, read directly from each contract."
     config:
