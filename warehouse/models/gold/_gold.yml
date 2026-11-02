@@ -368,7 +368,7 @@ models:
       - {name: channel_rank, description: "Rank by fees, largest first.", meta: {unit: "integer"}}
       - {name: derived_from, description: "Credit to the dashboard and its creator.", meta: {unit: "text"}, data_tests: [not_null]}
   - name: fct_intents_1click_daily
-    description: "1Click per UTC day, from the Intents Explorer API. 1Click is one route into NEAR Intents, so its volume is part of the total in fct_intents_daily. Tallied per day, with no row or wallet address stored. Empty until INTENTS_EXPLORER_JWT is set and a snapshot is in the build."
+    description: "1Click per UTC day, from the Intents Explorer API. 1Click is one route into NEAR Intents, so its volume is part of the total in fct_intents_daily. Tallied per day, with no row or wallet address stored. History arrives out of order, so check which days are present before summing. Empty until INTENTS_EXPLORER_JWT is set and a snapshot is in the build."
     config:
       meta: {grain: "date_day", sources: "Intents Explorer API"}
     data_tests:

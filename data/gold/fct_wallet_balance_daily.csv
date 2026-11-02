@@ -2627,16 +2627,16 @@ date_day,account_id,balance_near,has_transfer_on_day,balance_near_nearblocks
 2025-09-03,treasury.near,27472411.123093,true,
 2025-09-04,multisignature.near,20.236534,false,
 2025-09-04,treasury.near,27487956.289328,true,
-2025-09-05,auroraliqsupport.near,9.960986,true,
+2025-09-05,auroraliqsupport.near,9.960986,true,9.960986
 2025-09-05,multisignature.near,20.236534,false,
 2025-09-05,treasury.near,27503639.157429,true,
 2025-09-06,auroraliqsupport.near,9.960986,false,
 2025-09-06,multisignature.near,20.236534,false,
 2025-09-06,treasury.near,27524536.86444,true,
-2025-09-07,auroraliqsupport.near,9.958918,true,
+2025-09-07,auroraliqsupport.near,9.958918,true,9.958918
 2025-09-07,multisignature.near,20.236534,false,
 2025-09-07,treasury.near,27540153.710347,true,
-2025-09-08,auroraliqsupport.near,9.956831,true,
+2025-09-08,auroraliqsupport.near,9.956831,true,9.956831
 2025-09-08,multisignature.near,20.236534,false,
 2025-09-08,treasury.near,27555802.537953,true,
 2025-09-09,auroraliqsupport.near,9.956831,false,
@@ -2690,7 +2690,7 @@ date_day,account_id,balance_near,has_transfer_on_day,balance_near_nearblocks
 2025-09-24,fefundsadmin.sputnik-dao.near,6.000063,false,
 2025-09-24,multisignature.near,20.236534,false,
 2025-09-24,treasury.near,27836773.421948,true,
-2025-09-25,auroraliqsupport.near,9.955482,true,
+2025-09-25,auroraliqsupport.near,9.955482,true,9.955482
 2025-09-25,fefundsadmin.sputnik-dao.near,6.000063,false,
 2025-09-25,multisignature.near,20.236534,false,
 2025-09-25,treasury.near,27852636.464486,true,
@@ -2706,15 +2706,15 @@ date_day,account_id,balance_near,has_transfer_on_day,balance_near_nearblocks
 2025-09-28,fefundsadmin.sputnik-dao.near,6.000063,false,
 2025-09-28,multisignature.near,20.236534,false,
 2025-09-28,treasury.near,27906071.242061,true,
-2025-09-29,auroraliqsupport.near,9.949893,true,
+2025-09-29,auroraliqsupport.near,9.949893,true,9.948018
 2025-09-29,fefundsadmin.sputnik-dao.near,6.000063,false,
 2025-09-29,multisignature.near,20.236534,false,
 2025-09-29,treasury.near,27922091.515833,true,
-2025-09-30,auroraliqsupport.near,9.949356,true,
+2025-09-30,auroraliqsupport.near,9.949356,true,9.949356
 2025-09-30,fefundsadmin.sputnik-dao.near,6.000063,false,
 2025-09-30,multisignature.near,20.236534,false,
 2025-09-30,treasury.near,27943383.825116,true,
-2025-10-01,auroraliqsupport.near,9.948042,true,
+2025-10-01,auroraliqsupport.near,9.948042,true,9.948042
 2025-10-01,fefundsadmin.sputnik-dao.near,6.000063,false,
 2025-10-01,multisignature.near,20.236534,false,
 2025-10-01,treasury.near,27959324.33962,true,
@@ -2899,7 +2899,7 @@ date_day,account_id,balance_near,has_transfer_on_day,balance_near_nearblocks
 2025-11-06,multisignature.near,20.236534,false,
 2025-11-06,treasury.near,28514475.523004,true,28514475.523004
 2025-11-07,1csfundsadmin.sputnik-dao.near,6.000066,false,
-2025-11-07,auroraliqsupport.near,9.949145,true,
+2025-11-07,auroraliqsupport.near,9.949145,true,9.949145
 2025-11-07,fefundsadmin.sputnik-dao.near,153342.050703,true,153342.050703
 2025-11-07,multisignature.near,20.236534,false,
 2025-11-07,treasury.near,28522672.556677,true,28522672.556677
@@ -2929,7 +2929,7 @@ date_day,account_id,balance_near,has_transfer_on_day,balance_near_nearblocks
 2025-11-12,multisignature.near,20.236534,false,
 2025-11-12,treasury.near,28568703.563977,true,28568703.563977
 2025-11-13,1csfundsadmin.sputnik-dao.near,6.000066,false,
-2025-11-13,auroraliqsupport.near,9.946954,true,
+2025-11-13,auroraliqsupport.near,9.946954,true,9.946954
 2025-11-13,fefundsadmin.sputnik-dao.near,215138.480966,true,215138.480966
 2025-11-13,multisignature.near,20.236534,false,
 2025-11-13,treasury.near,28576739.782122,true,28576739.782122
@@ -2969,7 +2969,7 @@ date_day,account_id,balance_near,has_transfer_on_day,balance_near_nearblocks
 2025-11-20,multisignature.near,20.236534,false,
 2025-11-20,treasury.near,28638945.340254,true,28638945.340254
 2025-11-21,1csfundsadmin.sputnik-dao.near,6.000066,false,
-2025-11-21,auroraliqsupport.near,9.94708,true,
+2025-11-21,auroraliqsupport.near,9.94708,true,9.94708
 2025-11-21,fefundsadmin.sputnik-dao.near,319050.161228,true,319050.161228
 2025-11-21,multisignature.near,20.236534,false,
 2025-11-21,treasury.near,28646994.951266,true,28646994.951266
@@ -3019,7 +3019,7 @@ date_day,account_id,balance_near,has_transfer_on_day,balance_near_nearblocks
 2025-11-30,multisignature.near,20.236534,false,
 2025-11-30,treasury.near,28724856.821229,true,28724856.821229
 2025-12-01,1csfundsadmin.sputnik-dao.near,6.000066,false,
-2025-12-01,auroraliqsupport.near,9.94461,true,
+2025-12-01,auroraliqsupport.near,9.94461,true,9.94461
 2025-12-01,fefundsadmin.sputnik-dao.near,427518.101488,true,427518.101488
 2025-12-01,multisignature.near,20.236534,false,
 2025-12-01,treasury.near,28735505.875849,true,28735505.875849
@@ -3244,7 +3244,7 @@ date_day,account_id,balance_near,has_transfer_on_day,balance_near_nearblocks
 2026-01-14,multisignature.near,20.236534,false,
 2026-01-14,treasury.near,29120329.112381,true,29120329.112381
 2026-01-15,1csfundsadmin.sputnik-dao.near,6.000066,false,
-2026-01-15,auroraliqsupport.near,9.943695,true,
+2026-01-15,auroraliqsupport.near,9.943695,true,9.943695
 2026-01-15,fefundsadmin.sputnik-dao.near,634329.826293,true,634329.826293
 2026-01-15,multisignature.near,20.236534,false,
 2026-01-15,treasury.near,29131007.061323,true,29131007.061323
@@ -3334,7 +3334,7 @@ date_day,account_id,balance_near,has_transfer_on_day,balance_near_nearblocks
 2026-02-01,multisignature.near,25.238324,false,
 2026-02-01,treasury.near,29279188.531821,true,29279188.531821
 2026-02-02,1csfundsadmin.sputnik-dao.near,7303.47306,true,7303.47306
-2026-02-02,auroraliqsupport.near,9.942839,true,
+2026-02-02,auroraliqsupport.near,9.942839,true,9.942839
 2026-02-02,fefundsadmin.sputnik-dao.near,861521.947664,true,861521.947664
 2026-02-02,multisignature.near,25.238324,false,
 2026-02-02,treasury.near,29287323.822406,true,29287323.822406
@@ -3354,7 +3354,7 @@ date_day,account_id,balance_near,has_transfer_on_day,balance_near_nearblocks
 2026-02-05,multisignature.near,25.238324,false,
 2026-02-05,treasury.near,29314093.968536,true,29314093.968536
 2026-02-06,1csfundsadmin.sputnik-dao.near,42032.22429,true,42032.22429
-2026-02-06,auroraliqsupport.near,9.941884,true,
+2026-02-06,auroraliqsupport.near,9.941884,true,9.941884
 2026-02-06,fefundsadmin.sputnik-dao.near,924285.595718,true,924285.595718
 2026-02-06,multisignature.near,25.238324,false,
 2026-02-06,treasury.near,29324770.89184,true,29324770.89184
@@ -3454,7 +3454,7 @@ date_day,account_id,balance_near,has_transfer_on_day,balance_near_nearblocks
 2026-02-25,multisignature.near,25.244542,false,
 2026-02-25,treasury.near,29490078.139941,true,29490078.139941
 2026-02-26,1csfundsadmin.sputnik-dao.near,167940.759951,true,167940.759951
-2026-02-26,auroraliqsupport.near,9.940928,true,
+2026-02-26,auroraliqsupport.near,9.940928,true,9.940928
 2026-02-26,fefundsadmin.sputnik-dao.near,1040973.483832,true,1040973.483832
 2026-02-26,multisignature.near,25.244542,false,
 2026-02-26,treasury.near,29501043.734931,true,29501043.734931
@@ -3524,7 +3524,7 @@ date_day,account_id,balance_near,has_transfer_on_day,balance_near_nearblocks
 2026-03-11,multisignature.near,25.244542,false,
 2026-03-11,treasury.near,29616097.233805,true,29616097.233805
 2026-03-12,1csfundsadmin.sputnik-dao.near,257940.109341,true,257940.109341
-2026-03-12,auroraliqsupport.near,9.940026,true,
+2026-03-12,auroraliqsupport.near,9.940026,true,9.940026
 2026-03-12,fefundsadmin.sputnik-dao.near,1068789.013362,true,1068789.013362
 2026-03-12,multisignature.near,25.244542,false,
 2026-03-12,treasury.near,29624026.587001,true,29624026.587001
@@ -3608,7 +3608,7 @@ date_day,account_id,balance_near,has_transfer_on_day,balance_near_nearblocks
 2026-03-26,multisignature.near,25.24543,false,
 2026-03-26,treasury.near,29746494.307993,true,29746494.307993
 2026-03-27,1csfundsadmin.sputnik-dao.near,375000.025263,true,375000.025263
-2026-03-27,auroraliqsupport.near,9.939074,true,
+2026-03-27,auroraliqsupport.near,9.939074,true,9.939074
 2026-03-27,buybacks.multisignature.near,39.998442,false,
 2026-03-27,fefundsadmin.sputnik-dao.near,1270362.836891,true,1270362.836891
 2026-03-27,multisignature.near,25.24543,false,
@@ -4921,3 +4921,9 @@ date_day,account_id,balance_near,has_transfer_on_day,balance_near_nearblocks
 2026-10-31,fefundsadmin.sputnik-dao.near,1963841.863593,true,1963841.863593
 2026-10-31,multisignature.near,25.247177,false,
 2026-10-31,treasury.near,1526304.187383,true,1526304.187383
+2026-11-01,1csfundsadmin.sputnik-dao.near,270.875891,false,
+2026-11-01,auroraliqsupport.near,9.939074,false,
+2026-11-01,buybacks.multisignature.near,2150197.476174,true,2150197.476174
+2026-11-01,fefundsadmin.sputnik-dao.near,1965356.683093,true,1965356.683093
+2026-11-01,multisignature.near,25.247177,false,
+2026-11-01,treasury.near,1536680.714928,true,1536680.714928

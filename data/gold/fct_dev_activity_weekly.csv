@@ -920,10 +920,10 @@ week_start,repo,ecosystem,repo_group,commits,active_authors
 2026-11-01,MystenLabs/sui,sui,protocol,1,1
 2026-11-01,NEAR-DevHub/trezu,near,ecosystem,0,
 2026-11-01,anza-xyz/agave,solana,protocol,0,
-2026-11-01,aptos-labs/aptos-core,aptos,protocol,1,1
+2026-11-01,aptos-labs/aptos-core,aptos,protocol,2,1
 2026-11-01,aurora-is-near/aurora-engine,near,ecosystem,0,
 2026-11-01,ava-labs/avalanchego,avalanche,protocol,0,
-2026-11-01,ethereum/go-ethereum,ethereum,protocol,3,2
+2026-11-01,ethereum/go-ethereum,ethereum,protocol,5,4
 2026-11-01,near-daos/sputnik-dao-contract,near,governance,0,
 2026-11-01,near/docs,near,developer_tools,3,1
 2026-11-01,near/intents,near,intents,0,
@@ -932,6 +932,6 @@ week_start,repo,ecosystem,repo_group,commits,active_authors
 2026-11-01,near/near-cli-rs,near,developer_tools,0,
 2026-11-01,near/near-sdk-rs,near,developer_tools,0,
 2026-11-01,near/nearcore,near,protocol,0,
-2026-11-01,nearai/cloud-api,near,ai,0,
+2026-11-01,nearai/cloud-api,near,ai,2,2
 2026-11-01,out-layer/outlayer,near,ai,0,
 2026-11-01,ton-blockchain/ton,ton,protocol,0,

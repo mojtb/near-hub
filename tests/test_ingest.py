@@ -4,7 +4,7 @@ from __future__ import annotations
 import gzip
 import hashlib
 import json
-from datetime import date
+from datetime import date, timedelta
 from pathlib import Path
 
 import pytest
@@ -298,19 +298,36 @@ def test_explorer_repeats_recent_days_and_skips_finished_older_ones(tmp_path, mo
     intents, ctx, http = _explorer_context(tmp_path, monkeypatch, [[_swap(DAY_START + 1, "a")], [_swap(DAY_START - 86400 * 2 + 1, "b")]])
     monkeypatch.setattr(intents, "EXPLORER_RECENT_DAYS", 1)
     monkeypatch.setattr(intents, "EXPLORER_PAGES_PER_RUN", 2)
-    ctx.save_state("intents_explorer__daily_tally", {"days": {"2026-10-31": 5, "2026-10-30": 5}, "history_starts": None})
+    ctx.save_state("intents_explorer__daily_tally", {"days": {"2026-10-31": 5, "2026-10-30": 5}})
     intents.explorer_daily_tally(ctx)
     state = ctx.load_state("intents_explorer__daily_tally")
     assert state["days"] == {"2026-10-31": 1, "2026-10-30": 5, "2026-10-29": 1}
 
 
-def test_explorer_finds_where_history_starts_and_stays_above_it(tmp_path, monkeypatch):
-    intents, ctx, http = _explorer_context(tmp_path, monkeypatch, [[_swap(DAY_START + 1, "a")], [], []])
-    monkeypatch.setattr(intents, "EXPLORER_EMPTY_DAYS_TO_STOP", 2)
+def test_explorer_walks_recent_days_then_one_a_week_then_the_rest():
+    from ingest.sources import intents
+
+    order = intents.explorer_walk_order(date(2026, 11, 1))
+    assert order[0] == date(2026, 10, 31)
+    assert len(order) == len(set(order)) == (date(2026, 11, 1) - intents.EXPLORER_FROM).days
+    assert min(order) == intents.EXPLORER_FROM
+    full, later = order[:intents.EXPLORER_FULL_DAYS], order[intents.EXPLORER_FULL_DAYS:]
+    assert full == sorted(full, reverse=True) and min(full) > max(later)
+    weekly = len([d for d in later if d.toordinal() % 7 == 0])
+    assert all(d.toordinal() % 7 == 0 for d in later[:weekly])
+    assert not any(d.toordinal() % 7 == 0 for d in later[weekly:])
+    assert later[0] - later[1] == timedelta(days=7)
+    # The weekly days stay the same from night to night, so nothing is walked twice for moving a day.
+    assert set(later[:weekly]) <= set(intents.explorer_walk_order(date(2026, 11, 2)))
+    assert later[0] in intents.explorer_walk_order(date(2026, 11, 2))[intents.EXPLORER_FULL_DAYS:]
+
+
+def test_explorer_marks_an_empty_day_done_without_saving_a_file(tmp_path, monkeypatch):
+    intents, ctx, http = _explorer_context(tmp_path, monkeypatch, [[]])
+    monkeypatch.setattr(intents, "EXPLORER_PAGES_PER_RUN", 1)
     intents.explorer_daily_tally(ctx)
-    assert ctx.load_state("intents_explorer__daily_tally")["history_starts"] == "2026-10-31"
-    assert len(http.session.calls) == 3
-    assert not (tmp_path / "bronze/intents_explorer/daily_tally/dt=2026-11-01/2026-10-30.json.gz").exists()
+    assert ctx.load_state("intents_explorer__daily_tally")["days"] == {"2026-10-31": 0}
+    assert not (tmp_path / "bronze/intents_explorer").exists()
 
 
 def test_explorer_keeps_a_finished_day_when_a_later_call_fails(tmp_path, monkeypatch):

@@ -27,12 +27,12 @@ If you prefer a container, run `docker build -t near-thesis . && docker run --rm
 These lines are generated from the warehouse, and `make verify` fails if they stop matching it.
 
 <!-- expected:start -->
-- Data through: **2026-11-01**
+- Data through: **2026-11-02**
 - Gold tables and columns: **59** and **519**
-- Reconciliation: **34** comparisons agree, **4** differ, each with a written explanation
+- Reconciliation: **35** comparisons agree, **4** differ, each with a written explanation
 - Issuance over the last 30 days, from supply change plus burn: **2.49%** a year, against **2.50%** in the protocol config
-- Captured Intents revenue, all time: **$9.29M** per DefiLlama, **$9.28M** rebuilt from wallet transfers
-- Public Intents volume, all time: **$33.30B** per NearBlocks, **$32.93B** per NEAR's dashboard on Dune
+- Captured Intents revenue, all time: **$9.31M** per DefiLlama, **$9.29M** rebuilt from wallet transfers
+- Public Intents volume, all time: **$33.34B** per NearBlocks, **$32.93B** per NEAR's dashboard on Dune
 - Chain Signatures: **16** MPC participants with a threshold of **11**
 - Largest Intents fee channel, per NEAR's dashboard on Dune: **swapkit**, with **73%** of listed fees
 <!-- expected:end -->
