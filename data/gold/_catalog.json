@@ -44,9 +44,9 @@
     "description": "True from 2026-02-23, the first day of Intents buybacks per DefiLlama's adapter."
    }
   ],
-  "rows": 2295,
+  "rows": 2296,
   "first": "2020-07-21",
-  "last": "2026-11-01"
+  "last": "2026-11-02"
  },
  {
   "area": "Calendar and registry",
@@ -293,7 +293,7 @@
     "description": "happened, or voting while the vote is open."
    }
   ],
-  "rows": 16,
+  "rows": 17,
   "first": "2024-12-10",
   "last": "2026-10-23"
  },
@@ -354,9 +354,9 @@
     "description": "Protocol version."
    }
   ],
-  "rows": 724,
+  "rows": 725,
   "first": "2020-08-01",
-  "last": "2026-11-02"
+  "last": "2026-11-03"
  },
  {
   "area": "Calendar and registry",
@@ -483,7 +483,7 @@
  {
   "area": "Chain usage, supply and parameters",
   "table": "fct_chain_daily",
-  "description": "Chain usage per UTC day. NearBlocks v1 and v3 keep separate columns where their definitions differ.",
+  "description": "Chain usage per UTC day. NearBlocks v1 and v3 keep separate columns where their definitions differ. Levels of txns, receipts, v3 accounts, contracts, new accounts and meta columns cannot be compared across 2026-04-02: see docs/USAGE_BREAK_2026-04-02.md.",
   "grain": "date_day",
   "sources": "NearBlocks /v1/charts, /v3/txn-stats, /v3/address-stats",
   "path": "data/gold/fct_chain_daily.parquet",
@@ -558,13 +558,13 @@
     "name": "active_accounts_v1",
     "type": "BIGINT",
     "unit": "count",
-    "description": "Active accounts per /v1/charts. About half of the v3 figure; NearBlocks does not document either definition."
+    "description": "Active accounts per /v1/charts. NearBlocks does not document it, but it matches Nansen's published distinct signers, so it leaves out users whose transactions a relayer signs."
    },
    {
     "name": "active_accounts_v3",
     "type": "BIGINT",
     "unit": "count",
-    "description": "Active accounts per /v3/address-stats. See active_accounts_v1."
+    "description": "Active accounts per /v3/address-stats. NearBlocks does not document it, but it stays within 2% of active_accounts_v1 plus meta_accounts. About 1.8x v1 in the latest 30 days, and 9x to 18x in monthly averages before 2026-04-02."
    },
    {
     "name": "active_contracts_v1",
@@ -663,9 +663,9 @@
     "description": "Value moved by transactions."
    }
   ],
-  "rows": 2295,
+  "rows": 2296,
   "first": "2020-07-21",
-  "last": "2026-11-01"
+  "last": "2026-11-02"
  },
  {
   "area": "Chain usage, supply and parameters",
@@ -742,9 +742,9 @@
     "description": "minted_near times 365, divided by total supply. Noisy for a single day."
    }
   ],
-  "rows": 2295,
+  "rows": 2296,
   "first": "2020-07-21",
-  "last": "2026-11-01"
+  "last": "2026-11-02"
  },
  {
   "area": "Chain usage, supply and parameters",
@@ -833,9 +833,9 @@
     "description": "Account that receives the protocol reward share."
    }
   ],
-  "rows": 3,
+  "rows": 4,
   "first": "2026-10-28",
-  "last": "2026-11-02"
+  "last": "2026-11-03"
  },
  {
   "area": "Chain usage, supply and parameters",
@@ -888,9 +888,9 @@
     "description": "Distinct accounts the contract sent to."
    }
   ],
-  "rows": 13481,
+  "rows": 13517,
   "first": "2023-12-01",
-  "last": "2026-11-01"
+  "last": "2026-11-02"
  },
  {
   "area": "Chain usage, supply and parameters",
@@ -985,9 +985,9 @@
     "description": "Block height span of the day."
    }
   ],
-  "rows": 2461,
-  "first": "2026-10-18",
-  "last": "2026-10-31"
+  "rows": 7399,
+  "first": "2026-09-28",
+  "last": "2026-11-02"
  },
  {
   "area": "NEAR Intents and revenue",
@@ -1106,9 +1106,9 @@
     "description": "Confidential Intents TVL per revenue.near.org. Self-reported by NEAR."
    }
   ],
-  "rows": 692,
+  "rows": 693,
   "first": "2024-12-10",
-  "last": "2026-11-01"
+  "last": "2026-11-02"
  },
  {
   "area": "NEAR Intents and revenue",
@@ -1143,9 +1143,9 @@
     "description": "Swaps."
    }
   ],
-  "rows": 10494,
+  "rows": 10526,
   "first": "2025-10-29",
-  "last": "2026-11-01"
+  "last": "2026-11-02"
  },
  {
   "area": "NEAR Intents and revenue",
@@ -1198,9 +1198,9 @@
     "description": "Swaps."
    }
   ],
-  "rows": 39246,
+  "rows": 39358,
   "first": "2025-11-02",
-  "last": "2026-11-01"
+  "last": "2026-11-02"
  },
  {
   "area": "NEAR Intents and revenue",
@@ -1491,9 +1491,9 @@
     "description": "volume_usd divided by DefiLlama's volume for all of Intents that day."
    }
   ],
-  "rows": 0,
-  "first": null,
-  "last": null
+  "rows": 34,
+  "first": "2026-09-30",
+  "last": "2026-11-02"
  },
  {
   "area": "NEAR Intents and revenue",
@@ -1546,9 +1546,9 @@
     "description": "App fees: appFees read as basis points of the value paid in."
    }
   ],
-  "rows": 0,
-  "first": null,
-  "last": null
+  "rows": 4427,
+  "first": "2026-09-30",
+  "last": "2026-11-02"
  },
  {
   "area": "NEAR Intents and revenue",
@@ -1619,9 +1619,9 @@
     "description": "Value paid out."
    }
   ],
-  "rows": 0,
-  "first": null,
-  "last": null
+  "rows": 15319,
+  "first": "2026-09-30",
+  "last": "2026-11-02"
  },
  {
   "area": "NEAR Intents and revenue",
@@ -1662,9 +1662,9 @@
     "description": "Value paid in."
    }
   ],
-  "rows": 0,
-  "first": null,
-  "last": null
+  "rows": 136,
+  "first": "2026-09-30",
+  "last": "2026-11-02"
  },
  {
   "area": "NEAR Intents and revenue",
@@ -1699,9 +1699,9 @@
     "description": "Value paid in."
    }
   ],
-  "rows": 0,
-  "first": null,
-  "last": null
+  "rows": 170,
+  "first": "2026-09-30",
+  "last": "2026-11-02"
  },
  {
   "area": "NEAR Intents and revenue",
@@ -1736,9 +1736,9 @@
     "description": "Fees: appFees read as basis points of the value paid in."
    }
   ],
-  "rows": 0,
-  "first": null,
-  "last": null
+  "rows": 136,
+  "first": "2026-09-30",
+  "last": "2026-11-02"
  },
  {
   "area": "NEAR Intents and revenue",
@@ -1773,9 +1773,9 @@
     "description": "Share of gross fees captured as net revenue."
    }
   ],
-  "rows": 24,
+  "rows": 36,
   "first": "2026-11-01",
-  "last": "2026-11-02"
+  "last": "2026-11-03"
  },
  {
   "area": "NEAR Intents and revenue",
@@ -1828,9 +1828,9 @@
     "description": "Year-to-date revenue as a percentage of reference supply."
    }
   ],
-  "rows": 305,
+  "rows": 306,
   "first": "2026-01-01",
-  "last": "2026-11-01"
+  "last": "2026-11-02"
  },
  {
   "area": "NEAR Intents and revenue",
@@ -2028,9 +2028,9 @@
     "description": "Account that sent the receipt."
    }
   ],
-  "rows": 11848,
+  "rows": 11876,
   "first": "2020-07-22",
-  "last": "2026-11-02"
+  "last": "2026-11-03"
  },
  {
   "area": "Wallets",
@@ -2095,9 +2095,9 @@
     "description": "Signed value at transfer time, per FastNear."
    }
   ],
-  "rows": 3230,
+  "rows": 3233,
   "first": "2020-07-22",
-  "last": "2026-11-02"
+  "last": "2026-11-03"
  },
  {
   "area": "Wallets",
@@ -2205,9 +2205,9 @@
     "description": "Value received, at transfer time."
    }
   ],
-  "rows": 493,
+  "rows": 495,
   "first": "2025-09-22",
-  "last": "2026-11-02"
+  "last": "2026-11-03"
  },
  {
   "area": "Wallets",
@@ -2248,9 +2248,9 @@
     "description": "Same balance per NearBlocks, as a check."
    }
   ],
-  "rows": 4928,
+  "rows": 4934,
   "first": "2020-07-22",
-  "last": "2026-11-01"
+  "last": "2026-11-02"
  },
  {
   "area": "Wallets",
@@ -2303,9 +2303,9 @@
     "description": "Block of the last balance change."
    }
   ],
-  "rows": 17177,
+  "rows": 25608,
   "first": "2026-10-28",
-  "last": "2026-11-02"
+  "last": "2026-11-03"
  },
  {
   "area": "Wallets",
@@ -2376,9 +2376,9 @@
     "description": "Share of the balance held by the top 100. Not a share of total supply."
    }
   ],
-  "rows": 1400,
+  "rows": 2100,
   "first": "2026-11-01",
-  "last": "2026-11-02"
+  "last": "2026-11-03"
  },
  {
   "area": "Security and staking",
@@ -2473,7 +2473,7 @@
     "description": "nightly for a mid-epoch read, archival for an epoch read after it ended."
    }
   ],
-  "rows": 33504,
+  "rows": 46704,
   "first": null,
   "last": null
  },
@@ -2558,7 +2558,7 @@
     "description": "total_stake_near divided by total supply."
    }
   ],
-  "rows": 82,
+  "rows": 114,
   "first": null,
   "last": null
  },
@@ -2595,9 +2595,9 @@
     "description": "Gas burnt by the signer contract."
    }
   ],
-  "rows": 366,
+  "rows": 367,
   "first": "2025-11-01",
-  "last": "2026-11-01"
+  "last": "2026-11-02"
  },
  {
   "area": "Security and staking",
@@ -2638,9 +2638,9 @@
     "description": "MPC key generation epoch."
    }
   ],
-  "rows": 3,
+  "rows": 4,
   "first": "2026-10-28",
-  "last": "2026-11-02"
+  "last": "2026-11-03"
  },
  {
   "area": "Security and staking",
@@ -2669,9 +2669,9 @@
     "description": "Operator's id in the contract."
    }
   ],
-  "rows": 48,
+  "rows": 64,
   "first": "2026-10-28",
-  "last": "2026-11-02"
+  "last": "2026-11-03"
  },
  {
   "area": "Security and staking",
@@ -2730,9 +2730,9 @@
     "description": "Operator's public node address."
    }
   ],
-  "rows": 32,
+  "rows": 48,
   "first": "2026-11-01",
-  "last": "2026-11-02"
+  "last": "2026-11-03"
  },
  {
   "area": "Security and staking",
@@ -2779,9 +2779,9 @@
     "description": "NEAR staked by the contract. Empty where the contract has no such view."
    }
   ],
-  "rows": 6,
+  "rows": 9,
   "first": "2026-11-01",
-  "last": "2026-11-02"
+  "last": "2026-11-03"
  },
  {
   "area": "Capital and DeFi",
@@ -2822,9 +2822,9 @@
     "description": "Total value locked."
    }
   ],
-  "rows": 16729,
+  "rows": 16745,
   "first": "2021-08-20",
-  "last": "2026-11-01"
+  "last": "2026-11-02"
  },
  {
   "area": "Capital and DeFi",
@@ -2895,9 +2895,9 @@
     "description": "All time."
    }
   ],
-  "rows": 70,
+  "rows": 98,
   "first": "2026-10-28",
-  "last": "2026-11-02"
+  "last": "2026-11-03"
  },
  {
   "area": "Capital and DeFi",
@@ -2944,9 +2944,9 @@
     "description": "Circulating supply on the chain, in pegged units."
    }
   ],
-  "rows": 766,
+  "rows": 1154,
   "first": "2026-11-01",
-  "last": "2026-11-02"
+  "last": "2026-11-03"
  },
  {
   "area": "Capital and DeFi",
@@ -3005,9 +3005,9 @@
     "description": "Reward APY."
    }
   ],
-  "rows": 20,
+  "rows": 30,
   "first": "2026-11-01",
-  "last": "2026-11-02"
+  "last": "2026-11-03"
  },
  {
   "area": "Market and peers",
@@ -3096,9 +3096,9 @@
     "description": "Circulating supply per /v1/charts. The v3 stats endpoint reports this wrongly, so it is not used."
    }
   ],
-  "rows": 2295,
+  "rows": 2296,
   "first": "2020-07-21",
-  "last": "2026-11-01"
+  "last": "2026-11-02"
  },
  {
   "area": "Market and peers",
@@ -3163,9 +3163,9 @@
     "description": "Stablecoins on the chain per DefiLlama."
    }
   ],
-  "rows": 15060,
+  "rows": 15067,
   "first": "2017-09-27",
-  "last": "2026-11-01"
+  "last": "2026-11-02"
  },
  {
   "area": "Market and peers",
@@ -3320,9 +3320,9 @@
     "description": "How this row in the history file was reached."
    }
   ],
-  "rows": 25,
+  "rows": 26,
   "first": "2026-09-28",
-  "last": "2026-10-30"
+  "last": "2026-11-02"
  },
  {
   "area": "Market and peers",
@@ -3423,9 +3423,9 @@
     "description": "Snapshot the day was read in. Past blocks do not change, so a later read gives the same balances."
    }
   ],
-  "rows": 35,
+  "rows": 36,
   "first": "2026-09-28",
-  "last": "2026-11-01"
+  "last": "2026-11-02"
  },
  {
   "area": "Developers and governance",
@@ -3539,9 +3539,9 @@
     "description": "Creation date."
    }
   ],
-  "rows": 36,
+  "rows": 54,
   "first": "2026-11-01",
-  "last": "2026-11-02"
+  "last": "2026-11-03"
  },
  {
   "area": "Developers and governance",
@@ -3582,9 +3582,9 @@
     "description": "Catalog tags, as JSON."
    }
   ],
-  "rows": 680,
+  "rows": 1020,
   "first": "2026-11-01",
-  "last": "2026-11-02"
+  "last": "2026-11-03"
  },
  {
   "area": "Developers and governance",
@@ -3649,9 +3649,9 @@
     "description": "Whether the thread is closed."
    }
   ],
-  "rows": 8,
+  "rows": 12,
   "first": "2026-11-01",
-  "last": "2026-11-02"
+  "last": "2026-11-03"
  },
  {
   "area": "Developers and governance",
@@ -3807,9 +3807,9 @@
     "description": "Accounts holding veNEAR."
    }
   ],
-  "rows": 2,
+  "rows": 3,
   "first": "2026-11-01",
-  "last": "2026-11-02"
+  "last": "2026-11-03"
  },
  {
   "area": "Data quality",
@@ -4014,9 +4014,9 @@
     "description": "Change from first to last, as a percentage."
    }
   ],
-  "rows": 24,
-  "first": "2026-01-19",
-  "last": "2026-10-31"
+  "rows": 2146,
+  "first": "2021-05-21",
+  "last": "2026-11-01"
  },
  {
   "area": "Data quality",
@@ -4063,9 +4063,9 @@
     "description": "Time taken."
    }
   ],
-  "rows": 124,
+  "rows": 190,
   "first": "2026-11-01",
-  "last": "2026-11-02"
+  "last": "2026-11-03"
  },
  {
   "area": "Data quality",
@@ -4136,8 +4136,8 @@
     "description": "Any change made before saving, such as trimming."
    }
   ],
-  "rows": 161,
+  "rows": 229,
   "first": "2026-10-28",
-  "last": "2026-11-02"
+  "last": "2026-11-03"
  }
 ]

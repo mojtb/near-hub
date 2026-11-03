@@ -3226,6 +3226,9 @@ date_day,account_id,asset_id,direction,is_between_revenue_wallets,transfers,coun
 2026-11-01,buybacks.multisignature.near,native:near,in,false,19,1,5220.826338784225,22689.833485051524
 2026-11-01,fefundsadmin.sputnik-dao.near,native:near,in,false,6,1,1514.8194995531796,6591.075738065513
 2026-11-01,treasury.near,native:near,in,false,4,0,10376.527544670043,45241.41276605966
-2026-11-02,buybacks.multisignature.near,native:near,in,false,6,1,1888.9072663681582,7968.423061543509
-2026-11-02,fefundsadmin.sputnik-dao.near,native:near,in,false,2,1,511.65847188626697,2145.5119235635157
-2026-11-02,treasury.near,native:near,in,false,1,0,2569.1311862661346,11021.572789081718
+2026-11-02,buybacks.multisignature.near,native:near,in,false,21,1,7148.267343386602,28773.00690126741
+2026-11-02,fefundsadmin.sputnik-dao.near,native:near,in,false,5,1,1518.5569577278936,6117.273458940007
+2026-11-02,treasury.near,native:near,in,false,3,0,7779.349849943594,31938.445964415376
+2026-11-03,buybacks.multisignature.near,native:near,in,false,4,1,1175.914158018076,4490.263111102065
+2026-11-03,fefundsadmin.sputnik-dao.near,native:near,in,false,2,1,626.7188456067133,2420.832928254446
+2026-11-03,treasury.near,native:near,in,false,2,0,5098.399555243424,19552.201981065817

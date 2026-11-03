@@ -6,7 +6,7 @@ A reproducible data warehouse for a long-term investment thesis on NEAR, built f
 
 ## The problem
 
-Evidence about NEAR is scattered across a dozen services, and they disagree. Active accounts differ by 1.8x between two versions of one API. Some "independent" sources read the same NEAR-uploaded dataset. Price series are stamped a day apart. Free tiers and endpoints change or disappear. A thesis built on that is hard to check and easy to fool yourself with.
+Evidence about NEAR is scattered across a dozen services, and they disagree. Active accounts differ by 1.8x between two versions of one API today, and differed by 9x to 18x before April 2026. Some "independent" sources read the same NEAR-uploaded dataset. Price series are stamped a day apart. Free tiers and endpoints change or disappear. A thesis built on that is hard to check and easy to fool yourself with.
 
 This warehouse keeps every raw response, types it, joins it into shared tables, and publishes where sources disagree instead of picking the convenient number.
 
@@ -27,12 +27,12 @@ If you prefer a container, run `docker build -t near-thesis . && docker run --rm
 These lines are generated from the warehouse, and `make verify` fails if they stop matching it.
 
 <!-- expected:start -->
-- Data through: **2026-11-02**
+- Data through: **2026-11-03**
 - Gold tables and columns: **61** and **558**
 - Reconciliation: **38** comparisons agree, **4** differ, each with a written explanation
-- Issuance over the last 30 days, from supply change plus burn: **2.49%** a year, against **2.50%** in the protocol config
-- Captured Intents revenue, all time: **$9.31M** per DefiLlama, **$9.29M** rebuilt from wallet transfers
-- Public Intents volume, all time: **$33.34B** per NearBlocks, **$32.93B** per NEAR's dashboard on Dune
+- Issuance over the last 30 days, from supply change plus burn: **2.48%** a year, against **2.50%** in the protocol config
+- Captured Intents revenue, all time: **$9.35M** per DefiLlama, **$9.33M** rebuilt from wallet transfers
+- Public Intents volume, all time: **$33.40B** per NearBlocks, **$32.93B** per NEAR's dashboard on Dune
 - Chain Signatures: **16** MPC participants with a threshold of **11**
 - Largest Intents fee channel, per NEAR's dashboard on Dune: **swapkit**, with **73%** of listed fees
 - Bitwise NEAR ETF shares outstanding: **3,220,000** per the fund, **3,220,000** counted on chain in whole baskets
