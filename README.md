@@ -28,8 +28,8 @@ These lines are generated from the warehouse, and `make verify` fails if they st
 
 <!-- expected:start -->
 - Data through: **2026-11-04**, the last full UTC day before the pinned snapshot of 2026-11-05; `dq_freshness` lists any source that ends earlier
-- Gold tables and columns: **63** and **598**
-- Reconciliation: **61** comparisons agree, **8** differ, each with a written explanation
+- Gold tables and columns: **64** and **608**
+- Reconciliation: **62** comparisons agree, **8** differ, each with a written explanation
 - Issuance over the last 30 days, from supply change plus burn: **2.48%** a year, against **2.50%** in the protocol config
 - Circulating supply, built from NEAR's lockup contracts: **1,308.69M** NEAR, **99.84%** of total supply; on 2025-08-26, the last day NearBlocks computed its own, **1,249.72M** against **1,249.65M**
 - Captured Intents revenue, all time: **$9.44M** per DefiLlama, **$9.41M** rebuilt from wallet transfers
@@ -47,7 +47,7 @@ These lines are generated from the warehouse, and `make verify` fails if they st
 | NEAR Intents, revenue | `fct_intents_daily`, `fct_intents_chain_daily`, `fct_intents_asset_daily`, `fct_intents_fee_channels`, `fct_dune_intents_asset_daily`, `fct_dune_dashboard_results`, `fct_intents_1click_daily`, `fct_intents_1click_channel_daily`, `fct_revenue_capture` | DefiLlama, NearBlocks, revenue.near.org, NEAR's dashboard on Dune, Intents Explorer API |
 | Wallets | `fct_wallet_transfers`, `fct_wallet_counterparties`, `fct_revenue_inflows_daily`, `fct_wallet_balance_daily`, `fct_wallet_holdings`, `fct_token_holders`, `dim_entity` | FastNear, RPC, 1Click, Rhea |
 | Security, staking | `fct_validator_summary`, `fct_chain_signatures_daily`, `fct_mpc_state`, `fct_lst_snapshot` | RPC, NearBlocks |
-| Capital, DeFi | `fct_protocol_tvl_daily`, `fct_protocol_fees_snapshot`, `fct_stablecoin_assets`, `fct_yield_pools` | DefiLlama |
+| Capital, DeFi | `fct_protocol_tvl_daily`, `fct_exchange_balance_daily`, `fct_protocol_fees_snapshot`, `fct_stablecoin_assets`, `fct_yield_pools` | DefiLlama |
 | Market, peers | `fct_market_daily`, `fct_token_prices`, `fct_peer_daily` | CoinMetrics, Coinbase, DefiLlama, 1Click, Rhea |
 | Bitwise NEAR ETF flows | `fct_etf_nrr_daily`, `fct_etf_nrr_chain_daily` | Bitwise's page, archival RPC, SoSoValue through news reports |
 | Developers, governance | `fct_dev_activity_weekly`, `fct_repo_snapshot`, `fct_governance_proposals`, `fct_venear_snapshot`, `fct_governance_threads`, `dim_event` | GitHub, RPC, gov.near.org |

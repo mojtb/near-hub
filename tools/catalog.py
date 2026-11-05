@@ -25,7 +25,7 @@ AREAS = [
                                   "fct_intents_1click_fee_recipient_daily", "fct_revenue_capture", "fct_revenue_page_emissions", "fct_revenue_page_monthly"]),
     ("Wallets", ["fct_wallet_transfers", "fct_wallet_flows_daily", "fct_wallet_counterparties", "fct_revenue_inflows_daily", "fct_wallet_balance_daily", "fct_wallet_holdings", "fct_token_holders"]),
     ("Security and staking", ["fct_validator_epoch", "fct_validator_summary", "fct_chain_signatures_daily", "fct_mpc_state", "fct_mpc_participants", "fct_mpc_operators", "fct_lst_snapshot"]),
-    ("Capital and DeFi", ["fct_protocol_tvl_daily", "fct_protocol_fees_snapshot", "fct_stablecoin_assets", "fct_yield_pools"]),
+    ("Capital and DeFi", ["fct_protocol_tvl_daily", "fct_exchange_balance_daily", "fct_protocol_fees_snapshot", "fct_stablecoin_assets", "fct_yield_pools"]),
     ("Market and peers", ["fct_market_daily", "fct_token_prices", "fct_peer_daily", "fct_etf_nrr_daily", "fct_etf_nrr_chain_daily"]),
     ("Developers and governance", ["fct_dev_activity_weekly", "fct_repo_snapshot", "fct_catalog_projects", "fct_governance_threads", "fct_governance_proposals", "fct_venear_snapshot"]),
     ("Data quality", ["dq_reconciliation", "dq_freshness", "dq_revisions", "dq_ingest_runs", "dq_provenance"]),

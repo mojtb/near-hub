@@ -1,5 +1,7 @@
 # Data audit, 2026-11-05
 
+A second pass later the same day, after these fixes and the ones that followed them, is in [DATA_AUDIT_2026-11-05_second_pass.md](DATA_AUDIT_2026-11-05_second_pass.md).
+
 An audit of the warehouse for integrity (does each table hold what it says, and is it right) and coverage (which questions of a long-term NEAR thesis it can answer, how deep, and with what independent check). Done against the pin of 2026-11-01 on `main`, then against the nightly snapshot of 2026-11-05, which this audit moved the pin to. Read it with [RECONCILIATION.md](RECONCILIATION.md), [SOURCES.md](SOURCES.md) and [USAGE_BREAK_2026-04-02.md](USAGE_BREAK_2026-04-02.md).
 
 ## In short
@@ -157,7 +159,7 @@ The evidence is thin. Only four days (10-29 to 11-01) have been read both on the
 | Governance | `fct_governance_proposals`, `fct_venear_snapshot`, `fct_governance_threads`, `dim_event` | 30 proposals; 5 veNEAR snapshots; 4 threads | None | No vote-level data; thread coverage is four topics |
 | Ecosystem | `fct_catalog_projects` | 340 projects, point in time | None | No activity per project |
 
-Not covered at all: holder distribution over time (top holders exist only per snapshot), exchange balances, bridge flows (DefiLlama's bridge API is paid), per-contract gas burn, account retention, stablecoin history per asset, DEX trade data, anything social.
+Not covered at all: holder distribution over time (top holders exist only per snapshot), bridge flows (DefiLlama's bridge API is paid), per-contract gas burn, account retention, stablecoin history per asset, DEX trade data, anything social. Exchange balances were listed here too, wrongly: DefiLlama's exchange wallets were already in silver, and the second pass exposed them as `fct_exchange_balance_daily`.
 
 ## What changed today
 

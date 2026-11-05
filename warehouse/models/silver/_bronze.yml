@@ -68,6 +68,7 @@ sources:
       - {name: metapool__metrics_parsed, identifier: metapool/metrics_parsed, description: "Meta Pool's Prometheus metrics, parsed from the saved text."}
       - {name: github__repos, identifier: github/repos, description: "Stars, forks and last push per tracked repository."}
       - {name: github__commit_activity, identifier: github/commit_activity, description: "Weekly commits for 52 weeks per tracked repository."}
+      - {name: github__commits_weekly, identifier: github/commits_weekly, description: "Weekly commits and author counts on the default branch, assembled from the commits list, for every tracked repository."}
       - {name: github__contributors, identifier: github/contributors, description: "Weekly commits per contributor per tracked repository."}
       - {name: nearcatalog__projects, identifier: nearcatalog/projects, description: "NEAR Catalog project directory."}
       - {name: gov__topics, identifier: gov/topics, description: "Tracked governance threads."}

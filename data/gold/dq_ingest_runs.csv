@@ -274,6 +274,7 @@ snapshot_date,dataset,status,detail,files,seconds
 2026-11-05,fastnear/transfers,ok,"",6,2.1
 2026-11-05,fastnear/tx_counts,ok,"",1,46.4
 2026-11-05,github/commit_activity,ok,"",18,51.0
+2026-11-05,github/commits_weekly,ok,"",17,239.3
 2026-11-05,github/contributors,ok,"",18,39.4
 2026-11-05,github/repos,ok,"",18,13.0
 2026-11-05,gov/topics,ok,"",9,16.2

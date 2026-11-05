@@ -11,8 +11,8 @@
  },
  "dim_entity": {
   "columns": 18,
-  "hash": "8ba492ad122ef94cac7ad376c1d5fe81",
-  "rows": 53
+  "hash": "269e27be0af8088d913483d4e9f3ea38",
+  "rows": 63
  },
  "dim_event": {
   "columns": 6,
@@ -41,17 +41,17 @@
  },
  "dq_ingest_runs": {
   "columns": 6,
-  "hash": "bd072d2c432fa7c6a672d79aef6a238b",
-  "rows": 323
+  "hash": "1e154a9d2f961728d39e69a5d15f89c3",
+  "rows": 324
  },
  "dq_provenance": {
   "columns": 10,
-  "hash": "38564b31f79ddd0f175d84591f70e12f",
-  "rows": 366
+  "hash": "a46e479f74e35f99501bbc3b95acbda8",
+  "rows": 367
  },
  "dq_reconciliation": {
   "columns": 12,
-  "hash": "244f2975e6640cd1e71af44a7eb33ffe",
+  "hash": "e738106b492603151001656f12a6dd9d",
   "rows": 70
  },
  "dq_revisions": {
@@ -85,8 +85,8 @@
   "rows": 13590
  },
  "fct_dev_activity_weekly": {
-  "columns": 6,
-  "hash": "14e226c31a2af1ae93e180f1556fa512",
+  "columns": 8,
+  "hash": "19eadfcd213901ec3f3b6011a9a6bd78",
   "rows": 918
  },
  "fct_dune_dashboard_results": {
@@ -108,6 +108,11 @@
   "columns": 24,
   "hash": "637318164eb5794559c38dd315e4b4ab",
   "rows": 28
+ },
+ "fct_exchange_balance_daily": {
+  "columns": 5,
+  "hash": "8886d2cffe46a905ad2a80bcbdc9a95d",
+  "rows": 5874
  },
  "fct_governance_proposals": {
   "columns": 19,
@@ -221,7 +226,7 @@
  },
  "fct_receiver_sample_daily": {
   "columns": 14,
-  "hash": "41a12ff84c56ebe420a59a0dc1facf02",
+  "hash": "d30d20532cc67a5843cefd4724bd6a1c",
   "rows": 14509
  },
  "fct_repo_snapshot": {
@@ -295,18 +300,18 @@
   "rows": 180
  },
  "fct_wallet_flows_daily": {
-  "columns": 9,
-  "hash": "152d00f8b44e0b1b56b8f2de94288c15",
+  "columns": 10,
+  "hash": "8570f203c156f95b1b4fb83fd086fd11",
   "rows": 3236
  },
  "fct_wallet_holdings": {
   "columns": 15,
-  "hash": "0fca699a03cc1a4bcd7f3ae837f6f473",
+  "hash": "b69a4ca0177e1e1be2d9ecea1f9d4f2c",
   "rows": 42556
  },
  "fct_wallet_transfers": {
-  "columns": 24,
-  "hash": "52279fbc22a47239cacd87b26fb61ece",
+  "columns": 26,
+  "hash": "368f2dc5f906da9c7b678de298bc604e",
   "rows": 11943
  },
  "fct_yield_pools": {

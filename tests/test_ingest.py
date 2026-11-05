@@ -864,3 +864,23 @@ def test_lockups_run_after_block_heights_are_known():
 
     names = [f"{d.source}/{d.name}" for d in REGISTRY]
     assert names.index("rpc/block_day") < names.index("rpc/lockups")
+
+
+def test_commits_by_week_cuts_weeks_on_sunday_and_counts_each_author_once():
+    from datetime import date
+
+    from ingest.sources.ecosystem import commits_by_week, week_start
+
+    assert week_start(date(2026, 11, 5)) == date(2026, 11, 1)  # a Thursday falls in the week of Sunday 1 November
+    assert week_start(date(2026, 11, 1)) == date(2026, 11, 1)  # a Sunday starts its own week
+    assert week_start(date(2026, 10, 31)) == date(2026, 10, 25)
+    commit = lambda when, login: {"author": {"login": login} if login else None,
+                                  "commit": {"committer": {"date": when}, "author": {"email": "x@y", "name": "x"}}}
+    commits = [
+        commit("2026-10-25T00:00:01Z", "a"), commit("2026-10-31T23:59:59Z", "a"), commit("2026-10-31T12:00:00Z", "b"),
+        commit("2026-11-01T00:00:00Z", "a"),  # the next week
+        commit("2026-10-18T10:00:00Z", None),  # before the window: dropped
+    ]
+    weeks = commits_by_week(commits, date(2026, 10, 25), 2)
+    assert [w["week"] for w in weeks] == [1792886400, 1793491200]  # 2026-10-25 and 2026-11-01, 00:00 UTC
+    assert [(w["total"], w["authors"]) for w in weeks] == [(3, 2), (1, 1)]

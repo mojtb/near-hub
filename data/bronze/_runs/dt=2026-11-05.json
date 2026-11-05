@@ -112,6 +112,12 @@
   "seconds": 51.0,
   "status": "ok"
  },
+ "github/commits_weekly": {
+  "detail": "",
+  "files": 17,
+  "seconds": 239.3,
+  "status": "ok"
+ },
  "github/contributors": {
   "detail": "",
   "files": 18,

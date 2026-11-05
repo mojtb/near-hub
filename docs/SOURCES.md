@@ -45,6 +45,8 @@ The strongest checks are the ones that cross families. See [RECONCILIATION.md](R
 - A protocol's `id` is what stays the same; its `slug` can change. On the 2026-11-05 read DefiLlama made Templar a parent group: the old listing, id 6570, became `templar-lending` with its whole history, and `/protocol/templar-protocol` now answers with the group, id `parent#templar-protocol`. So gold goes by `id`, and the rule is on `dim_protocol` and `fct_protocol_tvl_daily` in [DATA_CATALOG.md](DATA_CATALOG.md).
 - Ingest never asks for a retired slug, because it rebuilds its list from `/protocols` each night: the top 25 by TVL on NEAR. At the 2026-11-05 pin nine of those are exchange wallets that gold leaves out, so `fct_protocol_tvl_daily` holds 16 of the 47 protocols. A protocol that falls out of the 25 stays in the table and stops updating.
 
+- Protocols in the `CEX` category are exchange wallets that DefiLlama labels on its exchange pages. Their NEAR figure is the USD value of every asset those wallets hold on NEAR, at DefiLlama's prices, and DefiLlama leaves them out of chain TVL. `fct_exchange_balance_daily` keeps them per exchange per day: nine exchanges have history at the 2026-11-05 pin, Binance's wallets alone holding about $536M on 2026-11-04. Only labelled wallets count, so an exchange's unlabelled wallets are missing, and a relabelling moves the whole series.
+
 ### revenue.near.org
 - Rendered tiles show 0 in plain HTML, but the real series are embedded in the Next.js payload. `ingest/parsers/revenue_page.py` reads them and fails loudly if a series disappears.
 - `protocol_fee_near`, `intents_revenue_near` and `burn_revenue_near` are 0 on every row. Only total fees carry information.
@@ -64,7 +66,7 @@ The strongest checks are the ones that cross families. See [RECONCILIATION.md](R
 
 ### Archival RPC
 - `block`, `view_account` and `call_function` work at old heights.
-- `validators` by `epoch_id` worked for an epoch in May 2026 and returned `UNKNOWN_EPOCH` for one in October 2024, so validator history is partial.
+- `validators` by `epoch_id` answers from 2026-04-19 and returns `UNKNOWN_EPOCH` for every earlier epoch tried, and by `block_id` it returns `VALIDATOR_INFO_UNAVAILABLE`, so there is no validator history before then from this node. The fetcher asks for the epoch in force at each day's first block, so `fct_validator_epoch` holds one epoch a day out of about three, plus the current epoch read each night. Older history would need another route, such as each staking pool's `get_total_staked_balance` at past heights.
 - Calls hit HTTP 429 quickly. The free RPC host recognises a FastNear key, but the archival host shows no sign of it, so archival calls keep the keyless pace.
 - `EXPERIMENTAL_protocol_config` by `block_id` gives the config in force at a past block, so a change can be dated to the block, while the nightly config read dates it only to the night. That is how `registry/protocol_upgrades.csv` dates protocol version 87, which removed the developer gas rebate: block 223012336 (11:46:28 UTC on 2026-11-04) reads version 86 and a 3/10 contract reward, and block 223012337, the first of a new epoch, reads 87 and 0. The block header's `latest_protocol_version` already read 87 that morning, so it cannot date a change.
 
@@ -77,6 +79,7 @@ The strongest checks are the ones that cross families. See [RECONCILIATION.md](R
 - Some answers are final and are kept: `UNKNOWN_ACCOUNT` (the contract is gone), `INVALID_ACCOUNT`, `NO_CONTRACT_CODE`, `CONTRACT_EXECUTION_ERROR` (no such method, or it panicked), `NOT_METADATA` (it returned something else) and `BAD_DECIMALS` (not a whole number from 0 to 255). These tokens stay empty in gold.
 - Any other error says something about the node, not the token, so the token is asked again on a later run, after the tokens that have not failed yet. Three failures in a row, or one call that used up its retries, end the run for that night.
 - Name and symbol are the contract's own claim: `usdc-4d51ec.launchpad.justhoot.near` calls itself USDC, with 18 decimals. `fct_wallet_holdings.metadata_source` shows which rows rest on a claim. Group by `token_id`, and treat these fields as untrusted text when displaying them.
+- Until a token's contract has been asked, the decimals of the list that prices it stand in (`metadata_source` reads `price_list`). A list's price is per whole token counted with its own decimals, so the two belong together, and the lists matched the contract on every token read in the sample below. A contract that has answered is final, even with an error, so no list fills in behind it. The test `token_decimals_lists_match_contracts` fails if a list and a contract ever disagree. This is what lets `fct_wallet_holdings` carry values at the 2026-11-05 pin, before the first night of `ft_metadata` reads.
 - A sample on 2026-11-05, not stored: of 300 tokens picked at random, 296 gave decimals, 2 no longer exist and 2 are `mock-ft` contracts that panic. So about 99% of holdings rows should convert once the backlog is read. All 12 registry tokens' decimals matched their contracts, and so did all 30 tokens read that 1Click lists. `token_decimals_match_ft_metadata` holds the registry to the contracts from now on.
 
 ### Token prices (`fct_token_prices`)
@@ -110,22 +113,22 @@ The strongest checks are the ones that cross families. See [RECONCILIATION.md](R
 - The multiple hardly matters. On the sample below, 2, 3, 10 and 1,000 times depth value these tokens at $2.25M, $2.33M, $2.44M and $3.17M, out of $641M in all. With no limit they would read $47.2B.
 - Tokens in `registry/tokens.csv` are exempt, because each was listed by hand with evidence. LiNEAR's $45M at Burrow is 32 times its depth and is real, since a lending market holds far more than any pool could absorb. `xtoken.rhealab.near` has $133 opposite it and $3.9M at Burrow, so it rests on Rhea's price alone. That price is RHEA's times the contract's `get_virtual_price`, 1.11747 when read by hand on 2026-11-05, so it does not come from the thin pool.
 
-**Decimals.** A price is per whole token, counted with the list's own decimals. If the holding's decimals differ, the value would be off by powers of ten, so `value_status` reads `decimals_disagree`. No row reads this today: on the sample below, Rhea's decimals matched the contract on all 1,116 tokens that answered, and 1Click's on all 132. The rule stays as a guard, tested on made-up rows.
+**Decimals.** A price is per whole token, counted with the list's own decimals. If the holding's decimals differ, the value would be off by powers of ten, so `value_status` reads `decimals_disagree`. No row reads this today: on the sample below, Rhea's decimals matched the contract on all 1,116 tokens that answered, and 1Click's on all 132. The rule stays as a guard, tested on made-up rows. Where no contract has answered yet, the list's decimals stand in, so a row priced by a list can never read `decimals_disagree` until its contract has been asked; see "Token metadata" above.
 
-**How much gets a value.** A sample on 2026-11-05, not stored, read all 932 held tokens that could get a value, plus about 400 others, and 12 of the 1,330 gave no decimals. So the sample column is close to what the full backlog gives, except that the rows it did not read move from `no_decimals` to `thin_price`, because they have nothing opposite them.
+**How much gets a value.** A sample on 2026-11-05, not stored, read all 932 held tokens that could get a value, plus about 400 others, and 12 of the 1,330 gave no decimals. The lists' decimals now stand in until a contract has been asked, so the pin reads as the sample predicted; the first night of `ft_metadata` reads changes `metadata_source` on these rows from `price_list` to `ft_metadata` and should change nothing else.
 
-| `value_status`, latest snapshot | At the pin | With the sample | After the backlog, estimated |
+| `value_status`, latest snapshot | At the pin before list decimals | With the sample | At the pin now, with list decimals |
 |---|---:|---:|---:|
-| `valued` | 65 (0.8%) | 968 (11.4%) | 968 (11.4%) |
+| `valued` | 65 (0.8%) | 968 (11.4%) | 970 (11.4%) |
 | `no_price` | 3,158 | 3,158 | 3,158 (37.2%) |
-| `no_decimals` | 5,261 | 3,758 | about 45 |
-| `thin_price` | 0 | 595 | about 4,300 (51%) |
+| `no_decimals` | 5,261 | 3,758 | 0 |
+| `thin_price` | 0 | 595 | 4,351 (51.3%) |
 | `sources_disagree` | 0 | 5 | 5 |
 | Sum of `value_usd` | $340.7M | $641.3M | $641.3M |
 
-Few rows get a value because most rows are launch tokens that nothing else trades against. The money is elsewhere: of the $641.3M, 1Click prices $522.7M (226 rows), Rhea prices $116.3M on registry tokens (22 rows), and Rhea prices $2.3M on all other tokens (720 rows). Across all snapshots the sample values 4,833 of 42,556 rows.
+Few rows get a value because most rows are launch tokens that nothing else trades against. The money is elsewhere: of the $641.3M, 1Click prices $522.7M (226 rows), Rhea prices $116.3M on registry tokens (22 rows), and Rhea prices $2.3M on all other tokens (720 rows). Across all snapshots 4,843 of 42,556 rows carry a value; the 382 rows of 2026-10-28 have amounts but no value, because no list had been read that day.
 
-**Checked against other sources.** `holdings_usd_latest_vs_tvl` sets the sums against TVL from outside the chain read. The Intents row stays `not_available` until bridged assets have decimals, because without them `intents.near` sums to only $86.1M.
+**Checked against other sources.** `holdings_usd_latest_vs_tvl` sets the sums against TVL from outside the chain read. Before list decimals the Intents row was `not_available`, because without decimals for bridged assets `intents.near` summed to only $86.1M; it now reads $233.8M against $248.2M.
 
 | Contracts | Sum of `value_usd` at the pin | With the sample | Compared with | Gap with the sample |
 |---|---:|---:|---|---:|
@@ -145,6 +148,11 @@ The Rhea DEX gap read 27% on 2026-11-01 and 24% on 11-02, so its tolerance is 30
 - A block is about 265 KB, so raw blocks are counted and thrown away.
 - The published limit is 180 requests per minute, but three parallel workers hit HTTP 429 from this machine. The sampler runs one request at a time.
 - Sample results are estimates. `fct_receiver_sample_daily` keeps `blocks_sampled` on every row.
+
+### GitHub
+- `stats/commit_activity` and `stats/contributors` are GitHub's own weekly statistics for the last 52 weeks. For a repository with over 10,000 commits they answer HTTP 200 with a year of zeros and an empty contributor list: `anza-xyz/agave` (34,937 commits) on every read. Gold leaves `commits` and `active_authors` empty for such a repository rather than record a year without work.
+- The statistic also counts more than the default branch holds. For `near/nearcore` it gave 1,749 commits for the 51 full weeks to 2026-10-31, while the commits list, the search API and GraphQL's `history` all give 1,345 on `master`; the difference is presumably commits on release branches, since a sweep of one week found such commits on `2.14-release`. So `github/commits_weekly` counts the default branch from the commits list for every repository, by committer date, with authors reduced to a count: `fct_dev_activity_weekly.commits_default_branch` and `authors_default_branch`, one method for every repository and the only figures for Agave (4,303 commits on `master` over the 51 full weeks to 2026-10-31). The statistic runs both above and below the default branch across the 18 repositories (MystenLabs/sui 5,067 against 2,823; ton-blockchain/ton 980 against 1,267), so the two measures are kept apart and never mixed in one series. It costs one call per 100 commits, about 250 calls a night across the 18 repositories, so without a token only the repositories whose statistics came back as zeros are read.
+- Weeks start on Sunday UTC, as GitHub cuts them. The week in progress at a read is left out until a later read sees it end.
 
 ### Intents Explorer API
 - Covers 1Click swaps only, despite being the track's suggested volume source. On 2026-10-31 that was about 30% of all Intents volume. For total Intents volume, use `fct_intents_daily`.

@@ -165,7 +165,7 @@
     "description": "Date of the on-chain check."
    }
   ],
-  "rows": 53,
+  "rows": 63,
   "first": null,
   "last": null
  },
@@ -2074,7 +2074,19 @@
     "name": "amount_usd",
     "type": "DOUBLE",
     "unit": "USD",
-    "description": "Signed value at transfer time, per FastNear."
+    "description": "Signed value at transfer time, per FastNear, which gives it for some transfers only."
+   },
+   {
+    "name": "amount_usd_estimated",
+    "type": "DOUBLE",
+    "unit": "USD",
+    "description": "amount_usd where FastNear gave one; otherwise, for native NEAR and wNEAR, amount_token times the day's closing price from fct_market_daily. Other tokens stay empty. On transfers FastNear did value, the close-price figure was within 1.9% of it on the median transfer and within 7.7% on nine in ten."
+   },
+   {
+    "name": "usd_basis",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "transfer_time where amount_usd is FastNear's, daily_close where amount_usd_estimated is the close-price figure, empty where there is neither."
    },
    {
     "name": "transaction_id",
@@ -2183,7 +2195,13 @@
     "name": "amount_usd",
     "type": "DOUBLE",
     "unit": "USD",
-    "description": "Signed value at transfer time, per FastNear."
+    "description": "Signed value at transfer time, per FastNear, summed over the transfers it valued only."
+   },
+   {
+    "name": "amount_usd_estimated",
+    "type": "DOUBLE",
+    "unit": "USD",
+    "description": "Signed value summed over every transfer, taking FastNear's figure where there is one and the day's closing price for the rest of the NEAR and wNEAR transfers; see fct_wallet_transfers.amount_usd_estimated."
    }
   ],
   "rows": 3236,
@@ -2293,7 +2311,7 @@
     "name": "received_usd",
     "type": "DOUBLE",
     "unit": "USD",
-    "description": "Value received, at transfer time."
+    "description": "Value received at transfer time, per FastNear. Empty on two days (6 NEAR each, the wallets' first receipts in September and October 2025) that FastNear did not value."
    }
   ],
   "rows": 497,
@@ -2346,7 +2364,7 @@
  {
   "area": "Wallets",
   "table": "fct_wallet_holdings",
-  "description": "Point in time: tokens and native NEAR per tracked account, per snapshot. This cannot be backfilled, so history starts with the first snapshot. Symbol and decimals come from registry/tokens.csv where a token is listed, otherwise from its contract's ft_metadata, which the nightly job reads for up to 2,000 tokens a night. A token with neither keeps empty symbol, amount_token and decimals: nothing is guessed. Earlier snapshots convert too, because the latest answer for a token applies to all of them. value_usd multiplies amount_token by the price read in the same snapshot, joined on token_id from fct_token_prices, and value_status says why a row has none. Sum value_usd, not amount_token times price_usd: those rows include prices that would read $46.5B for one meme token at v2.ref-finance.near.",
+  "description": "Point in time: tokens and native NEAR per tracked account, per snapshot. This cannot be backfilled, so history starts with the first snapshot. Symbol and decimals come from registry/tokens.csv where a token is listed, then from its contract's ft_metadata, which the nightly job reads for up to 2,000 tokens a night, then from the price list that prices the token (metadata_source says which). A list counts whole tokens with its own decimals, so its price and its decimals belong together, and the lists matched the contract on every token read so far; the test token_decimals_lists_match_contracts fails if that stops. A contract that has answered is final, even with an error, so no list fills in behind it. A token with none of the three keeps empty symbol, amount_token and decimals: nothing is guessed. Earlier snapshots convert too, because the latest answer for a token applies to all of them. value_usd multiplies amount_token by the price read in the same snapshot, joined on token_id from fct_token_prices, and value_status says why a row has none. Sum value_usd, not amount_token times price_usd: those rows include prices that would read $46.5B for one meme token at v2.ref-finance.near.",
   "grain": "snapshot_date, account_id, token_id",
   "sources": "FastNear /v1/account/{id}/full, registry/tokens.csv, 1Click, Rhea, RPC ft_metadata",
   "path": "data/gold/fct_wallet_holdings.parquet",
@@ -2373,7 +2391,7 @@
     "name": "symbol",
     "type": "VARCHAR",
     "unit": "text",
-    "description": "Token symbol. Where metadata_source is ft_metadata this is the contract's own claim, so a token calling itself USDC need not be USDC. Group by token_id, and treat this as untrusted text when displaying it."
+    "description": "Token symbol. Where metadata_source is ft_metadata or price_list this is the contract's or the list's own claim, so a token calling itself USDC need not be USDC. Group by token_id, and treat this as untrusted text when displaying it."
    },
    {
     "name": "balance_raw",
@@ -2391,13 +2409,13 @@
     "name": "decimals",
     "type": "INTEGER",
     "unit": "integer",
-    "description": "Token decimals: 24 for native NEAR, then the registry's figure (1Click's where the registry has none), then the contract's ft_metadata."
+    "description": "Token decimals: 24 for native NEAR, then the registry's figure, then the contract's ft_metadata answer, then the decimals of the price list that prices the token."
    },
    {
     "name": "metadata_source",
     "type": "VARCHAR",
     "unit": "text",
-    "description": "Where symbol and decimals came from: native, registry or ft_metadata. Empty if the token has neither."
+    "description": "Where symbol and decimals came from: native, registry, ft_metadata or price_list. Empty if the token has none of them."
    },
    {
     "name": "last_update_height",
@@ -2433,7 +2451,7 @@
     "name": "value_usd",
     "type": "DOUBLE",
     "unit": "USD",
-    "description": "amount_token times price_usd, where value_status is valued, and otherwise empty. Unvetted tokens are capped by depth, so this column is safe to sum. Rests on the contract's own decimals where metadata_source is ft_metadata."
+    "description": "amount_token times price_usd, where value_status is valued, and otherwise empty. Unvetted tokens are capped by depth, so this column is safe to sum. Rests on the contract's own decimals where metadata_source is ft_metadata, and on the list's where it is price_list."
    },
    {
     "name": "value_status",
@@ -2522,7 +2540,7 @@
  {
   "area": "Security and staking",
   "table": "fct_validator_epoch",
-  "description": "Validator set per epoch. An epoch read after it ended has final production counts; a nightly read of the current epoch is partial.",
+  "description": "Validator set per epoch, for the epoch in force at the first block of each UTC day plus the current epoch read each night. NEAR runs about three epochs a day, so this is a daily sample of epochs, not every epoch. The archival node answers from 2026-04-19 and returns UNKNOWN_EPOCH for earlier epochs, so there is no history before then. An epoch read after it ended has final production counts; a nightly read of the current epoch is partial.",
   "grain": "epoch_height, validator_account_id",
   "sources": "RPC validators",
   "path": "data/gold/fct_validator_epoch.parquet",
@@ -2619,7 +2637,7 @@
  {
   "area": "Security and staking",
   "table": "fct_validator_summary",
-  "description": "Decentralization per epoch: validator count, stake concentration and Nakamoto coefficients.",
+  "description": "Decentralization per epoch: validator count, stake concentration and Nakamoto coefficients. One epoch per day, the one in force at the day's first block, plus the current epoch read each night: see fct_validator_epoch. History starts on 2026-04-19.",
   "grain": "epoch_height",
   "sources": "fct_validator_epoch, dim_block_day",
   "path": "data/gold/fct_validator_summary.parquet",
@@ -2969,6 +2987,49 @@
   ],
   "rows": 16777,
   "first": "2021-08-20",
+  "last": "2026-11-04"
+ },
+ {
+  "area": "Capital and DeFi",
+  "table": "fct_exchange_balance_daily",
+  "description": "Assets on NEAR in the wallets DefiLlama attributes to centralised exchanges, in USD, per exchange per day. DefiLlama leaves these wallets out of chain TVL and so does fct_protocol_tvl_daily; here they stand on their own. The figure is every asset in the listed wallets at DefiLlama's prices, so it is mostly NEAR and moves with NEAR's price. Only wallets DefiLlama has labelled count, so an exchange's unlabelled wallets are missing and a relabelling moves the whole series. History is fetched for the largest 25 protocols on NEAR, so a small exchange can have a row in dim_protocol and no days here. Like all DefiLlama history, it can be rewritten without notice.",
+  "grain": "date_day, protocol_id",
+  "sources": "DefiLlama /protocol/{slug}, category CEX",
+  "path": "data/gold/fct_exchange_balance_daily.parquet",
+  "columns": [
+   {
+    "name": "date_day",
+    "type": "DATE",
+    "unit": "date",
+    "description": "UTC calendar day."
+   },
+   {
+    "name": "protocol_id",
+    "type": "VARCHAR",
+    "unit": "id",
+    "description": "DefiLlama's id for the exchange. It stays the same when the exchange is renamed."
+   },
+   {
+    "name": "exchange_slug",
+    "type": "VARCHAR",
+    "unit": "id",
+    "description": "DefiLlama's URL name for the exchange, as of the newest reading that listed it."
+   },
+   {
+    "name": "exchange_name",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "Exchange name."
+   },
+   {
+    "name": "balance_usd",
+    "type": "DOUBLE",
+    "unit": "USD",
+    "description": "USD value of every asset on NEAR in the exchange's labelled wallets, at DefiLlama's prices."
+   }
+  ],
+  "rows": 5874,
+  "first": "2022-11-14",
   "last": "2026-11-04"
  },
  {
@@ -3696,16 +3757,16 @@
  {
   "area": "Developers and governance",
   "table": "fct_dev_activity_weekly",
-  "description": "Commits and active authors per tracked repository per week. A fixed repository list, not a whole-ecosystem count; GitHub's author list covers each repository's top 100. Both measures are empty for a repository whose year of readings is all zero although GitHub says it was pushed to in that year, because GitHub's statistics endpoints serve zeros for some very large repositories (anza-xyz/agave on 2026-11-01).",
+  "description": "Commits and active authors per tracked repository per week. A fixed repository list, not a whole-ecosystem count; GitHub's author list covers each repository's top 100. Two measures sit side by side. commits and active_authors are GitHub's own statistics: they count more than the default branch holds (about a quarter more for near/nearcore, which keeps release branches), and they come back as a year of zeros with no contributors for a repository with over 10,000 commits (anza-xyz/agave), so both are empty for a repository whose year of readings is all zero although GitHub says it was pushed to in that year. commits_default_branch and authors_default_branch are counted from the commits list with one method for every repository, so compare repositories with those.",
   "grain": "week_start, repo",
-  "sources": "GitHub statistics API",
+  "sources": "GitHub statistics API, GitHub commits list",
   "path": "data/gold/fct_dev_activity_weekly.parquet",
   "columns": [
    {
     "name": "week_start",
     "type": "DATE",
     "unit": "date",
-    "description": "Monday of the week, UTC."
+    "description": "Sunday that starts the week, UTC, which is how GitHub cuts its weeks."
    },
    {
     "name": "repo",
@@ -3729,13 +3790,25 @@
     "name": "commits",
     "type": "BIGINT",
     "unit": "count",
-    "description": "Commits that week. Empty where GitHub served a year of zeros for a repository it reports as pushed to; see the table description."
+    "description": "Commits that week per GitHub's statistics endpoint, which counts beyond the default branch. Empty where GitHub served a year of zeros for a repository it reports as pushed to; see the table description."
    },
    {
     "name": "active_authors",
     "type": "BIGINT",
     "unit": "count",
-    "description": "Authors with at least one commit that week, among GitHub's top 100 for the repository."
+    "description": "Authors with at least one commit that week, among GitHub's top 100 for the repository, per GitHub's statistics. Empty where commits is."
+   },
+   {
+    "name": "commits_default_branch",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "Commits that week on the default branch, counted from the commits list by committer date, with the same method for every repository. Empty for a week no read has counted yet."
+   },
+   {
+    "name": "authors_default_branch",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "Distinct authors with a commit on the default branch that week, counted from the commits list; every author, not only the top 100."
    }
   ],
   "rows": 918,
@@ -4329,7 +4402,7 @@
     "description": "Time taken."
    }
   ],
-  "rows": 323,
+  "rows": 324,
   "first": "2026-11-01",
   "last": "2026-11-05"
  },
@@ -4402,7 +4475,7 @@
     "description": "Any change made before saving, such as trimming."
    }
   ],
-  "rows": 366,
+  "rows": 367,
   "first": "2026-10-28",
   "last": "2026-11-05"
  }
