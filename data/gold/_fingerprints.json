@@ -20,9 +20,9 @@
   "rows": 19
  },
  "dim_protocol": {
-  "columns": 9,
-  "hash": "38dbeaa88712b3d421b9beb40149701a",
-  "rows": 48
+  "columns": 10,
+  "hash": "c1fbb80d0cdeb94330c4ba4b29fdb446",
+  "rows": 47
  },
  "dim_source": {
   "columns": 7,
@@ -210,9 +210,9 @@
   "rows": 154
  },
  "fct_protocol_tvl_daily": {
-  "columns": 5,
-  "hash": "602ecae5f0335a809d4b7e213925e3bf",
-  "rows": 17210
+  "columns": 6,
+  "hash": "232680aeb57d0011de32b4e418a4b858",
+  "rows": 16777
  },
  "fct_receiver_sample_daily": {
   "columns": 14,

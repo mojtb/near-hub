@@ -73,14 +73,16 @@ models:
       - {name: source_url, description: "Where the evidence can be checked.", meta: {unit: "url"}}
       - {name: status, description: "happened, or voting while the vote is open.", meta: {unit: "text"}}
   - name: dim_protocol
-    description: "Protocols DefiLlama lists on NEAR, as of the newest reading. Exchange wallets are marked with is_cex."
+    description: "Protocols DefiLlama lists on NEAR, as of the newest reading that listed each one. A protocol is one DefiLlama id, so a rename, which changes the slug and keeps the id, gives one row under the newest slug. A protocol missing from the newest reading keeps its row with an older read_on, because a missed night and a delisting look the same. Exchange wallets are marked with is_cex."
     config:
-      meta: {grain: "protocol_slug", sources: "DefiLlama /protocols"}
+      meta: {grain: "protocol_id", sources: "DefiLlama /protocols"}
     data_tests:
+      - unique_grain: {arguments: {columns: ["protocol_id"]}}
       - unique_grain: {arguments: {columns: ["protocol_slug"]}}
       - min_rows: {arguments: {n: 30}}
     columns:
-      - {name: protocol_slug, description: "DefiLlama protocol identifier.", meta: {unit: "id"}, data_tests: [not_null]}
+      - {name: protocol_id, description: "DefiLlama's id for the protocol. It stays the same when the protocol is renamed.", meta: {unit: "id"}, data_tests: [not_null]}
+      - {name: protocol_slug, description: "DefiLlama's URL name for the protocol, as of the newest reading that listed it. It can change.", meta: {unit: "id"}, data_tests: [not_null]}
       - {name: protocol_name, description: "Protocol name.", meta: {unit: "text"}}
       - {name: category, description: "DefiLlama category.", meta: {unit: "text"}}
       - {name: url, description: "Protocol website.", meta: {unit: "url"}}
@@ -88,7 +90,7 @@ models:
       - {name: near_tvl_usd, description: "TVL on NEAR.", meta: {unit: "USD"}}
       - {name: total_tvl_usd, description: "TVL across all chains.", meta: {unit: "USD"}}
       - {name: is_cex, description: "True for exchange wallets, which DefiLlama leaves out of chain TVL.", meta: {unit: "boolean"}}
-      - {name: read_on, description: "Date of the reading.", meta: {unit: "date"}}
+      - {name: read_on, description: "Date of the newest reading that listed the protocol. Older than the table's newest date means it was missing from later readings, and its figures are as of this date.", meta: {unit: "date"}}
   - name: dim_token
     description: "Registry tokens with decimals and a live price from 1Click where listed."
     config:
@@ -620,15 +622,17 @@ models:
       - {name: total_1y_usd, description: "Trailing year.", meta: {unit: "USD"}}
       - {name: total_all_time_usd, description: "All time.", meta: {unit: "USD"}}
   - name: fct_protocol_tvl_daily
-    description: "TVL on NEAR per protocol per day, excluding exchange wallets. Liquid staking and lending can count the same NEAR twice, so do not sum categories into a chain total."
+    description: "TVL on NEAR per protocol per day, excluding exchange wallets. A protocol is one DefiLlama id, so a rename, which changes the slug and keeps the id, joins the old slug's days to the new slug's and counts the protocol once. A protocol missing from the newest reading keeps its history and its days stop, because a missed night and a delisting look the same. Two ids carrying one series fail the test no_two_protocols_share_a_tvl_series. Liquid staking and lending can count the same NEAR twice, so do not sum categories into a chain total."
     config:
-      meta: {grain: "date_day, protocol_slug", sources: "DefiLlama /protocol/{slug}"}
+      meta: {grain: "date_day, protocol_id", sources: "DefiLlama /protocol/{slug}"}
     data_tests:
+      - unique_grain: {arguments: {columns: ["date_day", "protocol_id"]}}
       - unique_grain: {arguments: {columns: ["date_day", "protocol_slug"]}}
       - min_rows: {arguments: {n: 5000}}
     columns:
       - {name: date_day, description: "UTC calendar day.", meta: {unit: "date"}, data_tests: [not_null]}
-      - {name: protocol_slug, description: "DefiLlama protocol identifier.", meta: {unit: "id"}, data_tests: [not_null]}
+      - {name: protocol_id, description: "DefiLlama's id for the protocol. It stays the same when the protocol is renamed.", meta: {unit: "id"}, data_tests: [not_null]}
+      - {name: protocol_slug, description: "DefiLlama's URL name for the protocol, as of the newest reading that listed it. It can change.", meta: {unit: "id"}, data_tests: [not_null]}
       - {name: protocol_name, description: "Protocol name.", meta: {unit: "text"}}
       - {name: category, description: "DefiLlama category.", meta: {unit: "text"}}
       - {name: tvl_usd, description: "Total value locked.", meta: {unit: "USD"}}
