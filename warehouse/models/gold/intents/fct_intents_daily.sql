@@ -7,6 +7,13 @@ with llama_fees as (
     group by date_day
 ),
 
+llama_fee_reads as (
+    select date_day, min(snapshot_date) as snapshot_date
+    from {{ ref('stg_defillama__intents_fees') }}
+    where is_latest
+    group by date_day
+),
+
 llama_volume as (select date_day, volume_usd from {{ ref('stg_defillama__intents_volume') }} where is_latest),
 
 nb as (
@@ -23,7 +30,7 @@ nb_cumulative as (
 ),
 
 page_volume as (select date_day, volume_usd, cumulative_volume_usd from {{ ref('stg_revenue_page__volume_daily') }} where is_latest),
-page_fees as (select date_day, fees_usd, total_fees_near, cumulative_fees_usd from {{ ref('stg_revenue_page__fees_daily') }} where is_latest),
+page_fees as (select date_day, snapshot_date, fees_usd, total_fees_near, cumulative_fees_usd from {{ ref('stg_revenue_page__fees_daily') }} where is_latest),
 page_tvl as (select date_day, confidential_tvl_usd from {{ ref('stg_revenue_page__confidential_tvl') }} where is_latest)
 
 select
@@ -44,10 +51,17 @@ select
     llama_fees.dailyHoldersRevenue as holders_revenue_usd_defillama,
     llama_fees.dailyProtocolRevenue as treasury_revenue_usd_defillama,
     llama_fees.dailySupplySideRevenue as supply_side_revenue_usd_defillama,
-    page_tvl.confidential_tvl_usd
+    page_tvl.confidential_tvl_usd,
+    -- Both sources rewrite a day's fees and revenue after first publishing them. Age is counted from each source's
+    -- own newest read, not today, so a pinned build gives the same answer and a missed fetch settles nothing.
+    coalesce(
+        least(page_fees.snapshot_date, llama_fee_reads.snapshot_date) - d.date_day < {{ var('intents_fee_settle_nights') }},
+        false
+    ) as is_fee_revenue_provisional
 from {{ ref('dim_date') }} d
 left join llama_volume using (date_day)
 left join llama_fees using (date_day)
+left join llama_fee_reads using (date_day)
 left join nb using (date_day)
 left join nb_cumulative using (date_day)
 left join page_volume using (date_day)

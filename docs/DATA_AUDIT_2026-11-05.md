@@ -11,7 +11,7 @@ An audit of the warehouse for integrity (does each table hold what it says, and 
 - **`main` was missing data the nightly branch already had**: six empty 1Click tables, 2 validator epochs instead of 164, one receiver-sample day instead of 78, no fund-page readings for the ETF. Moving the pin to 2026-11-05 fixed that.
 - **Smaller flaws fixed today:** wallet facts and GitHub weeks included a partial day or week; five registry tokens had no decimals, which emptied 200 holder rows; GitHub served a full year of zeros for anza-xyz/agave and gold took it as no activity; HSP-029 was still listed as voting after it passed; the accounts behind the April 2026 usage break were not in the registry.
 - **The developer gas rebate removal has shipped.** The 2026-11-05 config read is the first with `contract_gas_reward_rate` 0 and protocol version 87. The burn model had applied today's rate to all of history, which at the new pin would have raised every past day's burn by 43%; it now uses the rate in force on each day.
-- **Still open, in order of importance:** circulating supply, token metadata for holdings, provisional marking of the last days of NEAR-family fee series, and a fresh hand reading of the Dune dashboard.
+- **Still open, in order of importance:** circulating supply, token metadata for holdings, and a fresh hand reading of the Dune dashboard.
 
 Nothing from this audit is committed. The working tree holds the code changes, the moved pin and the regenerated docs; `git status` shows them.
 
@@ -82,7 +82,7 @@ The convention is that daily series leave out the day a snapshot was taken on, a
 
 **Fixed:** each day now uses the newest config read on or before that day, and days before the first read (2026-10-28) use the first read's rate, the 30% in force since mainnet launch; the rate used is exposed as `contract_gas_reward_rate`. Gas is about 1% of issuance, so the net-inflation figure barely moves, but the burn series is now right on both sides of the change. `protocol_reward_rate` still reads 0 while `treasury.near` receives 10% of issuance, so that field stays untrusted, and the 2026-11-05 change itself is worth confirming on a function-call receipt.
 
-### 10. Sources restate their recent days, and one restates its whole history
+### 10. Sources restate their recent days, and DefiLlama can rewrite TVL history
 
 `dq_revisions` is built from differences between snapshots, and with five nights visible it holds 3,344 rows:
 
@@ -95,7 +95,27 @@ The convention is that daily series leave out the day a snapshot was taken on, a
 | revenue.near.org daily fees | 4 | 4 | 789% | 1,670% |
 | NearBlocks, all series | 0 | 0 | | |
 
-The NEAR family publishes a day's fees before the day's data has arrived, then rewrites it: the last one to three days of `fees_usd_revenue_page`, `fees_usd_defillama` and `revenue_usd_defillama` are provisional at read time. DefiLlama's TVL history changes a little every night, so a TVL chart reproduces only at a pin. NearBlocks has not restated anything. **Open:** mark the trailing days of the NEAR-family series as provisional, and say in the catalog that DefiLlama TVL is never final.
+`dq_revisions` compares only a key's oldest and newest snapshot, so it shows that a value moved, not when. The rest of this finding compares each snapshot with the one before it, on the same 0.01% tolerance. NearBlocks has not restated anything.
+
+**Fee and revenue days.** The NEAR family publishes a day's fees before the day's data has arrived, then rewrites it. A day's first read is the snapshot after it ends:
+
+| Columns in `fct_intents_daily` | Days that moved | Last read that moved one |
+|---|---|---|
+| `fees_usd_revenue_page`, `fees_near_revenue_page` | 10-31, 11-01, 11-02, 11-03 | Second, one night after the first |
+| `fees_usd_defillama` | 10-27, 10-31, 11-01, 11-02 | Third, two nights after the first |
+| `revenue_usd_defillama`, `holders_revenue_usd_defillama` | 10-27, 10-31, 11-01, 11-02, 11-03 | Third |
+| `supply_side_revenue_usd_defillama` | 10-31, 11-01, 11-02, 11-03 | Third |
+| `treasury_revenue_usd_defillama`, and volume from all three sources | None | |
+
+Three of the page's four first readings were 6% to 14% of the figure that followed ($11,755 then $125,254, $23,021 then $163,862, $9,319 then $164,920); the fourth was within 0.02%. DefiLlama follows a night later: at this pin it still reads $9,319 for 11-03, which also turns that day's supply-side revenue negative. No figure read three or more nights after its day has moved by more than 0.01%, though smaller moves come later ($0.36 on the page's 10-21, twelve nights after).
+
+The evidence is thin. Only four days (10-29 to 11-01) have been read both on the third night and on the night after it. The move on 10-27 fell between the reads of 10-28 and 11-01, with no snapshot in between, so it may have come as late as the fifth night.
+
+**Fixed:** `fct_intents_daily.is_fee_revenue_provisional` is true until a day's figures have been read three nights after the day ended, which marks the newest two days of a nightly build (11-03 and 11-04 at this pin). The number is `intents_fee_settle_nights` in `dbt_project.yml`. The data test `intents_fees_settle_when_the_flag_clears` fails if a figure moves in the day's first week after the flag clears, or if the flag disagrees with the reads. Later moves are rewrites of history, which `dq_revisions` lists and no trailing flag could predict.
+
+`fct_peer_daily` carries the same flag, because NEAR's fees there are mostly Intents fees and move on the same reads (they read $33,285 for 10-31 and $146,822 two nights later, and $24,201 for 11-03 at this pin). The test `peer_fees_settle_when_the_flag_clears` holds the number for NEAR. The other six chains get the same rule so that a filter cuts every chain at the same day, not because they settle on that schedule. First reads of fees on Ethereum, Solana and Sui ran up to about 6% low; Ethereum's and Solana's figures also moved after the third read; and the 11-04 and 11-05 reads moved 165 and 557 of Solana's fee days, back to 2025-04-09, by up to 5.6%. Aptos and TON have not moved.
+
+**TVL.** The table above reads as if DefiLlama's TVL moves every night, and this report first said so. It does not. The 11-03 read rewrote 2,079 Ethereum and Solana rows back to 2021 (median 0.19%, largest 11.4%), the 11-02 read moved 8 recent Aptos rows by 0.23%, and the 11-01, 11-04 and 11-05 reads moved nothing by more than 0.01%. NEAR's chain TVL and all 25 protocols on NEAR have not moved in any read. So a rewrite can come on any night, without notice, and a TVL chart reproduces only at a pin. **Fixed:** the catalog says so on `fct_peer_daily.tvl_usd` and `fct_protocol_tvl_daily`.
 
 ### 11. Smaller findings, documented or harmless
 
@@ -105,7 +125,7 @@ The NEAR family publishes a day's fees before the day's data has arrived, then r
 - `fct_peer_daily.fees_usd` for NEAR over the latest 30 days is $7.35M, of which NEAR Intents is $6.07M, Rhea $1.09M and gas $0.18M. A peer comparison of "fees" compares NEAR's cross-chain application fees, mostly paid to solvers and channels, with other chains' totals built the same way. State that in any chart.
 - `fct_contract_daily` holds only days with activity: `sputnik-dao.near` has 365 rows across 1,066 days and `factory.bridge.near` ends on 2026-09-11. A missing day inside a window is a zero, and NearBlocks' limit of 365 is 365 active days.
 - `fct_receiver_sample_daily` reads 96 blocks a day, about 0.12% of a day's blocks, so its estimates for bursty accounts are rough; `blocks_sampled` is on every row.
-- `supply_side_revenue_usd_defillama` is negative on 5 days when a sweep exceeded the day's fees. Documented; sum it over weeks.
+- `supply_side_revenue_usd_defillama` is negative on 4 days when a sweep exceeded the day's fees, and at this pin on 2026-11-03, because DefiLlama's fees for that day have not arrived (finding 10). Documented; sum it over weeks.
 - `fct_supply_daily.minted_near` is negative on 79 days in 2020 (never more than 3 NEAR) and on 2023-12-01 (a 3,152 NEAR fall in total supply between two NearBlocks days). Harmless for any trailing mean; the plausibility test allows 0.5% a day.
 - `fct_market_daily.price_usd` is empty for the first 84 days (2020-07-21 to 10-12), before any price source starts.
 - `fct_wallet_flows_daily.amount_usd` exists for 799 of 2,921 native-NEAR rows, because FastNear values only some transfers. A USD estimate from the daily close would fill the rest.
@@ -121,11 +141,11 @@ The NEAR family publishes a day's fees before the day's data has arrived, then r
 |---|---|---|---|---|
 | Supply, issuance, burn | `fct_supply_daily`, `fct_protocol_config`, `dim_block_day` | Daily from 2020-07-21; on-chain supply on 301 sampled days | NearBlocks vs archival RPC, 0.000% | No live circulating supply (finding 2); the 2026-11-05 rebate change rests on one config read (finding 9); no lockup or vesting schedule |
 | Treasury | `fct_wallet_transfers`, `fct_supply_daily.treasury_reward_near` | Every transfer since 2020-10 | FastNear vs RPC vs NearBlocks balances within 0.5% | Outflows unlabelled |
-| Intents revenue and fee switch | `fct_intents_daily`, `fct_revenue_inflows_daily`, `fct_revenue_capture`, `fct_intents_fee_channels` | Fees from 2025-05-06, revenue from 2025-09-22 | Wallet transfers vs DefiLlama, 0.3% | USDC fees and the buyback execution trail are not followed; revenue page monthly series unexplained; last days provisional (finding 10) |
+| Intents revenue and fee switch | `fct_intents_daily`, `fct_revenue_inflows_daily`, `fct_revenue_capture`, `fct_intents_fee_channels` | Fees from 2025-05-06, revenue from 2025-09-22 | Wallet transfers vs DefiLlama, 0.3% | USDC fees and the buyback execution trail are not followed; revenue page monthly series unexplained; last two days provisional and flagged (finding 10) |
 | Intents volume | `fct_intents_daily`, `fct_intents_chain_daily`, `fct_intents_asset_daily`, `fct_dune_intents_asset_daily`, `fct_intents_1click_*` | Public daily from 2025-10-29; all-routes from 2024-12-10; 1Click daily from 2026-09-07 | NearBlocks vs Dune public scope, 1.1% | Confidential volume is self-reported only; DefiLlama scope step (finding 3); Dune asset series ends 10-31 |
 | Usage | `fct_chain_daily`, `fct_contract_daily`, `fct_receiver_sample_daily` | v1 daily from 2020; v3 daily for 369 days; 78 sample days | v1 vs v3 transactions, 0.000% | Levels break on 2026-04-02; batch-stream accounts now registered but not yet fetched; no retention or cohort data; sample is 0.12% of blocks |
 | Security and staking | `fct_validator_summary`, `fct_validator_epoch`, `fct_mpc_state`, `fct_mpc_operators`, `fct_lst_snapshot` | 164 epochs from 2026-04-19; 6 MPC snapshots | NearBlocks operators vs contract, every snapshot | No validator history before April 2026; no TEE attestation; rNEAR staked amount empty |
-| DeFi, TVL, stablecoins | `fct_protocol_tvl_daily`, `dim_protocol`, `fct_stablecoin_assets`, `fct_yield_pools`, `fct_peer_daily` | Protocol TVL from 2021-08-20; stablecoins from 2021 | DefiLlama vs NearBlocks TVL differ by definition, 62% | TVL double-counts across protocols; history restated nightly (finding 10); DefiLlama terms |
+| DeFi, TVL, stablecoins | `fct_protocol_tvl_daily`, `dim_protocol`, `fct_stablecoin_assets`, `fct_yield_pools`, `fct_peer_daily` | Protocol TVL from 2021-08-20; stablecoins from 2021 | DefiLlama vs NearBlocks TVL differ by definition, 62% | TVL double-counts across protocols; history can be rewritten on any night (finding 10); DefiLlama terms |
 | Market | `fct_market_daily`, `fct_etf_nrr_daily`, `fct_etf_nrr_chain_daily` | Price from 2020-10-13, Coinbase from 2022-09; ETF from 2026-09-28 | Three price sources within 0.12%; ETF shares chain vs fund, 0.000% | Market cap fully diluted since 2025-11 (finding 2); no exchange flows or derivatives; ETF history before 11-02 partly estimated |
 | Peers | `fct_peer_daily` | 7 chains; Ethereum from 2017 | Same source for all chains | TON has no market cap; NEAR "fees" are mostly Intents application fees; one source only |
 | Developers | `fct_dev_activity_weekly`, `fct_repo_snapshot` | 18 repositories, 52 weeks | None | Agave unavailable (finding 7); fixed repository list, authors among the top 100 only |
@@ -162,7 +182,7 @@ Result: `make verify` passes 10/10 at the new pin, with 233 data tests (one more
 2. **A token-metadata fetcher** (`rpc/ft_metadata`): one `ft_metadata` call per token id seen in holdings or top holders, cached in `data/state`, so `fct_wallet_holdings` can value the thousands of tokens the DEX and Intents contracts hold, at least for the ones with a 1Click or Rhea price. Medium.
 3. **Circulating supply.** Either read the lockup contracts on chain for a liquid-supply series, or take the Foundation's published schedule into the registry with a source URL. Until then, present `market_cap_usd` as fully diluted after 2025-10. Large, or small for the labelling alone.
 4. **Confirm the rebate removal on chain**: read one function-call receipt from before and after 2026-11-05 and compare burnt gas with the fee charged. If the config is ever found to lag the chain, add a registry table of dated parameters with evidence. Small.
-5. **Provisional marking** of the last days of the NEAR-family fee and revenue series, derived from `dq_revisions` (the number of nights until a day stops changing), and a catalog note that DefiLlama TVL history is restated nightly. Small.
+5. **Provisional marking** of the last days of the NEAR-family fee and revenue series, and a catalog note on DefiLlama TVL. Done (finding 10). Measure the nights again once `data/nightly` holds a few more weeks: the test catches a window that is too short, not one that is too long.
 6. **A fresh Dune reading by hand**, following the steps in SOURCES.md, both to extend the asset series past 10-31 and to replace the AI-taken reading that `registry/sources.csv` asks to retire. User's hands only.
 7. **Agave's commit history** by another route (the commits list with pagination, or the GraphQL API), and a general rule in the GitHub fetcher that a 200 with a year of zeros for a pushed-to repository is retried, not stored as fact. Small.
 8. **Fill USD for native transfers** from the daily close where FastNear gives none, as a separate `amount_usd_estimated` column. Small.

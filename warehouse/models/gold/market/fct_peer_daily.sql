@@ -10,7 +10,8 @@ tvl as (
 fees as (
     select p.chain_id, f.date_day,
         sum(f.value_usd) filter (where f.data_type = 'dailyFees') as fees_usd,
-        sum(f.value_usd) filter (where f.data_type = 'dailyRevenue') as revenue_usd
+        sum(f.value_usd) filter (where f.data_type = 'dailyRevenue') as revenue_usd,
+        min(f.snapshot_date) as fee_read_date
     from {{ ref('stg_defillama__chain_fees') }} f join peers p using (llama_chain) where f.is_latest
     group by all
 ),
@@ -53,7 +54,10 @@ select
     fees.fees_usd,
     fees.revenue_usd,
     dex.volume_usd as dex_volume_usd,
-    stable.stablecoins_usd
+    stable.stablecoins_usd,
+    -- Measured on NEAR, whose fees are mostly Intents fees and settle with them. Every chain gets the same rule, so a
+    -- filter on this column cuts all of them at the same day; only NEAR's figures are held to it by a test.
+    coalesce(fees.fee_read_date - k.date_day < {{ var('intents_fee_settle_nights') }}, false) as is_fee_revenue_provisional
 from keys k
 left join tvl using (chain_id, date_day)
 left join fees using (chain_id, date_day)

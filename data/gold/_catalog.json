@@ -1004,7 +1004,7 @@
  {
   "area": "NEAR Intents and revenue",
   "table": "fct_intents_daily",
-  "description": "NEAR Intents per UTC day, one column per source. revenue.near.org includes confidential Intents; NearBlocks counts public Intents only. DefiLlama reads the same NEAR-uploaded data as revenue.near.org, but its volume follows NearBlocks' public-only figure from 2026-04-01 to 2026-08-31 and the all-routes figure from 2026-09-01, so it changes meaning at that date. See dq_reconciliation.",
+  "description": "NEAR Intents per UTC day, one column per source. revenue.near.org includes confidential Intents; NearBlocks counts public Intents only. DefiLlama reads the same NEAR-uploaded data as revenue.near.org, but its volume follows NearBlocks' public-only figure from 2026-04-01 to 2026-08-31 and the all-routes figure from 2026-09-01, so it changes meaning at that date. See dq_reconciliation. The fee and revenue columns of the newest days can still change; see is_fee_revenue_provisional.",
   "grain": "date_day",
   "sources": "DefiLlama, NearBlocks, revenue.near.org",
   "path": "data/gold/fct_intents_daily.parquet",
@@ -1109,13 +1109,19 @@
     "name": "supply_side_revenue_usd_defillama",
     "type": "DOUBLE",
     "unit": "USD",
-    "description": "Gross fees minus captured revenue: kept by solvers and distribution channels. Negative on days when a periodic sweep into the revenue wallets exceeds that day's fees, so sum it over weeks, not days."
+    "description": "Gross fees minus captured revenue: kept by solvers and distribution channels. Negative on days when a periodic sweep into the revenue wallets exceeds that day's fees, so sum it over weeks, not days. Also negative on a provisional day whose fees have not fully arrived; see is_fee_revenue_provisional."
    },
    {
     "name": "confidential_tvl_usd",
     "type": "DOUBLE",
     "unit": "USD",
     "description": "Confidential Intents TVL per revenue.near.org. Self-reported by NEAR."
+   },
+   {
+    "name": "is_fee_revenue_provisional",
+    "type": "BOOLEAN",
+    "unit": "boolean",
+    "description": "True while this day's fee and revenue columns can still change, which is until they have been read 3 nights after the day ended: the newest two days of a nightly build. revenue.near.org and DefiLlama publish a day before its data has fully arrived, then rewrite it. The page read $9,319 for 2026-11-03 and $164,920 a night later, and DefiLlama follows a night after the page. Leave these days out of trends and totals. Volume columns are not affected. The number comes from few reads (2026-10-28 to 2026-11-05), and a data test fails if a figure moves in the day's first week after the flag clears. False does not mean final for good: a later rewrite of history would show in dq_revisions."
    }
   ],
   "rows": 695,
@@ -2798,7 +2804,7 @@
  {
   "area": "Capital and DeFi",
   "table": "fct_protocol_tvl_daily",
-  "description": "TVL on NEAR per protocol per day, excluding exchange wallets. A protocol is one DefiLlama id, so a rename, which changes the slug and keeps the id, joins the old slug's days to the new slug's and counts the protocol once. A protocol missing from the newest reading keeps its history and its days stop, because a missed night and a delisting look the same. Two ids carrying one series fail the test no_two_protocols_share_a_tvl_series. Liquid staking and lending can count the same NEAR twice, so do not sum categories into a chain total.",
+  "description": "TVL on NEAR per protocol per day, excluding exchange wallets. A protocol is one DefiLlama id, so a rename, which changes the slug and keeps the id, joins the old slug's days to the new slug's and counts the protocol once. A protocol missing from the newest reading keeps its history and its days stop, because a missed night and a delisting look the same. Two ids carrying one series fail the test no_two_protocols_share_a_tvl_series. Liquid staking and lending can count the same NEAR twice, so do not sum categories into a chain total. DefiLlama can rewrite TVL history without notice, as it did for Ethereum and Solana on 2026-11-03 (see fct_peer_daily.tvl_usd), so no value here is final either, although no protocol on NEAR had moved through 2026-11-05.",
   "grain": "date_day, protocol_id",
   "sources": "DefiLlama /protocol/{slug}",
   "path": "data/gold/fct_protocol_tvl_daily.parquet",
@@ -3121,7 +3127,7 @@
  {
   "area": "Market and peers",
   "table": "fct_peer_daily",
-  "description": "NEAR and peer chains per day on the same definitions. An empty cell means the source has no value for that day.",
+  "description": "NEAR and peer chains per day on the same definitions. An empty cell means the source has no value for that day. The fees and revenue of the newest days can still change; see is_fee_revenue_provisional.",
   "grain": "date_day, chain_id",
   "sources": "DefiLlama, CoinMetrics",
   "path": "data/gold/fct_peer_daily.parquet",
@@ -3154,13 +3160,13 @@
     "name": "tvl_usd",
     "type": "DOUBLE",
     "unit": "USD",
-    "description": "Chain TVL per DefiLlama."
+    "description": "Chain TVL per DefiLlama. DefiLlama can rewrite a chain's history on any night without notice, so no value is ever final and a TVL chart reproduces only at a pin. Its 2026-11-03 read moved 2,079 Ethereum and Solana days back to 2021, by up to 11.4%. Other reads through 2026-11-05 moved at most 8 days by more than 0.01%, and NEAR's series has not moved. See dq_revisions."
    },
    {
     "name": "fees_usd",
     "type": "DOUBLE",
     "unit": "USD",
-    "description": "Fees paid by users on the chain per DefiLlama."
+    "description": "Fees paid by users on the chain per DefiLlama. DefiLlama also rewrites older days: its 2026-11-04 and 11-05 reads moved 165 and 557 of Solana's days, back to 2025-04-09, by up to 5.6%."
    },
    {
     "name": "revenue_usd",
@@ -3179,6 +3185,12 @@
     "type": "DOUBLE",
     "unit": "USD",
     "description": "Stablecoins on the chain per DefiLlama."
+   },
+   {
+    "name": "is_fee_revenue_provisional",
+    "type": "BOOLEAN",
+    "unit": "boolean",
+    "description": "True while this day's fees_usd and revenue_usd can still change, by the rule on fct_intents_daily: until they have been read 3 nights after the day ended, so the newest two days of a nightly build. NEAR's fees are mostly Intents fees and settle with them: they read $33,285 for 2026-10-31 and $146,822 two nights later. Every chain gets the same rule, so filtering on this column cuts them all at the same day. The other chains' first reads also run low, by up to about 6% for fees on Ethereum, Solana and Sui, but they have no fixed settling time, so False does not mean settled for them. A data test holds the number for NEAR only."
    }
   ],
   "rows": 15081,
@@ -3972,7 +3984,7 @@
  {
   "area": "Data quality",
   "table": "dq_revisions",
-  "description": "Values a source changed after first publishing them, comparing the oldest and newest snapshot of the same key.",
+  "description": "Values a source changed after first publishing them, comparing the oldest and newest snapshot of the same key. This shows that a value moved, not when or how often; to date a change, compare consecutive snapshots in silver.",
   "grain": "model, value_column, series_key, date_day",
   "sources": "silver tables",
   "path": "data/gold/dq_revisions.parquet",
