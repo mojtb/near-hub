@@ -125,3 +125,31 @@ snapshot_date,measure,protocol_name,protocol_slug,category,total_24h_usd,total_7
 2026-11-04,revenue,Rhea Dex,rhea-dex,Dexs,1616.0,16245.0,157030.0,557512.0,1126121.0
 2026-11-04,revenue,Rhea Lend,rhea-lend,Lending,2087.0,18687.0,71069.0,618394.15,1396927.15
 2026-11-04,revenue,Veax CLMM,veax-clmm,Dexs,0.0,0.23000000000000004,2.6799999999999997,15.079999999999947,15.079999999999977
+2026-11-05,fees,Allbridge Classic,allbridge-classic,Bridge,,,,89.88000000000001,1669.8799999999997
+2026-11-05,fees,GAIB,gaib,RWA,,,,,103899.0
+2026-11-05,fees,KAIO,kaio,RWA,17.0,51.0,340.0,1904.0,1904.0
+2026-11-05,fees,Lunar Finance Aggregator,lunar-finance-aggregator,DEX Aggregator,0.0,0.0,0.0,0.0,0.0
+2026-11-05,fees,Lunar Finance Bridge Aggregator,lunar-finance-bridge-aggregator,Bridge Aggregators,0.0,0.0,0.0,0.0,0.0
+2026-11-05,fees,Meme Cooking,meme-cooking,Launchpad,0.02,0.48000000000000004,22.640000000000004,887.3999999999997,16554.399999999998
+2026-11-05,fees,NEAR Intents,near-intents,Bridge,257009.0,1290565.0,5968455.0,53858708.0,58674659.980000004
+2026-11-05,fees,Near,near,Chain,3585.0,23005.0,177998.0,1196526.0,18370565.97
+2026-11-05,fees,Pyth Core,pyth-core,Oracle,0.0,0.0,0.0,201335.27999999997,366759.27999999997
+2026-11-05,fees,RHEA Cross Chain,rhea-cross-chain,Cross Chain Bridge,21.0,234.25,758.1600000000001,7101.200000000004,7101.200000000004
+2026-11-05,fees,RHEA LST,rhea-lst,Liquid Staking,425.0,3403.0,11414.0,47663.9,47663.9
+2026-11-05,fees,Rhea Dex,rhea-dex,Dexs,7989.0,83436.0,767878.0,2783229.0,5639971.0
+2026-11-05,fees,Rhea Lend,rhea-lend,Lending,9783.0,56570.0,266350.0,2424743.0,5551568.0
+2026-11-05,fees,Veax CLMM,veax-clmm,Dexs,0.0,1.1,12.439999999999998,147.4300000000001,4105.430000000017
+2026-11-05,revenue,Allbridge Classic,allbridge-classic,Bridge,,,,5.99,5.99
+2026-11-05,revenue,GAIB,gaib,RWA,,,,,103899.0
+2026-11-05,revenue,KAIO,kaio,RWA,17.0,51.0,340.0,1904.0,1904.0
+2026-11-05,revenue,Lunar Finance Aggregator,lunar-finance-aggregator,DEX Aggregator,0.0,0.0,0.0,0.0,0.0
+2026-11-05,revenue,Lunar Finance Bridge Aggregator,lunar-finance-bridge-aggregator,Bridge Aggregators,0.0,0.0,0.0,0.0,0.0
+2026-11-05,revenue,Meme Cooking,meme-cooking,Launchpad,0.02,0.04,14.35,648.2399999999998,11601.240000000005
+2026-11-05,revenue,NEAR Intents,near-intents,Bridge,49426.0,373804.0,1995307.0,9442196.05,9442232.05
+2026-11-05,revenue,Near,near,Chain,2510.0,16103.0,124598.0,838164.0,12859999.09
+2026-11-05,revenue,Pyth Core,pyth-core,Oracle,0.0,0.0,0.0,201335.27999999997,366759.27999999997
+2026-11-05,revenue,RHEA Cross Chain,rhea-cross-chain,Cross Chain Bridge,21.0,234.25,758.1600000000001,7101.200000000004,7101.200000000004
+2026-11-05,revenue,RHEA LST,rhea-lst,Liquid Staking,425.0,3403.0,11414.0,47762.9,47762.9
+2026-11-05,revenue,Rhea Dex,rhea-dex,Dexs,1598.0,16687.0,153575.0,556641.0,1127987.0
+2026-11-05,revenue,Rhea Lend,rhea-lend,Lending,2509.0,18377.0,71750.0,617641.15,1399359.15
+2026-11-05,revenue,Veax CLMM,veax-clmm,Dexs,0.0,0.22000000000000003,2.5,15.079999999999977,15.079999999999977
