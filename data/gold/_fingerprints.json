@@ -195,8 +195,8 @@
   "rows": 6
  },
  "fct_peer_daily": {
-  "columns": 9,
-  "hash": "cfec055f963464dc41bc8ac43e2ce4ef",
+  "columns": 10,
+  "hash": "1f7a7b1bb8760e185d8ad533bf14bfc0",
   "rows": 15081
  },
  "fct_protocol_config": {

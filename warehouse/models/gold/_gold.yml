@@ -565,7 +565,7 @@ models:
       - {name: signature_domains, description: "Signature schemes supported.", meta: {unit: "count"}}
       - {name: keyset_epoch, description: "MPC key generation epoch.", meta: {unit: "integer"}}
   - name: fct_peer_daily
-    description: "NEAR and peer chains per day on the same definitions. An empty cell means the source has no value for that day."
+    description: "NEAR and peer chains per day on the same definitions. An empty cell means the source has no value for that day. The fees and revenue of the newest days can still change; see is_fee_revenue_provisional."
     config:
       meta: {grain: "date_day, chain_id", sources: "DefiLlama, CoinMetrics"}
     data_tests:
@@ -577,10 +577,11 @@ models:
       - {name: price_usd, description: "Close: CoinMetrics, else DefiLlama.", meta: {unit: "USD"}}
       - {name: market_cap_usd, description: "Market cap per CoinMetrics. Empty for TON, which has no community series. For NEAR it has equalled price times total supply since late 2025; see fct_market_daily.", meta: {unit: "USD"}}
       - {name: tvl_usd, description: "Chain TVL per DefiLlama. DefiLlama can rewrite a chain's history on any night without notice, so no value is ever final and a TVL chart reproduces only at a pin. Its 2026-11-03 read moved 2,079 Ethereum and Solana days back to 2021, by up to 11.4%. Other reads through 2026-11-05 moved at most 8 days by more than 0.01%, and NEAR's series has not moved. See dq_revisions.", meta: {unit: "USD"}}
-      - {name: fees_usd, description: "Fees paid by users on the chain per DefiLlama.", meta: {unit: "USD"}}
+      - {name: fees_usd, description: "Fees paid by users on the chain per DefiLlama. DefiLlama also rewrites older days: its 2026-11-04 and 11-05 reads moved 165 and 557 of Solana's days, back to 2025-04-09, by up to 5.6%.", meta: {unit: "USD"}}
       - {name: revenue_usd, description: "Chain revenue per DefiLlama.", meta: {unit: "USD"}}
       - {name: dex_volume_usd, description: "DEX volume on the chain per DefiLlama.", meta: {unit: "USD"}}
       - {name: stablecoins_usd, description: "Stablecoins on the chain per DefiLlama.", meta: {unit: "USD"}}
+      - {name: is_fee_revenue_provisional, description: "True while this day's fees_usd and revenue_usd can still change, by the rule on fct_intents_daily: until they have been read 3 nights after the day ended, so the newest two days of a nightly build. NEAR's fees are mostly Intents fees and settle with them: they read $33,285 for 2026-10-31 and $146,822 two nights later. Every chain gets the same rule, so filtering on this column cuts them all at the same day. The other chains' first reads also run low, by up to about 6% for fees on Ethereum, Solana and Sui, but they have no fixed settling time, so False does not mean settled for them. A data test holds the number for NEAR only.", meta: {unit: "boolean"}, data_tests: [not_null]}
   - name: fct_protocol_config
     description: "Protocol parameters as read on each snapshot date. A change between rows is a protocol change."
     config:

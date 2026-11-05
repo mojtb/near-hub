@@ -3115,7 +3115,7 @@
  {
   "area": "Market and peers",
   "table": "fct_peer_daily",
-  "description": "NEAR and peer chains per day on the same definitions. An empty cell means the source has no value for that day.",
+  "description": "NEAR and peer chains per day on the same definitions. An empty cell means the source has no value for that day. The fees and revenue of the newest days can still change; see is_fee_revenue_provisional.",
   "grain": "date_day, chain_id",
   "sources": "DefiLlama, CoinMetrics",
   "path": "data/gold/fct_peer_daily.parquet",
@@ -3154,7 +3154,7 @@
     "name": "fees_usd",
     "type": "DOUBLE",
     "unit": "USD",
-    "description": "Fees paid by users on the chain per DefiLlama."
+    "description": "Fees paid by users on the chain per DefiLlama. DefiLlama also rewrites older days: its 2026-11-04 and 11-05 reads moved 165 and 557 of Solana's days, back to 2025-04-09, by up to 5.6%."
    },
    {
     "name": "revenue_usd",
@@ -3173,6 +3173,12 @@
     "type": "DOUBLE",
     "unit": "USD",
     "description": "Stablecoins on the chain per DefiLlama."
+   },
+   {
+    "name": "is_fee_revenue_provisional",
+    "type": "BOOLEAN",
+    "unit": "boolean",
+    "description": "True while this day's fees_usd and revenue_usd can still change, by the rule on fct_intents_daily: until they have been read 3 nights after the day ended, so the newest two days of a nightly build. NEAR's fees are mostly Intents fees and settle with them: they read $33,285 for 2026-10-31 and $146,822 two nights later. Every chain gets the same rule, so filtering on this column cuts them all at the same day. The other chains' first reads also run low, by up to about 6% for fees on Ethereum, Solana and Sui, but they have no fixed settling time, so False does not mean settled for them. A data test holds the number for NEAR only."
    }
   ],
   "rows": 15081,
