@@ -26,7 +26,7 @@
  },
  "dim_source": {
   "columns": 7,
-  "hash": "79f37181450211dd4ff0895eec19dbff",
+  "hash": "00e1c18ff9ea6f4794c181f75e6ca7f9",
   "rows": 21
  },
  "dim_token": {
@@ -51,8 +51,8 @@
  },
  "dq_reconciliation": {
   "columns": 12,
-  "hash": "4608730ed66a717dadc84cc891912afb",
-  "rows": 45
+  "hash": "4c1fd17992bb6aaef8dfa88e7862fded",
+  "rows": 52
  },
  "dq_revisions": {
   "columns": 9,
@@ -259,6 +259,11 @@
   "hash": "4bdfd4ab575026a34de688ccd33eea7e",
   "rows": 3500
  },
+ "fct_token_prices": {
+  "columns": 11,
+  "hash": "f0da1186960a01b684d852b96a0f469d",
+  "rows": 23847
+ },
  "fct_validator_epoch": {
   "columns": 14,
   "hash": "d2166ab8df37aeb19b62a0a06e7d72b0",
@@ -290,8 +295,8 @@
   "rows": 3236
  },
  "fct_wallet_holdings": {
-  "columns": 9,
-  "hash": "3aadfb524a38c041b0b0719ec83195fe",
+  "columns": 15,
+  "hash": "0fca699a03cc1a4bcd7f3ae837f6f473",
   "rows": 42556
  },
  "fct_wallet_transfers": {

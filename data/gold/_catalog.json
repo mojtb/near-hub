@@ -2261,9 +2261,9 @@
  {
   "area": "Wallets",
   "table": "fct_wallet_holdings",
-  "description": "Point in time: tokens and native NEAR per tracked account, per snapshot. This cannot be backfilled, so history starts with the first snapshot. Symbol and decimals come from registry/tokens.csv where a token is listed, otherwise from its contract's ft_metadata, which the nightly job reads for up to 2,000 tokens a night. A token with neither keeps empty symbol, amount_token and decimals: nothing is guessed. Earlier snapshots convert too, because the latest answer for a token applies to all of them.",
+  "description": "Point in time: tokens and native NEAR per tracked account, per snapshot. This cannot be backfilled, so history starts with the first snapshot. Symbol and decimals come from registry/tokens.csv where a token is listed, otherwise from its contract's ft_metadata, which the nightly job reads for up to 2,000 tokens a night. A token with neither keeps empty symbol, amount_token and decimals: nothing is guessed. Earlier snapshots convert too, because the latest answer for a token applies to all of them. value_usd multiplies amount_token by the price read in the same snapshot, joined on token_id from fct_token_prices, and value_status says why a row has none. Sum value_usd, not amount_token times price_usd: those rows include prices that would read $46.5B for one meme token at v2.ref-finance.near.",
   "grain": "snapshot_date, account_id, token_id",
-  "sources": "FastNear /v1/account/{id}/full, registry/tokens.csv, 1Click, RPC ft_metadata",
+  "sources": "FastNear /v1/account/{id}/full, registry/tokens.csv, 1Click, Rhea, RPC ft_metadata",
   "path": "data/gold/fct_wallet_holdings.parquet",
   "columns": [
    {
@@ -2319,6 +2319,42 @@
     "type": "BIGINT",
     "unit": "blocks",
     "description": "Block of the last balance change."
+   },
+   {
+    "name": "price_usd",
+    "type": "DOUBLE",
+    "unit": "USD per token",
+    "description": "The token's price from fct_token_prices, read in the same snapshot and matched on token_id. It stays here on rows that get no value, so a thin price can be seen. Never multiply it by amount_token yourself without checking value_status."
+   },
+   {
+    "name": "price_source",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "Which list price_usd came from: oneclick or rhea. Native NEAR shows the source of wrap.near's price."
+   },
+   {
+    "name": "price_date",
+    "type": "DATE",
+    "unit": "date",
+    "description": "When price_usd was last set, as far as its list shows: 1Click's priceUpdatedAt, or for Rhea the first read showing this exact price. Earlier than snapshot_date means a price that has stopped changing."
+   },
+   {
+    "name": "price_depth_usd",
+    "type": "DOUBLE",
+    "unit": "USD",
+    "description": "Assets with a vetted price opposite this token in Rhea's pools, from fct_token_prices.depth_usd. Empty only where the token has no price."
+   },
+   {
+    "name": "value_usd",
+    "type": "DOUBLE",
+    "unit": "USD",
+    "description": "amount_token times price_usd, where value_status is valued, and otherwise empty. Unvetted tokens are capped by depth, so this column is safe to sum. Rests on the contract's own decimals where metadata_source is ft_metadata."
+   },
+   {
+    "name": "value_status",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "Why the row has a value or not, checked in this order. no_price: no list has a positive price in this snapshot. no_decimals: decimals are unknown, which the metadata backlog clears. decimals_disagree: the list counts whole tokens with other decimals than the holding, so the price would be off by powers of ten. sources_disagree: 1Click and Rhea are more than price_disagreement_pct (20) apart, and nothing here says which is right. thin_price: an unvetted token whose position would be worth more than price_depth_multiple (3) times price_depth_usd. valued: value_usd is filled."
    }
   ],
   "rows": 42556,
@@ -3120,6 +3156,85 @@
  },
  {
   "area": "Market and peers",
+  "table": "fct_token_prices",
+  "description": "Point in time: one USD price per token per read, chosen from 1Click and Rhea on the token's id, never its symbol. 1Click wins where it has a positive price, because 139 of its 152 tokens carry a market feed's id, while Rhea's list is one DEX's pools. A price of 0 or below on either list counts as no price. Tokens with no positive price on either list have no row. native:near takes wrap.near's price, because one redeems for the other one to one. Most of Rhea's list is stale or thin: 4,309 of the 4,609 tokens on all five reads to 2026-11-05 kept one unchanged price while NEAR moved 11%, and one token reads $1.36 trillion. So read price_date and depth_usd before using a Rhea price.",
+  "grain": "snapshot_date, token_id",
+  "sources": "1Click /v0/tokens, Rhea list-token-price, Rhea list-top-pools, registry/tokens.csv",
+  "path": "data/gold/fct_token_prices.parquet",
+  "columns": [
+   {
+    "name": "snapshot_date",
+    "type": "DATE",
+    "unit": "date",
+    "description": "Date the lists were read. On the 11-05 run the two lists were read about four minutes apart."
+   },
+   {
+    "name": "token_id",
+    "type": "VARCHAR",
+    "unit": "token id",
+    "description": "Token contract, as fct_wallet_holdings names it, or native:near. For 1Click this is the NEAR contract its asset id names, so bridged assets count too: USDC on Ethereum is eth-0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48.omft.near."
+   },
+   {
+    "name": "price_usd",
+    "type": "DOUBLE",
+    "unit": "USD per token",
+    "description": "The price to use: 1Click's if positive, otherwise Rhea's. Per whole token, counted with price_decimals."
+   },
+   {
+    "name": "price_source",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "Which list price_usd came from: oneclick or rhea."
+   },
+   {
+    "name": "price_date",
+    "type": "DATE",
+    "unit": "date",
+    "description": "When price_usd was last set, as far as its list shows. For 1Click, the date of its priceUpdatedAt. Rhea gives no time, so this is the first read showing this exact price, digit by digit. Earlier than snapshot_date means the price has not changed since then, and it can never read earlier than Rhea's first read, 2026-11-01."
+   },
+   {
+    "name": "price_decimals",
+    "type": "INTEGER",
+    "unit": "integer",
+    "description": "The decimals the chosen list uses for this token. A price is per whole token in these decimals, so a holding counted with different decimals cannot use it."
+   },
+   {
+    "name": "price_usd_oneclick",
+    "type": "DOUBLE",
+    "unit": "USD per token",
+    "description": "1Click's price. Empty if 1Click does not list the token or lists it at 0, which it did for six tokens on 2026-11-05."
+   },
+   {
+    "name": "price_usd_rhea",
+    "type": "DOUBLE",
+    "unit": "USD per token",
+    "description": "Rhea's price. Empty if Rhea does not list the token or lists it at 0."
+   },
+   {
+    "name": "price_gap_pct",
+    "type": "DOUBLE",
+    "unit": "percent",
+    "description": "How far apart the two lists are, as a percent of the larger price. Empty unless both have a positive price. Above the project's price_disagreement_pct (20), fct_wallet_holdings leaves the value empty."
+   },
+   {
+    "name": "depth_usd",
+    "type": "DOUBLE",
+    "unit": "USD",
+    "description": "Assets with a vetted price opposite this token, summed over Rhea's pools at this read. This is the real money behind a pool price: in a constant-product pool, selling any amount cannot take out more than the other side. It does not use Rhea's own tvl field, which reads $1.37B for one pool of two unknown tokens. It leaves out concentrated-liquidity (DCL) pools, which Rhea's pool list does not include, so a token traded only there reads 0."
+   },
+   {
+    "name": "is_vetted",
+    "type": "BOOLEAN",
+    "unit": "boolean",
+    "description": "True if 1Click has a positive price for the token or registry/tokens.csv lists it. Only these prices count toward depth_usd, and only these tokens can be valued beyond their depth."
+   }
+  ],
+  "rows": 23847,
+  "first": "2026-11-01",
+  "last": "2026-11-05"
+ },
+ {
+  "area": "Market and peers",
   "table": "fct_peer_daily",
   "description": "NEAR and peer chains per day on the same definitions. An empty cell means the source has no value for that day.",
   "grain": "date_day, chain_id",
@@ -3910,7 +4025,7 @@
     "description": "Why the gap exists, from registry/reconciliation_notes.csv."
    }
   ],
-  "rows": 45,
+  "rows": 52,
   "first": null,
   "last": null
  },

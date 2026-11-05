@@ -7,8 +7,8 @@ neardata,Sample blocks,No key,429 sooner than the published 180 per minute,https
 revenue_page,NEAR's own revenue and fee series,No key,None seen,https://revenue.near.org/,NEAR's public report; no license stated,Credit NEAR; low risk
 coinmetrics,Reference price and market cap,No key,10 calls per 6 s,https://gitbook-docs.coinmetrics.io/packages/coin-metrics-community-data,Community data is CC BY-NC 4.0: attribution required and non-commercial use only,Decide whether a prize entry counts as non-commercial; dropping it loses peer market-cap history
 coinbase,NEAR-USD daily candles,No key,None seen,https://www.coinbase.com/legal/market-data,Terms page could not be read (HTTP 403),Read the terms by hand
-oneclick,Supported token list with prices,No key,None seen,https://docs.near-intents.org/,Terms not reviewed,Low risk: token metadata
-rhea,Pools and token prices,No key,None seen,https://guide.rhea.finance/,Terms not reviewed,Low risk: only summary fields reach silver
+oneclick,Supported token list with prices,No key,None seen,https://docs.near-intents.org/,Terms not reviewed,"Read the terms first: every token's price per read now reaches gold, in fct_token_prices and next to each holding"
+rhea,Pools and token prices,No key,None seen,https://guide.rhea.finance/,Terms not reviewed,"Read the terms first: every token's price per read now reaches gold, in fct_token_prices and next to each holding, and pool amounts reach silver"
 metapool,Meta Pool metrics,No key,None seen,https://validators.narwallets.com/metrics,Terms not reviewed,Low risk
 github,Repository statistics,GITHUB_TOKEN optional,"60 calls/hour, 5,000 with a token",https://docs.github.com/en/site-policy/github-terms/github-terms-of-service,Public repository metadata under GitHub's terms,Contributor files include logins and avatars; they are stripped to counts in silver
 nearcatalog,Project directory,No key,None seen,https://nearcatalog.xyz/,Terms not reviewed,Low risk

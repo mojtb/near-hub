@@ -62,8 +62,8 @@ sources:
       - {name: oneclick__tokens, identifier: oneclick/tokens, description: "1Click supported tokens with price and decimals."}
       - {name: coinbase__candles, identifier: coinbase/candles, description: "Daily NEAR-USD OHLCV candles."}
       - {name: coinmetrics__asset_metrics, identifier: coinmetrics/asset_metrics, description: "Community price, market cap and spot volume per peer asset."}
-      - {name: rhea__top_pools, identifier: rhea/top_pools, description: "Largest Rhea pools."}
-      - {name: rhea__token_prices, identifier: rhea/token_prices, description: "Rhea token prices."}
+      - {name: rhea__top_pools, identifier: rhea/top_pools, description: "Rhea's pools with what each holds. Concentrated-liquidity (DCL) pools are not listed."}
+      - {name: rhea__token_prices, identifier: rhea/token_prices, description: "What Rhea lists as each token's USD price, with the decimals and symbol it uses."}
       - {name: metapool__metrics_parsed, identifier: metapool/metrics_parsed, description: "Meta Pool's Prometheus metrics, parsed from the saved text."}
       - {name: github__repos, identifier: github/repos, description: "Stars, forks and last push per tracked repository."}
       - {name: github__commit_activity, identifier: github/commit_activity, description: "Weekly commits for 52 weeks per tracked repository."}

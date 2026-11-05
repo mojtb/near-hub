@@ -104,6 +104,38 @@ etf_reported as (
     where reported_cumulative_usd is not null order by date_day desc limit 1
 ),
 
+prices_latest as (
+    select * from {{ ref('fct_token_prices') }}
+    where snapshot_date = (select max(snapshot_date) from {{ ref('fct_token_prices') }})
+),
+
+lst_latest as (
+    select token, contract, cast(price_near as double) as price_near
+    from {{ ref('fct_lst_snapshot') }}
+    where snapshot_date = (select max(snapshot_date) from prices_latest)
+),
+
+holdings_latest as (
+    select * from {{ ref('fct_wallet_holdings') }}
+    where snapshot_date = (select max(snapshot_date) from {{ ref('fct_wallet_holdings') }})
+),
+
+protocol_tvl_latest as (
+    select protocol_slug, arg_max(tvl_usd, date_day) as tvl_usd
+    from {{ ref('fct_protocol_tvl_daily') }}
+    group by protocol_slug
+),
+
+-- Bridged assets are most of what intents.near holds, so until the metadata backlog gives them decimals its sum means little.
+intents_holdings as (
+    select case
+        when count(*) filter (where value_status = 'no_decimals' and price_source = 'oneclick') <= 0.05 * count(*) filter (where price_source = 'oneclick')
+        then sum(value_usd)
+    end as value_usd
+    from holdings_latest
+    where account_id = 'intents.near'
+),
+
 checks as (
     select 'intents_volume_all_time_defillama_vs_page' as check_id, 'Intents all-time volume, USD' as metric, null as subject,
         'DefiLlama, sum of daily' as source_a, (select sum(volume_usd_defillama) from intents) as value_a,
@@ -276,6 +308,36 @@ checks as (
         'Share changes times NAV', (select cumulative_flow_usd from etf_reported),
         'SoSoValue, through news reports', (select reported_cumulative_usd from etf_reported),
         1.0, 'same_upstream'
+
+    union all select 'token_prices_latest_rhea_vs_oneclick', 'Median token price as a multiple of 1Click''s, over tokens both lists price', null,
+        'Rhea', (select median(price_usd_rhea / price_usd_oneclick) from prices_latest where token_id <> 'native:near'),
+        'Parity with 1Click', 1.0,
+        2.0, 'independent'
+
+    union all select 'lst_price_latest_lists_vs_contract', 'Liquid staking token price, USD', l.token,
+        'fct_token_prices', p.price_usd,
+        'Contract rate times wrap.near''s price', l.price_near * w.price_usd,
+        3.0, 'independent'
+    from lst_latest l
+    left join prices_latest p on p.token_id = l.contract
+    left join prices_latest w on w.token_id = 'wrap.near'
+
+    union all select 'holdings_usd_latest_vs_tvl', 'USD held by a protocol''s contracts against its TVL', 'Rhea lending',
+        'contract.main.burrow.near, sum of value_usd', (select sum(value_usd) from holdings_latest where account_id = 'contract.main.burrow.near'),
+        'DefiLlama rhea-lend', (select tvl_usd from protocol_tvl_latest where protocol_slug = 'rhea-lend'),
+        20.0, 'independent'
+
+    union all select 'holdings_usd_latest_vs_tvl', 'USD held by a protocol''s contracts against its TVL', 'Rhea DEX',
+        'v2.ref-finance.near and dclv2.ref-labs.near, sum of value_usd', (select sum(value_usd) from holdings_latest where account_id in ('v2.ref-finance.near', 'dclv2.ref-labs.near')),
+        'DefiLlama rhea-dex', (select tvl_usd from protocol_tvl_latest where protocol_slug = 'rhea-dex'),
+        30.0, 'independent'
+
+    union all select 'holdings_usd_latest_vs_tvl', 'USD held by a protocol''s contracts against its TVL', 'NEAR Intents',
+        'intents.near, sum of value_usd', (select value_usd from intents_holdings),
+        'DefiLlama near-intents plus revenue.near.org confidential TVL',
+        (select tvl_usd from protocol_tvl_latest where protocol_slug = 'near-intents')
+            + (select arg_max(confidential_tvl_usd, date_day) from intents where confidential_tvl_usd is not null),
+        20.0, 'independent'
 )
 
 select
