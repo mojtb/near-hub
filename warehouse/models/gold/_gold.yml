@@ -209,6 +209,23 @@ models:
       - {name: txn_fee_usd, description: "Transaction fees per /v1/charts.", meta: {unit: "USD"}}
       - {name: txn_volume_near, description: "NEAR moved by transactions.", meta: {unit: "NEAR"}}
       - {name: txn_volume_usd, description: "Value moved by transactions.", meta: {unit: "USD"}}
+  - name: fct_circulating_supply_daily
+    description: "NEAR's circulating supply per UTC day, built from the chain, from the day transfers were enabled. NEAR defines it as every token not subject to a lockup at that moment. This uses NEAR Explorer's formula: total supply, minus what every lockup contract still locks, minus the balances of lockup.near and contributors.near. Tested against NearBlocks' own lockup job while that ran, NEAR's published schedule, and the contracts' own answers. It does not take out the NEAR Foundation's liquid holding or the protocol treasury, and it counts staked tokens as circulating. See docs/CIRCULATING_SUPPLY.md."
+    config:
+      meta: {grain: "date_day", sources: "Archival RPC lockup contract state, FastNear transfers of lockup.near and contributors.near, NearBlocks total supply"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["date_day"]}}
+      - min_rows: {arguments: {n: 2000}}
+    columns:
+      - {name: date_day, description: "UTC calendar day, read at its close. Starts on 2020-10-13.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: total_supply_near, description: "Total supply at day end per NearBlocks, the same column as in fct_supply_daily, which a data test holds to the chain.", meta: {unit: "NEAR"}, data_tests: [not_null]}
+      - {name: lockup_locked_near, description: "Sum over all lockup contracts of the amount their schedule still locks at the day's close. A lockup whose owner never turned transfers on counts as released on schedule, as in NEAR Explorer; transfers_never_enabled_near holds those.", meta: {unit: "NEAR"}, data_tests: [not_null]}
+      - {name: foundation_locked_near, description: "Balances of lockup.near, which funds new lockups, and contributors.near, which held 418M NEAR at genesis and has since paid nearly all of it out. NEAR Explorer subtracted these two and no other account.", meta: {unit: "NEAR"}, data_tests: [not_null]}
+      - {name: circulating_supply_near, description: "total_supply_near minus lockup_locked_near minus foundation_locked_near.", meta: {unit: "NEAR"}, data_tests: [not_null]}
+      - {name: circulating_share_of_total, description: "circulating_supply_near divided by total_supply_near.", meta: {unit: "fraction"}, data_tests: [{in_range: {arguments: {low: 0.1, high: 1}}}]}
+      - {name: lockups_existing, description: "Lockup contracts that existed at the day's close. Contracts deleted later are counted until their last transfer.", meta: {unit: "count"}}
+      - {name: lockups_still_locking, description: "Lockup contracts with anything still locked at the day's close.", meta: {unit: "count"}}
+      - {name: transfers_never_enabled_near, description: "Held by lockups that exist today and whose owner has still not turned transfers on, so none of it has ever left its contract. It counts as circulating in circulating_supply_near, as in NEAR Explorer; a stricter reading subtracts it. Understated in the past, because a lockup that turned transfers on later is not in it for any day.", meta: {unit: "NEAR"}, data_tests: [not_null]}
   - name: fct_contract_daily
     description: "Daily transactions and unique callers per registry contract."
     config:
@@ -519,16 +536,18 @@ models:
       - {name: token_supply, description: "Tokens outstanding.", meta: {unit: "token units"}}
       - {name: staked_near, description: "NEAR staked by the contract. Empty where the contract has no such view.", meta: {unit: "NEAR"}}
   - name: fct_market_daily
-    description: "NEAR price and market cap per day, aligned to the close of the UTC day. price_usd prefers CoinMetrics; each source keeps its own column."
+    description: "NEAR price and market cap per day, aligned to the close of the UTC day. price_usd prefers CoinMetrics; each source keeps its own column. market_cap_usd is price times circulating supply built from the chain, which is total supply minus what lockups still lock. See docs/CIRCULATING_SUPPLY.md."
     config:
-      meta: {grain: "date_day", sources: "CoinMetrics, Coinbase, DefiLlama, NearBlocks"}
+      meta: {grain: "date_day", sources: "CoinMetrics, Coinbase, DefiLlama, NearBlocks, lockup contracts read on chain"}
     data_tests:
       - unique_grain: {arguments: {columns: ["date_day"]}}
       - min_rows: {arguments: {n: 2000}}
     columns:
       - {name: date_day, description: "UTC calendar day.", meta: {unit: "date"}, data_tests: [not_null]}
       - {name: price_usd, description: "NEAR close: CoinMetrics, else DefiLlama, else NearBlocks.", meta: {unit: "USD"}}
-      - {name: market_cap_usd, description: "Market cap: CoinMetrics, else NearBlocks. CoinMetrics' estimate tracked circulating supply until September 2025 and has equalled price times total supply since November 2025, so recent values are fully diluted. See circulating_supply_latest_nearblocks_vs_coinmetrics in dq_reconciliation.", meta: {unit: "USD"}}
+      - {name: market_cap_usd, description: "price_usd times circulating_supply_near: every token not subject to a lockup, including what the NEAR Foundation holds outside lockups. Empty before transfers were enabled on 2020-10-13. Do not read this next to a peer's as the same measure: see market_cap_basis in fct_peer_daily.", meta: {unit: "USD"}}
+      - {name: fully_diluted_value_usd, description: "price_usd times total supply. Since 2025-10-23 it is what other services publish as NEAR's market cap, and it runs about 0.2% above market_cap_usd.", meta: {unit: "USD"}}
+      - {name: market_cap_usd_coinmetrics, description: "CoinMetrics' CapMrktEstUSD, kept for comparison. Its supply is NearBlocks' legacy endpoint through CoinGecko, so it froze with NearBlocks in August 2025 and has been total supply since 2025-10-25.", meta: {unit: "USD"}}
       - {name: price_usd_coinmetrics, description: "CoinMetrics reference rate at the day's close.", meta: {unit: "USD"}}
       - {name: price_usd_coinbase_close, description: "Coinbase NEAR-USD close.", meta: {unit: "USD"}}
       - {name: price_usd_defillama, description: "DefiLlama price, moved back one day from its 00:00 stamp to align with the close.", meta: {unit: "USD"}}
@@ -538,7 +557,9 @@ models:
       - {name: low_usd, description: "Coinbase low.", meta: {unit: "USD"}}
       - {name: coinbase_volume_near, description: "Coinbase traded volume.", meta: {unit: "NEAR"}}
       - {name: reported_spot_volume_usd, description: "Reported spot volume per CoinMetrics.", meta: {unit: "USD"}}
-      - {name: circulating_supply_near, description: "Circulating supply per /v1/charts. The v3 stats endpoint reports this wrongly, so it is not used. Stale: the value has read 1,249,836,992 on every day since 2025-08-27, so treat it as unknown from then on.", meta: {unit: "NEAR"}}
+      - {name: circulating_supply_near, description: "Every token not subject to a lockup at the day's close, built from the chain: see fct_circulating_supply_daily. Empty before transfers were enabled on 2020-10-13.", meta: {unit: "NEAR"}}
+      - {name: circulating_share_of_total, description: "circulating_supply_near divided by total supply.", meta: {unit: "fraction"}}
+      - {name: circulating_supply_near_nearblocks, description: "NearBlocks' /v1/charts figure, kept as a test of the column above. Stuck at 1,249,836,992 since 2025-08-27, when NearBlocks stopped computing it, and too high from 2024-08-12 to 2024-12-28, when its job was failing.", meta: {unit: "NEAR"}}
   - name: fct_mpc_participants
     description: "MPC operators per snapshot, read directly from v1.signer."
     config:
@@ -564,7 +585,7 @@ models:
       - {name: signature_domains, description: "Signature schemes supported.", meta: {unit: "count"}}
       - {name: keyset_epoch, description: "MPC key generation epoch.", meta: {unit: "integer"}}
   - name: fct_peer_daily
-    description: "NEAR and peer chains per day on the same definitions. An empty cell means the source has no value for that day."
+    description: "NEAR and peer chains per day. Activity columns use one source and definition for every chain; market_cap_usd does not, so read market_cap_basis before comparing caps. An empty cell means the source has no value for that day."
     config:
       meta: {grain: "date_day, chain_id", sources: "DefiLlama, CoinMetrics"}
     data_tests:
@@ -574,7 +595,9 @@ models:
       - {name: date_day, description: "UTC calendar day.", meta: {unit: "date"}, data_tests: [not_null]}
       - {name: chain_id, description: "Chain identifier from registry/peers.csv.", meta: {unit: "id"}, data_tests: [not_null]}
       - {name: price_usd, description: "Close: CoinMetrics, else DefiLlama.", meta: {unit: "USD"}}
-      - {name: market_cap_usd, description: "Market cap per CoinMetrics. Empty for TON, which has no community series. For NEAR it has equalled price times total supply since late 2025; see fct_market_daily.", meta: {unit: "USD"}}
+      - {name: market_cap_usd, description: "Peers: CoinMetrics' estimate, price times the circulating supply the project reports. NEAR: fct_market_daily's, price times total supply minus lockups. Empty for TON, which has no community series. These are not one definition, so read market_cap_basis and implied_supply_tokens before comparing.", meta: {unit: "USD"}}
+      - {name: implied_supply_tokens, description: "market_cap_usd divided by the CoinMetrics price: the supply behind the cap. On 2026-11-05, as a share of total supply read from each chain: Sui 41% of 10B, Aptos 73%, Solana 93%, Avalanche 93%, Ethereum 100%, NEAR 99.8%.", meta: {unit: "native tokens"}}
+      - {name: market_cap_basis, description: "What market_cap_usd rests on. A peer's reported figure leaves out whatever its project treats as not circulating, while NEAR's leaves out only lockups, so the NEAR Foundation's liquid holding counts: 305M NEAR, about 26% of supply, at the last figure published (2024-01-11; see registry/near_supply_readings.csv).", meta: {unit: "label"}}
       - {name: tvl_usd, description: "Chain TVL per DefiLlama.", meta: {unit: "USD"}}
       - {name: fees_usd, description: "Fees paid by users on the chain per DefiLlama.", meta: {unit: "USD"}}
       - {name: revenue_usd, description: "Chain revenue per DefiLlama.", meta: {unit: "USD"}}
@@ -745,7 +768,8 @@ models:
     columns:
       - {name: date_day, description: "UTC calendar day.", meta: {unit: "date"}, data_tests: [not_null]}
       - {name: total_supply_near, description: "Total supply at day end per NearBlocks.", meta: {unit: "NEAR"}}
-      - {name: circulating_supply_near, description: "Circulating supply per /v1/charts. The v3 stats endpoint reports this wrongly, so it is not used. Stale: the value has read 1,249,836,992 on every day since 2025-08-27, so treat it as unknown from then on.", meta: {unit: "NEAR"}}
+      - {name: circulating_supply_near, description: "Every token not subject to a lockup at the day's close, built from the chain: see fct_circulating_supply_daily. Empty before transfers were enabled on 2020-10-13.", meta: {unit: "NEAR"}}
+      - {name: circulating_supply_near_nearblocks, description: "NearBlocks' /v1/charts figure, kept as a test of the column above. Stuck at 1,249,836,992 since 2025-08-27, when NearBlocks stopped computing it, and too high from 2024-08-12 to 2024-12-28, when its job was failing.", meta: {unit: "NEAR"}}
       - {name: onchain_supply_end_of_day_near, description: "Supply in the first block of the next day, read from the archival node. Empty where no daily block exists.", meta: {unit: "NEAR"}}
       - {name: protocol_version, description: "latest_protocol_version in the block header: the version the block's producer supports, which can lead the version in force by days (87 appeared on 2026-11-04; the config switched between the 11-04 and 11-05 reads). Date a change from fct_protocol_config.", meta: {unit: "integer"}}
       - {name: gas_fee_near, description: "Gas fees per /v1/charts.", meta: {unit: "NEAR"}}

@@ -42,6 +42,10 @@ seeds:
     events:
       +column_types:
         event_date: date
+    near_supply_readings:
+      +column_types:
+        reading_date: date
+        value: double
     etf_nrr_history:
       +column_types:
         date_day: date

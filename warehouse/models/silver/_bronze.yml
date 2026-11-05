@@ -20,8 +20,8 @@ sources:
       - {name: defillama__stablecoin_assets, identifier: defillama/stablecoin_assets, description: "Point-in-time supply per stablecoin per peer chain."}
       - {name: defillama__peer_price, identifier: defillama/peer_price, description: "Daily price per peer from DefiLlama's price API."}
       - {name: defillama__yield_pools, identifier: defillama/yield_pools, description: "Point-in-time yield pools on NEAR, trimmed from /pools."}
-      - {name: nearblocks__stats, identifier: nearblocks/stats, description: "Point-in-time chain stats; its circulating_supply is known to be wrong."}
-      - {name: nearblocks__stats_v1, identifier: nearblocks/stats_v1, description: "Legacy point-in-time chain stats, including circulating supply."}
+      - {name: nearblocks__stats, identifier: nearblocks/stats, description: "Point-in-time chain stats; its circulating_supply equals total supply by NearBlocks' choice."}
+      - {name: nearblocks__stats_v1, identifier: nearblocks/stats_v1, description: "Legacy point-in-time chain stats, including a circulating supply frozen since 2025-08-27."}
       - {name: nearblocks__blocks_24h, identifier: nearblocks/blocks_24h, description: "Trailing 24-hour block stats."}
       - {name: nearblocks__txns_24h, identifier: nearblocks/txns_24h, description: "Trailing 24-hour transaction stats."}
       - {name: nearblocks__intents_totals, identifier: nearblocks/intents_totals, description: "All-time Intents totals."}
@@ -53,6 +53,7 @@ sources:
       - {name: rpc__accounts, identifier: rpc/accounts, description: "view_account for each registry account."}
       - {name: rpc__hos_proposals, identifier: rpc/hos_proposals, description: "Every House of Stake proposal from the voting contract."}
       - {name: rpc__block_day, identifier: rpc/block_day, description: "Header fields of one block per UTC day."}
+      - {name: rpc__lockups, identifier: rpc/lockups, description: "Schedules of every lockup contract by number, the two accounts NEAR Explorer also subtracted, and the contracts' own answers at past blocks. No account names."}
       - {name: fastnear__account_full, identifier: fastnear/account_full, description: "Tokens, NFTs and staking pools per tracked account."}
       - {name: fastnear__ft_top_holders, identifier: fastnear/ft_top_holders, description: "Largest holders per registry token."}
       - {name: fastnear__tx_counts, identifier: fastnear/tx_counts, description: "Cumulative transaction count per registry account."}
