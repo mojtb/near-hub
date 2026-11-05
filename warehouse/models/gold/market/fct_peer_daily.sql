@@ -1,5 +1,7 @@
--- NEAR and peer chains per day on the same definitions: DefiLlama for activity, CoinMetrics for price and
--- market cap, DefiLlama prices where CoinMetrics has no series. Empty cells mean the source has no value.
+-- NEAR and peer chains per day: DefiLlama for activity, CoinMetrics for price and market cap, DefiLlama prices where CoinMetrics
+-- has no series. Empty cells mean the source has no value. Market caps are not on one definition. Each peer's uses the circulating
+-- supply its project reports, collected by CoinGecko: on 2026-11-05 that was 41% of total supply for Sui and 100% for Ethereum.
+-- NEAR's uses this warehouse's chain-built supply, which leaves out only lockups, so the Foundation's liquid NEAR counts as circulating.
 with peers as (select * from {{ ref('peers') }}),
 
 tvl as (
@@ -49,7 +51,12 @@ select
     k.date_day,
     k.chain_id,
     coalesce(cm.price_usd, llama_price.price_usd) as price_usd,
-    cm.market_cap_usd,
+    case when k.chain_id = 'near' then near_cap.market_cap_usd else cm.market_cap_usd end as market_cap_usd,
+    case when k.chain_id = 'near' then near_cap.market_cap_usd else cm.market_cap_usd end / cm.price_usd as implied_supply_tokens,
+    case
+        when k.chain_id = 'near' and near_cap.market_cap_usd is not null then 'chain: total supply minus lockups'
+        when k.chain_id <> 'near' and cm.market_cap_usd is not null then 'project-reported circulating supply, through CoinGecko and CoinMetrics'
+    end as market_cap_basis,
     tvl.tvl_usd,
     fees.fees_usd,
     fees.revenue_usd,
@@ -65,3 +72,4 @@ left join dex using (chain_id, date_day)
 left join stable using (chain_id, date_day)
 left join cm using (chain_id, date_day)
 left join llama_price using (chain_id, date_day)
+left join {{ ref('fct_market_daily') }} near_cap on k.chain_id = 'near' and near_cap.date_day = k.date_day

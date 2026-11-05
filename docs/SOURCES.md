@@ -15,6 +15,7 @@ This matters more than how many sources agree.
 | The chain, indexed by others | NearBlocks, FastNear | Independent of NEAR's uploads, but each is one company's indexer. Public Intents only. |
 | Markets | CoinMetrics, Coinbase, DefiLlama prices | Independent of the chain |
 | The Bitwise NEAR ETF's own numbers | Bitwise's page, SoSoValue's reported flows | SoSoValue's flows work out to Bitwise's share changes times NAV, so they are not a second opinion. The chain is. |
+| NEAR's circulating supply as others report it | NearBlocks' `/v1` figures, CoinMetrics' estimated market cap | CoinMetrics takes project-reported supply through CoinGecko, and NEAR's report is NearBlocks' legacy endpoint. They agree because they are one number. The lockup contracts on chain are the independent read: see [CIRCULATING_SUPPLY.md](CIRCULATING_SUPPLY.md). |
 
 Confidential Intents appear only in the NEAR family. Nothing here checks them independently, so treat them as self-reported.
 
@@ -25,8 +26,8 @@ The strongest checks are the ones that cross families. See [RECONCILIATION.md](R
 ### NearBlocks
 - v3 daily endpoints return at most 365 days per call. `limit` counts days, not rows, and `date=` returns a single day. History therefore grows with each stored snapshot.
 - Legacy `/v1/charts` is the only full daily history back to 2020-07-21, and `/v1` is marked for eventual removal. The bronze copy protects against that.
-- v3 `stats.circulating_supply` equals total supply, which is wrong. Circulating supply comes from `/v1` instead.
-- `/v1` circulating supply is stale too: it has read 1,249,836,992 NEAR on every day since 2025-08-27, on `/v1/charts` and `/v1/stats` alike. Gold keeps the column, the catalog marks it, and `circulating_supply_latest_nearblocks_vs_coinmetrics` in [RECONCILIATION.md](RECONCILIATION.md) shows the gap. No source in this warehouse has a live circulating figure.
+- v3 `stats.circulating_supply` equals total supply, and NearBlocks chose that: a comment in its [stats job](https://github.com/Nearblocks/nearblocks/blob/main/apps/backend/src/services/stats/stats.ts) says all genesis-locked tokens were released by October 2025. The chain agrees about genesis tokens, but later lockups still hold about 2M NEAR.
+- `/v1` circulating supply is frozen: it has read 1,249,836,992 NEAR on every day since 2025-08-27, on `/v1/charts` and `/v1/stats` alike, because NearBlocks' [rewrite of 2025-09-03](https://github.com/Nearblocks/nearblocks/commit/f70a80f58e) removed the job behind it. Until then that job read the lockup contracts, so its history is a good test of ours: from 2024-08-12 to 2024-12-28 it was failing and reads too high, and on all other days through 2025-08-26 it matches within 0.4%, with a median gap of 0.0001%. Gold keeps it as `circulating_supply_near_nearblocks`. `/v1/legacy/circulating-supply` has returned total supply [since 2025-10-23](https://github.com/Nearblocks/nearblocks/commit/ccff1f23f3), and it answers `format=coingecko`, which is how the figure reaches CoinMetrics.
 - v1 and v3 `active_accounts` are undocumented, and the gap between them is not stable: about 1.8x over the latest 30 days, but 9x to 18x in monthly averages from October 2025 to March 2026. The numbers show what each counts. v1 matches Nansen's published distinct signers, and v3 stays within 2% of v1 plus `meta_accounts`, so it also counts users whose transactions a relayer signs. Gold keeps both and calls neither "daily active users". `txns` and v3 cannot be compared across 2026-04-02: see [USAGE_BREAK_2026-04-02.md](USAGE_BREAK_2026-04-02.md).
 - Prices are stamped at 00:00 UTC, which makes the value on day D the close of day D-1. Gold moves them back one day, after which they match the other price sources within about 0.1%.
 - `tvl-stats` is a different measure from DefiLlama's chain TVL, about a third of it.
@@ -57,7 +58,9 @@ The strongest checks are the ones that cross families. See [RECONCILIATION.md](R
 - A fee collector can have no native account at all: `7066...f05` holds balances only inside `intents.near`, so `view_account` reports it as unknown. That is expected.
 
 ### CoinMetrics
-- `CapMrktEstUSD` divided by `PriceUSD` tracked NearBlocks' circulating figure until September 2025 and has equalled total supply since November 2025, so `market_cap_usd` in gold is a fully diluted cap from then on. The community data does not say why the estimate changed.
+- `CapMrktEstUSD` is price times a circulating supply [reported by each project and collected through CoinGecko](https://docs.coinmetrics.io/network-data/network-data-overview/market/market-capitalization). So it means something different per asset: on 2026-11-05 the supply behind it was 41% of total for Sui, 73% for Aptos, 93% for Solana and Avalanche, and 100% for Ethereum. Solana's matches its own `getSupply` RPC figure.
+- For NEAR it follows NearBlocks. It stayed within 0.02% (median) of NearBlocks' figure from November 2024, carried NearBlocks' frozen figure for two months, and on 2025-10-25, two days after NearBlocks pointed its endpoint at total supply, jumped to total supply. Since then it has equalled the previous day's total supply. Gold keeps it as `market_cap_usd_coinmetrics` and no longer uses it for NEAR.
+- The community tier offers `SplyCur` and `CapMrktCurUSD` only for some assets (Ethereum among the peers, not NEAR), so there is no CoinMetrics total supply to compare with.
 
 ### Archival RPC
 - `block`, `view_account` and `call_function` work at old heights.
@@ -131,6 +134,12 @@ Few rows get a value because most rows are launch tokens that nothing else trade
 
 The Rhea DEX gap read 27% on 2026-11-01 and 24% on 11-02, so its tolerance is 30%. About 97,000 QTC, $6.9M, left `dclv2.ref-labs.near` on 11-03, and DefiLlama's figure did not move with it, so it appears not to count QTC.
 
+### Lockup contracts
+- Every lockup is a subaccount of `lockup.near`, so FastNear's transfers for that account list them all: 5,379 under 5,364 names, none from genesis. A name comes from the owner, so an owner can delete a lockup and be given another under the same name, and 15 were. A lockup's state, read with `view_state` at a past block, gives its schedule, and the formula in gold is tested against each contract's own `get_locked_amount`.
+- Owners are people's accounts, so bronze has no account names: a lockup is known by its number in the factory's order, and each run rebuilds the list. Amounts and heights could lead back to an account on the public chain, but the repository does not hold a list of wallets.
+- `transfers.main.fastnear.com` gives each account's running balance, which matched `view_account` at the heights compared, so the balances of `lockup.near` and `contributors.near` need no daily calls.
+- A contract can stop being a lockup: one account now runs a Sputnik DAO contract, after its schedule ended. It is marked `replaced` and counts as holding nothing locked.
+
 ### Neardata
 - A block is about 265 KB, so raw blocks are counted and thrown away.
 - The published limit is 180 requests per minute, but three parallel workers hit HTTP 429 from this machine. The sampler runs one request at a time.
@@ -194,6 +203,8 @@ No, but it can check part of it and adds detail the dashboard lacks. Figures bel
 | Source | Why not |
 |---|---|
 | CoinGecko, GeckoTerminal | Terms bar storing or reproducing data, which a reproducible repository must do |
+| NEAR's published supply schedule as the circulating supply series | It gives six points from a plan made in 2020, and the chain differs from it by up to 3.3% after launch. It is kept as a test: `registry/near_supply_readings.csv` |
+| Token unlock trackers (Tokenomist, DropsTab, Messari, DefiLlama unlocks) | They restate NEAR's 2020 plan, and they disagree: DropsTab shows 100% unlocked on 13 Oct 2025, Tokenomist 23% locked against a 2035 projection |
 | Binance | HTTP 451 from this project's build machine |
 | DefiLlama bridges | Paid |
 | BigQuery `crypto_near_mainnet_us` | Not connected. Its freshness is unknown: the loader reads NEAR Lake, which stopped on 2026-03-24. Adding it needs a Google account and would give full distinct-signer and by-contract history |

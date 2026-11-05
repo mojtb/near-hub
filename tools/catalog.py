@@ -18,7 +18,7 @@ ROOT = Path(__file__).resolve().parents[1]
 DOCS = ROOT / "docs"
 AREAS = [
     ("Calendar and registry", ["dim_date", "dim_entity", "dim_token", "dim_event", "dim_block_day", "dim_protocol", "dim_source"]),
-    ("Chain usage, supply and parameters", ["fct_chain_daily", "fct_supply_daily", "fct_protocol_config", "fct_contract_daily", "fct_receiver_sample_daily"]),
+    ("Chain usage, supply and parameters", ["fct_chain_daily", "fct_supply_daily", "fct_circulating_supply_daily", "fct_protocol_config", "fct_contract_daily", "fct_receiver_sample_daily"]),
     ("NEAR Intents and revenue", ["fct_intents_daily", "fct_intents_chain_daily", "fct_intents_asset_daily", "fct_intents_fee_channels",
                                   "fct_intents_dashboard_readings", "fct_dune_intents_asset_daily", "fct_dune_dashboard_results",
                                   "fct_intents_1click_daily", "fct_intents_1click_channel_daily", "fct_intents_1click_pair_daily", "fct_intents_1click_route_daily", "fct_intents_1click_size_daily",
@@ -131,11 +131,14 @@ def expected_results(con: duckdb.DuckDBPyConnection) -> str:
     participants, threshold = one("select participants, threshold from gold.fct_mpc_state order by snapshot_date desc limit 1")
     channel, share = one("select referral, share_of_listed_fees from gold.fct_intents_fee_channels order by snapshot_date desc, channel_rank limit 1")
     chain_shares, fund_shares = one("select value_a, value_b from gold.dq_reconciliation where check_id = 'etf_nrr_shares_chain_vs_fund'")
+    circulating, circulating_share = one("select circulating_supply_near, circulating_share_of_total from gold.fct_circulating_supply_daily order by date_day desc limit 1")
+    live_chain, live_nearblocks = one("select value_a, value_b from gold.dq_reconciliation where check_id = 'circulating_supply_last_live_day_chain_vs_nearblocks'")
     lines = [
         f"- Data through: **{as_of}**",
         f"- Gold tables and columns: **{tables}** and **{columns}**",
         f"- Reconciliation: **{agree}** comparisons agree, **{differ}** differ, each with a written explanation",
         f"- Issuance over the last 30 days, from supply change plus burn: **{minted * 100:.2f}%** a year, against **{config * 100:.2f}%** in the protocol config",
+        f"- Circulating supply, built from NEAR's lockup contracts: **{circulating / 1e6:,.2f}M** NEAR, **{circulating_share * 100:.2f}%** of total supply; on 2025-08-26, the last day NearBlocks computed its own, **{live_chain / 1e6:,.2f}M** against **{live_nearblocks / 1e6:,.2f}M**",
         f"- Captured Intents revenue, all time: **${llama / 1e6:.2f}M** per DefiLlama, **${wallets / 1e6:.2f}M** rebuilt from wallet transfers",
         f"- Public Intents volume, all time: **${nb / 1e9:.2f}B** per NearBlocks, **${dune / 1e9:.2f}B** per NEAR's dashboard on Dune",
         f"- Chain Signatures: **{participants}** MPC participants with a threshold of **{threshold}**",

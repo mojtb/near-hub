@@ -364,6 +364,12 @@
   "seconds": 0.5,
   "status": "ok"
  },
+ "rpc/lockups": {
+  "detail": "",
+  "files": 0,
+  "seconds": 753.2,
+  "status": "ok"
+ },
  "rpc/nrr_pool_daily": {
   "detail": "",
   "files": 1,

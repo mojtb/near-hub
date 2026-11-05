@@ -112,3 +112,66 @@ def test_rhea_pools_become_one_row_per_token(con):
     sql = _silver("protocols/stg_rhea__pool_legs.sql", [("2026-11-05", pools)])
     rows = con.execute(f"select pool_id, token_id, amount_raw from ({sql}) order by 1, 2").fetchall()
     assert rows == [("1", "a.near", "200"), ("1", "wrap.near", "100"), ("2", "b.near", "1"), ("2", "c.near", "2"), ("2", "d.near", "3")]
+
+
+LOCKUP_MACROS = (Path(__file__).resolve().parents[1] / "warehouse" / "macros" / "lockups.sql").read_text()
+TRANSFERS_ENABLED_NS = 1602614338293769340.0
+YEAR_NS = 365 * 86400e9
+
+
+def _locked(con, t, amount=100.0, created=0.0, gone=None, withdrawn=0.0, kind="none", start=None, cliff=None, end=None, unvested=0.0,
+            lockup_start=TRANSFERS_ENABLED_NS, release=None, release_end=None, changed=None, finished=None, terminating_unvested=0.0, last_kind=None, last_withdrawn=0.0, last_unvested=0.0):
+    """Evaluate the gold formula for one made-up lockup."""
+    body = re.search(r"{%\s*macro lockup_locked_near\(t\)\s*-?%}(.*?){%-?\s*endmacro\s*%}", LOCKUP_MACROS, re.S).group(1).replace("{{ t }}", "t")
+    return con.execute(
+        f"""select {body} from (select ?::double as t, ?::double as lockup_amount_near, ?::double as created_ns, ?::double as gone_ns,
+                ?::double as first_withdrawn_near, ?::varchar as first_vesting_kind, ?::double as vesting_start_ns, ?::double as vesting_cliff_ns,
+                ?::double as vesting_end_ns, ?::double as first_unvested_near, ?::double as lockup_start_ns, ?::double as release_duration_ns,
+                ?::double as release_end_ns, ?::double as changed_ns, ?::double as finished_ns, ?::double as terminating_unvested_near,
+                ?::varchar as last_vesting_kind, ?::double as last_withdrawn_near, ?::double as last_unvested_near)""",
+        [t, amount, created, gone, withdrawn, kind, start, cliff, end, unvested, lockup_start, release, release_end, changed, finished, terminating_unvested, last_kind, last_withdrawn, last_unvested],
+    ).fetchone()[0]
+
+
+def test_lockup_holds_everything_until_its_lockup_ends_then_releases_in_a_line(con):
+    start = TRANSFERS_ENABLED_NS + YEAR_NS
+    plan = dict(lockup_start=start, release=4 * YEAR_NS, release_end=start + 4 * YEAR_NS)
+    assert _locked(con, start - 1e12, **plan) == 100.0
+    assert _locked(con, start + YEAR_NS, **plan) == pytest.approx(75.0)
+    assert _locked(con, start + 4 * YEAR_NS, **plan) == 0.0
+
+
+def test_early_contract_version_releases_from_transfers_enabled_not_from_the_end_of_its_lockup(con):
+    # Its release runs from the day transfers were enabled, so a quarter is already out when a one-year lockup ends.
+    start = TRANSFERS_ENABLED_NS + YEAR_NS
+    assert _locked(con, start, lockup_start=start, release=4 * YEAR_NS, release_end=TRANSFERS_ENABLED_NS + 4 * YEAR_NS) == pytest.approx(75.0)
+
+
+def test_lockup_vesting_holds_everything_before_the_cliff_and_the_larger_of_the_two_counts(con):
+    plan = dict(kind="schedule", start=0.0, cliff=YEAR_NS, end=4 * YEAR_NS, lockup_start=0.0)
+    assert _locked(con, YEAR_NS / 2, **plan) == 100.0
+    assert _locked(con, 2 * YEAR_NS, **plan) == pytest.approx(50.0)
+    assert _locked(con, 2 * YEAR_NS, **plan, release=4 * YEAR_NS, release_end=5 * YEAR_NS) == pytest.approx(75.0)
+
+
+def test_lockup_termination_locks_the_unvested_amount_until_it_has_left(con):
+    plan = dict(kind="schedule", start=0.0, cliff=0.0, end=4 * YEAR_NS, lockup_start=0.0, changed=YEAR_NS, finished=2 * YEAR_NS,
+                terminating_unvested=75.0, last_kind="none", last_withdrawn=75.0)
+    assert _locked(con, YEAR_NS - 1e12, **plan) == pytest.approx(75.0, abs=0.01)
+    assert _locked(con, 1.5 * YEAR_NS, **plan) == 75.0  # the schedule alone would say 62.5
+    assert _locked(con, 2 * YEAR_NS, **plan) == 0.0
+
+
+def test_lockup_termination_still_open_stays_at_what_the_newest_state_says(con):
+    plan = dict(kind="hash", lockup_start=0.0, changed=YEAR_NS, finished=YEAR_NS, last_kind="terminating", last_unvested=40.0)
+    assert _locked(con, YEAR_NS - 1e12, **plan) == 0.0
+    assert _locked(con, 10 * YEAR_NS, **plan) == 40.0
+
+
+def test_lockup_counts_only_while_it_exists(con):
+    assert _locked(con, TRANSFERS_ENABLED_NS - 1e12, created=TRANSFERS_ENABLED_NS) == 0.0
+    assert _locked(con, TRANSFERS_ENABLED_NS, created=0.0, gone=TRANSFERS_ENABLED_NS, lockup_start=2 * TRANSFERS_ENABLED_NS) == 0.0
+
+
+def test_lockup_vesting_hidden_behind_a_hash_counts_as_no_vesting(con):
+    assert _locked(con, YEAR_NS, kind="hash", lockup_start=0.0) == 0.0

@@ -1,6 +1,7 @@
 -- Supply and issuance per UTC day.
 -- NearBlocks' total_supply for day D is compared in dq_reconciliation with the on-chain supply at the
 -- first block of D+1. minted_near adds burned gas back to the change in supply, which isolates issuance.
+-- circulating_supply_near comes from fct_circulating_supply_daily, because NearBlocks' own figure stopped moving on 2025-08-27.
 -- Burn is gas minus the share paid to contracts (the developer gas rebate). That share changed from 0.3 to 0 with
 -- protocol version 87, first read on 2026-11-05, so each day uses the newest config read on or before it; days
 -- before the first read (2026-10-28) use the first read's rate, the 30% in force since mainnet launch.
@@ -41,7 +42,8 @@ base as (
     select
         nb.date_day,
         nb.total_supply_near,
-        nb.circulating_supply_near,
+        cs.circulating_supply_near,
+        nb.circulating_supply_near as circulating_supply_near_nearblocks,
         c.onchain_supply_end_of_day_near,
         c.protocol_version,
         nb.gas_fee_near,
@@ -51,6 +53,7 @@ base as (
         coalesce(t.treasury_reward_near, 0) as treasury_reward_near
     from rated nb
     left join chain_next_day c using (date_day)
+    left join {{ ref('fct_circulating_supply_daily') }} cs using (date_day)
     left join treasury_rewards t using (date_day)
 )
 

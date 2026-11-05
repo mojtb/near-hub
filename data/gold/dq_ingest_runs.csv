@@ -316,6 +316,7 @@ snapshot_date,dataset,status,detail,files,seconds
 2026-11-05,rpc/contract_views,ok,"",16,2.3
 2026-11-05,rpc/gas_price,ok,"",1,0.1
 2026-11-05,rpc/hos_proposals,ok,"",1,0.5
+2026-11-05,rpc/lockups,ok,"",0,753.2
 2026-11-05,rpc/nrr_pool_daily,ok,"",1,4.3
 2026-11-05,rpc/protocol_config,ok,"",1,0.1
 2026-11-05,rpc/status,ok,"",1,0.2

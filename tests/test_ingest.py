@@ -1,6 +1,7 @@
 """Unit tests for the ingest layer. They need no network: HTTP calls go to a stub session."""
 from __future__ import annotations
 
+import base64
 import gzip
 import hashlib
 import itertools
@@ -647,3 +648,219 @@ def test_holdings_and_top_holders_are_fetched_before_token_metadata():
     names = [f"{d.source}/{d.name}" for d in select("all", None, None)]
     assert names.index("fastnear/account_full") < names.index("rpc/ft_metadata")
     assert names.index("fastnear/ft_top_holders") < names.index("rpc/ft_metadata")
+
+
+def _borsh_text(value):
+    return len(value.encode()).to_bytes(4, "little") + value.encode()
+
+
+def _lockup_state(amount=10**30, withdrawn=0, duration=0, release=None, timestamp=None, poll=None, vesting=b"\x00", staking=None, foundation="foundation.near"):
+    """A lockup contract's state as the chain stores it. Field order follows near/core-contracts lockup/src/lib.rs."""
+    state = _borsh_text("person.near") + amount.to_bytes(16, "little") + withdrawn.to_bytes(16, "little") + duration.to_bytes(8, "little")
+    state += b"\x01" + release.to_bytes(8, "little") if release is not None else b"\x00"
+    state += b"\x01" + timestamp.to_bytes(8, "little") if timestamp is not None else b"\x00"
+    state += b"\x01" + _borsh_text(poll) if poll else b"\x00" + (1602614338293769340).to_bytes(8, "little")
+    state += vesting + _borsh_text("lockup-whitelist.near")
+    state += b"\x01" + _borsh_text(staking) + b"\x00" + (5).to_bytes(16, "little") if staking else b"\x00"
+    state += b"\x01" + _borsh_text(foundation) if foundation else b"\x00"
+    return state
+
+
+def test_lockup_state_decodes_each_kind_of_vesting_and_returns_no_names():
+    from ingest.sources.lockups import parse_state
+
+    schedule = b"\x02" + (1).to_bytes(8, "little") + (2).to_bytes(8, "little") + (3).to_bytes(8, "little")
+    hashed = b"\x01" + (2).to_bytes(4, "little") + b"ab"
+    terminating = b"\x03" + (7).to_bytes(16, "little") + b"\x04"
+    assert parse_state(_lockup_state(vesting=schedule))["vesting_end_ns"] == 3
+    assert parse_state(_lockup_state(vesting=hashed))["vesting_kind"] == "hash"
+    assert parse_state(_lockup_state(vesting=terminating))["unvested"] == 7
+    fields = parse_state(_lockup_state(release=9, timestamp=8, poll="transfer-vote.near", staking="pool.near", withdrawn=4))
+    assert (fields["release_duration_ns"], fields["lockup_timestamp_ns"], fields["withdrawn"], fields["transfers_enabled"]) == (9, 8, 4, False)
+    assert not {"person.near", "pool.near", "foundation.near", "transfer-vote.near"} & {str(v) for v in fields.values()}
+
+
+@pytest.mark.parametrize("raw", [b"", b"\x01\x00\x00", _lockup_state() + b"x", _lockup_state()[:-3]])
+def test_lockup_state_refuses_what_is_not_a_lockup(raw):
+    from ingest.sources.lockups import parse_state
+
+    with pytest.raises(ValueError):
+        parse_state(raw)
+
+
+def test_factory_lockups_are_numbered_by_funding_and_leave_the_rest_out():
+    from ingest.sources.lockups import factory_lockups
+
+    def transfer(other, height, asset="native:near", amount="-5"):
+        return {"other_account_id": other, "asset_id": asset, "block_height": str(height), "block_timestamp": str(height * 1000), "amount": amount}
+
+    found = factory_lockups([transfer("b.lockup.near", 20), transfer("a.lockup.near", 30), transfer("b.lockup.near", 10), transfer("near", 5),
+                             transfer("c.lockup.near", 1, asset="nep141:x"), transfer(None, 6), transfer("d.lockup.near", 30),
+                             transfer("e.lockup.near", 2, amount="5"), transfer("a.lockup.near", 30)])
+    assert found == [("b.lockup.near", 10, 10000), ("b.lockup.near", 20, 20000), ("a.lockup.near", 30, 30000), ("d.lockup.near", 30, 30000)]
+
+
+def test_daily_balances_keep_each_days_last_and_leave_out_the_day_under_way():
+    from ingest.sources.lockups import daily_balances
+
+    def transfer(day_seconds, height, balance, asset="native:near"):
+        return {"asset_id": asset, "block_height": str(height), "block_timestamp": str(day_seconds * 10**9), "end_of_block_balance": balance}
+
+    day_one, day_two = 1793404800, 1793491200  # 2026-10-31 and 2026-11-01, UTC
+    rows = daily_balances("lockup.near", [transfer(day_one, 2, "20"), transfer(day_one, 1, "10"), transfer(day_one, 3, "1", asset="nep141:x"), transfer(day_two, 4, "40")], "2026-11-01")
+    assert rows == [{"account_id": "lockup.near", "date_day": "2026-10-31", "balance_yocto": "20"}]
+
+
+class _FakeChain:
+    """Answers the fetcher's calls by what they ask for, so a test need not care about their order."""
+
+    def __init__(self, lockups, gone=(), last_transfers=None, contributors=()):
+        self.lockups, self.gone, self.last_transfers, self.contributors = lockups, set(gone), last_transfers or {}, list(contributors)
+        self.headers, self.calls = {}, []
+        self.factory = [{"other_account_id": a, "asset_id": "native:near", "block_height": str(h), "block_timestamp": str(h * 10**9), "end_of_block_balance": "7", "amount": "-5"}
+                        for a, (h, _) in lockups.items()]
+
+    def _reply(self, payload):
+        return FakeResponse(200, json.dumps(payload).encode())
+
+    def request(self, method, url, **kw):
+        body = kw.get("json") or {}
+        self.calls.append(body)
+        if "transfers" in url:
+            account = body["account_id"]
+            if account == "lockup.near":
+                return self._reply({"transfers": self.factory, "resume_token": None})
+            if account == "contributors.near":
+                return self._reply({"transfers": self.contributors, "resume_token": None})
+            if not body.get("desc") and account in getattr(self, "account_transfers", {}):
+                return self._reply({"transfers": self.account_transfers[account], "resume_token": None})
+            return self._reply({"transfers": self.last_transfers.get(account, [])[:1], "resume_token": None})
+        params = body["params"]
+        if body["method"] == "block":
+            height = params.get("block_id", 1000)
+            return self._reply({"result": {"header": {"height": height, "timestamp": height * 10}}})
+        kind = params["request_type"]
+        if kind == "view_account":
+            return self._reply({"result": {"amount": "99", "code_hash": "code"}})
+        if kind == "call_function":
+            answer = "5" if params["method_name"] == "get_locked_amount" else True
+            return self._reply({"result": {"block_height": 1, "result": list(json.dumps(answer).encode())}})
+        account, height = params["account_id"], params.get("block_id")
+        if account in self.gone and height is None:
+            return self._reply({"result": {"error": f"account {account} does not exist while viewing"}})
+        created, state = self.lockups[account]
+        if height is not None and height < created:
+            return self._reply({"result": {"error": f"account {account} does not exist while viewing"}})
+        state = state(height or 1000) if callable(state) else state
+        return self._reply({"result": {"values": [{"key": "U1RBVEU=", "value": base64.b64encode(state).decode()}], "block_height": height or 1000}})
+
+
+def _lockups_run(tmp_path, monkeypatch, chain, snapshot="2026-11-05"):
+    from ingest.sources import lockups
+
+    bronze = tmp_path / "bronze"
+    monkeypatch.setattr("ingest.pipeline.STATE", tmp_path)
+    monkeypatch.setattr(lockups, "BRONZE", bronze)
+    monkeypatch.delenv("FASTNEAR_API_KEY", raising=False)
+    http = HttpClient(policies={"archival-rpc.mainnet.fastnear.com": HostPolicy(), "free.rpc.fastnear.com": HostPolicy(), "transfers.main.fastnear.com": HostPolicy()}, log=lambda m: None)
+    http.session = chain
+    ctx = Context(snapshot, http, BronzeWriter(snapshot, root=bronze))
+    lockups.lockups(ctx)
+    ctx.bronze.flush()
+    return lockups, ctx, bronze
+
+
+def _saved(bronze, key, snapshot="2026-11-05"):
+    return json.loads(gzip.decompress((bronze / f"rpc/lockups/dt={snapshot}/{key}.json.gz").read_bytes()))
+
+
+def test_lockups_store_schedules_by_number_and_no_account_name(tmp_path, monkeypatch):
+    chain = _FakeChain({"aaa.lockup.near": (100, _lockup_state(release=10**18, poll="transfer-vote.near")), "bbb.lockup.near": (200, _lockup_state())},
+                       gone=["bbb.lockup.near"], last_transfers={"bbb.lockup.near": [{"block_height": "500", "block_timestamp": "900"}]})
+    _, _, bronze = _lockups_run(tmp_path, monkeypatch, chain)
+    rows = _saved(bronze, "schedules")
+    assert [(r["lockup_no"], r["status"]) for r in rows] == [(1, "live"), (2, "deleted")]
+    assert rows[0]["lockup_amount"] == str(10**30) and rows[0]["transfers_enabled"] is False and rows[1]["gone_ns"] == "900"
+    everything = "".join(p.read_bytes().decode("latin1") + gzip.decompress(p.read_bytes()).decode() for p in (bronze / "rpc/lockups/dt=2026-11-05").glob("*.gz"))
+    everything += (bronze / "_manifest/dt=2026-11-05.jsonl").read_text()
+    for name in ("aaa.lockup.near", "bbb.lockup.near", "person.near", "lockup-whitelist.near"):
+        assert name not in everything
+
+
+def test_lockups_a_later_run_reads_only_what_can_still_change_and_saves_only_what_did(tmp_path, monkeypatch):
+    far_future = 2 * 10**18
+    state = {"finished.lockup.near": (100, _lockup_state()), "running.lockup.near": (200, _lockup_state(timestamp=far_future))}
+    _lockups_run(tmp_path, monkeypatch, _FakeChain(state))
+    later = _FakeChain({**state, "new.lockup.near": (300, _lockup_state())})
+    _, _, bronze = _lockups_run(tmp_path, monkeypatch, later, snapshot="2026-11-06")
+    assert [r["lockup_no"] for r in _saved(bronze, "schedules", "2026-11-06")] == [3]
+    read = [c["params"]["account_id"] for c in later.calls if c.get("method") == "query" and c["params"]["request_type"] == "view_state"]
+    assert "finished.lockup.near" not in read and "running.lockup.near" in read and "new.lockup.near" in read
+
+
+def _termination_chain(start=500, end=800):
+    vesting = b"\x02" + (1).to_bytes(8, "little") + (2).to_bytes(8, "little") + (3 * 10**18).to_bytes(8, "little")
+    terminating = b"\x03" + (7).to_bytes(16, "little") + b"\x04"
+
+    def state(height):
+        if height < start:
+            return _lockup_state(vesting=vesting)
+        return _lockup_state(vesting=terminating) if height < end else _lockup_state(withdrawn=7)
+
+    return _FakeChain({"staff.lockup.near": (100, state)})
+
+
+def test_lockups_a_termination_is_saved_with_when_it_started_and_finished(tmp_path, monkeypatch):
+    _, _, bronze = _lockups_run(tmp_path, monkeypatch, _termination_chain())
+    row = _saved(bronze, "schedules")[0]
+    assert (row["vesting_kind"], row["last_vesting_kind"], row["last_withdrawn"], row["terminating_unvested"]) == ("schedule", "none", "7", "7")
+    assert (row["changed_ns"], row["finished_ns"]) == ("5000", "8000")
+
+
+def test_lockups_a_termination_still_open_needs_no_end_until_a_later_run_sees_it(tmp_path, monkeypatch):
+    _, _, bronze = _lockups_run(tmp_path, monkeypatch, _termination_chain(end=5000))
+    row = _saved(bronze, "schedules")[0]
+    assert (row["last_vesting_kind"], row["last_unvested"], row["changed_ns"], row["finished_ns"]) == ("terminating", "7", "5000", "5000")
+    later = _termination_chain(end=1000)
+    # The tip now shows it finished, and the search looks only above the height of the earlier read.
+    row_before = dict(row)
+    _, _, bronze = _lockups_run(tmp_path, monkeypatch, later, snapshot="2026-11-06")
+    row = _saved(bronze, "schedules", "2026-11-06")[0]
+    assert (row["last_vesting_kind"], row["last_withdrawn"], row["terminating_unvested"]) == ("none", "7", "7")
+    assert row["changed_ns"] == row_before["changed_ns"] and row["finished_ns"] == "10000"
+
+
+def test_lockups_a_rerun_on_one_day_keeps_that_days_earlier_rows(tmp_path, monkeypatch):
+    state = {"first.lockup.near": (100, _lockup_state())}
+    _lockups_run(tmp_path, monkeypatch, _FakeChain(state))
+    _, _, bronze = _lockups_run(tmp_path, monkeypatch, _FakeChain({**state, "second.lockup.near": (200, _lockup_state())}))
+    assert [r["lockup_no"] for r in _saved(bronze, "schedules")] == [1, 2]
+
+
+def test_lockups_refuse_to_guess_when_the_factorys_order_changes(tmp_path, monkeypatch):
+    _lockups_run(tmp_path, monkeypatch, _FakeChain({"first.lockup.near": (100, _lockup_state())}))
+    from ingest.sources import lockups
+
+    moved = _FakeChain({"other.lockup.near": (50, _lockup_state()), "first.lockup.near": (100, _lockup_state())})
+    _, ctx, bronze = _lockups_run(tmp_path, monkeypatch, moved, snapshot="2026-11-06")
+    assert any("order no longer matches" in w for w in ctx.warnings)
+    assert lockups.known_rows()[1]["created_height"] == 100
+
+
+def test_lockups_a_name_used_twice_is_two_lockups_and_the_tip_describes_only_the_second(tmp_path, monkeypatch):
+    first, second = _lockup_state(amount=9 * 10**30), _lockup_state(amount=2 * 10**30)
+    chain = _FakeChain({"owner.lockup.near": (100, lambda height: first if height < 500 else second)})
+    chain.factory.append({**chain.factory[0], "block_height": "500", "block_timestamp": str(500 * 10**9)})
+    chain.last_transfers = {"owner.lockup.near": []}
+    chain.account_transfers = {"owner.lockup.near": [{"block_height": "300", "block_timestamp": "3000"}, {"block_height": "500", "block_timestamp": "5000"}]}
+    _, _, bronze = _lockups_run(tmp_path, monkeypatch, chain)
+    rows = _saved(bronze, "schedules")
+    assert [(r["lockup_no"], r["lockup_amount"], r["status"], r["gone_ns"]) for r in rows] == [(1, str(9 * 10**30), "deleted", "3000"), (2, str(2 * 10**30), "live", None)]
+
+
+def test_lockups_run_after_block_heights_are_known():
+    from ingest import sources  # noqa: F401
+    from ingest.pipeline import REGISTRY
+
+    names = [f"{d.source}/{d.name}" for d in REGISTRY]
+    assert names.index("rpc/block_day") < names.index("rpc/lockups")

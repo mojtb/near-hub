@@ -16,8 +16,8 @@
  },
  "dim_event": {
   "columns": 6,
-  "hash": "7be93c756df6f781821b7b843f87dbd9",
-  "rows": 19
+  "hash": "f4d68aca9970d5d0c02299ae71fad940",
+  "rows": 22
  },
  "dim_protocol": {
   "columns": 10,
@@ -26,8 +26,8 @@
  },
  "dim_source": {
   "columns": 7,
-  "hash": "00e1c18ff9ea6f4794c181f75e6ca7f9",
-  "rows": 21
+  "hash": "def92cd3d9379b4638fc555fc5ad3f7a",
+  "rows": 22
  },
  "dim_token": {
   "columns": 11,
@@ -41,18 +41,18 @@
  },
  "dq_ingest_runs": {
   "columns": 6,
-  "hash": "e3aa63fc094ac8287b127685e7cae3cd",
-  "rows": 322
+  "hash": "bd072d2c432fa7c6a672d79aef6a238b",
+  "rows": 323
  },
  "dq_provenance": {
   "columns": 10,
-  "hash": "90ffe0d8243a00abbbcb1f42b517a3ac",
-  "rows": 365
+  "hash": "38564b31f79ddd0f175d84591f70e12f",
+  "rows": 366
  },
  "dq_reconciliation": {
   "columns": 12,
-  "hash": "4c1fd17992bb6aaef8dfa88e7862fded",
-  "rows": 52
+  "hash": "052b81bd179051e12387c3f575f16b91",
+  "rows": 70
  },
  "dq_revisions": {
   "columns": 9,
@@ -73,6 +73,11 @@
   "columns": 4,
   "hash": "640c239f6d7a8bb51448a1ceb12c5876",
   "rows": 369
+ },
+ "fct_circulating_supply_daily": {
+  "columns": 9,
+  "hash": "8838d812c9cbd5b992ec6596e5a5b528",
+  "rows": 2214
  },
  "fct_contract_daily": {
   "columns": 7,
@@ -96,7 +101,7 @@
  },
  "fct_etf_nrr_chain_daily": {
   "columns": 15,
-  "hash": "185b8f9a2d983849cf0bc548aea0b527",
+  "hash": "0abdd4714b22d562555dfc7d3e3a8613",
   "rows": 38
  },
  "fct_etf_nrr_daily": {
@@ -175,8 +180,8 @@
   "rows": 15
  },
  "fct_market_daily": {
-  "columns": 13,
-  "hash": "13f6fea9ce8d3379b9e80027307ae319",
+  "columns": 17,
+  "hash": "47d4a20fc26ebeff157509f26a1c6427",
   "rows": 2298
  },
  "fct_mpc_operators": {
@@ -195,8 +200,8 @@
   "rows": 6
  },
  "fct_peer_daily": {
-  "columns": 10,
-  "hash": "1f7a7b1bb8760e185d8ad533bf14bfc0",
+  "columns": 12,
+  "hash": "351827add889cf5f83e502ab54c28c08",
   "rows": 15081
  },
  "fct_protocol_config": {
@@ -250,8 +255,8 @@
   "rows": 1934
  },
  "fct_supply_daily": {
-  "columns": 12,
-  "hash": "4280c9ca29172d2d2bd55ed780425eb3",
+  "columns": 13,
+  "hash": "f98cd62883125433af7d4e77b5bacd98",
   "rows": 2298
  },
  "fct_token_holders": {

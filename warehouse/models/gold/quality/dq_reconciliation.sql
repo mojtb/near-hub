@@ -19,8 +19,42 @@ dune_day as (
 
 market_latest_cm as (
     select * from {{ ref('fct_market_daily') }}
-    where price_usd_coinmetrics is not null and market_cap_usd is not null and circulating_supply_near is not null
+    where price_usd_coinmetrics is not null and market_cap_usd_coinmetrics is not null and circulating_supply_near_nearblocks is not null
     order by date_day desc limit 1
+),
+
+-- NearBlocks stopped computing circulating supply on this day, so it is the last day its figure can test the chain-built one.
+nearblocks_last_live as (select date '2025-08-26' as d),
+
+circulating_years as (
+    select
+        year(date_day) as y,
+        avg(circulating_supply_near) as chain,
+        avg(circulating_supply_near_nearblocks) as nearblocks
+    from {{ ref('fct_supply_daily') }}, nearblocks_last_live
+    where date_day <= d and circulating_supply_near is not null and circulating_supply_near_nearblocks is not null
+    group by 1
+),
+
+published_supply as (select * from {{ ref('near_supply_readings') }} where reading = 'published_circulating_supply'),
+
+latest_lockup_views as (
+    select * from {{ ref('stg_rpc__lockup_contract_views') }}
+    where read_day = (select max(read_day) from {{ ref('stg_rpc__lockup_contract_views') }}) and transfers_enabled
+),
+
+lockup_schedules as (
+    select *, {{ lockup_dates() }} from {{ ref('stg_rpc__lockups') }} where is_latest and lockup_amount_near is not null
+),
+
+foundation_latest as (
+    select
+        account_id,
+        arg_max(balance_near, date_day) filter (where read_with = 'transfers') as balance_transfers,
+        arg_max(balance_near, date_day) filter (where read_with = 'view_account') as balance_view
+    from {{ ref('stg_rpc__lockup_foundation_balances') }}
+    where is_latest
+    group by account_id
 ),
 
 dune_assets as (select * from {{ ref('fct_dune_intents_asset_daily') }}),
@@ -224,10 +258,48 @@ checks as (
         'Archival RPC, first block of next day', (select arg_max(onchain_supply_end_of_day_near, date_day) from supply_both),
         0.05, 'independent'
 
-    union all select 'circulating_supply_latest_nearblocks_vs_coinmetrics', 'Circulating supply on the latest day, NEAR', null,
-        'NearBlocks /v1/charts', (select circulating_supply_near from market_latest_cm),
-        'CoinMetrics market cap divided by price', (select market_cap_usd / price_usd_coinmetrics from market_latest_cm),
-        2.0, 'independent'
+    union all select 'circulating_supply_latest_nearblocks_vs_coinmetrics', 'What other services report as circulating supply on the latest day, NEAR', null,
+        'NearBlocks /v1/charts', (select circulating_supply_near_nearblocks from market_latest_cm),
+        'CoinMetrics market cap divided by price', (select market_cap_usd_coinmetrics / price_usd_coinmetrics from market_latest_cm),
+        2.0, 'same_upstream'
+
+    union all select 'circulating_supply_latest_chain_vs_coinmetrics', 'Circulating supply on the latest day, NEAR', null,
+        'Total supply minus lockups, read on chain', (select circulating_supply_near from market_latest_cm),
+        'CoinMetrics market cap divided by price', (select market_cap_usd_coinmetrics / price_usd_coinmetrics from market_latest_cm),
+        1.0, 'independent'
+
+    union all select 'circulating_supply_last_live_day_chain_vs_nearblocks', 'Circulating supply on 2025-08-26, the last day NearBlocks computed it, NEAR', null,
+        'Total supply minus lockups, read on chain', (select circulating_supply_near from {{ ref('fct_supply_daily') }}, nearblocks_last_live where date_day = d),
+        'NearBlocks /v1/charts', (select circulating_supply_near_nearblocks from {{ ref('fct_supply_daily') }}, nearblocks_last_live where date_day = d),
+        0.1, 'independent'
+
+    union all select 'circulating_supply_year_mean_chain_vs_nearblocks', 'Mean circulating supply through 2025-08-26, NEAR', cast(y as varchar),
+        'Total supply minus lockups, read on chain', chain,
+        'NearBlocks /v1/charts', nearblocks,
+        1.0, 'independent'
+    from circulating_years
+
+    union all select 'circulating_supply_chain_vs_published_schedule', 'Circulating supply, NEAR', p.label,
+        'Total supply minus lockups, read on chain', s.circulating_supply_near,
+        'NEAR''s published schedule, last updated 2020-10-16', p.value,
+        5.0, 'independent'
+    from published_supply p left join {{ ref('fct_supply_daily') }} s on s.date_day = p.reading_date
+
+    union all select 'lockup_locked_latest_formula_vs_contract_views', 'NEAR locked in lockups still running at the latest read', null,
+        'Schedule formula', (select sum({{ lockup_locked_near('v.block_ns') }}) from latest_lockup_views v join lockup_schedules using (lockup_no)),
+        'Contracts'' get_locked_amount', (select sum(contract_locked_near) from latest_lockup_views),
+        0.1, 'same_upstream'
+
+    union all select 'foundation_balance_transfers_vs_chain', 'Balance of an account NEAR Explorer subtracted, NEAR', account_id,
+        'FastNear running balance', balance_transfers,
+        'RPC view_account', balance_view,
+        1.0, 'independent'
+    from foundation_latest
+
+    union all select 'market_cap_2026_06_15_chain_vs_bitwise_prospectus', 'NEAR market cap on 2026-06-15, USD', null,
+        'Price times chain-built circulating supply', (select market_cap_usd from {{ ref('fct_market_daily') }} where date_day = date '2026-06-15'),
+        'Bitwise NEAR ETF prospectus, rounded', (select value from {{ ref('near_supply_readings') }} where reading = 'market_cap' and reading_date = date '2026-06-15'),
+        3.0, 'independent'
 
     union all select 'issuance_rate_30d_minted_vs_config', 'Annual issuance rate, trailing 30 days', null,
         'Supply change plus burn', (select minted_per_day * 365 / supply from minted_30d),
