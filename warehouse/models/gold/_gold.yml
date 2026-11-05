@@ -542,6 +542,25 @@ models:
       - {name: coinbase_volume_near, description: "Coinbase traded volume.", meta: {unit: "NEAR"}}
       - {name: reported_spot_volume_usd, description: "Reported spot volume per CoinMetrics.", meta: {unit: "USD"}}
       - {name: circulating_supply_near, description: "Circulating supply per /v1/charts. The v3 stats endpoint reports this wrongly, so it is not used. Stale: the value has read 1,249,836,992 on every day since 2025-08-27, so treat it as unknown from then on.", meta: {unit: "NEAR"}}
+  - name: fct_token_prices
+    description: "Point in time: one USD price per token per read, chosen from 1Click and Rhea on the token's id, never its symbol. 1Click wins where it has a positive price, because 139 of its 152 tokens carry a market feed's id, while Rhea's list is one DEX's pools. A price of 0 or below on either list counts as no price. Tokens with no positive price on either list have no row. native:near takes wrap.near's price, because one redeems for the other one to one. Most of Rhea's list is stale or thin: 4,309 of the 4,609 tokens on all five reads to 2026-11-05 kept one unchanged price while NEAR moved 11%, and one token reads $1.36 trillion. So read price_date and depth_usd before using a Rhea price."
+    config:
+      meta: {grain: "snapshot_date, token_id", sources: "1Click /v0/tokens, Rhea list-token-price, Rhea list-top-pools, registry/tokens.csv"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["snapshot_date", "token_id"]}}
+      - min_rows: {arguments: {n: 1000}}
+    columns:
+      - {name: snapshot_date, description: "Date the lists were read. On the 11-05 run the two lists were read about four minutes apart.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: token_id, description: "Token contract, as fct_wallet_holdings names it, or native:near. For 1Click this is the NEAR contract its asset id names, so bridged assets count too: USDC on Ethereum is eth-0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48.omft.near.", meta: {unit: "token id"}, data_tests: [not_null]}
+      - {name: price_usd, description: "The price to use: 1Click's if positive, otherwise Rhea's. Per whole token, counted with price_decimals.", meta: {unit: "USD per token"}, data_tests: [not_null]}
+      - {name: price_source, description: "Which list price_usd came from: oneclick or rhea.", meta: {unit: "text"}, data_tests: [not_null, {accepted_values: {arguments: {values: ["oneclick", "rhea"]}}}]}
+      - {name: price_date, description: "When price_usd was last set, as far as its list shows. For 1Click, the date of its priceUpdatedAt. Rhea gives no time, so this is the first read showing this exact price, digit by digit. Earlier than snapshot_date means the price has not changed since then, and it can never read earlier than Rhea's first read, 2026-11-01.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: price_decimals, description: "The decimals the chosen list uses for this token. A price is per whole token in these decimals, so a holding counted with different decimals cannot use it.", meta: {unit: "integer"}}
+      - {name: price_usd_oneclick, description: "1Click's price. Empty if 1Click does not list the token or lists it at 0, which it did for six tokens on 2026-11-05.", meta: {unit: "USD per token"}}
+      - {name: price_usd_rhea, description: "Rhea's price. Empty if Rhea does not list the token or lists it at 0.", meta: {unit: "USD per token"}}
+      - {name: price_gap_pct, description: "How far apart the two lists are, as a percent of the larger price. Empty unless both have a positive price. Above the project's price_disagreement_pct (20), fct_wallet_holdings leaves the value empty.", meta: {unit: "percent"}, data_tests: [{in_range: {arguments: {low: 0, high: 100}}}]}
+      - {name: depth_usd, description: "Assets with a vetted price opposite this token, summed over Rhea's pools at this read. This is the real money behind a pool price: in a constant-product pool, selling any amount cannot take out more than the other side. It does not use Rhea's own tvl field, which reads $1.37B for one pool of two unknown tokens. It leaves out concentrated-liquidity (DCL) pools, which Rhea's pool list does not include, so a token traded only there reads 0.", meta: {unit: "USD"}, data_tests: [not_null, {in_range: {arguments: {low: 0, high: 1000000000}}}]}
+      - {name: is_vetted, description: "True if 1Click has a positive price for the token or registry/tokens.csv lists it. Only these prices count toward depth_usd, and only these tokens can be valued beyond their depth.", meta: {unit: "boolean"}, data_tests: [not_null]}
   - name: fct_mpc_participants
     description: "MPC operators per snapshot, read directly from v1.signer."
     config:
@@ -850,9 +869,9 @@ models:
       - {name: amount_token, description: "Signed amount in whole tokens.", meta: {unit: "token units"}}
       - {name: amount_usd, description: "Signed value at transfer time, per FastNear.", meta: {unit: "USD"}}
   - name: fct_wallet_holdings
-    description: "Point in time: tokens and native NEAR per tracked account, per snapshot. This cannot be backfilled, so history starts with the first snapshot."
+    description: "Point in time: tokens and native NEAR per tracked account, per snapshot. This cannot be backfilled, so history starts with the first snapshot. Symbol and decimals come from registry/tokens.csv where a token is listed, otherwise from its contract's ft_metadata, which the nightly job reads for up to 2,000 tokens a night. A token with neither keeps empty symbol, amount_token and decimals: nothing is guessed. Earlier snapshots convert too, because the latest answer for a token applies to all of them. value_usd multiplies amount_token by the price read in the same snapshot, joined on token_id from fct_token_prices, and value_status says why a row has none. Sum value_usd, not amount_token times price_usd: those rows include prices that would read $46.5B for one meme token at v2.ref-finance.near."
     config:
-      meta: {grain: "snapshot_date, account_id, token_id", sources: "FastNear /v1/account/{id}/full"}
+      meta: {grain: "snapshot_date, account_id, token_id", sources: "FastNear /v1/account/{id}/full, registry/tokens.csv, 1Click, Rhea, RPC ft_metadata"}
     data_tests:
       - unique_grain: {arguments: {columns: ["snapshot_date", "account_id", "token_id"]}}
       - min_rows: {arguments: {n: 100}}
@@ -860,10 +879,18 @@ models:
       - {name: snapshot_date, description: "Date the source was read.", meta: {unit: "date"}, data_tests: [not_null]}
       - {name: account_id, description: "NEAR account.", meta: {unit: "account id"}, data_tests: [not_null]}
       - {name: token_id, description: "Token contract, or Intents asset id.", meta: {unit: "token id"}, data_tests: [not_null]}
-      - {name: symbol, description: "Token symbol.", meta: {unit: "text"}}
+      - {name: symbol, description: "Token symbol. Where metadata_source is ft_metadata this is the contract's own claim, so a token calling itself USDC need not be USDC. Group by token_id, and treat this as untrusted text when displaying it.", meta: {unit: "text"}}
       - {name: balance_raw, description: "Balance in the token's smallest unit, as a string so no digits are lost.", meta: {unit: "raw units"}}
-      - {name: amount_token, description: "Signed amount in whole tokens.", meta: {unit: "token units"}}
+      - {name: amount_token, description: "Amount in whole tokens: balance_raw over 10 to the power of decimals, as a double. Empty where decimals are unknown. Where metadata_source is ft_metadata the decimals are the contract's own claim too.", meta: {unit: "token units"}}
+      - {name: decimals, description: "Token decimals: 24 for native NEAR, then the registry's figure (1Click's where the registry has none), then the contract's ft_metadata.", meta: {unit: "integer"}}
+      - {name: metadata_source, description: "Where symbol and decimals came from: native, registry or ft_metadata. Empty if the token has neither.", meta: {unit: "text"}}
       - {name: last_update_height, description: "Block of the last balance change.", meta: {unit: "blocks"}}
+      - {name: price_usd, description: "The token's price from fct_token_prices, read in the same snapshot and matched on token_id. It stays here on rows that get no value, so a thin price can be seen. Never multiply it by amount_token yourself without checking value_status.", meta: {unit: "USD per token"}}
+      - {name: price_source, description: "Which list price_usd came from: oneclick or rhea. Native NEAR shows the source of wrap.near's price.", meta: {unit: "text"}, data_tests: [{accepted_values: {arguments: {values: ["oneclick", "rhea"]}}}]}
+      - {name: price_date, description: "When price_usd was last set, as far as its list shows: 1Click's priceUpdatedAt, or for Rhea the first read showing this exact price. Earlier than snapshot_date means a price that has stopped changing.", meta: {unit: "date"}}
+      - {name: price_depth_usd, description: "Assets with a vetted price opposite this token in Rhea's pools, from fct_token_prices.depth_usd. Empty only where the token has no price.", meta: {unit: "USD"}}
+      - {name: value_usd, description: "amount_token times price_usd, where value_status is valued, and otherwise empty. Unvetted tokens are capped by depth, so this column is safe to sum. Rests on the contract's own decimals where metadata_source is ft_metadata.", meta: {unit: "USD"}, data_tests: [{in_range: {arguments: {low: 0, high: 1000000000}}}]}
+      - {name: value_status, description: "Why the row has a value or not, checked in this order. no_price: no list has a positive price in this snapshot. no_decimals: decimals are unknown, which the metadata backlog clears. decimals_disagree: the list counts whole tokens with other decimals than the holding, so the price would be off by powers of ten. sources_disagree: 1Click and Rhea are more than price_disagreement_pct (20) apart, and nothing here says which is right. thin_price: an unvetted token whose position would be worth more than price_depth_multiple (3) times price_depth_usd. valued: value_usd is filled.", meta: {unit: "text"}, data_tests: [not_null, {accepted_values: {arguments: {values: ["valued", "no_price", "no_decimals", "decimals_disagree", "sources_disagree", "thin_price"]}}}]}
   - name: fct_wallet_transfers
     description: "Every transfer touching a crawled wallet. Amounts are signed from the wallet's point of view, so outflows are negative. The day the newest crawl ran on is left out until the next crawl, like every daily series."
     config:
@@ -1039,3 +1066,123 @@ models:
       - {name: usd_out, description: "Value sent by the wallet, at transfer time, as a positive number.", meta: {unit: "USD"}}
       - {name: first_seen, description: "First transfer between the two.", meta: {unit: "date"}}
       - {name: last_seen, description: "Latest transfer between the two.", meta: {unit: "date"}}
+
+# These hold the rules on made-up rows, because at a pin with few decimals most of them have no real rows to fail on.
+unit_tests:
+  - name: token_prices_follow_the_token_id_and_prefer_oneclick
+    model: fct_token_prices
+    given:
+      - input: ref('stg_oneclick__tokens')
+        rows:
+          - {snapshot_date: "2026-11-05", near_token_id: "wrap.near", symbol: "wNEAR", price_usd: 4.0, price_date: "2026-11-05", decimals: 24}
+          - {snapshot_date: "2026-11-05", near_token_id: "usdc.real", symbol: "USDC", price_usd: 1.0, price_date: "2026-11-05", decimals: 6}
+          - {snapshot_date: "2026-11-05", near_token_id: "eth-0xabc.omft.near", symbol: "USDC", blockchain: "eth", contract_address: "0xabc", price_usd: 1.0, price_date: "2026-11-05", decimals: 6}
+          - {snapshot_date: "2026-11-05", near_token_id: "zec.omft.near", symbol: "ZEC", price_usd: 500.0, price_date: "2026-11-05", decimals: 8}
+          - {snapshot_date: "2026-11-05", near_token_id: "zec.omft.near", symbol: "ZEC", price_usd: 500.0, price_date: "2026-11-05", decimals: 8}
+          - {snapshot_date: "2026-11-05", near_token_id: "zero.near", symbol: "ZERO", price_usd: 0.0, price_date: "2026-11-02", decimals: 18}
+          - {snapshot_date: "2026-11-05", near_token_id: "nolist.near", symbol: "NOLIST", price_usd: 0.0, price_date: "2026-11-02", decimals: 18}
+          - {snapshot_date: "2026-11-05", near_token_id: null, symbol: "USDC", blockchain: "sol", price_usd: 1.0, price_date: "2026-11-05", decimals: 6}
+      - input: ref('stg_rhea__token_prices')
+        rows:
+          - {snapshot_date: "2026-11-05", token_id: "wrap.near", symbol: "wNEAR", price_usd: 5.0, price_first_read: "2026-11-05", decimals: 24}
+          - {snapshot_date: "2026-11-05", token_id: "usdc-fake.near", symbol: "USDC", price_usd: 0.25, price_first_read: "2026-11-01", decimals: 18}
+          - {snapshot_date: "2026-11-05", token_id: "zero.near", symbol: "ZERO", price_usd: 0.5, price_first_read: "2026-11-03", decimals: 18}
+          - {snapshot_date: "2026-11-05", token_id: "lst.near", symbol: "LST", price_usd: 8.0, price_first_read: "2026-11-05", decimals: 6}
+          - {snapshot_date: "2026-11-05", token_id: "dead.near", symbol: "DEAD", price_usd: 0.0, price_first_read: "2026-11-01", decimals: 18}
+      - input: ref('stg_rhea__pool_legs')
+        rows:
+          - {snapshot_date: "2026-11-05", pool_id: "1", token_id: "usdc.real", amount_raw: "100000000"}
+          - {snapshot_date: "2026-11-05", pool_id: "1", token_id: "usdc-fake.near", amount_raw: "400000000000000000000"}
+          - {snapshot_date: "2026-11-05", pool_id: "2", token_id: "lst.near", amount_raw: "2000000"}
+          - {snapshot_date: "2026-11-05", pool_id: "2", token_id: "usdc-fake.near", amount_raw: "64000000000000000000"}
+          - {snapshot_date: "2026-11-05", pool_id: "3", token_id: "usdc-fake.near", amount_raw: "1000000000000000000000000"}
+          - {snapshot_date: "2026-11-05", pool_id: "3", token_id: "zero.near", amount_raw: "1000000000000000000000000"}
+      - input: ref('tokens')
+        rows:
+          - {token_id: "lst.near", symbol: "LST", decimals: 6}
+    expect:
+      rows:
+        # wrap.near: both list it, 1Click wins, and the gap is a percent of the larger price.
+        - {token_id: "wrap.near", price_usd: 4.0, price_source: "oneclick", price_date: "2026-11-05", price_usd_oneclick: 4.0, price_usd_rhea: 5.0, price_gap_pct: 20.0, depth_usd: 0.0, is_vetted: true}
+        # native NEAR copies wrap.near.
+        - {token_id: "native:near", price_usd: 4.0, price_source: "oneclick", price_date: "2026-11-05", price_usd_oneclick: 4.0, price_usd_rhea: 5.0, price_gap_pct: 20.0, depth_usd: 0.0, is_vetted: true}
+        - {token_id: "usdc.real", price_usd: 1.0, price_source: "oneclick", price_date: "2026-11-05", price_usd_oneclick: 1.0, price_usd_rhea: null, price_gap_pct: null, depth_usd: 0.0, is_vetted: true}
+        # A bridged asset is priced through the contract its asset id names.
+        - {token_id: "eth-0xabc.omft.near", price_usd: 1.0, price_source: "oneclick", price_date: "2026-11-05", price_usd_oneclick: 1.0, price_usd_rhea: null, price_gap_pct: null, depth_usd: 0.0, is_vetted: true}
+        # Two asset ids naming one contract make one row.
+        - {token_id: "zec.omft.near", price_usd: 500.0, price_source: "oneclick", price_date: "2026-11-05", price_usd_oneclick: 500.0, price_usd_rhea: null, price_gap_pct: null, depth_usd: 0.0, is_vetted: true}
+        # Calling itself USDC gets it nothing: this is its own Rhea price, with 100 of USDC and 16 of the vetted LST opposite. Pool 3 has no vetted side.
+        - {token_id: "usdc-fake.near", price_usd: 0.25, price_source: "rhea", price_date: "2026-11-01", price_usd_oneclick: null, price_usd_rhea: 0.25, price_gap_pct: null, depth_usd: 116.0, is_vetted: false}
+        # 1Click's 0 means no price, so Rhea's is used.
+        - {token_id: "zero.near", price_usd: 0.5, price_source: "rhea", price_date: "2026-11-03", price_usd_oneclick: null, price_usd_rhea: 0.5, price_gap_pct: null, depth_usd: 0.0, is_vetted: false}
+        # On the registry but only Rhea prices it, so it is vetted and counts toward usdc-fake.near's depth. Its own pool has nothing vetted opposite.
+        - {token_id: "lst.near", price_usd: 8.0, price_source: "rhea", price_date: "2026-11-05", price_usd_oneclick: null, price_usd_rhea: 8.0, price_gap_pct: null, depth_usd: 0.0, is_vetted: true}
+  - name: wallet_holdings_value_only_what_the_rules_allow
+    model: fct_wallet_holdings
+    given:
+      - input: ref('stg_fastnear__holdings')
+        rows:
+          - {snapshot_date: "2026-11-05", account_id: "a.near", token_id: "native:near", balance_raw: "2000000000000000000000000"}
+          - {snapshot_date: "2026-11-05", account_id: "a.near", token_id: "wrap.near", balance_raw: "1000000000000000000000000"}
+          - {snapshot_date: "2026-10-28", account_id: "a.near", token_id: "wrap.near", balance_raw: "1000000000000000000000000"}
+          - {snapshot_date: "2026-11-05", account_id: "a.near", token_id: "registry.near", balance_raw: "1000000"}
+          - {snapshot_date: "2026-11-05", account_id: "a.near", token_id: "usdc-fake.near", balance_raw: "40000000"}
+          - {snapshot_date: "2026-11-05", account_id: "a.near", token_id: "at-limit.near", balance_raw: "3000000"}
+          - {snapshot_date: "2026-11-05", account_id: "a.near", token_id: "lambo.near", balance_raw: "90000000000000"}
+          - {snapshot_date: "2026-11-05", account_id: "a.near", token_id: "no-pool.near", balance_raw: "1000000"}
+          - {snapshot_date: "2026-11-05", account_id: "a.near", token_id: "no-price.near", balance_raw: "1000000"}
+          - {snapshot_date: "2026-11-05", account_id: "a.near", token_id: "no-decimals.near", balance_raw: "1000000"}
+          - {snapshot_date: "2026-11-05", account_id: "a.near", token_id: "nothing.near", balance_raw: "1000000"}
+          - {snapshot_date: "2026-11-05", account_id: "a.near", token_id: "other-decimals.near", balance_raw: "1000000"}
+          - {snapshot_date: "2026-11-05", account_id: "a.near", token_id: "far-apart.near", balance_raw: "1000000"}
+          - {snapshot_date: "2026-11-05", account_id: "a.near", token_id: "near-enough.near", balance_raw: "1000000"}
+      - input: ref('dim_token')
+        rows:
+          - {token_id: "wrap.near", symbol: "wNEAR", decimals: 24}
+          - {token_id: "registry.near", symbol: "REG", decimals: 6}
+      - input: ref('stg_rpc__ft_metadata')
+        rows:
+          - {token_id: "usdc-fake.near", symbol: "USDC", decimals: 6, is_latest: true}
+          - {token_id: "at-limit.near", symbol: "EDGE", decimals: 6, is_latest: true}
+          - {token_id: "lambo.near", symbol: "LAMBO", decimals: 6, is_latest: true}
+          - {token_id: "no-pool.near", symbol: "NOPOOL", decimals: 6, is_latest: true}
+          - {token_id: "no-price.near", symbol: "NOPRICE", decimals: 6, is_latest: true}
+          - {token_id: "other-decimals.near", symbol: "OTHER", decimals: 24, is_latest: true}
+          - {token_id: "far-apart.near", symbol: "FAR", decimals: 6, is_latest: true}
+          - {token_id: "near-enough.near", symbol: "NEAR1", decimals: 6, is_latest: true}
+      - input: ref('fct_token_prices')
+        rows:
+          - {snapshot_date: "2026-11-05", token_id: "native:near", price_usd: 4.0, price_source: "oneclick", price_date: "2026-11-05", price_decimals: 24, depth_usd: 1000.0, is_vetted: true}
+          - {snapshot_date: "2026-11-05", token_id: "wrap.near", price_usd: 4.0, price_source: "oneclick", price_date: "2026-11-05", price_decimals: 24, depth_usd: 1000.0, is_vetted: true}
+          # USDC's own price is here, so a join on symbol would value usdc-fake.near at 1.0 and not 0.25.
+          - {snapshot_date: "2026-11-05", token_id: "usdc.real", price_usd: 1.0, price_source: "oneclick", price_date: "2026-11-05", price_decimals: 6, depth_usd: 1000.0, is_vetted: true}
+          - {snapshot_date: "2026-11-05", token_id: "registry.near", price_usd: 500.0, price_source: "rhea", price_date: "2026-11-05", price_decimals: 6, depth_usd: 1.0, is_vetted: true}
+          - {snapshot_date: "2026-11-05", token_id: "usdc-fake.near", price_usd: 0.25, price_source: "rhea", price_date: "2026-11-01", price_decimals: 6, depth_usd: 100.0, is_vetted: false}
+          - {snapshot_date: "2026-11-05", token_id: "at-limit.near", price_usd: 1.0, price_source: "rhea", price_date: "2026-11-05", price_decimals: 6, depth_usd: 1.0, is_vetted: false}
+          - {snapshot_date: "2026-11-05", token_id: "lambo.near", price_usd: 512.0, price_source: "rhea", price_date: "2026-11-01", price_decimals: 6, depth_usd: 4.0, is_vetted: false}
+          - {snapshot_date: "2026-11-05", token_id: "no-pool.near", price_usd: 1.0, price_source: "rhea", price_date: "2026-11-05", price_decimals: 6, depth_usd: 0.0, is_vetted: false}
+          - {snapshot_date: "2026-11-05", token_id: "no-decimals.near", price_usd: 1.0, price_source: "rhea", price_date: "2026-11-05", price_decimals: 6, depth_usd: 100.0, is_vetted: false}
+          - {snapshot_date: "2026-11-05", token_id: "other-decimals.near", price_usd: 1.0, price_source: "rhea", price_date: "2026-11-05", price_decimals: 18, depth_usd: 100.0, is_vetted: false}
+          - {snapshot_date: "2026-11-05", token_id: "far-apart.near", price_usd: 1.0, price_source: "oneclick", price_date: "2026-11-05", price_decimals: 6, price_gap_pct: 30.0, depth_usd: 100.0, is_vetted: true}
+          - {snapshot_date: "2026-11-05", token_id: "near-enough.near", price_usd: 1.0, price_source: "oneclick", price_date: "2026-11-05", price_decimals: 6, price_gap_pct: 19.0, depth_usd: 100.0, is_vetted: true}
+    expect:
+      rows:
+        - {snapshot_date: "2026-11-05", token_id: "native:near", price_usd: 4.0, price_source: "oneclick", price_date: "2026-11-05", value_usd: 8.0, value_status: "valued"}
+        - {snapshot_date: "2026-11-05", token_id: "wrap.near", price_usd: 4.0, price_source: "oneclick", price_date: "2026-11-05", value_usd: 4.0, value_status: "valued"}
+        # The price of 11-05 does not reach back to a snapshot with no price of its own.
+        - {snapshot_date: "2026-10-28", token_id: "wrap.near", price_usd: null, price_source: null, price_date: null, value_usd: null, value_status: "no_price"}
+        # On the registry, so a position far beyond its depth still counts.
+        - {snapshot_date: "2026-11-05", token_id: "registry.near", price_usd: 500.0, price_source: "rhea", price_date: "2026-11-05", value_usd: 500.0, value_status: "valued"}
+        # Valued at its own 0.25, not at USDC's 1.0.
+        - {snapshot_date: "2026-11-05", token_id: "usdc-fake.near", price_usd: 0.25, price_source: "rhea", price_date: "2026-11-01", value_usd: 10.0, value_status: "valued"}
+        # Exactly three times its depth is the last value allowed.
+        - {snapshot_date: "2026-11-05", token_id: "at-limit.near", price_usd: 1.0, price_source: "rhea", price_date: "2026-11-05", value_usd: 3.0, value_status: "valued"}
+        # 90M tokens at a price set by $4 of wNEAR would read $46B. The price stays visible and the value stays empty.
+        - {snapshot_date: "2026-11-05", token_id: "lambo.near", price_usd: 512.0, price_source: "rhea", price_date: "2026-11-01", value_usd: null, value_status: "thin_price"}
+        - {snapshot_date: "2026-11-05", token_id: "no-pool.near", price_usd: 1.0, price_source: "rhea", price_date: "2026-11-05", value_usd: null, value_status: "thin_price"}
+        - {snapshot_date: "2026-11-05", token_id: "no-price.near", price_usd: null, price_source: null, price_date: null, value_usd: null, value_status: "no_price"}
+        - {snapshot_date: "2026-11-05", token_id: "no-decimals.near", price_usd: 1.0, price_source: "rhea", price_date: "2026-11-05", value_usd: null, value_status: "no_decimals"}
+        - {snapshot_date: "2026-11-05", token_id: "nothing.near", price_usd: null, price_source: null, price_date: null, value_usd: null, value_status: "no_price"}
+        - {snapshot_date: "2026-11-05", token_id: "other-decimals.near", price_usd: 1.0, price_source: "rhea", price_date: "2026-11-05", value_usd: null, value_status: "decimals_disagree"}
+        - {snapshot_date: "2026-11-05", token_id: "far-apart.near", price_usd: 1.0, price_source: "oneclick", price_date: "2026-11-05", value_usd: null, value_status: "sources_disagree"}
+        - {snapshot_date: "2026-11-05", token_id: "near-enough.near", price_usd: 1.0, price_source: "oneclick", price_date: "2026-11-05", value_usd: 1.0, value_status: "valued"}

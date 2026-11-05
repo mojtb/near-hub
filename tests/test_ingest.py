@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import gzip
 import hashlib
+import itertools
 import json
 from datetime import date, timedelta
 from pathlib import Path
@@ -484,3 +485,165 @@ def test_block_heights_and_the_wallet_list_come_before_the_pool_read():
     names = [f"{d.source}/{d.name}" for d in select("all", None, None)]
     assert names.index("rpc/block_day") < names.index("rpc/nrr_pool_daily")
     assert names.index("nrr_fund/figures") < names.index("rpc/nrr_pool_daily")
+
+
+def _ft_reply(metadata, height=7):
+    raw = metadata if isinstance(metadata, bytes) else json.dumps(metadata).encode()
+    return FakeResponse(200, json.dumps({"result": {"block_height": height, "logs": [], "result": list(raw)}}).encode())
+
+
+FT_OK = {"spec": "ft-1.0.0", "name": "Some Token", "symbol": "SOME", "decimals": 18, "icon": "data:image/png;base64,AAAA", "reference": None}
+FT_NO_METHOD = FakeResponse(200, json.dumps({"result": {"block_height": 7, "logs": [], "error": "wasm execution failed with error: MethodResolveError(MethodNotFound)"}}).encode())
+FT_DELETED = FakeResponse(200, json.dumps({"error": {"name": "HANDLER_ERROR", "cause": {"name": "UNKNOWN_ACCOUNT", "info": {"block_height": 9}}}}).encode())
+FT_NODE_TROUBLE = FakeResponse(200, json.dumps({"error": {"name": "HANDLER_ERROR", "cause": {"name": "NO_SYNCED_BLOCKS"}}}).encode())
+
+
+def _ft_context(tmp_path, monkeypatch, replies, holdings=None, top_holders=None, snapshot="2026-11-06"):
+    """Bronze holds one account per {token: balance} in `holdings`, and one top-holder file per {token: holders} in `top_holders`."""
+    from ingest import sources  # noqa: F401
+    from ingest.sources import rpc
+
+    bronze = tmp_path / "bronze"
+    monkeypatch.setattr("ingest.pipeline.STATE", tmp_path / "state")
+    monkeypatch.setattr(rpc, "BRONZE", bronze)
+    monkeypatch.delenv("FASTNEAR_API_KEY", raising=False)
+    for i, tokens in enumerate(holdings or []):
+        path = bronze / f"fastnear/account_full/dt=2026-11-05/account{i}.json.gz"
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(gzip.compress(json.dumps({"account_id": f"account{i}", "tokens": [{"contract_id": t, "balance": b} for t, b in tokens.items()]}).encode()))
+    for token, holders in (top_holders or {}).items():
+        path = bronze / f"fastnear/ft_top_holders/dt=2026-11-05/{token}.json.gz"
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(gzip.compress(json.dumps({"token_id": token, "accounts": [{"account_id": f"h{n}", "balance": "1"} for n in range(holders)]}).encode()))
+    http = client(replies)
+    http.policies[rpc.RPC.split("/")[2]] = HostPolicy()
+    return rpc, Context(snapshot, http, BronzeWriter(snapshot, root=bronze)), http
+
+
+def _ft_saved(tmp_path, first_token, snapshot="2026-11-06"):
+    return json.loads(gzip.decompress((tmp_path / f"bronze/rpc/ft_metadata/dt={snapshot}/from_{first_token}.json.gz").read_bytes()))
+
+
+def _ft_read_order(http):
+    return [call[2]["json"]["params"]["account_id"] for call in http.session.calls]
+
+
+def test_ft_metadata_reads_a_token_once_and_keeps_the_answer(tmp_path, monkeypatch):
+    rpc, ctx, http = _ft_context(tmp_path, monkeypatch, [_ft_reply(FT_OK)], holdings=[{"a.near": "5"}])
+    rpc.ft_metadata(ctx)
+    assert _ft_saved(tmp_path, "a.near") == [{"token_id": "a.near", "block_height": 7, "spec": "ft-1.0.0", "name": "Some Token", "symbol": "SOME", "decimals": 18}]
+    assert ctx.load_state("rpc__ft_metadata")["answers"] == {"a.near": {"symbol": "SOME", "decimals": 18}}
+    params = http.session.calls[0][2]["json"]["params"]
+    assert params["method_name"] == "ft_metadata" and params["finality"] == "final"
+    rpc.ft_metadata(ctx)
+    assert len(http.session.calls) == 1 and ctx.warnings == []
+
+
+def test_ft_metadata_reads_the_tokens_with_most_rows_first_and_stops_at_the_cap(tmp_path, monkeypatch):
+    holdings = [{"lone.near": "1", "shared.near": "2", "empty.near": "0", "blank.near": "", "gone.near": None}, {"shared.near": "3"}]
+    rpc, ctx, http = _ft_context(tmp_path, monkeypatch, [_ft_reply(FT_OK) for _ in range(3)], holdings=holdings, top_holders={"top.near": 100})
+    monkeypatch.setattr(rpc, "FT_METADATA_CALLS_PER_RUN", 2)
+    rpc.ft_metadata(ctx)
+    assert _ft_read_order(http) == ["top.near", "shared.near"]
+    rpc.ft_metadata(ctx)
+    assert _ft_read_order(http) == ["top.near", "shared.near", "lone.near"]  # no call for a token with no balance
+    assert len(_ft_saved(tmp_path, "top.near")) == 2 and len(_ft_saved(tmp_path, "lone.near")) == 1  # two runs on one day keep both files
+
+
+def test_ft_metadata_never_guesses_and_keeps_only_the_fields_it_trusts(tmp_path, monkeypatch):
+    replies = {"zero.near": _ft_reply({**FT_OK, "decimals": 0}), "true.near": _ft_reply({**FT_OK, "decimals": True}), "text.near": _ft_reply({**FT_OK, "decimals": "18"}),
+               "huge.near": _ft_reply({**FT_OK, "decimals": 300}), "none.near": _ft_reply({"symbol": "NONE"}), "list.near": _ft_reply([1, 2]),
+               "bytes.near": _ft_reply(b"\xff not json"), "blank.near": _ft_reply(b""), "deep.near": _ft_reply(b"[" * 200000), "method.near": FT_NO_METHOD, "deleted.near": FT_DELETED,
+               "messy.near": _ft_reply({**FT_OK, "symbol": "A\u0000B\n‮ C ", "name": "x" * 500, "spec": 5})}
+    tokens = sorted(replies)
+    rpc, ctx, _ = _ft_context(tmp_path, monkeypatch, [replies[t] for t in tokens], holdings=[{t: "1" for t in tokens}])
+    rpc.ft_metadata(ctx)
+    rows = {r["token_id"]: r for r in _ft_saved(tmp_path, tokens[0])}
+    assert rows["zero.near"]["decimals"] == 0
+    for token in ("true.near", "text.near", "huge.near", "none.near"):
+        assert rows[token]["error"] == "BAD_DECIMALS" and "decimals" not in rows[token]
+    assert rows["none.near"]["symbol"] == "NONE"
+    for token in ("list.near", "bytes.near", "blank.near", "deep.near"):
+        assert rows[token]["error"] == "NOT_METADATA"
+    assert rows["method.near"] == {"token_id": "method.near", "block_height": 7, "error": "CONTRACT_EXECUTION_ERROR"}
+    assert rows["deleted.near"] == {"token_id": "deleted.near", "block_height": 9, "error": "UNKNOWN_ACCOUNT"}
+    assert rows["messy.near"]["symbol"] == "AB C" and len(rows["messy.near"]["name"]) == 128 and rows["messy.near"]["spec"] is None
+    assert ctx.warnings == []
+    answers = ctx.load_state("rpc__ft_metadata")["answers"]
+    assert answers["zero.near"]["decimals"] == 0 and answers["deleted.near"] == {"error": "UNKNOWN_ACCOUNT"} and set(answers) == set(tokens)
+
+
+def test_ft_metadata_asks_again_when_the_node_had_no_answer(tmp_path, monkeypatch):
+    rpc, ctx, http = _ft_context(tmp_path, monkeypatch, [FT_NODE_TROUBLE, FakeResponse(200, b"<html>not json</html>"), _ft_reply(FT_OK)],
+                                 holdings=[{"a.near": "1", "b.near": "1", "c.near": "1"}])
+    rpc.ft_metadata(ctx)
+    assert _ft_read_order(http) == ["a.near", "b.near", "c.near"]
+    state = ctx.load_state("rpc__ft_metadata")
+    assert set(state["answers"]) == {"c.near"} and state["failures"] == {"a.near": 1, "b.near": 1}
+    assert len(ctx.warnings) == 2 and "NO_SYNCED_BLOCKS" in ctx.warnings[0]
+    http.session.replies.extend([_ft_reply(FT_OK), _ft_reply(FT_OK)])
+    rpc.ft_metadata(ctx)
+    state = ctx.load_state("rpc__ft_metadata")
+    assert set(state["answers"]) == {"a.near", "b.near", "c.near"} and state["failures"] == {}
+
+
+@pytest.mark.parametrize("reply", [b'{"error": "rate limited"}', b"[1, 2]", b'{"result": {"block_height": 7}}', b'{"result": 5}', b"{}"])
+def test_ft_metadata_treats_any_other_reply_as_no_answer(tmp_path, monkeypatch, reply):
+    rpc, ctx, http = _ft_context(tmp_path, monkeypatch, [FakeResponse(200, reply)], holdings=[{"a.near": "1"}])
+    rpc.ft_metadata(ctx)
+    state = ctx.load_state("rpc__ft_metadata")
+    assert state["answers"] == {} and state["failures"] == {"a.near": 1} and len(ctx.warnings) == 1
+
+
+def test_ft_metadata_stops_for_the_night_when_the_node_keeps_failing(tmp_path, monkeypatch):
+    rpc, ctx, http = _ft_context(tmp_path, monkeypatch, [_ft_reply(FT_OK), FakeResponse(403, b"no"), FakeResponse(403, b"no"), FakeResponse(403, b"no"), _ft_reply(FT_OK)],
+                                 holdings=[{f"{c}.near": "1" for c in "abcde"}])
+    rpc.ft_metadata(ctx)
+    assert _ft_read_order(http) == ["a.near", "b.near", "c.near", "d.near"]  # e.near was never asked
+    assert set(ctx.load_state("rpc__ft_metadata")["answers"]) == {"a.near"}  # the answer before the failures is saved
+    assert _ft_saved(tmp_path, "a.near")[0]["decimals"] == 18
+    assert "stopped early" in ctx.warnings[-1]
+
+
+def test_ft_metadata_stops_at_once_after_a_call_that_used_every_retry(tmp_path, monkeypatch):
+    rpc, ctx, http = _ft_context(tmp_path, monkeypatch, [FakeResponse(503) for _ in range(6)], holdings=[{"a.near": "1", "b.near": "1"}])
+    rpc.ft_metadata(ctx)
+    assert _ft_read_order(http) == ["a.near"] * 6
+    assert "stopped early" in ctx.warnings[-1]
+
+
+def test_ft_metadata_stops_when_its_time_is_up(tmp_path, monkeypatch):
+    rpc, ctx, http = _ft_context(tmp_path, monkeypatch, [_ft_reply(FT_OK)], holdings=[{"a.near": "1", "b.near": "1"}])
+    clock = itertools.count(step=rpc.FT_METADATA_MINUTES_PER_RUN * 60)  # each look at the clock moves it on by the whole budget
+    monkeypatch.setattr(rpc.time, "monotonic", lambda: next(clock))
+    rpc.ft_metadata(ctx)
+    assert _ft_read_order(http) == ["a.near"]
+    assert "stopped after" in ctx.warnings[-1]
+    assert set(ctx.load_state("rpc__ft_metadata")["answers"]) == {"a.near"}
+
+
+def test_ft_metadata_cannot_be_held_up_by_tokens_that_keep_failing(tmp_path, monkeypatch):
+    rpc, ctx, http = _ft_context(tmp_path, monkeypatch, [_ft_reply(FT_OK)], holdings=[{"a.near": "1", "b.near": "1"}])
+    monkeypatch.setattr(rpc, "FT_METADATA_CALLS_PER_RUN", 1)
+    ctx.save_state("rpc__ft_metadata", {"answers": {}, "failures": {"a.near": 2}})
+    rpc.ft_metadata(ctx)
+    assert _ft_read_order(http) == ["b.near"]
+
+
+def test_ft_metadata_reads_again_an_answer_whose_bronze_file_is_gone(tmp_path, monkeypatch):
+    # The nightly job drops its bronze dated up to main's pin, while its state file stays. The token must not stay unconverted for good.
+    rpc, ctx, http = _ft_context(tmp_path, monkeypatch, [_ft_reply(FT_OK), _ft_reply(FT_OK, height=8)], holdings=[{"a.near": "1"}], snapshot="2026-11-05")
+    rpc.ft_metadata(ctx)
+    (tmp_path / "bronze/rpc/ft_metadata/dt=2026-11-05/from_a.near.json.gz").unlink()
+    later = Context("2026-11-06", http, BronzeWriter("2026-11-06", root=tmp_path / "bronze"))
+    rpc.ft_metadata(later)
+    assert len(http.session.calls) == 2 and _ft_saved(tmp_path, "a.near")[0]["block_height"] == 8
+
+
+def test_holdings_and_top_holders_are_fetched_before_token_metadata():
+    from ingest import sources  # noqa: F401
+    from ingest.pipeline import select
+
+    names = [f"{d.source}/{d.name}" for d in select("all", None, None)]
+    assert names.index("fastnear/account_full") < names.index("rpc/ft_metadata")
+    assert names.index("fastnear/ft_top_holders") < names.index("rpc/ft_metadata")

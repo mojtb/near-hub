@@ -64,6 +64,73 @@ The strongest checks are the ones that cross families. See [RECONCILIATION.md](R
 - `validators` by `epoch_id` worked for an epoch in May 2026 and returned `UNKNOWN_EPOCH` for one in October 2024, so validator history is partial.
 - Calls hit HTTP 429 quickly. The free RPC host recognises a FastNear key, but the archival host shows no sign of it, so archival calls keep the keyless pace.
 
+### Token metadata (`rpc/ft_metadata`)
+- Asks each token seen with a positive balance in `fastnear/account_full`, or seen in `fastnear/ft_top_holders`, what its contract says through `ft_metadata`. 7,933 tokens had been seen by 2026-11-05, nearly all held by `dclv2.ref-labs.near`, `v2.ref-finance.near` and `intents.near`.
+- Each token is read once. Answers are kept in `data/state/rpc__ft_metadata.json`, and each run's new answers in one bronze file. An answer whose bronze file has gone is read again, because the nightly job drops its own bronze dated up to `main`'s pin, so a run on the pin's day would otherwise lose those tokens for good.
+- A night makes at most 2,000 calls, tokens with the most rows first, so the backlog takes four nights and later nights ask only about new tokens. At the keyed pace of 0.15 s a call that is about 5 minutes, but this pace has only been seen on runs of about 50 calls, so check the first night's time in `data/bronze/_runs/`.
+- Without a key, one call a second drew HTTP 429 after about 3 minutes, and 300 tokens took 412 seconds. A run stops after 40 minutes, which limits a keyless run to about 1,750 tokens and keeps a node that rate-limits every call from stretching the night past the job's timeout.
+- `icon` and `reference` are dropped, because an icon can be a large image. `spec`, `name` and `symbol` are cut to printable characters and to 32, 128 and 64 characters, because a contract can put anything there.
+- Some answers are final and are kept: `UNKNOWN_ACCOUNT` (the contract is gone), `INVALID_ACCOUNT`, `NO_CONTRACT_CODE`, `CONTRACT_EXECUTION_ERROR` (no such method, or it panicked), `NOT_METADATA` (it returned something else) and `BAD_DECIMALS` (not a whole number from 0 to 255). These tokens stay empty in gold.
+- Any other error says something about the node, not the token, so the token is asked again on a later run, after the tokens that have not failed yet. Three failures in a row, or one call that used up its retries, end the run for that night.
+- Name and symbol are the contract's own claim: `usdc-4d51ec.launchpad.justhoot.near` calls itself USDC, with 18 decimals. `fct_wallet_holdings.metadata_source` shows which rows rest on a claim. Group by `token_id`, and treat these fields as untrusted text when displaying them.
+- A sample on 2026-11-05, not stored: of 300 tokens picked at random, 296 gave decimals, 2 no longer exist and 2 are `mock-ft` contracts that panic. So about 99% of holdings rows should convert once the backlog is read. All 12 registry tokens' decimals matched their contracts, and so did all 30 tokens read that 1Click lists. `token_decimals_match_ft_metadata` holds the registry to the contracts from now on.
+
+### Token prices (`fct_token_prices`)
+- Two lists price NEAR tokens: 1Click's `/v0/tokens` and Rhea's `list-token-price`. On 2026-11-05 they were read about four minutes apart. A holding uses the prices read in its own snapshot and no others, so all 382 rows of 2026-10-28, before either list was fetched, have no value.
+- Prices join on token id, never on symbol. `usdc-4d51ec.launchpad.justhoot.near` calls itself USDC, is held by `dclv2.ref-labs.near`, and is on neither list, so it has no price at all.
+- For 1Click the token id is the NEAR contract named in `assetId`, not `contractAddress`. Filtering on `blockchain = 'near'` finds 39 tokens. USDC on Ethereum is listed under `eth` with a 0x address, yet its asset id names `eth-0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48.omft.near`, which is the contract `intents.near` holds. The asset id finds 152 tokens, 142 of them held, against 33 held on that filter. On the sample below it adds $97.8M, 42% of what `intents.near` holds. Three tokens are listed twice, with the same price and decimals.
+- 1Click wins where it has a positive price, because 139 of its 152 tokens carry a market feed's id (`coingeckoId`), while Rhea's list is one DEX's pools. A price of 0 means no price: 1Click lists six tokens at 0, and Rhea prices three of them.
+- Native NEAR takes `wrap.near`'s price, because one redeems for the other one to one.
+
+**When the lists disagree.** 26 tokens are on both lists at every read, which makes 130 comparisons. The gap is a percent of the larger price. It grows as Rhea's pools get thinner:
+
+| Vetted assets opposite the token on Rhea | Comparisons | Median gap | Largest gap | Over 20% |
+|---|---:|---:|---:|---:|
+| Under $1,000 | 15 | 0.38% | 32.1% | 5 |
+| $1,000 to $10,000 | 21 | 0.64% | 28.2% | 2 |
+| $10,000 to $100,000 | 54 | 0.50% | 10.7% | 0 |
+| $100,000 or more | 40 | 0.24% | 4.1% | 0 |
+
+- Above 20% (`price_disagreement_pct` in `dbt_project.yml`), `value_status` reads `sources_disagree` and the value stays empty. Nothing here says which list is right, and the next largest gap is 10.7%, so the line is not close to anything normal.
+- Two tokens are over it. `lsd-usdt.rhealab.near` is on Rhea at 1.46973 at every read, against about 1 on 1Click, with about $1 opposite it. HAPI fell from 0.181 to 0.141 on 1Click on 2026-11-04, while its Rhea pool, with about $1,800 opposite, stayed near 0.20. Both are worth little here: about $2,300 of HAPI at 1Click's price and under $10 of the other.
+- `token_prices_agree_where_rhea_is_deep` fails if a gap over 20% appears with $100,000 or more behind Rhea's price, because then a real position goes blank and someone should look. `token_prices_latest_rhea_vs_oneclick` in [RECONCILIATION.md](RECONCILIATION.md) holds the median ratio to 2%. It has read 0.9999 to 1.0046.
+- `lst_price_latest_lists_vs_contract` compares LiNEAR, rNEAR and stNEAR with their contracts' own rates times `wrap.near`'s price. Over the 15 comparisons so far the largest gap is 1.06%. That matters because LiNEAR and rNEAR are priced by Rhea alone and hold about $107M at `contract.main.burrow.near`.
+
+**Stale and thin Rhea prices.**
+- Most of Rhea's list does not update. 4,309 of the 4,609 tokens on all five reads kept one exact price while NEAR moved 11%, and a price set against wNEAR should have moved with it. Rhea gives no time, so `price_date` is the first read showing that exact price. Filter on `price_date = snapshot_date` to keep only prices that changed since the last read.
+- A listed price says nothing about size. `lambo.meierbach.near` lists at $512 on the strength of 1 wNEAR, about $4, opposite it, and `v2.ref-finance.near` holds 90.9M of it, which would read $46.5B. `inear.tkn.near` would read $683M with $487 opposite. Launch tokens are the quiet version: `dclv2.ref-labs.near` holds up to a billion each of thousands of them, typically worth about $0.000005 on Rhea's list, which would add about $20M with almost nothing opposite.
+- A strange number alone is not the problem. The 8.9e17 `neardog.tkn.near` at `v2.ref-finance.near` come to $256 at Rhea's $2.88e-16, with $190 opposite. `shmrt-1315.meme-cooking.near` lists at $1.36 trillion, the highest price on the list, but its pool holds 9.3e-10 of a token, so that row reads $1,263 with $1,061 opposite. Both rows get a value.
+- Rhea's own `tvl` field has the same flaw, because it prices each side at its listed price. Pool 5746 holds only ELON and INEAR, and reads $1.367B of the $1.388B total across all 3,159 pools. So depth is measured another way.
+- `depth_usd` sums the assets with a vetted price (1Click's, or a registry token at Rhea's) opposite the token, across Rhea's pools. It is real money: faking it means depositing it. In a constant-product pool, selling any amount of a token cannot take out more than the other side. Concentrated-liquidity (DCL) pools are not in Rhea's pool list, so a token traded only there reads 0.
+- A token that is not vetted gets a value only up to 3 times its depth (`price_depth_multiple`). Above that, `value_status` reads `thin_price`: `price_usd` stays visible and `value_usd` stays empty, so `sum(value_usd)` is safe. A pool's own reserves read about 1, as a constant-product pool should. Among the 167 such tokens at `v2.ref-finance.near` with over $1,000 of depth, the median is 1.01 at a price that changed since the last read and 1.18 at one that did not, and 90% are under 1.4.
+- The multiple hardly matters. On the sample below, 2, 3, 10 and 1,000 times depth value these tokens at $2.25M, $2.33M, $2.44M and $3.17M, out of $641M in all. With no limit they would read $47.2B.
+- Tokens in `registry/tokens.csv` are exempt, because each was listed by hand with evidence. LiNEAR's $45M at Burrow is 32 times its depth and is real, since a lending market holds far more than any pool could absorb. `xtoken.rhealab.near` has $133 opposite it and $3.9M at Burrow, so it rests on Rhea's price alone. That price is RHEA's times the contract's `get_virtual_price`, 1.11747 when read by hand on 2026-11-05, so it does not come from the thin pool.
+
+**Decimals.** A price is per whole token, counted with the list's own decimals. If the holding's decimals differ, the value would be off by powers of ten, so `value_status` reads `decimals_disagree`. No row reads this today: on the sample below, Rhea's decimals matched the contract on all 1,116 tokens that answered, and 1Click's on all 132. The rule stays as a guard, tested on made-up rows.
+
+**How much gets a value.** A sample on 2026-11-05, not stored, read all 932 held tokens that could get a value, plus about 400 others, and 12 of the 1,330 gave no decimals. So the sample column is close to what the full backlog gives, except that the rows it did not read move from `no_decimals` to `thin_price`, because they have nothing opposite them.
+
+| `value_status`, latest snapshot | At the pin | With the sample | After the backlog, estimated |
+|---|---:|---:|---:|
+| `valued` | 65 (0.8%) | 968 (11.4%) | 968 (11.4%) |
+| `no_price` | 3,158 | 3,158 | 3,158 (37.2%) |
+| `no_decimals` | 5,261 | 3,758 | about 45 |
+| `thin_price` | 0 | 595 | about 4,300 (51%) |
+| `sources_disagree` | 0 | 5 | 5 |
+| Sum of `value_usd` | $340.7M | $641.3M | $641.3M |
+
+Few rows get a value because most rows are launch tokens that nothing else trades against. The money is elsewhere: of the $641.3M, 1Click prices $522.7M (226 rows), Rhea prices $116.3M on registry tokens (22 rows), and Rhea prices $2.3M on all other tokens (720 rows). Across all snapshots the sample values 4,833 of 42,556 rows.
+
+**Checked against other sources.** `holdings_usd_latest_vs_tvl` sets the sums against TVL from outside the chain read. The Intents row stays `not_available` until bridged assets have decimals, because without them `intents.near` sums to only $86.1M.
+
+| Contracts | Sum of `value_usd` at the pin | With the sample | Compared with | Gap with the sample |
+|---|---:|---:|---|---:|
+| `contract.main.burrow.near` | $158.5M | $165.3M | DefiLlama `rhea-lend`, $153.5M | 7.1% |
+| `v2.ref-finance.near`, `dclv2.ref-labs.near` | $23.2M | $28.3M | DefiLlama `rhea-dex`, $24.1M | 14.9% |
+| `intents.near` | not available | $233.8M | DefiLlama `near-intents` plus revenue.near.org's confidential TVL, $248.2M | 5.8% |
+
+The Rhea DEX gap read 27% on 2026-11-01 and 24% on 11-02, so its tolerance is 30%. About 97,000 QTC, $6.9M, left `dclv2.ref-labs.near` on 11-03, and DefiLlama's figure did not move with it, so it appears not to count QTC.
+
 ### Neardata
 - A block is about 265 KB, so raw blocks are counted and thrown away.
 - The published limit is 180 requests per minute, but three parallel workers hit HTTP 429 from this machine. The sampler runs one request at a time.

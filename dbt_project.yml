@@ -61,3 +61,9 @@ vars:
   # Measured on 2026-11-05 from every snapshot; see docs/DATA_AUDIT_2026-11-05.md, finding 10. If you change it, change
   # the descriptions of is_fee_revenue_provisional on fct_intents_daily and fct_peer_daily, which state the number.
   intents_fee_settle_nights: 3
+  # Percent of the larger price. When 1Click and Rhea price a token this far apart, fct_wallet_holdings leaves its value empty.
+  # On 2026-11-01 to 11-05 two of the 26 tokens both price passed this, and the next largest gap was 10.7%.
+  price_disagreement_pct: 20
+  # A token nobody has vetted gets a value only up to this many times the vetted assets opposite it in Rhea's pools. A pool's
+  # own reserves read about 1, and 90% read under 1.4. The result hardly depends on this number; see docs/SOURCES.md.
+  price_depth_multiple: 3
