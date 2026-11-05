@@ -1,4 +1,5 @@
--- Registry tokens plus decimals and a live price from 1Click, where 1Click lists the contract.
+-- Registry tokens plus decimals and a live price. Decimals come from the registry, where each was read from the
+-- contract's ft_metadata; 1Click's figure is the fallback, and a data test holds the two to each other.
 with oneclick as (
     select
         contract_address,
@@ -19,7 +20,7 @@ select
     t.evidence_level,
     t.source_url,
     t.note,
-    o.decimals,
+    coalesce(t.decimals, o.decimals) as decimals,
     o.price_usd,
     o.coingecko_id,
     o.priced_on

@@ -12,7 +12,9 @@ event_date,event_type,title,detail,source_url,status
 2026-09-22,product,Tokenized stocks on near.com through Ondo,Reported in Nansen's Q3 report,https://www.nansen.ai/post/near-q3-2026-report,happened
 2026-09-29,market,Bitwise NEAR ETF launches,Reported in Nansen's Q3 report; verify flows on the issuer's pages before using,https://www.nansen.ai/post/near-q3-2026-report,happened
 2026-09-30,governance,Discussion opens on reducing issuance to 1.6%,Governance thread,https://gov.near.org/t/42595,happened
-2026-10-07,governance,HSP-029 proposes a 24-month ramp to 1.6%,Proposal posted on the forum; on-chain voting opened 2026-10-19 as vote.dao proposal 29. See fct_governance_proposals for its live status,https://gov.near.org/t/42644,voting
+2026-10-07,governance,HSP-029 proposes a 24-month ramp to 1.6%,Proposal posted on the forum; on-chain voting opened 2026-10-19 as vote.dao proposal 29. See fct_governance_proposals for its live status,https://gov.near.org/t/42644,happened
+2026-11-02,governance,HSP-029 passes its on-chain vote,"vote.dao proposal 29 closed on 2026-11-02 with about 3.29M veNEAR for and almost none against, at 62% turnout; it read Timelock in the 2026-11-05 snapshot. fct_governance_proposals carries the live status",https://gov.near.org/t/42644,happened
 2026-10-15,governance,MPC emissions program announced,HSP-007 funds MPC nodes from emissions: up to 4600 NEAR per node per month and up to 21 nodes,https://github.com/houseofstake/proposals/blob/main/HSPs/hsp-007.md,happened
 2026-10-20,report,Nansen Q3 2026 NEAR report,Independent quarterly report,https://www.nansen.ai/post/near-q3-2026-report,happened
 2026-10-23,protocol,Chain Signatures run entirely inside TEEs,NEAR blog announcement,https://near.org/blog,happened
+2026-11-05,protocol,Developer gas rebate removed with protocol version 87,"The protocol config read contract_gas_reward_rate 0.3 and protocol version 86 on every night through 2026-11-04 and 0 with version 87 on 2026-11-05, so vote.dao proposal 27 has taken effect; gas burn is now the whole fee. See fct_protocol_config and fct_supply_daily",https://docs.near.org/api/rpc/protocol,happened

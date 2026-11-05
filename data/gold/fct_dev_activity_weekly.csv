@@ -1,7 +1,7 @@
 week_start,repo,ecosystem,repo_group,commits,active_authors
 2025-11-09,MystenLabs/sui,sui,protocol,81,22
 2025-11-09,NEAR-DevHub/trezu,near,ecosystem,0,
-2025-11-09,anza-xyz/agave,solana,protocol,0,
+2025-11-09,anza-xyz/agave,solana,protocol,,
 2025-11-09,aptos-labs/aptos-core,aptos,protocol,22,12
 2025-11-09,aurora-is-near/aurora-engine,near,ecosystem,2,1
 2025-11-09,ava-labs/avalanchego,avalanche,protocol,32,9
@@ -19,7 +19,7 @@ week_start,repo,ecosystem,repo_group,commits,active_authors
 2025-11-09,ton-blockchain/ton,ton,protocol,19,6
 2025-11-16,MystenLabs/sui,sui,protocol,114,25
 2025-11-16,NEAR-DevHub/trezu,near,ecosystem,0,
-2025-11-16,anza-xyz/agave,solana,protocol,0,
+2025-11-16,anza-xyz/agave,solana,protocol,,
 2025-11-16,aptos-labs/aptos-core,aptos,protocol,25,14
 2025-11-16,aurora-is-near/aurora-engine,near,ecosystem,0,
 2025-11-16,ava-labs/avalanchego,avalanche,protocol,64,12
@@ -37,7 +37,7 @@ week_start,repo,ecosystem,repo_group,commits,active_authors
 2025-11-16,ton-blockchain/ton,ton,protocol,10,4
 2025-11-23,MystenLabs/sui,sui,protocol,62,21
 2025-11-23,NEAR-DevHub/trezu,near,ecosystem,0,
-2025-11-23,anza-xyz/agave,solana,protocol,0,
+2025-11-23,anza-xyz/agave,solana,protocol,,
 2025-11-23,aptos-labs/aptos-core,aptos,protocol,9,7
 2025-11-23,aurora-is-near/aurora-engine,near,ecosystem,1,2
 2025-11-23,ava-labs/avalanchego,avalanche,protocol,24,10
@@ -55,7 +55,7 @@ week_start,repo,ecosystem,repo_group,commits,active_authors
 2025-11-23,ton-blockchain/ton,ton,protocol,21,5
 2025-11-30,MystenLabs/sui,sui,protocol,80,24
 2025-11-30,NEAR-DevHub/trezu,near,ecosystem,0,
-2025-11-30,anza-xyz/agave,solana,protocol,0,
+2025-11-30,anza-xyz/agave,solana,protocol,,
 2025-11-30,aptos-labs/aptos-core,aptos,protocol,67,15
 2025-11-30,aurora-is-near/aurora-engine,near,ecosystem,1,1
 2025-11-30,ava-labs/avalanchego,avalanche,protocol,62,9
@@ -73,7 +73,7 @@ week_start,repo,ecosystem,repo_group,commits,active_authors
 2025-11-30,ton-blockchain/ton,ton,protocol,15,9
 2025-12-07,MystenLabs/sui,sui,protocol,95,23
 2025-12-07,NEAR-DevHub/trezu,near,ecosystem,18,1
-2025-12-07,anza-xyz/agave,solana,protocol,0,
+2025-12-07,anza-xyz/agave,solana,protocol,,
 2025-12-07,aptos-labs/aptos-core,aptos,protocol,26,11
 2025-12-07,aurora-is-near/aurora-engine,near,ecosystem,3,4
 2025-12-07,ava-labs/avalanchego,avalanche,protocol,33,9
@@ -91,7 +91,7 @@ week_start,repo,ecosystem,repo_group,commits,active_authors
 2025-12-07,ton-blockchain/ton,ton,protocol,12,3
 2025-12-14,MystenLabs/sui,sui,protocol,100,26
 2025-12-14,NEAR-DevHub/trezu,near,ecosystem,32,1
-2025-12-14,anza-xyz/agave,solana,protocol,0,
+2025-12-14,anza-xyz/agave,solana,protocol,,
 2025-12-14,aptos-labs/aptos-core,aptos,protocol,26,16
 2025-12-14,aurora-is-near/aurora-engine,near,ecosystem,2,1
 2025-12-14,ava-labs/avalanchego,avalanche,protocol,40,10
@@ -109,7 +109,7 @@ week_start,repo,ecosystem,repo_group,commits,active_authors
 2025-12-14,ton-blockchain/ton,ton,protocol,23,5
 2025-12-21,MystenLabs/sui,sui,protocol,32,11
 2025-12-21,NEAR-DevHub/trezu,near,ecosystem,35,3
-2025-12-21,anza-xyz/agave,solana,protocol,0,
+2025-12-21,anza-xyz/agave,solana,protocol,,
 2025-12-21,aptos-labs/aptos-core,aptos,protocol,7,5
 2025-12-21,aurora-is-near/aurora-engine,near,ecosystem,0,
 2025-12-21,ava-labs/avalanchego,avalanche,protocol,10,6
@@ -127,7 +127,7 @@ week_start,repo,ecosystem,repo_group,commits,active_authors
 2025-12-21,ton-blockchain/ton,ton,protocol,18,8
 2025-12-28,MystenLabs/sui,sui,protocol,44,10
 2025-12-28,NEAR-DevHub/trezu,near,ecosystem,24,3
-2025-12-28,anza-xyz/agave,solana,protocol,0,
+2025-12-28,anza-xyz/agave,solana,protocol,,
 2025-12-28,aptos-labs/aptos-core,aptos,protocol,8,7
 2025-12-28,aurora-is-near/aurora-engine,near,ecosystem,0,
 2025-12-28,ava-labs/avalanchego,avalanche,protocol,17,7
@@ -145,7 +145,7 @@ week_start,repo,ecosystem,repo_group,commits,active_authors
 2025-12-28,ton-blockchain/ton,ton,protocol,14,6
 2026-01-04,MystenLabs/sui,sui,protocol,128,26
 2026-01-04,NEAR-DevHub/trezu,near,ecosystem,25,5
-2026-01-04,anza-xyz/agave,solana,protocol,0,
+2026-01-04,anza-xyz/agave,solana,protocol,,
 2026-01-04,aptos-labs/aptos-core,aptos,protocol,18,8
 2026-01-04,aurora-is-near/aurora-engine,near,ecosystem,1,2
 2026-01-04,ava-labs/avalanchego,avalanche,protocol,28,8
@@ -163,7 +163,7 @@ week_start,repo,ecosystem,repo_group,commits,active_authors
 2026-01-04,ton-blockchain/ton,ton,protocol,41,7
 2026-01-11,MystenLabs/sui,sui,protocol,171,30
 2026-01-11,NEAR-DevHub/trezu,near,ecosystem,36,4
-2026-01-11,anza-xyz/agave,solana,protocol,0,
+2026-01-11,anza-xyz/agave,solana,protocol,,
 2026-01-11,aptos-labs/aptos-core,aptos,protocol,28,13
 2026-01-11,aurora-is-near/aurora-engine,near,ecosystem,7,2
 2026-01-11,ava-labs/avalanchego,avalanche,protocol,35,12
@@ -181,7 +181,7 @@ week_start,repo,ecosystem,repo_group,commits,active_authors
 2026-01-11,ton-blockchain/ton,ton,protocol,65,6
 2026-01-18,MystenLabs/sui,sui,protocol,109,28
 2026-01-18,NEAR-DevHub/trezu,near,ecosystem,30,4
-2026-01-18,anza-xyz/agave,solana,protocol,0,
+2026-01-18,anza-xyz/agave,solana,protocol,,
 2026-01-18,aptos-labs/aptos-core,aptos,protocol,23,12
 2026-01-18,aurora-is-near/aurora-engine,near,ecosystem,3,1
 2026-01-18,ava-labs/avalanchego,avalanche,protocol,24,10
@@ -199,7 +199,7 @@ week_start,repo,ecosystem,repo_group,commits,active_authors
 2026-01-18,ton-blockchain/ton,ton,protocol,38,8
 2026-01-25,MystenLabs/sui,sui,protocol,185,29
 2026-01-25,NEAR-DevHub/trezu,near,ecosystem,33,4
-2026-01-25,anza-xyz/agave,solana,protocol,0,
+2026-01-25,anza-xyz/agave,solana,protocol,,
 2026-01-25,aptos-labs/aptos-core,aptos,protocol,46,18
 2026-01-25,aurora-is-near/aurora-engine,near,ecosystem,2,2
 2026-01-25,ava-labs/avalanchego,avalanche,protocol,27,9
@@ -217,7 +217,7 @@ week_start,repo,ecosystem,repo_group,commits,active_authors
 2026-01-25,ton-blockchain/ton,ton,protocol,24,3
 2026-02-01,MystenLabs/sui,sui,protocol,170,30
 2026-02-01,NEAR-DevHub/trezu,near,ecosystem,51,5
-2026-02-01,anza-xyz/agave,solana,protocol,0,
+2026-02-01,anza-xyz/agave,solana,protocol,,
 2026-02-01,aptos-labs/aptos-core,aptos,protocol,57,13
 2026-02-01,aurora-is-near/aurora-engine,near,ecosystem,3,2
 2026-02-01,ava-labs/avalanchego,avalanche,protocol,21,8
@@ -235,7 +235,7 @@ week_start,repo,ecosystem,repo_group,commits,active_authors
 2026-02-01,ton-blockchain/ton,ton,protocol,16,1
 2026-02-08,MystenLabs/sui,sui,protocol,126,27
 2026-02-08,NEAR-DevHub/trezu,near,ecosystem,41,5
-2026-02-08,anza-xyz/agave,solana,protocol,0,
+2026-02-08,anza-xyz/agave,solana,protocol,,
 2026-02-08,aptos-labs/aptos-core,aptos,protocol,102,21
 2026-02-08,aurora-is-near/aurora-engine,near,ecosystem,0,
 2026-02-08,ava-labs/avalanchego,avalanche,protocol,23,8
@@ -251,9 +251,9 @@ week_start,repo,ecosystem,repo_group,commits,active_authors
 2026-02-08,nearai/cloud-api,near,ai,7,5
 2026-02-08,out-layer/outlayer,near,ai,29,1
 2026-02-08,ton-blockchain/ton,ton,protocol,52,8
-2026-02-15,MystenLabs/sui,sui,protocol,87,22
+2026-02-15,MystenLabs/sui,sui,protocol,85,21
 2026-02-15,NEAR-DevHub/trezu,near,ecosystem,51,5
-2026-02-15,anza-xyz/agave,solana,protocol,0,
+2026-02-15,anza-xyz/agave,solana,protocol,,
 2026-02-15,aptos-labs/aptos-core,aptos,protocol,43,12
 2026-02-15,aurora-is-near/aurora-engine,near,ecosystem,0,
 2026-02-15,ava-labs/avalanchego,avalanche,protocol,49,8
@@ -271,7 +271,7 @@ week_start,repo,ecosystem,repo_group,commits,active_authors
 2026-02-15,ton-blockchain/ton,ton,protocol,20,5
 2026-02-22,MystenLabs/sui,sui,protocol,110,20
 2026-02-22,NEAR-DevHub/trezu,near,ecosystem,105,6
-2026-02-22,anza-xyz/agave,solana,protocol,0,
+2026-02-22,anza-xyz/agave,solana,protocol,,
 2026-02-22,aptos-labs/aptos-core,aptos,protocol,68,19
 2026-02-22,aurora-is-near/aurora-engine,near,ecosystem,5,2
 2026-02-22,ava-labs/avalanchego,avalanche,protocol,43,14
@@ -289,7 +289,7 @@ week_start,repo,ecosystem,repo_group,commits,active_authors
 2026-02-22,ton-blockchain/ton,ton,protocol,34,7
 2026-03-01,MystenLabs/sui,sui,protocol,130,24
 2026-03-01,NEAR-DevHub/trezu,near,ecosystem,34,6
-2026-03-01,anza-xyz/agave,solana,protocol,0,
+2026-03-01,anza-xyz/agave,solana,protocol,,
 2026-03-01,aptos-labs/aptos-core,aptos,protocol,87,20
 2026-03-01,aurora-is-near/aurora-engine,near,ecosystem,0,
 2026-03-01,ava-labs/avalanchego,avalanche,protocol,42,12
@@ -307,7 +307,7 @@ week_start,repo,ecosystem,repo_group,commits,active_authors
 2026-03-01,ton-blockchain/ton,ton,protocol,7,4
 2026-03-08,MystenLabs/sui,sui,protocol,116,26
 2026-03-08,NEAR-DevHub/trezu,near,ecosystem,25,7
-2026-03-08,anza-xyz/agave,solana,protocol,0,
+2026-03-08,anza-xyz/agave,solana,protocol,,
 2026-03-08,aptos-labs/aptos-core,aptos,protocol,82,22
 2026-03-08,aurora-is-near/aurora-engine,near,ecosystem,0,
 2026-03-08,ava-labs/avalanchego,avalanche,protocol,27,12
@@ -325,7 +325,7 @@ week_start,repo,ecosystem,repo_group,commits,active_authors
 2026-03-08,ton-blockchain/ton,ton,protocol,26,6
 2026-03-15,MystenLabs/sui,sui,protocol,123,30
 2026-03-15,NEAR-DevHub/trezu,near,ecosystem,19,7
-2026-03-15,anza-xyz/agave,solana,protocol,0,
+2026-03-15,anza-xyz/agave,solana,protocol,,
 2026-03-15,aptos-labs/aptos-core,aptos,protocol,60,16
 2026-03-15,aurora-is-near/aurora-engine,near,ecosystem,2,1
 2026-03-15,ava-labs/avalanchego,avalanche,protocol,26,11
@@ -343,7 +343,7 @@ week_start,repo,ecosystem,repo_group,commits,active_authors
 2026-03-15,ton-blockchain/ton,ton,protocol,12,7
 2026-03-22,MystenLabs/sui,sui,protocol,166,34
 2026-03-22,NEAR-DevHub/trezu,near,ecosystem,43,7
-2026-03-22,anza-xyz/agave,solana,protocol,0,
+2026-03-22,anza-xyz/agave,solana,protocol,,
 2026-03-22,aptos-labs/aptos-core,aptos,protocol,104,20
 2026-03-22,aurora-is-near/aurora-engine,near,ecosystem,12,4
 2026-03-22,ava-labs/avalanchego,avalanche,protocol,30,11
@@ -359,9 +359,9 @@ week_start,repo,ecosystem,repo_group,commits,active_authors
 2026-03-22,nearai/cloud-api,near,ai,4,1
 2026-03-22,out-layer/outlayer,near,ai,3,1
 2026-03-22,ton-blockchain/ton,ton,protocol,41,7
-2026-03-29,MystenLabs/sui,sui,protocol,108,25
+2026-03-29,MystenLabs/sui,sui,protocol,107,25
 2026-03-29,NEAR-DevHub/trezu,near,ecosystem,20,3
-2026-03-29,anza-xyz/agave,solana,protocol,0,
+2026-03-29,anza-xyz/agave,solana,protocol,,
 2026-03-29,aptos-labs/aptos-core,aptos,protocol,58,10
 2026-03-29,aurora-is-near/aurora-engine,near,ecosystem,3,3
 2026-03-29,ava-labs/avalanchego,avalanche,protocol,18,11
@@ -379,7 +379,7 @@ week_start,repo,ecosystem,repo_group,commits,active_authors
 2026-03-29,ton-blockchain/ton,ton,protocol,13,6
 2026-04-05,MystenLabs/sui,sui,protocol,91,27
 2026-04-05,NEAR-DevHub/trezu,near,ecosystem,24,8
-2026-04-05,anza-xyz/agave,solana,protocol,0,
+2026-04-05,anza-xyz/agave,solana,protocol,,
 2026-04-05,aptos-labs/aptos-core,aptos,protocol,61,19
 2026-04-05,aurora-is-near/aurora-engine,near,ecosystem,1,1
 2026-04-05,ava-labs/avalanchego,avalanche,protocol,24,8
@@ -395,9 +395,9 @@ week_start,repo,ecosystem,repo_group,commits,active_authors
 2026-04-05,nearai/cloud-api,near,ai,1,1
 2026-04-05,out-layer/outlayer,near,ai,2,1
 2026-04-05,ton-blockchain/ton,ton,protocol,20,5
-2026-04-12,MystenLabs/sui,sui,protocol,136,29
+2026-04-12,MystenLabs/sui,sui,protocol,135,29
 2026-04-12,NEAR-DevHub/trezu,near,ecosystem,59,4
-2026-04-12,anza-xyz/agave,solana,protocol,0,
+2026-04-12,anza-xyz/agave,solana,protocol,,
 2026-04-12,aptos-labs/aptos-core,aptos,protocol,65,15
 2026-04-12,aurora-is-near/aurora-engine,near,ecosystem,5,2
 2026-04-12,ava-labs/avalanchego,avalanche,protocol,16,7
@@ -415,7 +415,7 @@ week_start,repo,ecosystem,repo_group,commits,active_authors
 2026-04-12,ton-blockchain/ton,ton,protocol,7,5
 2026-04-19,MystenLabs/sui,sui,protocol,116,27
 2026-04-19,NEAR-DevHub/trezu,near,ecosystem,24,8
-2026-04-19,anza-xyz/agave,solana,protocol,0,
+2026-04-19,anza-xyz/agave,solana,protocol,,
 2026-04-19,aptos-labs/aptos-core,aptos,protocol,51,15
 2026-04-19,aurora-is-near/aurora-engine,near,ecosystem,3,1
 2026-04-19,ava-labs/avalanchego,avalanche,protocol,2,2
@@ -433,7 +433,7 @@ week_start,repo,ecosystem,repo_group,commits,active_authors
 2026-04-19,ton-blockchain/ton,ton,protocol,12,7
 2026-04-26,MystenLabs/sui,sui,protocol,118,26
 2026-04-26,NEAR-DevHub/trezu,near,ecosystem,19,6
-2026-04-26,anza-xyz/agave,solana,protocol,0,
+2026-04-26,anza-xyz/agave,solana,protocol,,
 2026-04-26,aptos-labs/aptos-core,aptos,protocol,55,14
 2026-04-26,aurora-is-near/aurora-engine,near,ecosystem,0,
 2026-04-26,ava-labs/avalanchego,avalanche,protocol,30,10
@@ -451,7 +451,7 @@ week_start,repo,ecosystem,repo_group,commits,active_authors
 2026-04-26,ton-blockchain/ton,ton,protocol,11,6
 2026-05-03,MystenLabs/sui,sui,protocol,138,28
 2026-05-03,NEAR-DevHub/trezu,near,ecosystem,13,5
-2026-05-03,anza-xyz/agave,solana,protocol,0,
+2026-05-03,anza-xyz/agave,solana,protocol,,
 2026-05-03,aptos-labs/aptos-core,aptos,protocol,58,16
 2026-05-03,aurora-is-near/aurora-engine,near,ecosystem,0,
 2026-05-03,ava-labs/avalanchego,avalanche,protocol,24,11
@@ -469,7 +469,7 @@ week_start,repo,ecosystem,repo_group,commits,active_authors
 2026-05-03,ton-blockchain/ton,ton,protocol,12,4
 2026-05-10,MystenLabs/sui,sui,protocol,145,26
 2026-05-10,NEAR-DevHub/trezu,near,ecosystem,10,6
-2026-05-10,anza-xyz/agave,solana,protocol,0,
+2026-05-10,anza-xyz/agave,solana,protocol,,
 2026-05-10,aptos-labs/aptos-core,aptos,protocol,90,21
 2026-05-10,aurora-is-near/aurora-engine,near,ecosystem,5,1
 2026-05-10,ava-labs/avalanchego,avalanche,protocol,10,5
@@ -487,7 +487,7 @@ week_start,repo,ecosystem,repo_group,commits,active_authors
 2026-05-10,ton-blockchain/ton,ton,protocol,17,7
 2026-05-17,MystenLabs/sui,sui,protocol,142,27
 2026-05-17,NEAR-DevHub/trezu,near,ecosystem,10,4
-2026-05-17,anza-xyz/agave,solana,protocol,0,
+2026-05-17,anza-xyz/agave,solana,protocol,,
 2026-05-17,aptos-labs/aptos-core,aptos,protocol,58,19
 2026-05-17,aurora-is-near/aurora-engine,near,ecosystem,1,1
 2026-05-17,ava-labs/avalanchego,avalanche,protocol,23,12
@@ -505,7 +505,7 @@ week_start,repo,ecosystem,repo_group,commits,active_authors
 2026-05-17,ton-blockchain/ton,ton,protocol,15,3
 2026-05-24,MystenLabs/sui,sui,protocol,110,19
 2026-05-24,NEAR-DevHub/trezu,near,ecosystem,8,2
-2026-05-24,anza-xyz/agave,solana,protocol,0,
+2026-05-24,anza-xyz/agave,solana,protocol,,
 2026-05-24,aptos-labs/aptos-core,aptos,protocol,53,15
 2026-05-24,aurora-is-near/aurora-engine,near,ecosystem,0,
 2026-05-24,ava-labs/avalanchego,avalanche,protocol,7,4
@@ -523,7 +523,7 @@ week_start,repo,ecosystem,repo_group,commits,active_authors
 2026-05-24,ton-blockchain/ton,ton,protocol,8,5
 2026-05-31,MystenLabs/sui,sui,protocol,43,18
 2026-05-31,NEAR-DevHub/trezu,near,ecosystem,27,8
-2026-05-31,anza-xyz/agave,solana,protocol,0,
+2026-05-31,anza-xyz/agave,solana,protocol,,
 2026-05-31,aptos-labs/aptos-core,aptos,protocol,50,17
 2026-05-31,aurora-is-near/aurora-engine,near,ecosystem,1,2
 2026-05-31,ava-labs/avalanchego,avalanche,protocol,6,4
@@ -541,7 +541,7 @@ week_start,repo,ecosystem,repo_group,commits,active_authors
 2026-05-31,ton-blockchain/ton,ton,protocol,24,3
 2026-06-07,MystenLabs/sui,sui,protocol,77,11
 2026-06-07,NEAR-DevHub/trezu,near,ecosystem,37,7
-2026-06-07,anza-xyz/agave,solana,protocol,0,
+2026-06-07,anza-xyz/agave,solana,protocol,,
 2026-06-07,aptos-labs/aptos-core,aptos,protocol,65,13
 2026-06-07,aurora-is-near/aurora-engine,near,ecosystem,1,1
 2026-06-07,ava-labs/avalanchego,avalanche,protocol,15,9
@@ -559,7 +559,7 @@ week_start,repo,ecosystem,repo_group,commits,active_authors
 2026-06-07,ton-blockchain/ton,ton,protocol,21,6
 2026-06-14,MystenLabs/sui,sui,protocol,94,21
 2026-06-14,NEAR-DevHub/trezu,near,ecosystem,15,5
-2026-06-14,anza-xyz/agave,solana,protocol,0,
+2026-06-14,anza-xyz/agave,solana,protocol,,
 2026-06-14,aptos-labs/aptos-core,aptos,protocol,49,15
 2026-06-14,aurora-is-near/aurora-engine,near,ecosystem,1,1
 2026-06-14,ava-labs/avalanchego,avalanche,protocol,21,7
@@ -577,7 +577,7 @@ week_start,repo,ecosystem,repo_group,commits,active_authors
 2026-06-14,ton-blockchain/ton,ton,protocol,35,5
 2026-06-21,MystenLabs/sui,sui,protocol,89,28
 2026-06-21,NEAR-DevHub/trezu,near,ecosystem,10,5
-2026-06-21,anza-xyz/agave,solana,protocol,0,
+2026-06-21,anza-xyz/agave,solana,protocol,,
 2026-06-21,aptos-labs/aptos-core,aptos,protocol,43,13
 2026-06-21,aurora-is-near/aurora-engine,near,ecosystem,0,
 2026-06-21,ava-labs/avalanchego,avalanche,protocol,30,9
@@ -595,7 +595,7 @@ week_start,repo,ecosystem,repo_group,commits,active_authors
 2026-06-21,ton-blockchain/ton,ton,protocol,9,2
 2026-06-28,MystenLabs/sui,sui,protocol,94,23
 2026-06-28,NEAR-DevHub/trezu,near,ecosystem,16,5
-2026-06-28,anza-xyz/agave,solana,protocol,0,
+2026-06-28,anza-xyz/agave,solana,protocol,,
 2026-06-28,aptos-labs/aptos-core,aptos,protocol,21,8
 2026-06-28,aurora-is-near/aurora-engine,near,ecosystem,1,1
 2026-06-28,ava-labs/avalanchego,avalanche,protocol,15,8
@@ -613,7 +613,7 @@ week_start,repo,ecosystem,repo_group,commits,active_authors
 2026-06-28,ton-blockchain/ton,ton,protocol,10,2
 2026-07-05,MystenLabs/sui,sui,protocol,112,23
 2026-07-05,NEAR-DevHub/trezu,near,ecosystem,20,9
-2026-07-05,anza-xyz/agave,solana,protocol,0,
+2026-07-05,anza-xyz/agave,solana,protocol,,
 2026-07-05,aptos-labs/aptos-core,aptos,protocol,15,8
 2026-07-05,aurora-is-near/aurora-engine,near,ecosystem,0,
 2026-07-05,ava-labs/avalanchego,avalanche,protocol,16,9
@@ -631,7 +631,7 @@ week_start,repo,ecosystem,repo_group,commits,active_authors
 2026-07-05,ton-blockchain/ton,ton,protocol,12,4
 2026-07-12,MystenLabs/sui,sui,protocol,142,24
 2026-07-12,NEAR-DevHub/trezu,near,ecosystem,32,10
-2026-07-12,anza-xyz/agave,solana,protocol,0,
+2026-07-12,anza-xyz/agave,solana,protocol,,
 2026-07-12,aptos-labs/aptos-core,aptos,protocol,23,8
 2026-07-12,aurora-is-near/aurora-engine,near,ecosystem,5,3
 2026-07-12,ava-labs/avalanchego,avalanche,protocol,35,8
@@ -649,7 +649,7 @@ week_start,repo,ecosystem,repo_group,commits,active_authors
 2026-07-12,ton-blockchain/ton,ton,protocol,23,3
 2026-07-19,MystenLabs/sui,sui,protocol,112,25
 2026-07-19,NEAR-DevHub/trezu,near,ecosystem,18,7
-2026-07-19,anza-xyz/agave,solana,protocol,0,
+2026-07-19,anza-xyz/agave,solana,protocol,,
 2026-07-19,aptos-labs/aptos-core,aptos,protocol,17,10
 2026-07-19,aurora-is-near/aurora-engine,near,ecosystem,0,
 2026-07-19,ava-labs/avalanchego,avalanche,protocol,14,4
@@ -667,7 +667,7 @@ week_start,repo,ecosystem,repo_group,commits,active_authors
 2026-07-19,ton-blockchain/ton,ton,protocol,33,4
 2026-07-26,MystenLabs/sui,sui,protocol,101,23
 2026-07-26,NEAR-DevHub/trezu,near,ecosystem,6,2
-2026-07-26,anza-xyz/agave,solana,protocol,0,
+2026-07-26,anza-xyz/agave,solana,protocol,,
 2026-07-26,aptos-labs/aptos-core,aptos,protocol,32,8
 2026-07-26,aurora-is-near/aurora-engine,near,ecosystem,2,1
 2026-07-26,ava-labs/avalanchego,avalanche,protocol,17,9
@@ -685,13 +685,13 @@ week_start,repo,ecosystem,repo_group,commits,active_authors
 2026-07-26,ton-blockchain/ton,ton,protocol,20,2
 2026-08-02,MystenLabs/sui,sui,protocol,73,15
 2026-08-02,NEAR-DevHub/trezu,near,ecosystem,15,5
-2026-08-02,anza-xyz/agave,solana,protocol,0,
+2026-08-02,anza-xyz/agave,solana,protocol,,
 2026-08-02,aptos-labs/aptos-core,aptos,protocol,35,8
 2026-08-02,aurora-is-near/aurora-engine,near,ecosystem,0,
 2026-08-02,ava-labs/avalanchego,avalanche,protocol,21,9
 2026-08-02,ethereum/go-ethereum,ethereum,protocol,20,8
 2026-08-02,near-daos/sputnik-dao-contract,near,governance,0,
-2026-08-02,near/docs,near,developer_tools,6,4
+2026-08-02,near/docs,near,developer_tools,6,3
 2026-08-02,near/intents,near,intents,9,2
 2026-08-02,near/mpc,near,chain_signatures,26,11
 2026-08-02,near/near-api-js,near,developer_tools,0,
@@ -703,7 +703,7 @@ week_start,repo,ecosystem,repo_group,commits,active_authors
 2026-08-02,ton-blockchain/ton,ton,protocol,19,6
 2026-08-09,MystenLabs/sui,sui,protocol,99,24
 2026-08-09,NEAR-DevHub/trezu,near,ecosystem,18,8
-2026-08-09,anza-xyz/agave,solana,protocol,0,
+2026-08-09,anza-xyz/agave,solana,protocol,,
 2026-08-09,aptos-labs/aptos-core,aptos,protocol,22,9
 2026-08-09,aurora-is-near/aurora-engine,near,ecosystem,1,2
 2026-08-09,ava-labs/avalanchego,avalanche,protocol,9,4
@@ -721,7 +721,7 @@ week_start,repo,ecosystem,repo_group,commits,active_authors
 2026-08-09,ton-blockchain/ton,ton,protocol,34,4
 2026-08-16,MystenLabs/sui,sui,protocol,66,22
 2026-08-16,NEAR-DevHub/trezu,near,ecosystem,5,2
-2026-08-16,anza-xyz/agave,solana,protocol,0,
+2026-08-16,anza-xyz/agave,solana,protocol,,
 2026-08-16,aptos-labs/aptos-core,aptos,protocol,54,11
 2026-08-16,aurora-is-near/aurora-engine,near,ecosystem,3,3
 2026-08-16,ava-labs/avalanchego,avalanche,protocol,20,7
@@ -739,7 +739,7 @@ week_start,repo,ecosystem,repo_group,commits,active_authors
 2026-08-16,ton-blockchain/ton,ton,protocol,22,4
 2026-08-23,MystenLabs/sui,sui,protocol,57,19
 2026-08-23,NEAR-DevHub/trezu,near,ecosystem,12,5
-2026-08-23,anza-xyz/agave,solana,protocol,0,
+2026-08-23,anza-xyz/agave,solana,protocol,,
 2026-08-23,aptos-labs/aptos-core,aptos,protocol,29,10
 2026-08-23,aurora-is-near/aurora-engine,near,ecosystem,1,1
 2026-08-23,ava-labs/avalanchego,avalanche,protocol,28,10
@@ -757,7 +757,7 @@ week_start,repo,ecosystem,repo_group,commits,active_authors
 2026-08-23,ton-blockchain/ton,ton,protocol,26,4
 2026-08-30,MystenLabs/sui,sui,protocol,59,16
 2026-08-30,NEAR-DevHub/trezu,near,ecosystem,16,6
-2026-08-30,anza-xyz/agave,solana,protocol,0,
+2026-08-30,anza-xyz/agave,solana,protocol,,
 2026-08-30,aptos-labs/aptos-core,aptos,protocol,39,8
 2026-08-30,aurora-is-near/aurora-engine,near,ecosystem,8,4
 2026-08-30,ava-labs/avalanchego,avalanche,protocol,28,8
@@ -775,7 +775,7 @@ week_start,repo,ecosystem,repo_group,commits,active_authors
 2026-08-30,ton-blockchain/ton,ton,protocol,12,1
 2026-09-06,MystenLabs/sui,sui,protocol,78,21
 2026-09-06,NEAR-DevHub/trezu,near,ecosystem,1,1
-2026-09-06,anza-xyz/agave,solana,protocol,0,
+2026-09-06,anza-xyz/agave,solana,protocol,,
 2026-09-06,aptos-labs/aptos-core,aptos,protocol,31,9
 2026-09-06,aurora-is-near/aurora-engine,near,ecosystem,0,
 2026-09-06,ava-labs/avalanchego,avalanche,protocol,18,10
@@ -793,7 +793,7 @@ week_start,repo,ecosystem,repo_group,commits,active_authors
 2026-09-06,ton-blockchain/ton,ton,protocol,20,2
 2026-09-13,MystenLabs/sui,sui,protocol,34,16
 2026-09-13,NEAR-DevHub/trezu,near,ecosystem,14,8
-2026-09-13,anza-xyz/agave,solana,protocol,0,
+2026-09-13,anza-xyz/agave,solana,protocol,,
 2026-09-13,aptos-labs/aptos-core,aptos,protocol,23,6
 2026-09-13,aurora-is-near/aurora-engine,near,ecosystem,2,2
 2026-09-13,ava-labs/avalanchego,avalanche,protocol,13,8
@@ -811,7 +811,7 @@ week_start,repo,ecosystem,repo_group,commits,active_authors
 2026-09-13,ton-blockchain/ton,ton,protocol,1,1
 2026-09-20,MystenLabs/sui,sui,protocol,79,23
 2026-09-20,NEAR-DevHub/trezu,near,ecosystem,9,6
-2026-09-20,anza-xyz/agave,solana,protocol,0,
+2026-09-20,anza-xyz/agave,solana,protocol,,
 2026-09-20,aptos-labs/aptos-core,aptos,protocol,38,10
 2026-09-20,aurora-is-near/aurora-engine,near,ecosystem,2,2
 2026-09-20,ava-labs/avalanchego,avalanche,protocol,16,5
@@ -829,7 +829,7 @@ week_start,repo,ecosystem,repo_group,commits,active_authors
 2026-09-20,ton-blockchain/ton,ton,protocol,11,4
 2026-09-27,MystenLabs/sui,sui,protocol,32,12
 2026-09-27,NEAR-DevHub/trezu,near,ecosystem,15,9
-2026-09-27,anza-xyz/agave,solana,protocol,0,
+2026-09-27,anza-xyz/agave,solana,protocol,,
 2026-09-27,aptos-labs/aptos-core,aptos,protocol,70,13
 2026-09-27,aurora-is-near/aurora-engine,near,ecosystem,3,2
 2026-09-27,ava-labs/avalanchego,avalanche,protocol,24,9
@@ -847,8 +847,8 @@ week_start,repo,ecosystem,repo_group,commits,active_authors
 2026-09-27,ton-blockchain/ton,ton,protocol,3,1
 2026-10-04,MystenLabs/sui,sui,protocol,63,20
 2026-10-04,NEAR-DevHub/trezu,near,ecosystem,13,5
-2026-10-04,anza-xyz/agave,solana,protocol,0,
-2026-10-04,aptos-labs/aptos-core,aptos,protocol,62,13
+2026-10-04,anza-xyz/agave,solana,protocol,,
+2026-10-04,aptos-labs/aptos-core,aptos,protocol,64,14
 2026-10-04,aurora-is-near/aurora-engine,near,ecosystem,4,4
 2026-10-04,ava-labs/avalanchego,avalanche,protocol,23,7
 2026-10-04,ethereum/go-ethereum,ethereum,protocol,44,15
@@ -865,13 +865,13 @@ week_start,repo,ecosystem,repo_group,commits,active_authors
 2026-10-04,ton-blockchain/ton,ton,protocol,17,3
 2026-10-11,MystenLabs/sui,sui,protocol,47,16
 2026-10-11,NEAR-DevHub/trezu,near,ecosystem,9,4
-2026-10-11,anza-xyz/agave,solana,protocol,0,
-2026-10-11,aptos-labs/aptos-core,aptos,protocol,36,16
+2026-10-11,anza-xyz/agave,solana,protocol,,
+2026-10-11,aptos-labs/aptos-core,aptos,protocol,38,16
 2026-10-11,aurora-is-near/aurora-engine,near,ecosystem,0,
 2026-10-11,ava-labs/avalanchego,avalanche,protocol,37,10
 2026-10-11,ethereum/go-ethereum,ethereum,protocol,20,8
 2026-10-11,near-daos/sputnik-dao-contract,near,governance,0,
-2026-10-11,near/docs,near,developer_tools,4,2
+2026-10-11,near/docs,near,developer_tools,4,3
 2026-10-11,near/intents,near,intents,7,2
 2026-10-11,near/mpc,near,chain_signatures,37,10
 2026-10-11,near/near-api-js,near,developer_tools,1,1
@@ -883,13 +883,13 @@ week_start,repo,ecosystem,repo_group,commits,active_authors
 2026-10-11,ton-blockchain/ton,ton,protocol,3,2
 2026-10-18,MystenLabs/sui,sui,protocol,95,22
 2026-10-18,NEAR-DevHub/trezu,near,ecosystem,6,5
-2026-10-18,anza-xyz/agave,solana,protocol,0,
-2026-10-18,aptos-labs/aptos-core,aptos,protocol,81,9
+2026-10-18,anza-xyz/agave,solana,protocol,,
+2026-10-18,aptos-labs/aptos-core,aptos,protocol,91,10
 2026-10-18,aurora-is-near/aurora-engine,near,ecosystem,1,1
 2026-10-18,ava-labs/avalanchego,avalanche,protocol,26,8
-2026-10-18,ethereum/go-ethereum,ethereum,protocol,28,11
+2026-10-18,ethereum/go-ethereum,ethereum,protocol,28,12
 2026-10-18,near-daos/sputnik-dao-contract,near,governance,0,
-2026-10-18,near/docs,near,developer_tools,19,9
+2026-10-18,near/docs,near,developer_tools,19,10
 2026-10-18,near/intents,near,intents,5,5
 2026-10-18,near/mpc,near,chain_signatures,37,9
 2026-10-18,near/near-api-js,near,developer_tools,9,3
@@ -901,8 +901,8 @@ week_start,repo,ecosystem,repo_group,commits,active_authors
 2026-10-18,ton-blockchain/ton,ton,protocol,2,1
 2026-10-25,MystenLabs/sui,sui,protocol,92,19
 2026-10-25,NEAR-DevHub/trezu,near,ecosystem,6,3
-2026-10-25,anza-xyz/agave,solana,protocol,0,
-2026-10-25,aptos-labs/aptos-core,aptos,protocol,104,10
+2026-10-25,anza-xyz/agave,solana,protocol,,
+2026-10-25,aptos-labs/aptos-core,aptos,protocol,113,11
 2026-10-25,aurora-is-near/aurora-engine,near,ecosystem,6,3
 2026-10-25,ava-labs/avalanchego,avalanche,protocol,30,9
 2026-10-25,ethereum/go-ethereum,ethereum,protocol,15,6
@@ -917,21 +917,3 @@ week_start,repo,ecosystem,repo_group,commits,active_authors
 2026-10-25,nearai/cloud-api,near,ai,14,7
 2026-10-25,out-layer/outlayer,near,ai,0,
 2026-10-25,ton-blockchain/ton,ton,protocol,0,
-2026-11-01,MystenLabs/sui,sui,protocol,1,1
-2026-11-01,NEAR-DevHub/trezu,near,ecosystem,0,
-2026-11-01,anza-xyz/agave,solana,protocol,0,
-2026-11-01,aptos-labs/aptos-core,aptos,protocol,1,1
-2026-11-01,aurora-is-near/aurora-engine,near,ecosystem,0,
-2026-11-01,ava-labs/avalanchego,avalanche,protocol,0,
-2026-11-01,ethereum/go-ethereum,ethereum,protocol,3,2
-2026-11-01,near-daos/sputnik-dao-contract,near,governance,0,
-2026-11-01,near/docs,near,developer_tools,3,1
-2026-11-01,near/intents,near,intents,0,
-2026-11-01,near/mpc,near,chain_signatures,1,1
-2026-11-01,near/near-api-js,near,developer_tools,0,
-2026-11-01,near/near-cli-rs,near,developer_tools,0,
-2026-11-01,near/near-sdk-rs,near,developer_tools,0,
-2026-11-01,near/nearcore,near,protocol,0,
-2026-11-01,nearai/cloud-api,near,ai,0,
-2026-11-01,out-layer/outlayer,near,ai,0,
-2026-11-01,ton-blockchain/ton,ton,protocol,0,

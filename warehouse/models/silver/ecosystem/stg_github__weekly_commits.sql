@@ -1,4 +1,5 @@
 -- Commits per week for the last 52 weeks. file_key is owner__repo.
+-- The week still in progress when a read was taken is left out; a later read brings it in complete.
 with files as ({{ bronze_files('github__commit_activity') }}),
 
 rows as (
@@ -16,3 +17,4 @@ typed as (
 
 select *, {{ is_latest('repo, week_start') }} as is_latest
 from typed
+where week_start + 7 <= snapshot_date

@@ -17,7 +17,7 @@ models:
       - {name: total_supply_near, description: "Total supply in this block.", meta: {unit: "NEAR"}}
       - {name: gas_price_yocto, description: "Gas price in the block.", meta: {unit: "yoctoNEAR per gas"}}
       - {name: epoch_id, description: "Epoch identifier.", meta: {unit: "hash"}}
-      - {name: protocol_version, description: "Protocol version.", meta: {unit: "integer"}}
+      - {name: protocol_version, description: "latest_protocol_version in the block header: the version the block's producer supports, which can lead the version in force by days (87 appeared on 2026-11-04; the config switched between the 11-04 and 11-05 reads). Date a change from fct_protocol_config.", meta: {unit: "integer"}}
   - name: dim_date
     description: "Calendar spine covering every day with chain or Intents data."
     config:
@@ -104,7 +104,7 @@ models:
       - {name: evidence_level, description: "Strength of the label: documented, chain, token_list, third_party_code, observed or name_only.", meta: {unit: "text"}}
       - {name: source_url, description: "Where the evidence can be checked.", meta: {unit: "url"}}
       - {name: note, description: "Caveat on this row.", meta: {unit: "text"}}
-      - {name: decimals, description: "Token decimals, per 1Click. Empty if 1Click does not list it.", meta: {unit: "integer"}}
+      - {name: decimals, description: "Token decimals from registry/tokens.csv, each read from the contract's ft_metadata; 1Click's figure is the fallback and a data test holds the two to each other.", meta: {unit: "integer"}}
       - {name: price_usd, description: "Price.", meta: {unit: "USD"}}
       - {name: coingecko_id, description: "CoinGecko identifier.", meta: {unit: "id"}}
       - {name: priced_on, description: "Date the price was read.", meta: {unit: "date"}}
@@ -201,7 +201,7 @@ models:
       - {name: unique_contracts, description: "Distinct contract code hashes deployed, per /v1/charts.", meta: {unit: "count"}}
       - {name: meta_accounts, description: "Accounts sending meta-transactions.", meta: {unit: "count"}}
       - {name: meta_relayers, description: "Relayers submitting meta-transactions.", meta: {unit: "count"}}
-      - {name: multichain_txns, description: "Multichain transactions per /v1/charts.", meta: {unit: "count"}}
+      - {name: multichain_txns, description: "Multichain transactions per /v1/charts. Reads 0 on every day as of 2026-11; use fct_chain_signatures_daily for Chain Signatures activity.", meta: {unit: "count"}}
       - {name: gas_used, description: "Gas used.", meta: {unit: "gas units"}}
       - {name: gas_fee_near, description: "Gas fees per /v1/charts.", meta: {unit: "NEAR"}}
       - {name: txn_fee_near_v1, description: "Transaction fees per /v1/charts.", meta: {unit: "NEAR"}}
@@ -225,7 +225,7 @@ models:
       - {name: unique_callers, description: "Distinct accounts calling the contract.", meta: {unit: "count"}}
       - {name: unique_receivers, description: "Distinct accounts the contract sent to.", meta: {unit: "count"}}
   - name: fct_dev_activity_weekly
-    description: "Commits and active authors per tracked repository per week. A fixed repository list, not a whole-ecosystem count; GitHub's author list covers each repository's top 100."
+    description: "Commits and active authors per tracked repository per week. A fixed repository list, not a whole-ecosystem count; GitHub's author list covers each repository's top 100. Both measures are empty for a repository whose year of readings is all zero although GitHub says it was pushed to in that year, because GitHub's statistics endpoints serve zeros for some very large repositories (anza-xyz/agave on 2026-11-01)."
     config:
       meta: {grain: "week_start, repo", sources: "GitHub statistics API"}
     data_tests:
@@ -235,7 +235,7 @@ models:
       - {name: repo, description: "GitHub repository as owner/name.", meta: {unit: "text"}, data_tests: [not_null]}
       - {name: ecosystem, description: "Chain the repository belongs to.", meta: {unit: "id"}}
       - {name: repo_group, description: "Kind of repository.", meta: {unit: "text"}}
-      - {name: commits, description: "Commits that week.", meta: {unit: "count"}}
+      - {name: commits, description: "Commits that week. Empty where GitHub served a year of zeros for a repository it reports as pushed to; see the table description.", meta: {unit: "count"}}
       - {name: active_authors, description: "Authors with at least one commit that week, among GitHub's top 100 for the repository.", meta: {unit: "count"}}
   - name: fct_governance_threads
     description: "Engagement on the tracked governance threads, per read. Governance outcomes belong in dim_event."
@@ -282,7 +282,7 @@ models:
       - {name: volume_usd, description: "Public Intents volume.", meta: {unit: "USD"}}
       - {name: swaps, description: "Swaps.", meta: {unit: "count"}}
   - name: fct_intents_daily
-    description: "NEAR Intents per UTC day, one column per source. DefiLlama and revenue.near.org include confidential Intents and read the same NEAR-uploaded data; NearBlocks counts public Intents only."
+    description: "NEAR Intents per UTC day, one column per source. revenue.near.org includes confidential Intents; NearBlocks counts public Intents only. DefiLlama reads the same NEAR-uploaded data as revenue.near.org, but its volume follows NearBlocks' public-only figure from 2026-04-01 to 2026-08-31 and the all-routes figure from 2026-09-01, so it changes meaning at that date. See dq_reconciliation."
     config:
       meta: {grain: "date_day", sources: "DefiLlama, NearBlocks, revenue.near.org"}
     data_tests:
@@ -290,7 +290,7 @@ models:
       - min_rows: {arguments: {n: 500}}
     columns:
       - {name: date_day, description: "UTC calendar day.", meta: {unit: "date"}, data_tests: [not_null]}
-      - {name: volume_usd_defillama, description: "Volume per DefiLlama; includes confidential Intents.", meta: {unit: "USD"}}
+      - {name: volume_usd_defillama, description: "Volume per DefiLlama. Matches NearBlocks' public-only figure from 2026-04-01 to 2026-08-31 and revenue.near.org's all-routes figure from 2026-09-01; before April 2026 the three sources agree. Do not read a trend across 2026-09-01 from this column.", meta: {unit: "USD"}}
       - {name: volume_usd_nearblocks, description: "Volume per NearBlocks; public Intents only.", meta: {unit: "USD"}}
       - {name: volume_usd_revenue_page, description: "Volume per revenue.near.org; includes confidential Intents.", meta: {unit: "USD"}}
       - {name: cumulative_volume_usd_nearblocks, description: "All-time volume per NearBlocks.", meta: {unit: "USD"}}
@@ -305,7 +305,7 @@ models:
       - {name: revenue_usd_defillama, description: "Captured revenue per DefiLlama: NEAR and wNEAR swept into the revenue wallets. Sweeps are periodic, so one day can exceed that day's fees.", meta: {unit: "USD"}}
       - {name: holders_revenue_usd_defillama, description: "Captured revenue from 2026-02-23, which DefiLlama treats as used for buybacks.", meta: {unit: "USD"}}
       - {name: treasury_revenue_usd_defillama, description: "Captured revenue before 2026-02-23, held by the treasury.", meta: {unit: "USD"}}
-      - {name: supply_side_revenue_usd_defillama, description: "Gross fees minus captured revenue: kept by solvers and distribution channels.", meta: {unit: "USD"}}
+      - {name: supply_side_revenue_usd_defillama, description: "Gross fees minus captured revenue: kept by solvers and distribution channels. Negative on days when a periodic sweep into the revenue wallets exceeds that day's fees, so sum it over weeks, not days.", meta: {unit: "USD"}}
       - {name: confidential_tvl_usd, description: "Confidential Intents TVL per revenue.near.org. Self-reported by NEAR.", meta: {unit: "USD"}}
   - name: fct_dune_dashboard_results
     description: "Derived from NEAR's Intents dashboard on Dune: every row of every widget read by hand, as the widget returned it, so nothing waits for a typed table. NEAR uploads the data behind the dashboard, so it is self-reported."
@@ -528,7 +528,7 @@ models:
     columns:
       - {name: date_day, description: "UTC calendar day.", meta: {unit: "date"}, data_tests: [not_null]}
       - {name: price_usd, description: "NEAR close: CoinMetrics, else DefiLlama, else NearBlocks.", meta: {unit: "USD"}}
-      - {name: market_cap_usd, description: "Market cap: CoinMetrics, else NearBlocks.", meta: {unit: "USD"}}
+      - {name: market_cap_usd, description: "Market cap: CoinMetrics, else NearBlocks. CoinMetrics' estimate tracked circulating supply until September 2025 and has equalled price times total supply since November 2025, so recent values are fully diluted. See circulating_supply_latest_nearblocks_vs_coinmetrics in dq_reconciliation.", meta: {unit: "USD"}}
       - {name: price_usd_coinmetrics, description: "CoinMetrics reference rate at the day's close.", meta: {unit: "USD"}}
       - {name: price_usd_coinbase_close, description: "Coinbase NEAR-USD close.", meta: {unit: "USD"}}
       - {name: price_usd_defillama, description: "DefiLlama price, moved back one day from its 00:00 stamp to align with the close.", meta: {unit: "USD"}}
@@ -538,7 +538,7 @@ models:
       - {name: low_usd, description: "Coinbase low.", meta: {unit: "USD"}}
       - {name: coinbase_volume_near, description: "Coinbase traded volume.", meta: {unit: "NEAR"}}
       - {name: reported_spot_volume_usd, description: "Reported spot volume per CoinMetrics.", meta: {unit: "USD"}}
-      - {name: circulating_supply_near, description: "Circulating supply per /v1/charts. The v3 stats endpoint reports this wrongly, so it is not used.", meta: {unit: "NEAR"}}
+      - {name: circulating_supply_near, description: "Circulating supply per /v1/charts. The v3 stats endpoint reports this wrongly, so it is not used. Stale: the value has read 1,249,836,992 on every day since 2025-08-27, so treat it as unknown from then on.", meta: {unit: "NEAR"}}
   - name: fct_mpc_participants
     description: "MPC operators per snapshot, read directly from v1.signer."
     config:
@@ -574,7 +574,7 @@ models:
       - {name: date_day, description: "UTC calendar day.", meta: {unit: "date"}, data_tests: [not_null]}
       - {name: chain_id, description: "Chain identifier from registry/peers.csv.", meta: {unit: "id"}, data_tests: [not_null]}
       - {name: price_usd, description: "Close: CoinMetrics, else DefiLlama.", meta: {unit: "USD"}}
-      - {name: market_cap_usd, description: "Market cap per CoinMetrics. Empty for TON, which has no community series.", meta: {unit: "USD"}}
+      - {name: market_cap_usd, description: "Market cap per CoinMetrics. Empty for TON, which has no community series. For NEAR it has equalled price times total supply since late 2025; see fct_market_daily.", meta: {unit: "USD"}}
       - {name: tvl_usd, description: "Chain TVL per DefiLlama.", meta: {unit: "USD"}}
       - {name: fees_usd, description: "Fees paid by users on the chain per DefiLlama.", meta: {unit: "USD"}}
       - {name: revenue_usd, description: "Chain revenue per DefiLlama.", meta: {unit: "USD"}}
@@ -745,12 +745,13 @@ models:
     columns:
       - {name: date_day, description: "UTC calendar day.", meta: {unit: "date"}, data_tests: [not_null]}
       - {name: total_supply_near, description: "Total supply at day end per NearBlocks.", meta: {unit: "NEAR"}}
-      - {name: circulating_supply_near, description: "Circulating supply per /v1/charts. The v3 stats endpoint reports this wrongly, so it is not used.", meta: {unit: "NEAR"}}
+      - {name: circulating_supply_near, description: "Circulating supply per /v1/charts. The v3 stats endpoint reports this wrongly, so it is not used. Stale: the value has read 1,249,836,992 on every day since 2025-08-27, so treat it as unknown from then on.", meta: {unit: "NEAR"}}
       - {name: onchain_supply_end_of_day_near, description: "Supply in the first block of the next day, read from the archival node. Empty where no daily block exists.", meta: {unit: "NEAR"}}
-      - {name: protocol_version, description: "Protocol version.", meta: {unit: "integer"}}
+      - {name: protocol_version, description: "latest_protocol_version in the block header: the version the block's producer supports, which can lead the version in force by days (87 appeared on 2026-11-04; the config switched between the 11-04 and 11-05 reads). Date a change from fct_protocol_config.", meta: {unit: "integer"}}
       - {name: gas_fee_near, description: "Gas fees per /v1/charts.", meta: {unit: "NEAR"}}
       - {name: supply_change_near, description: "Change in total supply from the previous day.", meta: {unit: "NEAR"}}
-      - {name: burn_near, description: "gas_fee_near times the gas burn rate. A lower bound, because the contract reward applies only to function-call gas.", meta: {unit: "NEAR"}}
+      - {name: contract_gas_reward_rate, description: "Share of gas paid to the called contract on that day (the developer gas rebate): the newest protocol config read on or before the day, and the first read's 0.3 before 2026-10-28. It became 0 with protocol version 87, first read on 2026-11-05.", meta: {unit: "fraction"}}
+      - {name: burn_near, description: "Gas fees minus the contract share in force that day. Before protocol version 87 that is 70% of gas; from 2026-11-05 all of it.", meta: {unit: "NEAR"}}
       - {name: treasury_reward_near, description: "EpochRewards received by treasury.near that day, from wallet transfers. Part of minted_near, not on top of it.", meta: {unit: "NEAR"}}
       - {name: minted_near, description: "supply_change_near plus burn_near: issuance implied by the chain.", meta: {unit: "NEAR"}}
       - {name: minted_annualized_rate, description: "minted_near times 365, divided by total supply. Noisy for a single day.", meta: {unit: "fraction per year"}}
@@ -858,7 +859,7 @@ models:
       - {name: amount_token, description: "Signed amount in whole tokens.", meta: {unit: "token units"}}
       - {name: last_update_height, description: "Block of the last balance change.", meta: {unit: "blocks"}}
   - name: fct_wallet_transfers
-    description: "Every transfer touching a crawled wallet. Amounts are signed from the wallet's point of view, so outflows are negative."
+    description: "Every transfer touching a crawled wallet. Amounts are signed from the wallet's point of view, so outflows are negative. The day the newest crawl ran on is left out until the next crawl, like every daily series."
     config:
       meta: {grain: "account_id, block_height, transaction_id, receipt_id, action_index, log_index, transfer_index, asset_id, amount_raw", sources: "FastNear Transfers API"}
     data_tests:

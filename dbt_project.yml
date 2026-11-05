@@ -34,6 +34,7 @@ seeds:
     tokens:
       +column_types:
         token_id: varchar
+        decimals: integer
         track_holders: integer
     dune_queries:
       +column_types:

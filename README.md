@@ -27,15 +27,15 @@ If you prefer a container, run `docker build -t near-thesis . && docker run --rm
 These lines are generated from the warehouse, and `make verify` fails if they stop matching it.
 
 <!-- expected:start -->
-- Data through: **2026-11-01**
-- Gold tables and columns: **61** and **558**
-- Reconciliation: **37** comparisons agree, **4** differ, each with a written explanation
-- Issuance over the last 30 days, from supply change plus burn: **2.49%** a year, against **2.50%** in the protocol config
-- Captured Intents revenue, all time: **$9.29M** per DefiLlama, **$9.28M** rebuilt from wallet transfers
+- Data through: **2026-11-05**
+- Gold tables and columns: **61** and **559**
+- Reconciliation: **39** comparisons agree, **6** differ, each with a written explanation
+- Issuance over the last 30 days, from supply change plus burn: **2.48%** a year, against **2.50%** in the protocol config
+- Captured Intents revenue, all time: **$9.44M** per DefiLlama, **$9.41M** rebuilt from wallet transfers
 - Public Intents volume, all time: **$33.30B** per NearBlocks, **$32.93B** per NEAR's dashboard on Dune
 - Chain Signatures: **16** MPC participants with a threshold of **11**
 - Largest Intents fee channel, per NEAR's dashboard on Dune: **swapkit**, with **73%** of listed fees
-- Bitwise NEAR ETF shares outstanding: **3,220,000** per the fund, **3,220,000** counted on chain in whole baskets
+- Bitwise NEAR ETF shares outstanding: **3,040,000** per the fund, **3,040,000** counted on chain in whole baskets
 <!-- expected:end -->
 
 ## What's inside

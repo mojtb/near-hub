@@ -1,5 +1,7 @@
 -- Every transfer touching a crawled wallet. `amount` is signed from the wallet's point of view.
 -- Pages overlap on purpose at the crawl's tail, so rows are made unique here.
+-- The day the newest crawl ran on is left out, as with every daily series: the crawl caught only part of it,
+-- and the next crawl brings the whole day in. Nothing is lost, because every crawl's files stay visible.
 with files as ({{ bronze_files('fastnear__transfers') }}),
 
 rows as (
@@ -34,6 +36,7 @@ typed as (
 
 select *
 from typed
+where date_day < (select max(snapshot_date) from typed)
 qualify row_number() over (
     partition by account_id, block_height, transaction_id, receipt_id, action_index, log_index, transfer_index, asset_id, amount_raw
     order by snapshot_date desc

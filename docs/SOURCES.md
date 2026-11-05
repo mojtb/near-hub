@@ -26,6 +26,7 @@ The strongest checks are the ones that cross families. See [RECONCILIATION.md](R
 - v3 daily endpoints return at most 365 days per call. `limit` counts days, not rows, and `date=` returns a single day. History therefore grows with each stored snapshot.
 - Legacy `/v1/charts` is the only full daily history back to 2020-07-21, and `/v1` is marked for eventual removal. The bronze copy protects against that.
 - v3 `stats.circulating_supply` equals total supply, which is wrong. Circulating supply comes from `/v1` instead.
+- `/v1` circulating supply is stale too: it has read 1,249,836,992 NEAR on every day since 2025-08-27, on `/v1/charts` and `/v1/stats` alike. Gold keeps the column, the catalog marks it, and `circulating_supply_latest_nearblocks_vs_coinmetrics` in [RECONCILIATION.md](RECONCILIATION.md) shows the gap. No source in this warehouse has a live circulating figure.
 - v1 and v3 `active_accounts` are undocumented, and the gap between them is not stable: about 1.8x over the latest 30 days, but 9x to 18x in monthly averages from October 2025 to March 2026. The numbers show what each counts. v1 matches Nansen's published distinct signers, and v3 stays within 2% of v1 plus `meta_accounts`, so it also counts users whose transactions a relayer signs. Gold keeps both and calls neither "daily active users". `txns` and v3 cannot be compared across 2026-04-02: see [USAGE_BREAK_2026-04-02.md](USAGE_BREAK_2026-04-02.md).
 - Prices are stamped at 00:00 UTC, which makes the value on day D the close of day D-1. Gold moves them back one day, after which they match the other price sources within about 0.1%.
 - `tvl-stats` is a different measure from DefiLlama's chain TVL, about a third of it.
@@ -34,6 +35,7 @@ The strongest checks are the ones that cross families. See [RECONCILIATION.md](R
 ### DefiLlama
 - Intents fees and revenue come from NEAR's Dune datasets, not an independent count. Read the [adapter](https://github.com/DefiLlama/dimension-adapters/blob/master/fees/near-intents/index.ts) before citing them.
 - Revenue means NEAR and wNEAR swept into three wallets, excluding hops between them. Sweeps are periodic, so a single day's revenue can exceed that day's fees.
+- Its Intents volume changes meaning on 2026-09-01. From 2026-04-01 to 2026-08-31 it matches NearBlocks' public-only figure within 0.2%, and from 2026-09-01 it equals revenue.near.org's all-routes figure, which includes confidential Intents. The adapter has no date rule, so DefiLlama probably kept its stored values when NEAR restated the earlier months; that is not confirmed. Two checks in [RECONCILIATION.md](RECONCILIATION.md) hold this. Read a volume trend across that date from revenue.near.org or NearBlocks, never from DefiLlama.
 - `bridges.llama.fi` returns HTTP 402 and is not used.
 - `/protocols` and `/protocol/<slug>` are large, so they are trimmed to NEAR before saving, and the manifest note records that. `/protocols` also lists exchange wallets on NEAR, which gold marks with `is_cex` and leaves out of TVL.
 
@@ -47,6 +49,9 @@ The strongest checks are the ones that cross families. See [RECONCILIATION.md](R
 - The crawl walks oldest to newest with `resume_token` and resumes where it stopped.
 - `intents.near` and token contracts have far too many transfers to crawl, so they use daily contract statistics instead.
 - A fee collector can have no native account at all: `7066...f05` holds balances only inside `intents.near`, so `view_account` reports it as unknown. That is expected.
+
+### CoinMetrics
+- `CapMrktEstUSD` divided by `PriceUSD` tracked NearBlocks' circulating figure until September 2025 and has equalled total supply since November 2025, so `market_cap_usd` in gold is a fully diluted cap from then on. The community data does not say why the estimate changed.
 
 ### Archival RPC
 - `block`, `view_account` and `call_function` work at old heights.
@@ -93,6 +98,7 @@ No, but it can check part of it and adds detail the dashboard lacks. Figures bel
 - The tool keeps each widget's response exactly as received, and leaves headers, cookies and the page's signature behind. The date can't be later than `data/PINNED`, so move the pin first if it is. Keep the HAR file out of the repository; `.gitignore` covers it.
 - `fct_dune_dashboard_results` holds every row of every widget. Widgets that matter get a typed table such as `fct_dune_intents_asset_daily`.
 - Each reading of the asset widget covers about 30 days, so one reading every few weeks keeps that series continuous.
+- A reading's all-time tiles stand still, so `dq_reconciliation` compares them with the other sources on the reading's last full day, the day before the snapshot, which is what the tiles covered. Comparing them with the latest day drifted about 0.3% a day and failed the nightly checks on 2026-11-04 and 11-05, until this was changed.
 - Free access is view-only with no API, so the official fetcher needs a key on a plan or trial with API access. It skips cleanly without one.
 - `near.balances` and `near.circulating_supply` were stale as of the 2026-10 research, and a NEAR data gap ran from 2026-02-28 to 03-19. Check before querying them.
 - The first stored reading, in `dune_public/near_intents_dashboard`, was taken by an AI-driven browser and should be replaced by hand: see `registry/sources.csv`.

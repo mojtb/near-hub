@@ -11,6 +11,18 @@ dune as (
     where snapshot_date = (select max(snapshot_date) from {{ ref('fct_intents_dashboard_readings') }})
 ),
 
+-- A dashboard reading is taken by hand, so it stands still while the daily series move on. Its all-time tiles are
+-- therefore compared with the other source on the reading's last full day, which is what the tiles covered.
+dune_day as (
+    select max(snapshot_date) - 1 as d from {{ ref('fct_intents_dashboard_readings') }}
+),
+
+market_latest_cm as (
+    select * from {{ ref('fct_market_daily') }}
+    where price_usd_coinmetrics is not null and market_cap_usd is not null and circulating_supply_near is not null
+    order by date_day desc limit 1
+),
+
 dune_assets as (select * from {{ ref('fct_dune_intents_asset_daily') }}),
 
 last_intents_day as (select max(date_day) as d from intents where volume_usd_defillama is not null),
@@ -99,12 +111,12 @@ checks as (
         3.0 as tolerance_pct, 'same_upstream' as independence
 
     union all select 'intents_volume_all_time_page_vs_dune', 'Intents all-time volume, USD', null,
-        'revenue.near.org, cumulative', (select max(cumulative_volume_usd_revenue_page) from intents),
+        'revenue.near.org, cumulative on the reading''s last day', (select cumulative_volume_usd_revenue_page from intents, dune_day where date_day = d),
         'Dune public page, all scopes', (select value_usd from dune where metric = 'volume_all_time' and scope = 'all'),
         1.0, 'same_upstream'
 
     union all select 'intents_volume_all_time_nearblocks_vs_dune_public', 'Public Intents all-time volume, USD', null,
-        'NearBlocks, cumulative', (select max(cumulative_volume_usd_nearblocks) from intents),
+        'NearBlocks, cumulative on the reading''s last day', (select cumulative_volume_usd_nearblocks from intents, dune_day where date_day = d),
         'Dune public page, public scope', (select value_usd from dune where metric = 'volume_all_time' and scope = 'public'),
         3.0, 'independent'
 
@@ -113,13 +125,23 @@ checks as (
         'revenue.near.org', (select sum(volume_usd_revenue_page) from intents, last_intents_day where date_day > d - 30),
         1.0, 'same_upstream'
 
+    union all select 'intents_volume_2026_apr_aug_defillama_vs_nearblocks', 'Intents volume from 2026-04-01 to 2026-08-31, USD', null,
+        'DefiLlama', (select sum(volume_usd_defillama) from intents where date_day between date '2026-04-01' and date '2026-08-31'),
+        'NearBlocks, public Intents only', (select sum(volume_usd_nearblocks) from intents where date_day between date '2026-04-01' and date '2026-08-31'),
+        1.0, 'independent'
+
+    union all select 'intents_volume_2026_apr_aug_defillama_vs_page', 'Intents volume from 2026-04-01 to 2026-08-31, USD', null,
+        'DefiLlama', (select sum(volume_usd_defillama) from intents where date_day between date '2026-04-01' and date '2026-08-31'),
+        'revenue.near.org, all routes', (select sum(volume_usd_revenue_page) from intents where date_day between date '2026-04-01' and date '2026-08-31'),
+        3.0, 'same_upstream'
+
     union all select 'intents_fees_all_time_defillama_vs_page', 'Intents all-time gross fees, USD', null,
         'DefiLlama, sum of daily', (select sum(fees_usd_defillama) from intents),
         'revenue.near.org, cumulative', (select max(fees_usd) from (select sum(fees_usd_revenue_page) as fees_usd from intents)),
         3.0, 'same_upstream'
 
     union all select 'intents_fees_all_time_page_vs_dune', 'Intents all-time gross fees, USD', null,
-        'revenue.near.org', (select sum(fees_usd_revenue_page) from intents),
+        'revenue.near.org, through the reading''s last day', (select sum(fees_usd_revenue_page) from intents, dune_day where date_day <= d),
         'Dune public page', (select value_usd from dune where metric = 'total_generated_fees' and scope = 'all'),
         1.0, 'same_upstream'
 
@@ -156,19 +178,24 @@ checks as (
     from page_wallets w left join inflows i using (account_id)
 
     union all select 'intents_confidential_tvl_page_vs_dune', 'Confidential Intents TVL, USD', null,
-        'revenue.near.org, last day', (select arg_max(confidential_tvl_usd, date_day) from intents where confidential_tvl_usd is not null),
+        'revenue.near.org, on the reading''s last day', (select arg_max(confidential_tvl_usd, date_day) from intents, dune_day where confidential_tvl_usd is not null and date_day <= d),
         'Dune public page', (select value_usd from dune where metric = 'tvl' and scope = 'confidential'),
         5.0, 'same_upstream'
 
     union all select 'intents_public_tvl_dune_vs_defillama', 'Public Intents TVL, USD', null,
         'Dune public page', (select value_usd from dune where metric = 'tvl' and scope = 'public'),
-        'DefiLlama protocol TVL', (select near_tvl_usd from {{ ref('dim_protocol') }} where protocol_slug = 'near-intents'),
+        'DefiLlama protocol TVL, on the reading''s last day', (select arg_max(tvl_usd, date_day) from {{ ref('fct_protocol_tvl_daily') }}, dune_day where protocol_slug = 'near-intents' and date_day <= d),
         15.0, 'independent'
 
     union all select 'supply_latest_nearblocks_vs_chain', 'Total supply at day end, NEAR', null,
         'NearBlocks /v1/charts', (select arg_max(total_supply_near, date_day) from supply_both),
         'Archival RPC, first block of next day', (select arg_max(onchain_supply_end_of_day_near, date_day) from supply_both),
         0.05, 'independent'
+
+    union all select 'circulating_supply_latest_nearblocks_vs_coinmetrics', 'Circulating supply on the latest day, NEAR', null,
+        'NearBlocks /v1/charts', (select circulating_supply_near from market_latest_cm),
+        'CoinMetrics market cap divided by price', (select market_cap_usd / price_usd_coinmetrics from market_latest_cm),
+        2.0, 'independent'
 
     union all select 'issuance_rate_30d_minted_vs_config', 'Annual issuance rate, trailing 30 days', null,
         'Supply change plus burn', (select minted_per_day * 365 / supply from minted_30d),
