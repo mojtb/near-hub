@@ -57,3 +57,7 @@ vars:
   # Latest snapshot the build may read. Later snapshots are ignored, so a pinned build never drifts.
   # `make warehouse` passes the date from data/PINNED when that file exists.
   as_of: "9999-12-31"
+  # A day's Intents fee and revenue figures can change until they are read this many nights after the day ended.
+  # Measured on 2026-11-05 from every snapshot; see docs/DATA_AUDIT_2026-11-05.md, finding 10. If you change it, change
+  # the description of fct_intents_daily.is_fee_revenue_provisional, which states the number.
+  intents_fee_settle_nights: 3

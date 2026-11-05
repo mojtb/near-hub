@@ -36,12 +36,15 @@ The strongest checks are the ones that cross families. See [RECONCILIATION.md](R
 - Intents fees and revenue come from NEAR's Dune datasets, not an independent count. Read the [adapter](https://github.com/DefiLlama/dimension-adapters/blob/master/fees/near-intents/index.ts) before citing them.
 - Revenue means NEAR and wNEAR swept into three wallets, excluding hops between them. Sweeps are periodic, so a single day's revenue can exceed that day's fees.
 - Its Intents volume changes meaning on 2026-09-01. From 2026-04-01 to 2026-08-31 it matches NearBlocks' public-only figure within 0.2%, and from 2026-09-01 it equals revenue.near.org's all-routes figure, which includes confidential Intents. The adapter has no date rule, so DefiLlama probably kept its stored values when NEAR restated the earlier months; that is not confirmed. Two checks in [RECONCILIATION.md](RECONCILIATION.md) hold this. Read a volume trend across that date from revenue.near.org or NearBlocks, never from DefiLlama.
+- A day's Intents fees and revenue can change until the read three nights after the day ended, a night behind revenue.near.org. `fct_intents_daily.is_fee_revenue_provisional` marks those days.
+- TVL history can be rewritten on any night, without notice, so a TVL chart reproduces only at a pin. Of the five re-reads to 2026-11-05, the 11-03 read moved 2,079 Ethereum and Solana days back to 2021 (median 0.19%, largest 11.4%), the 11-02 read moved 8 recent Aptos days by 0.23%, and the other three moved nothing by more than 0.01%. NEAR's chain TVL and the protocol TVL on NEAR did not move at all.
 - `bridges.llama.fi` returns HTTP 402 and is not used.
 - `/protocols` and `/protocol/<slug>` are large, so they are trimmed to NEAR before saving, and the manifest note records that. `/protocols` also lists exchange wallets on NEAR, which gold marks with `is_cex` and leaves out of TVL.
 
 ### revenue.near.org
 - Rendered tiles show 0 in plain HTML, but the real series are embedded in the Next.js payload. `ingest/parsers/revenue_page.py` reads them and fails loudly if a series disappears.
 - `protocol_fee_near`, `intents_revenue_near` and `burn_revenue_near` are 0 on every row. Only total fees carry information.
+- A day's fees are published before the day's data has fully arrived and are rewritten on the next read. Three of the four days measured first read at 6% to 14% of the figure that followed ($9,319, then $164,920 for 2026-11-03). Daily volume is not rewritten. `fct_intents_daily.is_fee_revenue_provisional` marks those days.
 - Three cumulative revenue figures appear on or around this page, and they do not match. See `intents_revenue_all_time_defillama_vs_page_monthly` in [RECONCILIATION.md](RECONCILIATION.md).
 
 ### FastNear

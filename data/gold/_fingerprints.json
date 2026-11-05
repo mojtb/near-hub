@@ -155,8 +155,8 @@
   "rows": 10583
  },
  "fct_intents_daily": {
-  "columns": 18,
-  "hash": "0b135b79f1d9e7c841bac7364452764d",
+  "columns": 19,
+  "hash": "216f6f3d374198bf09a60a1574efd939",
   "rows": 695
  },
  "fct_intents_dashboard_readings": {
