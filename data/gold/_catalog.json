@@ -361,16 +361,22 @@
  {
   "area": "Calendar and registry",
   "table": "dim_protocol",
-  "description": "Protocols DefiLlama lists on NEAR, as of the newest reading. Exchange wallets are marked with is_cex.",
-  "grain": "protocol_slug",
+  "description": "Protocols DefiLlama lists on NEAR, as of the newest reading that listed each one. A protocol is one DefiLlama id, so a rename, which changes the slug and keeps the id, gives one row under the newest slug. A protocol missing from the newest reading keeps its row with an older read_on, because a missed night and a delisting look the same. Exchange wallets are marked with is_cex.",
+  "grain": "protocol_id",
   "sources": "DefiLlama /protocols",
   "path": "data/gold/dim_protocol.parquet",
   "columns": [
    {
+    "name": "protocol_id",
+    "type": "VARCHAR",
+    "unit": "id",
+    "description": "DefiLlama's id for the protocol. It stays the same when the protocol is renamed."
+   },
+   {
     "name": "protocol_slug",
     "type": "VARCHAR",
     "unit": "id",
-    "description": "DefiLlama protocol identifier."
+    "description": "DefiLlama's URL name for the protocol, as of the newest reading that listed it. It can change."
    },
    {
     "name": "protocol_name",
@@ -418,10 +424,10 @@
     "name": "read_on",
     "type": "DATE",
     "unit": "date",
-    "description": "Date of the reading."
+    "description": "Date of the newest reading that listed the protocol. Older than the table's newest date means it was missing from later readings, and its figures are as of this date."
    }
   ],
-  "rows": 48,
+  "rows": 47,
   "first": null,
   "last": null
  },
@@ -2792,8 +2798,8 @@
  {
   "area": "Capital and DeFi",
   "table": "fct_protocol_tvl_daily",
-  "description": "TVL on NEAR per protocol per day, excluding exchange wallets. Liquid staking and lending can count the same NEAR twice, so do not sum categories into a chain total.",
-  "grain": "date_day, protocol_slug",
+  "description": "TVL on NEAR per protocol per day, excluding exchange wallets. A protocol is one DefiLlama id, so a rename, which changes the slug and keeps the id, joins the old slug's days to the new slug's and counts the protocol once. A protocol missing from the newest reading keeps its history and its days stop, because a missed night and a delisting look the same. Two ids carrying one series fail the test no_two_protocols_share_a_tvl_series. Liquid staking and lending can count the same NEAR twice, so do not sum categories into a chain total.",
+  "grain": "date_day, protocol_id",
   "sources": "DefiLlama /protocol/{slug}",
   "path": "data/gold/fct_protocol_tvl_daily.parquet",
   "columns": [
@@ -2804,10 +2810,16 @@
     "description": "UTC calendar day."
    },
    {
+    "name": "protocol_id",
+    "type": "VARCHAR",
+    "unit": "id",
+    "description": "DefiLlama's id for the protocol. It stays the same when the protocol is renamed."
+   },
+   {
     "name": "protocol_slug",
     "type": "VARCHAR",
     "unit": "id",
-    "description": "DefiLlama protocol identifier."
+    "description": "DefiLlama's URL name for the protocol, as of the newest reading that listed it. It can change."
    },
    {
     "name": "protocol_name",
@@ -2828,7 +2840,7 @@
     "description": "Total value locked."
    }
   ],
-  "rows": 17210,
+  "rows": 16777,
   "first": "2021-08-20",
   "last": "2026-11-04"
  },
