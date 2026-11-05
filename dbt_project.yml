@@ -46,6 +46,13 @@ seeds:
       +column_types:
         reading_date: date
         value: double
+    protocol_upgrades:
+      +column_types:
+        protocol_version: integer
+        first_block_height: bigint
+        first_block_utc: timestamp
+        contract_gas_reward_rate_before: double
+        contract_gas_reward_rate_after: double
     etf_nrr_history:
       +column_types:
         date_day: date

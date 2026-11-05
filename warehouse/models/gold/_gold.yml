@@ -17,7 +17,7 @@ models:
       - {name: total_supply_near, description: "Total supply in this block.", meta: {unit: "NEAR"}}
       - {name: gas_price_yocto, description: "Gas price in the block.", meta: {unit: "yoctoNEAR per gas"}}
       - {name: epoch_id, description: "Epoch identifier.", meta: {unit: "hash"}}
-      - {name: protocol_version, description: "latest_protocol_version in the block header: the version the block's producer supports, which can lead the version in force by days (87 appeared on 2026-11-04; the config switched between the 11-04 and 11-05 reads). Date a change from fct_protocol_config.", meta: {unit: "integer"}}
+      - {name: protocol_version, description: "latest_protocol_version in the block header: the version the block's producer supports, which can lead the version in force by days. 87 was in the header by the first block of 2026-11-04 and took effect at 11:46:29 UTC that day, with block 223012337. Date a change from registry/protocol_upgrades.csv or fct_protocol_config.", meta: {unit: "integer"}}
   - name: dim_date
     description: "Calendar spine covering every day with chain or Intents data."
     config:
@@ -458,7 +458,7 @@ models:
       - {name: app_fees_usd, description: "App fees on finished swaps: appFees read as basis points of the value paid in.", meta: {unit: "USD"}}
       - {name: senders, description: "Distinct sending wallets on finished swaps. Only the count is stored.", meta: {unit: "count"}}
       - {name: recipients, description: "Distinct receiving wallets on finished swaps. Only the count is stored.", meta: {unit: "count"}}
-      - {name: share_of_all_intents_volume, description: "volume_usd divided by DefiLlama's volume for all of Intents that day.", meta: {unit: "fraction"}}
+      - {name: share_of_all_intents_volume, description: "volume_usd divided by revenue.near.org's volume for all of Intents that day, which counts every route, confidential included, on the same basis every day. Not DefiLlama's: from 2026-04-01 to 08-31 that followed NearBlocks' public-only count, so a share of it read too high on those days.", meta: {unit: "fraction"}}
   - name: fct_intents_1click_channel_daily
     description: "1Click volume and app fees per UTC day, referral channel and status, from the Intents Explorer API. Empty until a snapshot with INTENTS_EXPLORER_JWT is in the build."
     config:
@@ -796,11 +796,11 @@ models:
       - {name: circulating_supply_near, description: "Every token not subject to a lockup at the day's close, built from the chain: see fct_circulating_supply_daily. Empty before transfers were enabled on 2020-10-13.", meta: {unit: "NEAR"}}
       - {name: circulating_supply_near_nearblocks, description: "NearBlocks' /v1/charts figure, kept as a test of the column above. Stuck at 1,249,836,992 since 2025-08-27, when NearBlocks stopped computing it, and too high from 2024-08-12 to 2024-12-28, when its job was failing.", meta: {unit: "NEAR"}}
       - {name: onchain_supply_end_of_day_near, description: "Supply in the first block of the next day, read from the archival node. Empty where no daily block exists.", meta: {unit: "NEAR"}}
-      - {name: protocol_version, description: "latest_protocol_version in the block header: the version the block's producer supports, which can lead the version in force by days (87 appeared on 2026-11-04; the config switched between the 11-04 and 11-05 reads). Date a change from fct_protocol_config.", meta: {unit: "integer"}}
+      - {name: protocol_version, description: "latest_protocol_version in the block header: the version the block's producer supports, which can lead the version in force by days. 87 was in the header by the first block of 2026-11-04 and took effect at 11:46:29 UTC that day, with block 223012337. Date a change from registry/protocol_upgrades.csv or fct_protocol_config.", meta: {unit: "integer"}}
       - {name: gas_fee_near, description: "Gas fees per /v1/charts.", meta: {unit: "NEAR"}}
       - {name: supply_change_near, description: "Change in total supply from the previous day.", meta: {unit: "NEAR"}}
-      - {name: contract_gas_reward_rate, description: "Share of gas paid to the called contract on that day (the developer gas rebate): the newest protocol config read on or before the day, and the first read's 0.3 before 2026-10-28. It became 0 with protocol version 87, first read on 2026-11-05.", meta: {unit: "fraction"}}
-      - {name: burn_near, description: "Gas fees minus the contract share in force that day. Before protocol version 87 that is 70% of gas; from 2026-11-05 all of it.", meta: {unit: "NEAR"}}
+      - {name: contract_gas_reward_rate, description: "Share of function-call gas paid to the called contract on that day (the developer gas rebate): the newest protocol config read on or before the day, and the first read's 0.3 before 2026-10-28. A change that registry/protocol_upgrades.csv dates to the block holds from the next day, and its own day takes both rates weighted by the time each was in force, as if gas were spread evenly over the day: 0.147 on 2026-11-04, when protocol version 87 set the share to 0 at 11:46:29 UTC.", meta: {unit: "fraction"}}
+      - {name: burn_near, description: "Gas fees times one minus contract_gas_reward_rate. The rebate came only out of gas burnt executing function calls, so before protocol version 87 the real burn was more than 70% of gas and this is a lower bound. From 11:46:29 UTC on 2026-11-04 all gas burns; that day itself is the time-weighted mix.", meta: {unit: "NEAR"}}
       - {name: treasury_reward_near, description: "EpochRewards received by treasury.near that day, from wallet transfers. Part of minted_near, not on top of it.", meta: {unit: "NEAR"}}
       - {name: minted_near, description: "supply_change_near plus burn_near: issuance implied by the chain.", meta: {unit: "NEAR"}}
       - {name: minted_annualized_rate, description: "minted_near times 365, divided by total supply. Noisy for a single day.", meta: {unit: "fraction per year"}}

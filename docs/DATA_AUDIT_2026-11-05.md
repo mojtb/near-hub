@@ -10,10 +10,10 @@ An audit of the warehouse for integrity (does each table hold what it says, and 
 - **DefiLlama's Intents volume changes meaning on 2026-09-01**, and the catalog said the opposite. Fixed in the documentation and held by two new checks.
 - **`main` was missing data the nightly branch already had**: six empty 1Click tables, 2 validator epochs instead of 164, one receiver-sample day instead of 78, no fund-page readings for the ETF. Moving the pin to 2026-11-05 fixed that.
 - **Smaller flaws fixed today:** wallet facts and GitHub weeks included a partial day or week; five registry tokens had no decimals, which emptied 200 holder rows; GitHub served a full year of zeros for anza-xyz/agave and gold took it as no activity; HSP-029 was still listed as voting after it passed; the accounts behind the April 2026 usage break were not in the registry.
-- **The developer gas rebate removal has shipped.** The 2026-11-05 config read is the first with `contract_gas_reward_rate` 0 and protocol version 87. The burn model had applied today's rate to all of history, which at the new pin would have raised every past day's burn by 43%; it now uses the rate in force on each day.
+- **The developer gas rebate removal has shipped.** Protocol version 87 set `contract_gas_reward_rate` to 0 at 11:46:29 UTC on 2026-11-04 (block 223012337), and the 2026-11-05 config read is the first to show it. The burn model had applied today's rate to all of history, which at the new pin would have raised every past day's burn by 43%; it now uses the rate in force on each day, with 2026-11-04 split by the time each rate held.
 - **Still open, in order of importance:** token metadata for holdings, and a fresh hand reading of the Dune dashboard. Circulating supply was on this list and is now built from the chain.
 
-Nothing from this audit is committed. The working tree holds the code changes, the moved pin and the regenerated docs; `git status` shows them.
+Committed as `d2aaaf6` on 2026-11-05, with the pin moved to 2026-11-05. Four follow-up branches were merged on top the same day: circulating supply (finding 2), token metadata and USD values for holdings (finding 6), provisional fee days (finding 10) and one series per protocol in `fct_protocol_tvl_daily` (finding 11). The dating of the rebate switch to the block (finding 9) came with them.
 
 ## How it was checked
 
@@ -31,7 +31,7 @@ Ordered by how much they could mislead a reader of the thesis. Each ends with it
 
 `gh run list` shows both scheduled runs red. Their logs show 8 of 10 checks passing, with `reconciliation gaps are explained` failing: one unexplained gap on 11-04, two on 11-05 (`intents_volume_all_time_page_vs_dune` at 1.385% and `intents_fees_all_time_page_vs_dune` at 1.366%, against a 1% tolerance). The Dune reading is a hand snapshot from 11-01 and cannot move, while the revenue page's cumulative totals grow about 0.3% a day, so these checks had to fail within days of any reading, and would have failed again after every future reading.
 
-On the reading's last full day (10-31) the page's cumulative volume is 36,949,581,750 and the Dune tile 36,949,581,750: the tiles describe the day before the reading exactly. **Fixed:** `dq_reconciliation` now compares all-time tiles, TVL tiles and NearBlocks' cumulative with the other source on the reading's last full day. Both checks agree again (0.000% and 0.059%). The nightly stays red until this reaches `main`.
+On the reading's last full day (10-31) the page's cumulative volume is 36,949,581,750 and the Dune tile 36,949,581,750: the tiles describe the day before the reading exactly. **Fixed:** `dq_reconciliation` now compares all-time tiles, TVL tiles and NearBlocks' cumulative with the other source on the reading's last full day. Both checks agree again (0.000% and 0.059%). The fix reached `main` in `d2aaaf6`, so the nightly run of 2026-11-06 is the first to use it.
 
 ### 2. No live circulating supply, and market cap is fully diluted since November 2025
 
@@ -76,13 +76,15 @@ The convention is that daily series leave out the day a snapshot was taken on, a
 ### 8. HSP-029 and the April 2026 batch streams in the registry
 
 - `registry/events.csv` still listed HSP-029 as `voting`. The 11-05 snapshot of `vote.dao` reads proposal 29 as `Timelock`, with about 3.29M veNEAR for and almost none against at 62% turnout. **Fixed:** the row says `happened`, and a 2026-11-02 event records the vote closing.
-- The accounts that explain the 2026-04-02 break (`hotwallet.kaiching`, `users.kaiching`, `sweat-migration.near`, `relay.tg`, `0-relay.hot.tg`) were not in `registry/entities.csv`, so the warehouse could not subtract them and their per-account history sat only in a document. **Fixed:** they are registered with `track_contract_stats=1`. The nightly job fetches `contract_txns` for them once this change reaches `main`; NearBlocks' per-account window is 365 days, so April 2026 is capturable until about April 2027.
+- The accounts that explain the 2026-04-02 break (`hotwallet.kaiching`, `users.kaiching`, `sweat-migration.near`, `relay.tg`, `0-relay.hot.tg`) were not in `registry/entities.csv`, so the warehouse could not subtract them and their per-account history sat only in a document. **Fixed:** they are registered with `track_contract_stats=1`. The nightly job fetches `contract_txns` for them from 2026-11-06, the first run after `d2aaaf6` reached `main`; NearBlocks' per-account window is 365 days, so April 2026 is capturable until about April 2027.
 
-### 9. Burn used today's config for all of history, and the config changed on 2026-11-05
+### 9. Burn used today's config for all of history, and the config changed on 2026-11-04
 
-`fct_supply_daily.burn_near` was `gas_fee_near * (1 - contract_gas_reward_rate)` with the rate taken from the latest config snapshot and applied to every day since 2020. The 2026-11-05 snapshot is the first to read `contract_gas_reward_rate` 0 and `protocol_version` 87, against 0.3 and 86 on the five earlier reads: the developer gas rebate that vote.dao proposal 27 voted out on 2026-07-03 (91.6% turnout) has shipped. At the 11-05 pin, the old model silently raised the burn of every historical day by 43%, from 70% to 100% of gas.
+`fct_supply_daily.burn_near` was `gas_fee_near * (1 - contract_gas_reward_rate)` with the rate taken from the latest config snapshot and applied to every day since 2020. The 2026-11-05 snapshot is the first to read `contract_gas_reward_rate` 0 and `protocol_version` 87, against 0.3 and 86 on the five earlier reads: the developer gas rebate that vote.dao proposal 27 voted out on 2026-07-03 (91.6% turnout) has shipped. An archival `EXPERIMENTAL_protocol_config` read by block dates the switch: block 223012336, at 11:46:28 UTC on 2026-11-04, still reads version 86 and a 3/10 contract reward, and block 223012337, the first of a new epoch, reads 87 and 0. The 11-04 read came before that. At the 11-05 pin, the old model silently raised the burn of every historical day by 43%, from 70% to 100% of gas.
 
-**Fixed:** each day now uses the newest config read on or before that day, and days before the first read (2026-10-28) use the first read's rate, the 30% in force since mainnet launch; the rate used is exposed as `contract_gas_reward_rate`. Gas is about 1% of issuance, so the net-inflation figure barely moves, but the burn series is now right on both sides of the change. `protocol_reward_rate` still reads 0 while `treasury.near` receives 10% of issuance, so that field stays untrusted, and the 2026-11-05 change itself is worth confirming on a function-call receipt.
+**Fixed:** each day now uses the newest config read on or before that day, and days before the first read (2026-10-28) use the first read's rate, the 30% in force since mainnet launch; the rate used is exposed as `contract_gas_reward_rate`. Gas is about 1% of issuance, so the net-inflation figure barely moves, but the burn series is now right on both sides of the change. `protocol_reward_rate` still reads 0 while `treasury.near` receives 10% of issuance, so that field stays untrusted, and the change itself is worth confirming on a function-call receipt.
+
+**Also fixed, after this audit:** the switch day. The 11-04 config read came before the switch, so 2026-11-04 had taken 0.3 for the whole day and its burn read 662.6 NEAR, about 145 NEAR low. `registry/protocol_upgrades.csv` now dates the change to the block. A change holds from the day after it even before a read shows it, and its own day takes both rates weighted by the time each held: 0.147 on 2026-11-04, as if gas were spread evenly over the day, which gives a burn of 807.3 NEAR. The test `protocol_upgrades_match_config_reads` holds the registry to the nightly reads.
 
 ### 10. Sources restate their recent days, and DefiLlama can rewrite TVL history
 
@@ -122,8 +124,9 @@ The evidence is thin. Only four days (10-29 to 11-01) have been read both on the
 ### 11. Smaller findings, documented or harmless
 
 - `fct_chain_daily.multichain_txns` is 0 on all 717 days. Now documented; use `fct_chain_signatures_daily`.
-- `dim_block_day.protocol_version` and `fct_supply_daily.protocol_version` are the block header's `latest_protocol_version`, the version the block's producer supports, not the version in force: it read 87 from the first block of 2026-11-04 while the config switched between the 11-04 and 11-05 reads. Now documented; the config snapshots date a change, the header field only announces it.
+- `dim_block_day.protocol_version` and `fct_supply_daily.protocol_version` are the block header's `latest_protocol_version`, the version the block's producer supports, not the version in force: it read 87 from the first block of 2026-11-04, while version 86 stayed in force until 11:46:29 UTC that day. Now documented: archival config reads by block date a change, the nightly config snapshots date it to the night, and the header field only announces it.
 - `fct_protocol_tvl_daily` sums to 600.9M on 10-31 while DefiLlama's chain TVL is 197.5M: liquid staking, lending and bridges count the same NEAR up to three times. The model comment says so; never sum this table across protocols.
+- Found after this audit: DefiLlama renamed `templar-protocol` to `templar-lending` on the 11-05 read, so `fct_protocol_tvl_daily` held Templar twice on 433 days (median $0.67M a day, up to $10.1M) and `dim_protocol` listed it twice. **Fixed:** a protocol is one DefiLlama id, so a rename joins the two slugs' days, and `no_two_protocols_share_a_tvl_series` catches a re-listing under a new id. The 600.9M above is the figure after the fix.
 - `fct_peer_daily.fees_usd` for NEAR over the latest 30 days is $7.35M, of which NEAR Intents is $6.07M, Rhea $1.09M and gas $0.18M. A peer comparison of "fees" compares NEAR's cross-chain application fees, mostly paid to solvers and channels, with other chains' totals built the same way. State that in any chart.
 - `fct_contract_daily` holds only days with activity: `sputnik-dao.near` has 365 rows across 1,066 days and `factory.bridge.near` ends on 2026-09-11. A missing day inside a window is a zero, and NearBlocks' limit of 365 is 365 active days.
 - `fct_receiver_sample_daily` reads 96 blocks a day, about 0.12% of a day's blocks, so its estimates for bursty accounts are rough; `blocks_sampled` is on every row.
@@ -141,7 +144,7 @@ The evidence is thin. Only four days (10-29 to 11-01) have been read both on the
 
 | Question | Tables | Depth at the 11-05 pin | Independent check | Gap |
 |---|---|---|---|---|
-| Supply, issuance, burn | `fct_supply_daily`, `fct_protocol_config`, `dim_block_day` | Daily from 2020-07-21; on-chain supply on 301 sampled days | NearBlocks vs archival RPC, 0.000% | The 2026-11-05 rebate change rests on one config read (finding 9); the Foundation's liquid holding is not on chain under any known list ([CIRCULATING_SUPPLY.md](CIRCULATING_SUPPLY.md)) |
+| Supply, issuance, burn | `fct_supply_daily`, `fct_protocol_config`, `dim_block_day` | Daily from 2020-07-21; on-chain supply on 301 sampled days | NearBlocks vs archival RPC, 0.000% | The rebate change is dated by archival config reads, not yet by a receipt (finding 9); the Foundation's liquid holding is not on chain under any known list ([CIRCULATING_SUPPLY.md](CIRCULATING_SUPPLY.md)) |
 | Treasury | `fct_wallet_transfers`, `fct_supply_daily.treasury_reward_near` | Every transfer since 2020-10 | FastNear vs RPC vs NearBlocks balances within 0.5% | Outflows unlabelled |
 | Intents revenue and fee switch | `fct_intents_daily`, `fct_revenue_inflows_daily`, `fct_revenue_capture`, `fct_intents_fee_channels` | Fees from 2025-05-06, revenue from 2025-09-22 | Wallet transfers vs DefiLlama, 0.3% | USDC fees and the buyback execution trail are not followed; revenue page monthly series unexplained; last two days provisional and flagged (finding 10) |
 | Intents volume | `fct_intents_daily`, `fct_intents_chain_daily`, `fct_intents_asset_daily`, `fct_dune_intents_asset_daily`, `fct_intents_1click_*` | Public daily from 2025-10-29; all-routes from 2024-12-10; 1Click daily from 2026-09-07 | NearBlocks vs Dune public scope, 1.1% | Confidential volume is self-reported only; DefiLlama scope step (finding 3); Dune asset series ends 10-31 |
@@ -158,7 +161,7 @@ Not covered at all: holder distribution over time (top holders exist only per sn
 
 ## What changed today
 
-Code and registry, all uncommitted:
+Code and registry, committed as `d2aaaf6`:
 
 | File | Change |
 |---|---|
@@ -180,10 +183,10 @@ Result: `make verify` passes 10/10 at the new pin, with 233 data tests (one more
 
 ## What to do next
 
-1. **Commit and push.** Until the reconciliation fix is on `main`, every nightly run stays red, and the nightly job keeps reading the old `registry/entities.csv`, so the batch-stream accounts are not fetched. Push also starts CI on the moved pin.
+1. ~~**Commit and push.**~~ Done: `d2aaaf6` is on `main`, and CI passed on the moved pin. The nightly run of 2026-11-06 is the first with the reconciliation fix and the batch-stream accounts.
 2. **A token-metadata fetcher** (`rpc/ft_metadata`): one `ft_metadata` call per token id seen in holdings or top holders, cached in `data/state`, so `fct_wallet_holdings` can value the thousands of tokens the DEX and Intents contracts hold, at least for the ones with a 1Click or Rhea price. Medium. **Update:** the fetcher is written and `fct_wallet_holdings` converts with its answers; the data arrives through the nightly job. `fct_wallet_holdings` now has `value_usd`, from the new `fct_token_prices`: 65 of 8,484 rows at this pin and, on a sample, 968 (11.4%, $641M) once the backlog is read. Most other rows are launch tokens with no price or nothing behind it; [SOURCES.md](SOURCES.md) has the rules and the figures.
 3. ~~**Circulating supply.**~~ Done: `fct_circulating_supply_daily`, built from the lockup contracts, with NEAR's published schedule kept as a test. See [CIRCULATING_SUPPLY.md](CIRCULATING_SUPPLY.md).
-4. **Confirm the rebate removal on chain**: read one function-call receipt from before and after 2026-11-05 and compare burnt gas with the fee charged. If the config is ever found to lag the chain, add a registry table of dated parameters with evidence. Small.
+4. **Confirm the rebate removal on a receipt**: the switch is dated by archival config reads in `registry/protocol_upgrades.csv` (block 223012337, 11:46:29 UTC on 2026-11-04). A function-call receipt on either side of that block, with its burnt gas set against the fee charged, would confirm the burn itself. Small.
 5. **Provisional marking** of the last days of the NEAR-family fee and revenue series, and a catalog note on DefiLlama TVL. Done (finding 10). Measure the nights again once `data/nightly` holds a few more weeks: the test catches a window that is too short, not one that is too long.
 6. **A fresh Dune reading by hand**, following the steps in SOURCES.md, both to extend the asset series past 10-31 and to replace the AI-taken reading that `registry/sources.csv` asks to retire. User's hands only.
 7. **Agave's commit history** by another route (the commits list with pagination, or the GraphQL API), and a general rule in the GitHub fetcher that a 200 with a year of zeros for a pushed-to repository is retried, not stored as fact. Small.

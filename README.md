@@ -27,15 +27,15 @@ If you prefer a container, run `docker build -t near-thesis . && docker run --rm
 These lines are generated from the warehouse, and `make verify` fails if they stop matching it.
 
 <!-- expected:start -->
-- Data through: **2026-11-05**
+- Data through: **2026-11-04**, the last full UTC day before the pinned snapshot of 2026-11-05; `dq_freshness` lists any source that ends earlier
 - Gold tables and columns: **63** and **598**
 - Reconciliation: **61** comparisons agree, **8** differ, each with a written explanation
 - Issuance over the last 30 days, from supply change plus burn: **2.48%** a year, against **2.50%** in the protocol config
 - Circulating supply, built from NEAR's lockup contracts: **1,308.69M** NEAR, **99.84%** of total supply; on 2025-08-26, the last day NearBlocks computed its own, **1,249.72M** against **1,249.65M**
 - Captured Intents revenue, all time: **$9.44M** per DefiLlama, **$9.41M** rebuilt from wallet transfers
-- Public Intents volume, all time: **$33.30B** per NearBlocks, **$32.93B** per NEAR's dashboard on Dune
+- Public Intents volume, all time through 2026-10-31, the last full day of the latest Dune reading: **$33.30B** per NearBlocks, **$32.93B** per NEAR's dashboard on Dune
 - Chain Signatures: **16** MPC participants with a threshold of **11**
-- Largest Intents fee channel, per NEAR's dashboard on Dune: **swapkit**, with **73%** of listed fees
+- Largest Intents fee channel, per NEAR's dashboard on Dune as read on 2026-11-01: **swapkit**, with **73%** of listed fees
 - Bitwise NEAR ETF shares outstanding: **3,040,000** per the fund, **3,040,000** counted on chain in whole baskets
 <!-- expected:end -->
 

@@ -66,6 +66,7 @@ The strongest checks are the ones that cross families. See [RECONCILIATION.md](R
 - `block`, `view_account` and `call_function` work at old heights.
 - `validators` by `epoch_id` worked for an epoch in May 2026 and returned `UNKNOWN_EPOCH` for one in October 2024, so validator history is partial.
 - Calls hit HTTP 429 quickly. The free RPC host recognises a FastNear key, but the archival host shows no sign of it, so archival calls keep the keyless pace.
+- `EXPERIMENTAL_protocol_config` by `block_id` gives the config in force at a past block, so a change can be dated to the block, while the nightly config read dates it only to the night. That is how `registry/protocol_upgrades.csv` dates protocol version 87, which removed the developer gas rebate: block 223012336 (11:46:28 UTC on 2026-11-04) reads version 86 and a 3/10 contract reward, and block 223012337, the first of a new epoch, reads 87 and 0. The block header's `latest_protocol_version` already read 87 that morning, so it cannot date a change.
 
 ### Token metadata (`rpc/ft_metadata`)
 - Asks each token seen with a positive balance in `fastnear/account_full`, or seen in `fastnear/ft_top_holders`, what its contract says through `ft_metadata`. 7,933 tokens had been seen by 2026-11-05, nearly all held by `dclv2.ref-labs.near`, `v2.ref-finance.near` and `intents.near`.

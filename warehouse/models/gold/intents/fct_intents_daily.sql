@@ -1,5 +1,7 @@
 -- NEAR Intents per UTC day, one column per source so they can be compared.
--- DefiLlama and revenue.near.org include confidential Intents; NearBlocks counts public Intents only.
+-- revenue.near.org counts every route, confidential Intents included; NearBlocks counts public Intents only.
+-- DefiLlama's volume equals NearBlocks' from 2026-04-01 to 08-31 and revenue.near.org's from 09-01, and before April
+-- 2026 all three agree (docs/DATA_AUDIT_2026-11-05.md, finding 3).
 with llama_fees as (
     pivot (select date_day, data_type, value_usd from {{ ref('stg_defillama__intents_fees') }} where is_latest)
     on data_type in ('dailyFees', 'dailyRevenue', 'dailyHoldersRevenue', 'dailyProtocolRevenue', 'dailySupplySideRevenue')

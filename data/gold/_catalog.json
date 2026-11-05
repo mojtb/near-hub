@@ -295,7 +295,7 @@
   ],
   "rows": 22,
   "first": "2024-12-10",
-  "last": "2026-11-05"
+  "last": "2026-11-04"
  },
  {
   "area": "Calendar and registry",
@@ -351,7 +351,7 @@
     "name": "protocol_version",
     "type": "INTEGER",
     "unit": "integer",
-    "description": "latest_protocol_version in the block header: the version the block's producer supports, which can lead the version in force by days (87 appeared on 2026-11-04; the config switched between the 11-04 and 11-05 reads). Date a change from fct_protocol_config."
+    "description": "latest_protocol_version in the block header: the version the block's producer supports, which can lead the version in force by days. 87 was in the header by the first block of 2026-11-04 and took effect at 11:46:29 UTC that day, with block 223012337. Date a change from registry/protocol_upgrades.csv or fct_protocol_config."
    }
   ],
   "rows": 727,
@@ -482,7 +482,7 @@
     "description": "What to settle before the repository is made public."
    }
   ],
-  "rows": 22,
+  "rows": 23,
   "first": null,
   "last": null
  },
@@ -715,7 +715,7 @@
     "name": "protocol_version",
     "type": "INTEGER",
     "unit": "integer",
-    "description": "latest_protocol_version in the block header: the version the block's producer supports, which can lead the version in force by days (87 appeared on 2026-11-04; the config switched between the 11-04 and 11-05 reads). Date a change from fct_protocol_config."
+    "description": "latest_protocol_version in the block header: the version the block's producer supports, which can lead the version in force by days. 87 was in the header by the first block of 2026-11-04 and took effect at 11:46:29 UTC that day, with block 223012337. Date a change from registry/protocol_upgrades.csv or fct_protocol_config."
    },
    {
     "name": "gas_fee_near",
@@ -733,13 +733,13 @@
     "name": "contract_gas_reward_rate",
     "type": "DOUBLE",
     "unit": "fraction",
-    "description": "Share of gas paid to the called contract on that day (the developer gas rebate): the newest protocol config read on or before the day, and the first read's 0.3 before 2026-10-28. It became 0 with protocol version 87, first read on 2026-11-05."
+    "description": "Share of function-call gas paid to the called contract on that day (the developer gas rebate): the newest protocol config read on or before the day, and the first read's 0.3 before 2026-10-28. A change that registry/protocol_upgrades.csv dates to the block holds from the next day, and its own day takes both rates weighted by the time each was in force, as if gas were spread evenly over the day: 0.147 on 2026-11-04, when protocol version 87 set the share to 0 at 11:46:29 UTC."
    },
    {
     "name": "burn_near",
     "type": "DOUBLE",
     "unit": "NEAR",
-    "description": "Gas fees minus the contract share in force that day. Before protocol version 87 that is 70% of gas; from 2026-11-05 all of it."
+    "description": "Gas fees times one minus contract_gas_reward_rate. The rebate came only out of gas burnt executing function calls, so before protocol version 87 the real burn was more than 70% of gas and this is a lower bound. From 11:46:29 UTC on 2026-11-04 all gas burns; that day itself is the time-weighted mix."
    },
    {
     "name": "treasury_reward_near",
@@ -1579,7 +1579,7 @@
     "name": "share_of_all_intents_volume",
     "type": "DOUBLE",
     "unit": "fraction",
-    "description": "volume_usd divided by DefiLlama's volume for all of Intents that day."
+    "description": "volume_usd divided by revenue.near.org's volume for all of Intents that day, which counts every route, confidential included, on the same basis every day. Not DefiLlama's: from 2026-04-01 to 08-31 that followed NearBlocks' public-only count, so a share of it read too high on those days."
    }
   ],
   "rows": 89,

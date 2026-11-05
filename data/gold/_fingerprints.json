@@ -16,7 +16,7 @@
  },
  "dim_event": {
   "columns": 6,
-  "hash": "f4d68aca9970d5d0c02299ae71fad940",
+  "hash": "a6728b729197c8d3d30bd2c8e62d221b",
   "rows": 22
  },
  "dim_protocol": {
@@ -26,8 +26,8 @@
  },
  "dim_source": {
   "columns": 7,
-  "hash": "def92cd3d9379b4638fc555fc5ad3f7a",
-  "rows": 22
+  "hash": "df656e3a9112f1bef8928277fd0d28f7",
+  "rows": 23
  },
  "dim_token": {
   "columns": 11,
@@ -51,7 +51,7 @@
  },
  "dq_reconciliation": {
   "columns": 12,
-  "hash": "052b81bd179051e12387c3f575f16b91",
+  "hash": "244f2975e6640cd1e71af44a7eb33ffe",
   "rows": 70
  },
  "dq_revisions": {
@@ -126,7 +126,7 @@
  },
  "fct_intents_1click_daily": {
   "columns": 10,
-  "hash": "d568c38de403f765d5f68dca624c3bbf",
+  "hash": "f6b4db9133b9a3df2656600872ac31cf",
   "rows": 89
  },
  "fct_intents_1click_fee_recipient_daily": {
@@ -256,7 +256,7 @@
  },
  "fct_supply_daily": {
   "columns": 13,
-  "hash": "f98cd62883125433af7d4e77b5bacd98",
+  "hash": "ed408aa315dcd3b9aac3cfc2ce2da52e",
   "rows": 2298
  },
  "fct_token_holders": {
