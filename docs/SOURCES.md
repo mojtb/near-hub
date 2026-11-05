@@ -58,6 +58,17 @@ The strongest checks are the ones that cross families. See [RECONCILIATION.md](R
 - `validators` by `epoch_id` worked for an epoch in May 2026 and returned `UNKNOWN_EPOCH` for one in October 2024, so validator history is partial.
 - Calls hit HTTP 429 quickly. The free RPC host recognises a FastNear key, but the archival host shows no sign of it, so archival calls keep the keyless pace.
 
+### Token metadata (`rpc/ft_metadata`)
+- Asks each token seen with a positive balance in `fastnear/account_full`, or seen in `fastnear/ft_top_holders`, what its contract says through `ft_metadata`. 7,933 tokens had been seen by 2026-11-05, nearly all held by `dclv2.ref-labs.near`, `v2.ref-finance.near` and `intents.near`.
+- Each token is read once. Answers are kept in `data/state/rpc__ft_metadata.json`, and each run's new answers in one bronze file. An answer whose bronze file has gone is read again, because the nightly job drops its own bronze dated up to `main`'s pin, so a run on the pin's day would otherwise lose those tokens for good.
+- A night makes at most 2,000 calls, tokens with the most rows first, so the backlog takes four nights and later nights ask only about new tokens. At the keyed pace of 0.15 s a call that is about 5 minutes, but this pace has only been seen on runs of about 50 calls, so check the first night's time in `data/bronze/_runs/`.
+- Without a key, one call a second drew HTTP 429 after about 3 minutes, and 300 tokens took 412 seconds. A run stops after 40 minutes, which limits a keyless run to about 1,750 tokens and keeps a node that rate-limits every call from stretching the night past the job's timeout.
+- `icon` and `reference` are dropped, because an icon can be a large image. `spec`, `name` and `symbol` are cut to printable characters and to 32, 128 and 64 characters, because a contract can put anything there.
+- Some answers are final and are kept: `UNKNOWN_ACCOUNT` (the contract is gone), `INVALID_ACCOUNT`, `NO_CONTRACT_CODE`, `CONTRACT_EXECUTION_ERROR` (no such method, or it panicked), `NOT_METADATA` (it returned something else) and `BAD_DECIMALS` (not a whole number from 0 to 255). These tokens stay empty in gold.
+- Any other error says something about the node, not the token, so the token is asked again on a later run, after the tokens that have not failed yet. Three failures in a row, or one call that used up its retries, end the run for that night.
+- Name and symbol are the contract's own claim: `usdc-4d51ec.launchpad.justhoot.near` calls itself USDC, with 18 decimals. `fct_wallet_holdings.metadata_source` shows which rows rest on a claim. Group by `token_id`, and treat these fields as untrusted text when displaying them.
+- A sample on 2026-11-05, not stored: of 300 tokens picked at random, 296 gave decimals, 2 no longer exist and 2 are `mock-ft` contracts that panic. So about 99% of holdings rows should convert once the backlog is read. All 12 registry tokens' decimals matched their contracts, and so did all 30 tokens read that 1Click lists. `token_decimals_match_ft_metadata` holds the registry to the contracts from now on.
+
 ### Neardata
 - A block is about 265 KB, so raw blocks are counted and thrown away.
 - The published limit is 180 requests per minute, but three parallel workers hit HTTP 429 from this machine. The sampler runs one request at a time.

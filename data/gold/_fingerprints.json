@@ -290,8 +290,8 @@
   "rows": 3236
  },
  "fct_wallet_holdings": {
-  "columns": 7,
-  "hash": "25c3ee3cae6c3219b016a6797c8ecc6e",
+  "columns": 9,
+  "hash": "3aadfb524a38c041b0b0719ec83195fe",
   "rows": 42556
  },
  "fct_wallet_transfers": {

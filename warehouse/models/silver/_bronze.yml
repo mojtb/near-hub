@@ -53,6 +53,7 @@ sources:
       - {name: rpc__accounts, identifier: rpc/accounts, description: "view_account for each registry account."}
       - {name: rpc__hos_proposals, identifier: rpc/hos_proposals, description: "Every House of Stake proposal from the voting contract."}
       - {name: rpc__block_day, identifier: rpc/block_day, description: "Header fields of one block per UTC day."}
+      - {name: rpc__ft_metadata, identifier: rpc/ft_metadata, description: "What each token seen in holdings or top holders says through ft_metadata, read once per token, trimmed."}
       - {name: fastnear__account_full, identifier: fastnear/account_full, description: "Tokens, NFTs and staking pools per tracked account."}
       - {name: fastnear__ft_top_holders, identifier: fastnear/ft_top_holders, description: "Largest holders per registry token."}
       - {name: fastnear__tx_counts, identifier: fastnear/tx_counts, description: "Cumulative transaction count per registry account."}

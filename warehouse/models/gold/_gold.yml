@@ -844,9 +844,9 @@ models:
       - {name: amount_token, description: "Signed amount in whole tokens.", meta: {unit: "token units"}}
       - {name: amount_usd, description: "Signed value at transfer time, per FastNear.", meta: {unit: "USD"}}
   - name: fct_wallet_holdings
-    description: "Point in time: tokens and native NEAR per tracked account, per snapshot. This cannot be backfilled, so history starts with the first snapshot."
+    description: "Point in time: tokens and native NEAR per tracked account, per snapshot. This cannot be backfilled, so history starts with the first snapshot. Symbol and decimals come from registry/tokens.csv where a token is listed, otherwise from its contract's ft_metadata, which the nightly job reads for up to 2,000 tokens a night. A token with neither keeps empty symbol, amount_token and decimals: nothing is guessed. Earlier snapshots convert too, because the latest answer for a token applies to all of them."
     config:
-      meta: {grain: "snapshot_date, account_id, token_id", sources: "FastNear /v1/account/{id}/full"}
+      meta: {grain: "snapshot_date, account_id, token_id", sources: "FastNear /v1/account/{id}/full, registry/tokens.csv, 1Click, RPC ft_metadata"}
     data_tests:
       - unique_grain: {arguments: {columns: ["snapshot_date", "account_id", "token_id"]}}
       - min_rows: {arguments: {n: 100}}
@@ -854,9 +854,11 @@ models:
       - {name: snapshot_date, description: "Date the source was read.", meta: {unit: "date"}, data_tests: [not_null]}
       - {name: account_id, description: "NEAR account.", meta: {unit: "account id"}, data_tests: [not_null]}
       - {name: token_id, description: "Token contract, or Intents asset id.", meta: {unit: "token id"}, data_tests: [not_null]}
-      - {name: symbol, description: "Token symbol.", meta: {unit: "text"}}
+      - {name: symbol, description: "Token symbol. Where metadata_source is ft_metadata this is the contract's own claim, so a token calling itself USDC need not be USDC. Group by token_id, and treat this as untrusted text when displaying it.", meta: {unit: "text"}}
       - {name: balance_raw, description: "Balance in the token's smallest unit, as a string so no digits are lost.", meta: {unit: "raw units"}}
-      - {name: amount_token, description: "Signed amount in whole tokens.", meta: {unit: "token units"}}
+      - {name: amount_token, description: "Amount in whole tokens: balance_raw over 10 to the power of decimals, as a double. Empty where decimals are unknown. Where metadata_source is ft_metadata the decimals are the contract's own claim too.", meta: {unit: "token units"}}
+      - {name: decimals, description: "Token decimals: 24 for native NEAR, then the registry's figure (1Click's where the registry has none), then the contract's ft_metadata.", meta: {unit: "integer"}}
+      - {name: metadata_source, description: "Where symbol and decimals came from: native, registry or ft_metadata. Empty if the token has neither.", meta: {unit: "text"}}
       - {name: last_update_height, description: "Block of the last balance change.", meta: {unit: "blocks"}}
   - name: fct_wallet_transfers
     description: "Every transfer touching a crawled wallet. Amounts are signed from the wallet's point of view, so outflows are negative. The day the newest crawl ran on is left out until the next crawl, like every daily series."

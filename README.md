@@ -28,7 +28,7 @@ These lines are generated from the warehouse, and `make verify` fails if they st
 
 <!-- expected:start -->
 - Data through: **2026-11-05**
-- Gold tables and columns: **61** and **559**
+- Gold tables and columns: **61** and **561**
 - Reconciliation: **39** comparisons agree, **6** differ, each with a written explanation
 - Issuance over the last 30 days, from supply change plus burn: **2.48%** a year, against **2.50%** in the protocol config
 - Captured Intents revenue, all time: **$9.44M** per DefiLlama, **$9.41M** rebuilt from wallet transfers

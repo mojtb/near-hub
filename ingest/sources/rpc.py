@@ -1,5 +1,6 @@
 """NEAR RPC, the on-chain source of truth: protocol config, validators, contract state,
-and one block per UTC day from the archival node (supply, gas price, epoch, protocol version).
+one block per UTC day from the archival node (supply, gas price, epoch, protocol version),
+and each held token's own metadata.
 
 `validators` responses are trimmed: per-shard arrays and public keys are dropped, which takes
 an epoch from about 400 KB to about 100 KB. Contract view results arrive as a byte array and
@@ -10,11 +11,13 @@ from __future__ import annotations
 import base64
 import gzip
 import json
+import time
+from collections import Counter
 from datetime import date, datetime, timedelta, timezone
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, Iterator, List, Optional, Tuple
 
 from ..http import HttpError
-from ..pipeline import Context, Skip, dataset
+from ..pipeline import Context, Skip, dataset, log
 from ..settings import BRONZE, read_registry, secret
 from ._common import fetch
 
@@ -29,6 +32,12 @@ NS_PER_S = 10**9
 BLOCK_DAYS_PER_RUN = 400  # keyless archival calls are slow, so a long backfill spreads over several runs
 RECENT_DAYS = 14
 VALIDATOR_EPOCHS_PER_RUN = 40
+FT_METADATA_CALLS_PER_RUN = 2000  # about 5 minutes at the keyed pace, and about 8,000 tokens take 4 nights
+FT_METADATA_MINUTES_PER_RUN = 40  # a node that rate-limits every call must not stretch the night past the job's timeout
+FT_METADATA_SAVE_EVERY = 200
+FT_METADATA_FAILURES_IN_A_ROW = 3  # by then the node is the likely problem, so the rest waits for the next run
+# These say something about the token, so they are kept. Any other error says something about the node, so the token is asked again.
+FT_METADATA_FINAL_ERRORS = {"UNKNOWN_ACCOUNT", "INVALID_ACCOUNT", "NO_CONTRACT_CODE", "CONTRACT_EXECUTION_ERROR"}
 FEE_COLLECTOR = "7066024d3f20f94de601c003163367873cca78507eeca4df66d9be645f197f05"
 
 # (contract, method, args). Each result is decoded and saved as one file per night.
@@ -106,11 +115,16 @@ def validators_current(ctx: Context) -> None:
                          note="trimmed: per-shard arrays and public keys dropped")
 
 
-def _view(ctx: Context, contract: str, method: str, args: Dict[str, Any], block_id: Optional[int] = None) -> Optional[Dict[str, Any]]:
-    """Call a contract view and decode its result. Returns None if the method does not exist or fails."""
+def _view_params(contract: str, method: str, args: Dict[str, Any], block_id: Optional[int] = None) -> Dict[str, Any]:
     params = {"request_type": "call_function", "account_id": contract, "method_name": method,
               "args_base64": base64.b64encode(json.dumps(args).encode()).decode()}
     params.update({"block_id": block_id} if block_id else {"finality": "final"})
+    return params
+
+
+def _view(ctx: Context, contract: str, method: str, args: Dict[str, Any], block_id: Optional[int] = None) -> Optional[Dict[str, Any]]:
+    """Call a contract view and decode its result. Returns None if the method does not exist or fails."""
+    params = _view_params(contract, method, args, block_id)
     try:
         result = _result(ctx, ARCHIVAL if block_id else RPC, "query", params)
     except HttpError as e:
@@ -288,3 +302,108 @@ def validators_epoch(ctx: Context) -> None:
                              note="trimmed: per-shard arrays and public keys dropped")
         state["done"].append(epoch_id)
         ctx.save_state("rpc__validators_epoch", state)
+
+
+def _bronze_docs(pattern: str) -> Iterator[Any]:
+    for path in BRONZE.glob(pattern):
+        yield json.loads(gzip.decompress(path.read_bytes()))
+
+
+def _tokens_seen() -> Counter:
+    """Token ids in holdings or top holders, with how many bronze rows each has. Gold drops zero and empty balances, so they don't count."""
+    seen: Counter = Counter()
+    for doc in _bronze_docs("fastnear/account_full/dt=*/*.json.gz"):
+        for token in doc.get("tokens") or []:
+            balance = str(token.get("balance") or "")
+            if balance.isdigit() and int(balance) > 0:
+                seen[token["contract_id"]] += 1
+    for doc in _bronze_docs("fastnear/ft_top_holders/dt=*/*.json.gz"):
+        if doc.get("token_id"):
+            seen[doc["token_id"]] += len(doc.get("accounts") or [])
+    return seen
+
+
+def _ft_text(value: Any, limit: int) -> Optional[str]:
+    """A contract can put anything in these fields, so keep printable characters only, up to a limit."""
+    if not isinstance(value, str):
+        return None
+    return "".join(c for c in value if c.isprintable()).strip()[:limit] or None
+
+
+def _ft_metadata_row(ctx: Context, token: str) -> Dict[str, Any]:
+    """What one token's contract says through ft_metadata. Raises if the node gave no answer about the token."""
+    payload = ctx.http.post(RPC, body("query", _view_params(token, "ft_metadata", {})), ok=(200, 422), headers=_headers()).json()
+    cause = (payload.get("error") or {}).get("cause") or {}
+    if cause.get("name") in FT_METADATA_FINAL_ERRORS:
+        return {"token_id": token, "block_height": (cause.get("info") or {}).get("block_height"), "error": cause["name"]}
+    result = payload.get("result")
+    if not isinstance(result, dict) or not ("result" in result or "error" in result):
+        raise ValueError(f"no answer about the token: {cause.get('name') or 'empty reply'}")
+    row = {"token_id": token, "block_height": result.get("block_height")}
+    if "result" not in result:  # the contract has no such method, or it panicked
+        return {**row, "error": "CONTRACT_EXECUTION_ERROR"}
+    try:
+        metadata = json.loads(bytes(result["result"]).decode())
+    except (TypeError, ValueError, RecursionError):  # anyone can deploy a token, so its reply can be built to break a parser
+        metadata = None
+    if not isinstance(metadata, dict):
+        return {**row, "error": "NOT_METADATA"}
+    row.update(spec=_ft_text(metadata.get("spec"), 32), name=_ft_text(metadata.get("name"), 128), symbol=_ft_text(metadata.get("symbol"), 64))
+    decimals = metadata.get("decimals")
+    if type(decimals) is int and 0 <= decimals <= 255:  # a u8 in the standard, NEP-148; `type` because True is an int to isinstance
+        return {**row, "decimals": decimals}
+    return {**row, "error": "BAD_DECIMALS"}
+
+
+def _flush_ft_metadata(ctx: Context, rows: List[Dict[str, Any]], state: Dict[str, Any]) -> None:
+    if rows:
+        ctx.bronze.save_json(SOURCE, "ft_metadata", f"from_{rows[0]['token_id']}", rows, url=RPC, method="POST", rows=len(rows),
+                             params={"view": "ft_metadata"},
+                             note="assembled: one ft_metadata view per token, read once; icon and reference dropped, spec, name and symbol "
+                                  "cut to printable characters and 32, 128 and 64 characters")
+        ctx.bronze.flush()
+    ctx.save_state("rpc__ft_metadata", state)
+
+
+@dataset(SOURCE, "ft_metadata")
+def ft_metadata(ctx: Context) -> None:
+    """Decimals and symbol from each token seen in holdings or top holders, read once, most rows first, a batch per run.
+
+    `answers` in the state file keeps every answer, including "this contract has no metadata". A token with no answer about it
+    is asked again on a later run, after the tokens that have not failed yet, so it cannot hold up the queue. Bronze holds one
+    file per run, named after the run's first token.
+    """
+    state = ctx.load_state("rpc__ft_metadata", {"answers": {}, "failures": {}})
+    answers, failures = state["answers"], state["failures"]
+    # The nightly job drops its own bronze dated up to main's pin, and a run on the pin's day writes there. An answer without its file is read again.
+    on_file = {row["token_id"] for doc in _bronze_docs("rpc/ft_metadata/dt=*/*.json.gz") for row in doc}
+    seen = _tokens_seen()
+    todo = sorted((t for t in seen if t not in answers or t not in on_file), key=lambda t: (failures.get(t, 0), -seen[t], t))
+    rows: List[Dict[str, Any]] = []
+    in_a_row = 0
+    deadline = time.monotonic() + FT_METADATA_MINUTES_PER_RUN * 60
+    try:
+        for token in todo[:FT_METADATA_CALLS_PER_RUN]:
+            if time.monotonic() > deadline:
+                ctx.warn(f"stopped after {FT_METADATA_MINUTES_PER_RUN} minutes; the remaining tokens wait for the next run")
+                break
+            try:
+                row = _ft_metadata_row(ctx, token)
+            except (HttpError, ValueError, AttributeError) as e:  # AttributeError: a reply that is not shaped like JSON-RPC
+                ctx.warn(f"{token}: {e}")
+                failures[token] = failures.get(token, 0) + 1
+                in_a_row += 1
+                # Status 0 means every retry failed, which has already taken about 15 minutes.
+                if in_a_row >= FT_METADATA_FAILURES_IN_A_ROW or getattr(e, "status", None) == 0:
+                    ctx.warn("stopped early; the remaining tokens wait for the next run")
+                    break
+                continue
+            in_a_row = 0
+            failures.pop(token, None)
+            rows.append(row)
+            answers[token] = {k: row[k] for k in ("decimals", "symbol", "error") if row.get(k) is not None}
+            if len(rows) % FT_METADATA_SAVE_EVERY == 0:
+                _flush_ft_metadata(ctx, rows, state)
+    finally:
+        _flush_ft_metadata(ctx, rows, state)
+    log(f"  rpc/ft_metadata: {len(rows)} tokens read, {len(todo) - len(rows)} still to read")
