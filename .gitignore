@@ -23,3 +23,6 @@ data/bronze/_manifest/*.tmp
 
 # dbt writes this anonymous id file next to profiles.yml
 .user.yml
+
+# Worktrees the Claude desktop app makes for side sessions
+.claude/worktrees/

@@ -17,7 +17,7 @@ models:
       - {name: total_supply_near, description: "Total supply in this block.", meta: {unit: "NEAR"}}
       - {name: gas_price_yocto, description: "Gas price in the block.", meta: {unit: "yoctoNEAR per gas"}}
       - {name: epoch_id, description: "Epoch identifier.", meta: {unit: "hash"}}
-      - {name: protocol_version, description: "Protocol version.", meta: {unit: "integer"}}
+      - {name: protocol_version, description: "latest_protocol_version in the block header: the version the block's producer supports, which can lead the version in force by days. 87 was in the header by the first block of 2026-11-04 and took effect at 11:46:29 UTC that day, with block 223012337. Date a change from registry/protocol_upgrades.csv or fct_protocol_config.", meta: {unit: "integer"}}
   - name: dim_date
     description: "Calendar spine covering every day with chain or Intents data."
     config:
@@ -73,14 +73,16 @@ models:
       - {name: source_url, description: "Where the evidence can be checked.", meta: {unit: "url"}}
       - {name: status, description: "happened, or voting while the vote is open.", meta: {unit: "text"}}
   - name: dim_protocol
-    description: "Protocols DefiLlama lists on NEAR, as of the newest reading. Exchange wallets are marked with is_cex."
+    description: "Protocols DefiLlama lists on NEAR, as of the newest reading that listed each one. A protocol is one DefiLlama id, so a rename, which changes the slug and keeps the id, gives one row under the newest slug. A protocol missing from the newest reading keeps its row with an older read_on, because a missed night and a delisting look the same. Exchange wallets are marked with is_cex."
     config:
-      meta: {grain: "protocol_slug", sources: "DefiLlama /protocols"}
+      meta: {grain: "protocol_id", sources: "DefiLlama /protocols"}
     data_tests:
+      - unique_grain: {arguments: {columns: ["protocol_id"]}}
       - unique_grain: {arguments: {columns: ["protocol_slug"]}}
       - min_rows: {arguments: {n: 30}}
     columns:
-      - {name: protocol_slug, description: "DefiLlama protocol identifier.", meta: {unit: "id"}, data_tests: [not_null]}
+      - {name: protocol_id, description: "DefiLlama's id for the protocol. It stays the same when the protocol is renamed.", meta: {unit: "id"}, data_tests: [not_null]}
+      - {name: protocol_slug, description: "DefiLlama's URL name for the protocol, as of the newest reading that listed it. It can change.", meta: {unit: "id"}, data_tests: [not_null]}
       - {name: protocol_name, description: "Protocol name.", meta: {unit: "text"}}
       - {name: category, description: "DefiLlama category.", meta: {unit: "text"}}
       - {name: url, description: "Protocol website.", meta: {unit: "url"}}
@@ -88,7 +90,7 @@ models:
       - {name: near_tvl_usd, description: "TVL on NEAR.", meta: {unit: "USD"}}
       - {name: total_tvl_usd, description: "TVL across all chains.", meta: {unit: "USD"}}
       - {name: is_cex, description: "True for exchange wallets, which DefiLlama leaves out of chain TVL.", meta: {unit: "boolean"}}
-      - {name: read_on, description: "Date of the reading.", meta: {unit: "date"}}
+      - {name: read_on, description: "Date of the newest reading that listed the protocol. Older than the table's newest date means it was missing from later readings, and its figures are as of this date.", meta: {unit: "date"}}
   - name: dim_token
     description: "Registry tokens with decimals and a live price from 1Click where listed."
     config:
@@ -104,7 +106,7 @@ models:
       - {name: evidence_level, description: "Strength of the label: documented, chain, token_list, third_party_code, observed or name_only.", meta: {unit: "text"}}
       - {name: source_url, description: "Where the evidence can be checked.", meta: {unit: "url"}}
       - {name: note, description: "Caveat on this row.", meta: {unit: "text"}}
-      - {name: decimals, description: "Token decimals, per 1Click. Empty if 1Click does not list it.", meta: {unit: "integer"}}
+      - {name: decimals, description: "Token decimals from registry/tokens.csv, each read from the contract's ft_metadata; 1Click's figure is the fallback and a data test holds the two to each other.", meta: {unit: "integer"}}
       - {name: price_usd, description: "Price.", meta: {unit: "USD"}}
       - {name: coingecko_id, description: "CoinGecko identifier.", meta: {unit: "id"}}
       - {name: priced_on, description: "Date the price was read.", meta: {unit: "date"}}
@@ -144,7 +146,7 @@ models:
       - {name: status, description: "agree, differs or not_available.", meta: {unit: "text"}}
       - {name: explanation, description: "Why the gap exists, from registry/reconciliation_notes.csv.", meta: {unit: "text"}}
   - name: dq_revisions
-    description: "Values a source changed after first publishing them, comparing the oldest and newest snapshot of the same key."
+    description: "Values a source changed after first publishing them, comparing the oldest and newest snapshot of the same key. This shows that a value moved, not when or how often; to date a change, compare consecutive snapshots in silver."
     config:
       meta: {grain: "model, value_column, series_key, date_day", sources: "silver tables"}
     data_tests:
@@ -201,7 +203,7 @@ models:
       - {name: unique_contracts, description: "Distinct contract code hashes deployed, per /v1/charts.", meta: {unit: "count"}}
       - {name: meta_accounts, description: "Accounts sending meta-transactions.", meta: {unit: "count"}}
       - {name: meta_relayers, description: "Relayers submitting meta-transactions.", meta: {unit: "count"}}
-      - {name: multichain_txns, description: "Multichain transactions per /v1/charts.", meta: {unit: "count"}}
+      - {name: multichain_txns, description: "Multichain transactions per /v1/charts. Reads 0 on every day as of 2026-11; use fct_chain_signatures_daily for Chain Signatures activity.", meta: {unit: "count"}}
       - {name: gas_used, description: "Gas used.", meta: {unit: "gas units"}}
       - {name: gas_fee_near, description: "Gas fees per /v1/charts.", meta: {unit: "NEAR"}}
       - {name: txn_fee_near_v1, description: "Transaction fees per /v1/charts.", meta: {unit: "NEAR"}}
@@ -209,6 +211,23 @@ models:
       - {name: txn_fee_usd, description: "Transaction fees per /v1/charts.", meta: {unit: "USD"}}
       - {name: txn_volume_near, description: "NEAR moved by transactions.", meta: {unit: "NEAR"}}
       - {name: txn_volume_usd, description: "Value moved by transactions.", meta: {unit: "USD"}}
+  - name: fct_circulating_supply_daily
+    description: "NEAR's circulating supply per UTC day, built from the chain, from the day transfers were enabled. NEAR defines it as every token not subject to a lockup at that moment. This uses NEAR Explorer's formula: total supply, minus what every lockup contract still locks, minus the balances of lockup.near and contributors.near. Tested against NearBlocks' own lockup job while that ran, NEAR's published schedule, and the contracts' own answers. It does not take out the NEAR Foundation's liquid holding or the protocol treasury, and it counts staked tokens as circulating. See docs/CIRCULATING_SUPPLY.md."
+    config:
+      meta: {grain: "date_day", sources: "Archival RPC lockup contract state, FastNear transfers of lockup.near and contributors.near, NearBlocks total supply"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["date_day"]}}
+      - min_rows: {arguments: {n: 2000}}
+    columns:
+      - {name: date_day, description: "UTC calendar day, read at its close. Starts on 2020-10-13.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: total_supply_near, description: "Total supply at day end per NearBlocks, the same column as in fct_supply_daily, which a data test holds to the chain.", meta: {unit: "NEAR"}, data_tests: [not_null]}
+      - {name: lockup_locked_near, description: "Sum over all lockup contracts of the amount their schedule still locks at the day's close. A lockup whose owner never turned transfers on counts as released on schedule, as in NEAR Explorer; transfers_never_enabled_near holds those.", meta: {unit: "NEAR"}, data_tests: [not_null]}
+      - {name: foundation_locked_near, description: "Balances of lockup.near, which funds new lockups, and contributors.near, which held 418M NEAR at genesis and has since paid nearly all of it out. NEAR Explorer subtracted these two and no other account.", meta: {unit: "NEAR"}, data_tests: [not_null]}
+      - {name: circulating_supply_near, description: "total_supply_near minus lockup_locked_near minus foundation_locked_near.", meta: {unit: "NEAR"}, data_tests: [not_null]}
+      - {name: circulating_share_of_total, description: "circulating_supply_near divided by total_supply_near.", meta: {unit: "fraction"}, data_tests: [{in_range: {arguments: {low: 0.1, high: 1}}}]}
+      - {name: lockups_existing, description: "Lockup contracts that existed at the day's close. Contracts deleted later are counted until their last transfer.", meta: {unit: "count"}}
+      - {name: lockups_still_locking, description: "Lockup contracts with anything still locked at the day's close.", meta: {unit: "count"}}
+      - {name: transfers_never_enabled_near, description: "Held by lockups that exist today and whose owner has still not turned transfers on, so none of it has ever left its contract. It counts as circulating in circulating_supply_near, as in NEAR Explorer; a stricter reading subtracts it. Understated in the past, because a lockup that turned transfers on later is not in it for any day.", meta: {unit: "NEAR"}, data_tests: [not_null]}
   - name: fct_contract_daily
     description: "Daily transactions and unique callers per registry contract."
     config:
@@ -225,18 +244,20 @@ models:
       - {name: unique_callers, description: "Distinct accounts calling the contract.", meta: {unit: "count"}}
       - {name: unique_receivers, description: "Distinct accounts the contract sent to.", meta: {unit: "count"}}
   - name: fct_dev_activity_weekly
-    description: "Commits and active authors per tracked repository per week. A fixed repository list, not a whole-ecosystem count; GitHub's author list covers each repository's top 100."
+    description: "Commits and active authors per tracked repository per week. A fixed repository list, not a whole-ecosystem count; GitHub's author list covers each repository's top 100. Two measures sit side by side. commits and active_authors are GitHub's own statistics: they count more than the default branch holds (about a quarter more for near/nearcore, which keeps release branches), and they come back as a year of zeros with no contributors for a repository with over 10,000 commits (anza-xyz/agave), so both are empty for a repository whose year of readings is all zero although GitHub says it was pushed to in that year. commits_default_branch and authors_default_branch are counted from the commits list with one method for every repository, so compare repositories with those."
     config:
-      meta: {grain: "week_start, repo", sources: "GitHub statistics API"}
+      meta: {grain: "week_start, repo", sources: "GitHub statistics API, GitHub commits list"}
     data_tests:
       - unique_grain: {arguments: {columns: ["week_start", "repo"]}}
     columns:
-      - {name: week_start, description: "Monday of the week, UTC.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: week_start, description: "Sunday that starts the week, UTC, which is how GitHub cuts its weeks.", meta: {unit: "date"}, data_tests: [not_null]}
       - {name: repo, description: "GitHub repository as owner/name.", meta: {unit: "text"}, data_tests: [not_null]}
       - {name: ecosystem, description: "Chain the repository belongs to.", meta: {unit: "id"}}
       - {name: repo_group, description: "Kind of repository.", meta: {unit: "text"}}
-      - {name: commits, description: "Commits that week.", meta: {unit: "count"}}
-      - {name: active_authors, description: "Authors with at least one commit that week, among GitHub's top 100 for the repository.", meta: {unit: "count"}}
+      - {name: commits, description: "Commits that week per GitHub's statistics endpoint, which counts beyond the default branch. Empty where GitHub served a year of zeros for a repository it reports as pushed to; see the table description.", meta: {unit: "count"}}
+      - {name: active_authors, description: "Authors with at least one commit that week, among GitHub's top 100 for the repository, per GitHub's statistics. Empty where commits is.", meta: {unit: "count"}}
+      - {name: commits_default_branch, description: "Commits that week on the default branch, counted from the commits list by committer date, with the same method for every repository. Empty for a week no read has counted yet.", meta: {unit: "count"}}
+      - {name: authors_default_branch, description: "Distinct authors with a commit on the default branch that week, counted from the commits list; every author, not only the top 100.", meta: {unit: "count"}}
   - name: fct_governance_threads
     description: "Engagement on the tracked governance threads, per read. Governance outcomes belong in dim_event."
     config:
@@ -282,7 +303,7 @@ models:
       - {name: volume_usd, description: "Public Intents volume.", meta: {unit: "USD"}}
       - {name: swaps, description: "Swaps.", meta: {unit: "count"}}
   - name: fct_intents_daily
-    description: "NEAR Intents per UTC day, one column per source. DefiLlama and revenue.near.org include confidential Intents and read the same NEAR-uploaded data; NearBlocks counts public Intents only."
+    description: "NEAR Intents per UTC day, one column per source. revenue.near.org includes confidential Intents; NearBlocks counts public Intents only. DefiLlama reads the same NEAR-uploaded data as revenue.near.org, but its volume follows NearBlocks' public-only figure from 2026-04-01 to 2026-08-31 and the all-routes figure from 2026-09-01, so it changes meaning at that date. See dq_reconciliation. The fee and revenue columns of the newest days can still change; see is_fee_revenue_provisional."
     config:
       meta: {grain: "date_day", sources: "DefiLlama, NearBlocks, revenue.near.org"}
     data_tests:
@@ -290,7 +311,7 @@ models:
       - min_rows: {arguments: {n: 500}}
     columns:
       - {name: date_day, description: "UTC calendar day.", meta: {unit: "date"}, data_tests: [not_null]}
-      - {name: volume_usd_defillama, description: "Volume per DefiLlama; includes confidential Intents.", meta: {unit: "USD"}}
+      - {name: volume_usd_defillama, description: "Volume per DefiLlama. Matches NearBlocks' public-only figure from 2026-04-01 to 2026-08-31 and revenue.near.org's all-routes figure from 2026-09-01; before April 2026 the three sources agree. Do not read a trend across 2026-09-01 from this column.", meta: {unit: "USD"}}
       - {name: volume_usd_nearblocks, description: "Volume per NearBlocks; public Intents only.", meta: {unit: "USD"}}
       - {name: volume_usd_revenue_page, description: "Volume per revenue.near.org; includes confidential Intents.", meta: {unit: "USD"}}
       - {name: cumulative_volume_usd_nearblocks, description: "All-time volume per NearBlocks.", meta: {unit: "USD"}}
@@ -305,8 +326,9 @@ models:
       - {name: revenue_usd_defillama, description: "Captured revenue per DefiLlama: NEAR and wNEAR swept into the revenue wallets. Sweeps are periodic, so one day can exceed that day's fees.", meta: {unit: "USD"}}
       - {name: holders_revenue_usd_defillama, description: "Captured revenue from 2026-02-23, which DefiLlama treats as used for buybacks.", meta: {unit: "USD"}}
       - {name: treasury_revenue_usd_defillama, description: "Captured revenue before 2026-02-23, held by the treasury.", meta: {unit: "USD"}}
-      - {name: supply_side_revenue_usd_defillama, description: "Gross fees minus captured revenue: kept by solvers and distribution channels.", meta: {unit: "USD"}}
+      - {name: supply_side_revenue_usd_defillama, description: "Gross fees minus captured revenue: kept by solvers and distribution channels. Negative on days when a periodic sweep into the revenue wallets exceeds that day's fees, so sum it over weeks, not days. Also negative on a provisional day whose fees have not fully arrived; see is_fee_revenue_provisional.", meta: {unit: "USD"}}
       - {name: confidential_tvl_usd, description: "Confidential Intents TVL per revenue.near.org. Self-reported by NEAR.", meta: {unit: "USD"}}
+      - {name: is_fee_revenue_provisional, description: "True while this day's fee and revenue columns can still change, which is until they have been read 3 nights after the day ended: the newest two days of a nightly build. revenue.near.org and DefiLlama publish a day before its data has fully arrived, then rewrite it. The page read $9,319 for 2026-11-03 and $164,920 a night later, and DefiLlama follows a night after the page. Leave these days out of trends and totals. Volume columns are not affected. The number comes from few reads (2026-10-28 to 2026-11-05), and a data test fails if a figure moves in the day's first week after the flag clears. False does not mean final for good: a later rewrite of history would show in dq_revisions.", meta: {unit: "boolean"}, data_tests: [not_null]}
   - name: fct_dune_dashboard_results
     description: "Derived from NEAR's Intents dashboard on Dune: every row of every widget read by hand, as the widget returned it, so nothing waits for a typed table. NEAR uploads the data behind the dashboard, so it is self-reported."
     config:
@@ -438,7 +460,7 @@ models:
       - {name: app_fees_usd, description: "App fees on finished swaps: appFees read as basis points of the value paid in.", meta: {unit: "USD"}}
       - {name: senders, description: "Distinct sending wallets on finished swaps. Only the count is stored.", meta: {unit: "count"}}
       - {name: recipients, description: "Distinct receiving wallets on finished swaps. Only the count is stored.", meta: {unit: "count"}}
-      - {name: share_of_all_intents_volume, description: "volume_usd divided by DefiLlama's volume for all of Intents that day.", meta: {unit: "fraction"}}
+      - {name: share_of_all_intents_volume, description: "volume_usd divided by revenue.near.org's volume for all of Intents that day, which counts every route, confidential included, on the same basis every day. Not DefiLlama's: from 2026-04-01 to 08-31 that followed NearBlocks' public-only count, so a share of it read too high on those days.", meta: {unit: "fraction"}}
   - name: fct_intents_1click_channel_daily
     description: "1Click volume and app fees per UTC day, referral channel and status, from the Intents Explorer API. Empty until a snapshot with INTENTS_EXPLORER_JWT is in the build."
     config:
@@ -519,16 +541,18 @@ models:
       - {name: token_supply, description: "Tokens outstanding.", meta: {unit: "token units"}}
       - {name: staked_near, description: "NEAR staked by the contract. Empty where the contract has no such view.", meta: {unit: "NEAR"}}
   - name: fct_market_daily
-    description: "NEAR price and market cap per day, aligned to the close of the UTC day. price_usd prefers CoinMetrics; each source keeps its own column."
+    description: "NEAR price and market cap per day, aligned to the close of the UTC day. price_usd prefers CoinMetrics; each source keeps its own column. market_cap_usd is price times circulating supply built from the chain, which is total supply minus what lockups still lock. See docs/CIRCULATING_SUPPLY.md."
     config:
-      meta: {grain: "date_day", sources: "CoinMetrics, Coinbase, DefiLlama, NearBlocks"}
+      meta: {grain: "date_day", sources: "CoinMetrics, Coinbase, DefiLlama, NearBlocks, lockup contracts read on chain"}
     data_tests:
       - unique_grain: {arguments: {columns: ["date_day"]}}
       - min_rows: {arguments: {n: 2000}}
     columns:
       - {name: date_day, description: "UTC calendar day.", meta: {unit: "date"}, data_tests: [not_null]}
       - {name: price_usd, description: "NEAR close: CoinMetrics, else DefiLlama, else NearBlocks.", meta: {unit: "USD"}}
-      - {name: market_cap_usd, description: "Market cap: CoinMetrics, else NearBlocks.", meta: {unit: "USD"}}
+      - {name: market_cap_usd, description: "price_usd times circulating_supply_near: every token not subject to a lockup, including what the NEAR Foundation holds outside lockups. Empty before transfers were enabled on 2020-10-13. Do not read this next to a peer's as the same measure: see market_cap_basis in fct_peer_daily.", meta: {unit: "USD"}}
+      - {name: fully_diluted_value_usd, description: "price_usd times total supply. Since 2025-10-23 it is what other services publish as NEAR's market cap, and it runs about 0.2% above market_cap_usd.", meta: {unit: "USD"}}
+      - {name: market_cap_usd_coinmetrics, description: "CoinMetrics' CapMrktEstUSD, kept for comparison. Its supply is NearBlocks' legacy endpoint through CoinGecko, so it froze with NearBlocks in August 2025 and has been total supply since 2025-10-25.", meta: {unit: "USD"}}
       - {name: price_usd_coinmetrics, description: "CoinMetrics reference rate at the day's close.", meta: {unit: "USD"}}
       - {name: price_usd_coinbase_close, description: "Coinbase NEAR-USD close.", meta: {unit: "USD"}}
       - {name: price_usd_defillama, description: "DefiLlama price, moved back one day from its 00:00 stamp to align with the close.", meta: {unit: "USD"}}
@@ -538,7 +562,28 @@ models:
       - {name: low_usd, description: "Coinbase low.", meta: {unit: "USD"}}
       - {name: coinbase_volume_near, description: "Coinbase traded volume.", meta: {unit: "NEAR"}}
       - {name: reported_spot_volume_usd, description: "Reported spot volume per CoinMetrics.", meta: {unit: "USD"}}
-      - {name: circulating_supply_near, description: "Circulating supply per /v1/charts. The v3 stats endpoint reports this wrongly, so it is not used.", meta: {unit: "NEAR"}}
+      - {name: circulating_supply_near, description: "Every token not subject to a lockup at the day's close, built from the chain: see fct_circulating_supply_daily. Empty before transfers were enabled on 2020-10-13.", meta: {unit: "NEAR"}}
+      - {name: circulating_share_of_total, description: "circulating_supply_near divided by total supply.", meta: {unit: "fraction"}}
+      - {name: circulating_supply_near_nearblocks, description: "NearBlocks' /v1/charts figure, kept as a test of the column above. Stuck at 1,249,836,992 since 2025-08-27, when NearBlocks stopped computing it, and too high from 2024-08-12 to 2024-12-28, when its job was failing.", meta: {unit: "NEAR"}}
+  - name: fct_token_prices
+    description: "Point in time: one USD price per token per read, chosen from 1Click and Rhea on the token's id, never its symbol. 1Click wins where it has a positive price, because 139 of its 152 tokens carry a market feed's id, while Rhea's list is one DEX's pools. A price of 0 or below on either list counts as no price. Tokens with no positive price on either list have no row. native:near takes wrap.near's price, because one redeems for the other one to one. Most of Rhea's list is stale or thin: 4,309 of the 4,609 tokens on all five reads to 2026-11-05 kept one unchanged price while NEAR moved 11%, and one token reads $1.36 trillion. So read price_date and depth_usd before using a Rhea price."
+    config:
+      meta: {grain: "snapshot_date, token_id", sources: "1Click /v0/tokens, Rhea list-token-price, Rhea list-top-pools, registry/tokens.csv"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["snapshot_date", "token_id"]}}
+      - min_rows: {arguments: {n: 1000}}
+    columns:
+      - {name: snapshot_date, description: "Date the lists were read. On the 11-05 run the two lists were read about four minutes apart.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: token_id, description: "Token contract, as fct_wallet_holdings names it, or native:near. For 1Click this is the NEAR contract its asset id names, so bridged assets count too: USDC on Ethereum is eth-0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48.omft.near.", meta: {unit: "token id"}, data_tests: [not_null]}
+      - {name: price_usd, description: "The price to use: 1Click's if positive, otherwise Rhea's. Per whole token, counted with price_decimals.", meta: {unit: "USD per token"}, data_tests: [not_null]}
+      - {name: price_source, description: "Which list price_usd came from: oneclick or rhea.", meta: {unit: "text"}, data_tests: [not_null, {accepted_values: {arguments: {values: ["oneclick", "rhea"]}}}]}
+      - {name: price_date, description: "When price_usd was last set, as far as its list shows. For 1Click, the date of its priceUpdatedAt. Rhea gives no time, so this is the first read showing this exact price, digit by digit. Earlier than snapshot_date means the price has not changed since then, and it can never read earlier than Rhea's first read, 2026-11-01.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: price_decimals, description: "The decimals the chosen list uses for this token. A price is per whole token in these decimals, so a holding counted with different decimals cannot use it.", meta: {unit: "integer"}}
+      - {name: price_usd_oneclick, description: "1Click's price. Empty if 1Click does not list the token or lists it at 0, which it did for six tokens on 2026-11-05.", meta: {unit: "USD per token"}}
+      - {name: price_usd_rhea, description: "Rhea's price. Empty if Rhea does not list the token or lists it at 0.", meta: {unit: "USD per token"}}
+      - {name: price_gap_pct, description: "How far apart the two lists are, as a percent of the larger price. Empty unless both have a positive price. Above the project's price_disagreement_pct (20), fct_wallet_holdings leaves the value empty.", meta: {unit: "percent"}, data_tests: [{in_range: {arguments: {low: 0, high: 100}}}]}
+      - {name: depth_usd, description: "Assets with a vetted price opposite this token, summed over Rhea's pools at this read. This is the real money behind a pool price: in a constant-product pool, selling any amount cannot take out more than the other side. It does not use Rhea's own tvl field, which reads $1.37B for one pool of two unknown tokens. It leaves out concentrated-liquidity (DCL) pools, which Rhea's pool list does not include, so a token traded only there reads 0.", meta: {unit: "USD"}, data_tests: [not_null, {in_range: {arguments: {low: 0, high: 1000000000}}}]}
+      - {name: is_vetted, description: "True if 1Click has a positive price for the token or registry/tokens.csv lists it. Only these prices count toward depth_usd, and only these tokens can be valued beyond their depth.", meta: {unit: "boolean"}, data_tests: [not_null]}
   - name: fct_mpc_participants
     description: "MPC operators per snapshot, read directly from v1.signer."
     config:
@@ -564,7 +609,7 @@ models:
       - {name: signature_domains, description: "Signature schemes supported.", meta: {unit: "count"}}
       - {name: keyset_epoch, description: "MPC key generation epoch.", meta: {unit: "integer"}}
   - name: fct_peer_daily
-    description: "NEAR and peer chains per day on the same definitions. An empty cell means the source has no value for that day."
+    description: "NEAR and peer chains per day. Activity columns use one source and definition for every chain; market_cap_usd does not, so read market_cap_basis before comparing caps. An empty cell means the source has no value for that day. The fees and revenue of the newest days can still change; see is_fee_revenue_provisional."
     config:
       meta: {grain: "date_day, chain_id", sources: "DefiLlama, CoinMetrics"}
     data_tests:
@@ -574,12 +619,15 @@ models:
       - {name: date_day, description: "UTC calendar day.", meta: {unit: "date"}, data_tests: [not_null]}
       - {name: chain_id, description: "Chain identifier from registry/peers.csv.", meta: {unit: "id"}, data_tests: [not_null]}
       - {name: price_usd, description: "Close: CoinMetrics, else DefiLlama.", meta: {unit: "USD"}}
-      - {name: market_cap_usd, description: "Market cap per CoinMetrics. Empty for TON, which has no community series.", meta: {unit: "USD"}}
-      - {name: tvl_usd, description: "Chain TVL per DefiLlama.", meta: {unit: "USD"}}
-      - {name: fees_usd, description: "Fees paid by users on the chain per DefiLlama.", meta: {unit: "USD"}}
+      - {name: market_cap_usd, description: "Peers: CoinMetrics' estimate, price times the circulating supply the project reports. NEAR: fct_market_daily's, price times total supply minus lockups. Empty for TON, which has no community series. These are not one definition, so read market_cap_basis and implied_supply_tokens before comparing.", meta: {unit: "USD"}}
+      - {name: implied_supply_tokens, description: "market_cap_usd divided by the CoinMetrics price: the supply behind the cap. On 2026-11-05, as a share of total supply read from each chain: Sui 41% of 10B, Aptos 73%, Solana 93%, Avalanche 93%, Ethereum 100%, NEAR 99.8%.", meta: {unit: "native tokens"}}
+      - {name: market_cap_basis, description: "What market_cap_usd rests on. A peer's reported figure leaves out whatever its project treats as not circulating, while NEAR's leaves out only lockups, so the NEAR Foundation's liquid holding counts: 305M NEAR, about 26% of supply, at the last figure published (2024-01-11; see registry/near_supply_readings.csv).", meta: {unit: "label"}}
+      - {name: tvl_usd, description: "Chain TVL per DefiLlama. DefiLlama can rewrite a chain's history on any night without notice, so no value is ever final and a TVL chart reproduces only at a pin. Its 2026-11-03 read moved 2,079 Ethereum and Solana days back to 2021, by up to 11.4%. Other reads through 2026-11-05 moved at most 8 days by more than 0.01%, and NEAR's series has not moved. See dq_revisions.", meta: {unit: "USD"}}
+      - {name: fees_usd, description: "Fees paid by users on the chain per DefiLlama. DefiLlama also rewrites older days: its 2026-11-04 and 11-05 reads moved 165 and 557 of Solana's days, back to 2025-04-09, by up to 5.6%.", meta: {unit: "USD"}}
       - {name: revenue_usd, description: "Chain revenue per DefiLlama.", meta: {unit: "USD"}}
       - {name: dex_volume_usd, description: "DEX volume on the chain per DefiLlama.", meta: {unit: "USD"}}
       - {name: stablecoins_usd, description: "Stablecoins on the chain per DefiLlama.", meta: {unit: "USD"}}
+      - {name: is_fee_revenue_provisional, description: "True while this day's fees_usd and revenue_usd can still change, by the rule on fct_intents_daily: until they have been read 3 nights after the day ended, so the newest two days of a nightly build. NEAR's fees are mostly Intents fees and settle with them: they read $33,285 for 2026-10-31 and $146,822 two nights later. Every chain gets the same rule, so filtering on this column cuts them all at the same day. The other chains' first reads also run low, by up to about 6% for fees on Ethereum, Solana and Sui, but they have no fixed settling time, so False does not mean settled for them. A data test holds the number for NEAR only.", meta: {unit: "boolean"}, data_tests: [not_null]}
   - name: fct_protocol_config
     description: "Protocol parameters as read on each snapshot date. A change between rows is a protocol change."
     config:
@@ -620,18 +668,33 @@ models:
       - {name: total_1y_usd, description: "Trailing year.", meta: {unit: "USD"}}
       - {name: total_all_time_usd, description: "All time.", meta: {unit: "USD"}}
   - name: fct_protocol_tvl_daily
-    description: "TVL on NEAR per protocol per day, excluding exchange wallets. Liquid staking and lending can count the same NEAR twice, so do not sum categories into a chain total."
+    description: "TVL on NEAR per protocol per day, excluding exchange wallets. A protocol is one DefiLlama id, so a rename, which changes the slug and keeps the id, joins the old slug's days to the new slug's and counts the protocol once. A protocol missing from the newest reading keeps its history and its days stop, because a missed night and a delisting look the same. Two ids carrying one series fail the test no_two_protocols_share_a_tvl_series. Liquid staking and lending can count the same NEAR twice, so do not sum categories into a chain total. DefiLlama can rewrite TVL history without notice, as it did for Ethereum and Solana on 2026-11-03 (see fct_peer_daily.tvl_usd), so no value here is final either, although no protocol on NEAR had moved through 2026-11-05."
     config:
-      meta: {grain: "date_day, protocol_slug", sources: "DefiLlama /protocol/{slug}"}
+      meta: {grain: "date_day, protocol_id", sources: "DefiLlama /protocol/{slug}"}
     data_tests:
+      - unique_grain: {arguments: {columns: ["date_day", "protocol_id"]}}
       - unique_grain: {arguments: {columns: ["date_day", "protocol_slug"]}}
       - min_rows: {arguments: {n: 5000}}
     columns:
       - {name: date_day, description: "UTC calendar day.", meta: {unit: "date"}, data_tests: [not_null]}
-      - {name: protocol_slug, description: "DefiLlama protocol identifier.", meta: {unit: "id"}, data_tests: [not_null]}
+      - {name: protocol_id, description: "DefiLlama's id for the protocol. It stays the same when the protocol is renamed.", meta: {unit: "id"}, data_tests: [not_null]}
+      - {name: protocol_slug, description: "DefiLlama's URL name for the protocol, as of the newest reading that listed it. It can change.", meta: {unit: "id"}, data_tests: [not_null]}
       - {name: protocol_name, description: "Protocol name.", meta: {unit: "text"}}
       - {name: category, description: "DefiLlama category.", meta: {unit: "text"}}
       - {name: tvl_usd, description: "Total value locked.", meta: {unit: "USD"}}
+  - name: fct_exchange_balance_daily
+    description: "Assets on NEAR in the wallets DefiLlama attributes to centralised exchanges, in USD, per exchange per day. DefiLlama leaves these wallets out of chain TVL and so does fct_protocol_tvl_daily; here they stand on their own. The figure is every asset in the listed wallets at DefiLlama's prices, so it is mostly NEAR and moves with NEAR's price. Only wallets DefiLlama has labelled count, so an exchange's unlabelled wallets are missing and a relabelling moves the whole series. History is fetched for the largest 25 protocols on NEAR, so a small exchange can have a row in dim_protocol and no days here. Like all DefiLlama history, it can be rewritten without notice."
+    config:
+      meta: {grain: "date_day, protocol_id", sources: "DefiLlama /protocol/{slug}, category CEX"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["date_day", "protocol_id"]}}
+      - min_rows: {arguments: {n: 1000}}
+    columns:
+      - {name: date_day, description: "UTC calendar day.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: protocol_id, description: "DefiLlama's id for the exchange. It stays the same when the exchange is renamed.", meta: {unit: "id"}, data_tests: [not_null]}
+      - {name: exchange_slug, description: "DefiLlama's URL name for the exchange, as of the newest reading that listed it.", meta: {unit: "id"}, data_tests: [not_null]}
+      - {name: exchange_name, description: "Exchange name.", meta: {unit: "text"}}
+      - {name: balance_usd, description: "USD value of every asset on NEAR in the exchange's labelled wallets, at DefiLlama's prices.", meta: {unit: "USD"}}
   - name: fct_receiver_sample_daily
     description: "Activity per receiver, estimated from evenly spaced sample blocks. These are estimates, and a day's sample density is in blocks_sampled."
     config:
@@ -692,7 +755,7 @@ models:
       - {name: account_id, description: "NEAR account.", meta: {unit: "account id"}, data_tests: [not_null]}
       - {name: transfers, description: "Transfers.", meta: {unit: "count"}}
       - {name: received_near, description: "NEAR and wNEAR received.", meta: {unit: "NEAR"}}
-      - {name: received_usd, description: "Value received, at transfer time.", meta: {unit: "USD"}}
+      - {name: received_usd, description: "Value received at transfer time, per FastNear. Empty on two days (6 NEAR each, the wallets' first receipts in September and October 2025) that FastNear did not value.", meta: {unit: "USD"}}
   - name: fct_revenue_page_emissions
     description: "NEAR's own year-to-date revenue and emissions. Kept apart from fct_supply_daily so the two can be compared."
     config:
@@ -745,12 +808,14 @@ models:
     columns:
       - {name: date_day, description: "UTC calendar day.", meta: {unit: "date"}, data_tests: [not_null]}
       - {name: total_supply_near, description: "Total supply at day end per NearBlocks.", meta: {unit: "NEAR"}}
-      - {name: circulating_supply_near, description: "Circulating supply per /v1/charts. The v3 stats endpoint reports this wrongly, so it is not used.", meta: {unit: "NEAR"}}
+      - {name: circulating_supply_near, description: "Every token not subject to a lockup at the day's close, built from the chain: see fct_circulating_supply_daily. Empty before transfers were enabled on 2020-10-13.", meta: {unit: "NEAR"}}
+      - {name: circulating_supply_near_nearblocks, description: "NearBlocks' /v1/charts figure, kept as a test of the column above. Stuck at 1,249,836,992 since 2025-08-27, when NearBlocks stopped computing it, and too high from 2024-08-12 to 2024-12-28, when its job was failing.", meta: {unit: "NEAR"}}
       - {name: onchain_supply_end_of_day_near, description: "Supply in the first block of the next day, read from the archival node. Empty where no daily block exists.", meta: {unit: "NEAR"}}
-      - {name: protocol_version, description: "Protocol version.", meta: {unit: "integer"}}
+      - {name: protocol_version, description: "latest_protocol_version in the block header: the version the block's producer supports, which can lead the version in force by days. 87 was in the header by the first block of 2026-11-04 and took effect at 11:46:29 UTC that day, with block 223012337. Date a change from registry/protocol_upgrades.csv or fct_protocol_config.", meta: {unit: "integer"}}
       - {name: gas_fee_near, description: "Gas fees per /v1/charts.", meta: {unit: "NEAR"}}
       - {name: supply_change_near, description: "Change in total supply from the previous day.", meta: {unit: "NEAR"}}
-      - {name: burn_near, description: "gas_fee_near times the gas burn rate. A lower bound, because the contract reward applies only to function-call gas.", meta: {unit: "NEAR"}}
+      - {name: contract_gas_reward_rate, description: "Share of function-call gas paid to the called contract on that day (the developer gas rebate): the newest protocol config read on or before the day, and the first read's 0.3 before 2026-10-28. A change that registry/protocol_upgrades.csv dates to the block holds from the next day, and its own day takes both rates weighted by the time each was in force, as if gas were spread evenly over the day: 0.147 on 2026-11-04, when protocol version 87 set the share to 0 at 11:46:29 UTC.", meta: {unit: "fraction"}}
+      - {name: burn_near, description: "Gas fees times one minus contract_gas_reward_rate. The rebate came only out of gas burnt executing function calls, so before protocol version 87 the real burn was more than 70% of gas and this is a lower bound. From 11:46:29 UTC on 2026-11-04 all gas burns; that day itself is the time-weighted mix.", meta: {unit: "NEAR"}}
       - {name: treasury_reward_near, description: "EpochRewards received by treasury.near that day, from wallet transfers. Part of minted_near, not on top of it.", meta: {unit: "NEAR"}}
       - {name: minted_near, description: "supply_change_near plus burn_near: issuance implied by the chain.", meta: {unit: "NEAR"}}
       - {name: minted_annualized_rate, description: "minted_near times 365, divided by total supply. Noisy for a single day.", meta: {unit: "fraction per year"}}
@@ -773,7 +838,7 @@ models:
       - {name: amount_token, description: "Signed amount in whole tokens.", meta: {unit: "token units"}}
       - {name: share_of_top_100, description: "Share of the balance held by the top 100. Not a share of total supply.", meta: {unit: "fraction"}}
   - name: fct_validator_epoch
-    description: "Validator set per epoch. An epoch read after it ended has final production counts; a nightly read of the current epoch is partial."
+    description: "Validator set per epoch, for the epoch in force at the first block of each UTC day plus the current epoch read each night. NEAR runs about three epochs a day, so this is a daily sample of epochs, not every epoch. The archival node answers from 2026-04-19 and returns UNKNOWN_EPOCH for earlier epochs, so there is no history before then. An epoch read after it ended has final production counts; a nightly read of the current epoch is partial."
     config:
       meta: {grain: "epoch_height, validator_account_id", sources: "RPC validators"}
     data_tests:
@@ -795,7 +860,7 @@ models:
       - {name: endorsements_expected, description: "Chunk endorsements expected.", meta: {unit: "count"}}
       - {name: read_from, description: "nightly for a mid-epoch read, archival for an epoch read after it ended.", meta: {unit: "text"}}
   - name: fct_validator_summary
-    description: "Decentralization per epoch: validator count, stake concentration and Nakamoto coefficients."
+    description: "Decentralization per epoch: validator count, stake concentration and Nakamoto coefficients. One epoch per day, the one in force at the day's first block, plus the current epoch read each night: see fct_validator_epoch. History starts on 2026-04-19."
     config:
       meta: {grain: "epoch_height", sources: "fct_validator_epoch, dim_block_day"}
     data_tests:
@@ -841,11 +906,12 @@ models:
       - {name: transfers, description: "Transfers.", meta: {unit: "count"}}
       - {name: counterparties, description: "Distinct counterparties.", meta: {unit: "count"}}
       - {name: amount_token, description: "Signed amount in whole tokens.", meta: {unit: "token units"}}
-      - {name: amount_usd, description: "Signed value at transfer time, per FastNear.", meta: {unit: "USD"}}
+      - {name: amount_usd, description: "Signed value at transfer time, per FastNear, summed over the transfers it valued only.", meta: {unit: "USD"}}
+      - {name: amount_usd_estimated, description: "Signed value summed over every transfer, taking FastNear's figure where there is one and the day's closing price for the rest of the NEAR and wNEAR transfers; see fct_wallet_transfers.amount_usd_estimated.", meta: {unit: "USD"}}
   - name: fct_wallet_holdings
-    description: "Point in time: tokens and native NEAR per tracked account, per snapshot. This cannot be backfilled, so history starts with the first snapshot."
+    description: "Point in time: tokens and native NEAR per tracked account, per snapshot. This cannot be backfilled, so history starts with the first snapshot. Symbol and decimals come from registry/tokens.csv where a token is listed, then from its contract's ft_metadata, which the nightly job reads for up to 2,000 tokens a night, then from the price list that prices the token (metadata_source says which). A list counts whole tokens with its own decimals, so its price and its decimals belong together, and the lists matched the contract on every token read so far; the test token_decimals_lists_match_contracts fails if that stops. A contract that has answered is final, even with an error, so no list fills in behind it. A token with none of the three keeps empty symbol, amount_token and decimals: nothing is guessed. Earlier snapshots convert too, because the latest answer for a token applies to all of them. value_usd multiplies amount_token by the price read in the same snapshot, joined on token_id from fct_token_prices, and value_status says why a row has none. Sum value_usd, not amount_token times price_usd: those rows include prices that would read $46.5B for one meme token at v2.ref-finance.near."
     config:
-      meta: {grain: "snapshot_date, account_id, token_id", sources: "FastNear /v1/account/{id}/full"}
+      meta: {grain: "snapshot_date, account_id, token_id", sources: "FastNear /v1/account/{id}/full, registry/tokens.csv, 1Click, Rhea, RPC ft_metadata"}
     data_tests:
       - unique_grain: {arguments: {columns: ["snapshot_date", "account_id", "token_id"]}}
       - min_rows: {arguments: {n: 100}}
@@ -853,12 +919,20 @@ models:
       - {name: snapshot_date, description: "Date the source was read.", meta: {unit: "date"}, data_tests: [not_null]}
       - {name: account_id, description: "NEAR account.", meta: {unit: "account id"}, data_tests: [not_null]}
       - {name: token_id, description: "Token contract, or Intents asset id.", meta: {unit: "token id"}, data_tests: [not_null]}
-      - {name: symbol, description: "Token symbol.", meta: {unit: "text"}}
+      - {name: symbol, description: "Token symbol. Where metadata_source is ft_metadata or price_list this is the contract's or the list's own claim, so a token calling itself USDC need not be USDC. Group by token_id, and treat this as untrusted text when displaying it.", meta: {unit: "text"}}
       - {name: balance_raw, description: "Balance in the token's smallest unit, as a string so no digits are lost.", meta: {unit: "raw units"}}
-      - {name: amount_token, description: "Signed amount in whole tokens.", meta: {unit: "token units"}}
+      - {name: amount_token, description: "Amount in whole tokens: balance_raw over 10 to the power of decimals, as a double. Empty where decimals are unknown. Where metadata_source is ft_metadata the decimals are the contract's own claim too.", meta: {unit: "token units"}}
+      - {name: decimals, description: "Token decimals: 24 for native NEAR, then the registry's figure, then the contract's ft_metadata answer, then the decimals of the price list that prices the token.", meta: {unit: "integer"}}
+      - {name: metadata_source, description: "Where symbol and decimals came from: native, registry, ft_metadata or price_list. Empty if the token has none of them.", meta: {unit: "text"}, data_tests: [{accepted_values: {arguments: {values: ["native", "registry", "ft_metadata", "price_list"]}}}]}
       - {name: last_update_height, description: "Block of the last balance change.", meta: {unit: "blocks"}}
+      - {name: price_usd, description: "The token's price from fct_token_prices, read in the same snapshot and matched on token_id. It stays here on rows that get no value, so a thin price can be seen. Never multiply it by amount_token yourself without checking value_status.", meta: {unit: "USD per token"}}
+      - {name: price_source, description: "Which list price_usd came from: oneclick or rhea. Native NEAR shows the source of wrap.near's price.", meta: {unit: "text"}, data_tests: [{accepted_values: {arguments: {values: ["oneclick", "rhea"]}}}]}
+      - {name: price_date, description: "When price_usd was last set, as far as its list shows: 1Click's priceUpdatedAt, or for Rhea the first read showing this exact price. Earlier than snapshot_date means a price that has stopped changing.", meta: {unit: "date"}}
+      - {name: price_depth_usd, description: "Assets with a vetted price opposite this token in Rhea's pools, from fct_token_prices.depth_usd. Empty only where the token has no price.", meta: {unit: "USD"}}
+      - {name: value_usd, description: "amount_token times price_usd, where value_status is valued, and otherwise empty. Unvetted tokens are capped by depth, so this column is safe to sum. Rests on the contract's own decimals where metadata_source is ft_metadata, and on the list's where it is price_list.", meta: {unit: "USD"}, data_tests: [{in_range: {arguments: {low: 0, high: 1000000000}}}]}
+      - {name: value_status, description: "Why the row has a value or not, checked in this order. no_price: no list has a positive price in this snapshot. no_decimals: decimals are unknown, which the metadata backlog clears. decimals_disagree: the list counts whole tokens with other decimals than the holding, so the price would be off by powers of ten. sources_disagree: 1Click and Rhea are more than price_disagreement_pct (20) apart, and nothing here says which is right. thin_price: an unvetted token whose position would be worth more than price_depth_multiple (3) times price_depth_usd. valued: value_usd is filled.", meta: {unit: "text"}, data_tests: [not_null, {accepted_values: {arguments: {values: ["valued", "no_price", "no_decimals", "decimals_disagree", "sources_disagree", "thin_price"]}}}]}
   - name: fct_wallet_transfers
-    description: "Every transfer touching a crawled wallet. Amounts are signed from the wallet's point of view, so outflows are negative."
+    description: "Every transfer touching a crawled wallet. Amounts are signed from the wallet's point of view, so outflows are negative. The day the newest crawl ran on is left out until the next crawl, like every daily series."
     config:
       meta: {grain: "account_id, block_height, transaction_id, receipt_id, action_index, log_index, transfer_index, asset_id, amount_raw", sources: "FastNear Transfers API"}
     data_tests:
@@ -880,7 +954,9 @@ models:
       - {name: method_name, description: "Contract method, if any.", meta: {unit: "text"}}
       - {name: amount_raw, description: "Signed amount in the token's smallest unit, as a string so no digits are lost.", meta: {unit: "raw units"}}
       - {name: amount_token, description: "Signed amount in whole tokens.", meta: {unit: "token units"}}
-      - {name: amount_usd, description: "Signed value at transfer time, per FastNear.", meta: {unit: "USD"}}
+      - {name: amount_usd, description: "Signed value at transfer time, per FastNear, which gives it for some transfers only.", meta: {unit: "USD"}}
+      - {name: amount_usd_estimated, description: "amount_usd where FastNear gave one; otherwise, for native NEAR and wNEAR, amount_token times the day's closing price from fct_market_daily. Other tokens stay empty. On transfers FastNear did value, the close-price figure was within 1.9% of it on the median transfer and within 7.7% on nine in ten.", meta: {unit: "USD"}}
+      - {name: usd_basis, description: "transfer_time where amount_usd is FastNear's, daily_close where amount_usd_estimated is the close-price figure, empty where there is neither.", meta: {unit: "text"}, data_tests: [{accepted_values: {arguments: {values: ["transfer_time", "daily_close"]}}}]}
       - {name: transaction_id, description: "Transaction hash. Empty for protocol transfers with no transaction, such as epoch rewards to treasury.near.", meta: {unit: "hash"}}
       - {name: receipt_id, description: "Receipt id.", meta: {unit: "hash"}}
       - {name: action_index, description: "Action position in the receipt.", meta: {unit: "integer"}}
@@ -1032,3 +1108,144 @@ models:
       - {name: usd_out, description: "Value sent by the wallet, at transfer time, as a positive number.", meta: {unit: "USD"}}
       - {name: first_seen, description: "First transfer between the two.", meta: {unit: "date"}}
       - {name: last_seen, description: "Latest transfer between the two.", meta: {unit: "date"}}
+
+# These hold the rules on made-up rows, because at a pin with few decimals most of them have no real rows to fail on.
+unit_tests:
+  - name: token_prices_follow_the_token_id_and_prefer_oneclick
+    model: fct_token_prices
+    given:
+      - input: ref('stg_oneclick__tokens')
+        rows:
+          - {snapshot_date: "2026-11-05", near_token_id: "wrap.near", symbol: "wNEAR", price_usd: 4.0, price_date: "2026-11-05", decimals: 24}
+          - {snapshot_date: "2026-11-05", near_token_id: "usdc.real", symbol: "USDC", price_usd: 1.0, price_date: "2026-11-05", decimals: 6}
+          - {snapshot_date: "2026-11-05", near_token_id: "eth-0xabc.omft.near", symbol: "USDC", blockchain: "eth", contract_address: "0xabc", price_usd: 1.0, price_date: "2026-11-05", decimals: 6}
+          - {snapshot_date: "2026-11-05", near_token_id: "zec.omft.near", symbol: "ZEC", price_usd: 500.0, price_date: "2026-11-05", decimals: 8}
+          - {snapshot_date: "2026-11-05", near_token_id: "zec.omft.near", symbol: "ZEC", price_usd: 500.0, price_date: "2026-11-05", decimals: 8}
+          - {snapshot_date: "2026-11-05", near_token_id: "zero.near", symbol: "ZERO", price_usd: 0.0, price_date: "2026-11-02", decimals: 18}
+          - {snapshot_date: "2026-11-05", near_token_id: "nolist.near", symbol: "NOLIST", price_usd: 0.0, price_date: "2026-11-02", decimals: 18}
+          - {snapshot_date: "2026-11-05", near_token_id: null, symbol: "USDC", blockchain: "sol", price_usd: 1.0, price_date: "2026-11-05", decimals: 6}
+      - input: ref('stg_rhea__token_prices')
+        rows:
+          - {snapshot_date: "2026-11-05", token_id: "wrap.near", symbol: "wNEAR", price_usd: 5.0, price_first_read: "2026-11-05", decimals: 24}
+          - {snapshot_date: "2026-11-05", token_id: "usdc-fake.near", symbol: "USDC", price_usd: 0.25, price_first_read: "2026-11-01", decimals: 18}
+          - {snapshot_date: "2026-11-05", token_id: "zero.near", symbol: "ZERO", price_usd: 0.5, price_first_read: "2026-11-03", decimals: 18}
+          - {snapshot_date: "2026-11-05", token_id: "lst.near", symbol: "LST", price_usd: 8.0, price_first_read: "2026-11-05", decimals: 6}
+          - {snapshot_date: "2026-11-05", token_id: "dead.near", symbol: "DEAD", price_usd: 0.0, price_first_read: "2026-11-01", decimals: 18}
+      - input: ref('stg_rhea__pool_legs')
+        rows:
+          - {snapshot_date: "2026-11-05", pool_id: "1", token_id: "usdc.real", amount_raw: "100000000"}
+          - {snapshot_date: "2026-11-05", pool_id: "1", token_id: "usdc-fake.near", amount_raw: "400000000000000000000"}
+          - {snapshot_date: "2026-11-05", pool_id: "2", token_id: "lst.near", amount_raw: "2000000"}
+          - {snapshot_date: "2026-11-05", pool_id: "2", token_id: "usdc-fake.near", amount_raw: "64000000000000000000"}
+          - {snapshot_date: "2026-11-05", pool_id: "3", token_id: "usdc-fake.near", amount_raw: "1000000000000000000000000"}
+          - {snapshot_date: "2026-11-05", pool_id: "3", token_id: "zero.near", amount_raw: "1000000000000000000000000"}
+      - input: ref('tokens')
+        rows:
+          - {token_id: "lst.near", symbol: "LST", decimals: 6}
+    expect:
+      rows:
+        # wrap.near: both list it, 1Click wins, and the gap is a percent of the larger price.
+        - {token_id: "wrap.near", price_usd: 4.0, price_source: "oneclick", price_date: "2026-11-05", price_usd_oneclick: 4.0, price_usd_rhea: 5.0, price_gap_pct: 20.0, depth_usd: 0.0, is_vetted: true}
+        # native NEAR copies wrap.near.
+        - {token_id: "native:near", price_usd: 4.0, price_source: "oneclick", price_date: "2026-11-05", price_usd_oneclick: 4.0, price_usd_rhea: 5.0, price_gap_pct: 20.0, depth_usd: 0.0, is_vetted: true}
+        - {token_id: "usdc.real", price_usd: 1.0, price_source: "oneclick", price_date: "2026-11-05", price_usd_oneclick: 1.0, price_usd_rhea: null, price_gap_pct: null, depth_usd: 0.0, is_vetted: true}
+        # A bridged asset is priced through the contract its asset id names.
+        - {token_id: "eth-0xabc.omft.near", price_usd: 1.0, price_source: "oneclick", price_date: "2026-11-05", price_usd_oneclick: 1.0, price_usd_rhea: null, price_gap_pct: null, depth_usd: 0.0, is_vetted: true}
+        # Two asset ids naming one contract make one row.
+        - {token_id: "zec.omft.near", price_usd: 500.0, price_source: "oneclick", price_date: "2026-11-05", price_usd_oneclick: 500.0, price_usd_rhea: null, price_gap_pct: null, depth_usd: 0.0, is_vetted: true}
+        # Calling itself USDC gets it nothing: this is its own Rhea price, with 100 of USDC and 16 of the vetted LST opposite. Pool 3 has no vetted side.
+        - {token_id: "usdc-fake.near", price_usd: 0.25, price_source: "rhea", price_date: "2026-11-01", price_usd_oneclick: null, price_usd_rhea: 0.25, price_gap_pct: null, depth_usd: 116.0, is_vetted: false}
+        # 1Click's 0 means no price, so Rhea's is used.
+        - {token_id: "zero.near", price_usd: 0.5, price_source: "rhea", price_date: "2026-11-03", price_usd_oneclick: null, price_usd_rhea: 0.5, price_gap_pct: null, depth_usd: 0.0, is_vetted: false}
+        # On the registry but only Rhea prices it, so it is vetted and counts toward usdc-fake.near's depth. Its own pool has nothing vetted opposite.
+        - {token_id: "lst.near", price_usd: 8.0, price_source: "rhea", price_date: "2026-11-05", price_usd_oneclick: null, price_usd_rhea: 8.0, price_gap_pct: null, depth_usd: 0.0, is_vetted: true}
+  - name: wallet_holdings_value_only_what_the_rules_allow
+    model: fct_wallet_holdings
+    given:
+      - input: ref('stg_fastnear__holdings')
+        rows:
+          - {snapshot_date: "2026-11-05", account_id: "a.near", token_id: "native:near", balance_raw: "2000000000000000000000000"}
+          - {snapshot_date: "2026-11-05", account_id: "a.near", token_id: "wrap.near", balance_raw: "1000000000000000000000000"}
+          - {snapshot_date: "2026-10-28", account_id: "a.near", token_id: "wrap.near", balance_raw: "1000000000000000000000000"}
+          - {snapshot_date: "2026-11-05", account_id: "a.near", token_id: "registry.near", balance_raw: "1000000"}
+          - {snapshot_date: "2026-11-05", account_id: "a.near", token_id: "usdc-fake.near", balance_raw: "40000000"}
+          - {snapshot_date: "2026-11-05", account_id: "a.near", token_id: "at-limit.near", balance_raw: "3000000"}
+          - {snapshot_date: "2026-11-05", account_id: "a.near", token_id: "lambo.near", balance_raw: "90000000000000"}
+          - {snapshot_date: "2026-11-05", account_id: "a.near", token_id: "no-pool.near", balance_raw: "1000000"}
+          - {snapshot_date: "2026-11-05", account_id: "a.near", token_id: "no-price.near", balance_raw: "1000000"}
+          - {snapshot_date: "2026-11-05", account_id: "a.near", token_id: "no-decimals.near", balance_raw: "1000000"}
+          - {snapshot_date: "2026-11-05", account_id: "a.near", token_id: "nothing.near", balance_raw: "1000000"}
+          - {snapshot_date: "2026-11-05", account_id: "a.near", token_id: "other-decimals.near", balance_raw: "1000000"}
+          - {snapshot_date: "2026-11-05", account_id: "a.near", token_id: "far-apart.near", balance_raw: "1000000"}
+          - {snapshot_date: "2026-11-05", account_id: "a.near", token_id: "near-enough.near", balance_raw: "1000000"}
+          # Three tokens no contract has answered for: two priced by a list that carries decimals, one whose contract answered with an error.
+          - {snapshot_date: "2026-11-05", account_id: "a.near", token_id: "listed-by-rhea.near", balance_raw: "2000000"}
+          - {snapshot_date: "2026-11-05", account_id: "a.near", token_id: "listed-by-1click.near", balance_raw: "300000000"}
+          - {snapshot_date: "2026-11-05", account_id: "a.near", token_id: "contract-said-no.near", balance_raw: "1000000"}
+      - input: ref('dim_token')
+        rows:
+          - {token_id: "wrap.near", symbol: "wNEAR", decimals: 24}
+          - {token_id: "registry.near", symbol: "REG", decimals: 6}
+      - input: ref('stg_rpc__ft_metadata')
+        rows:
+          - {token_id: "usdc-fake.near", symbol: "USDC", decimals: 6, is_latest: true}
+          - {token_id: "at-limit.near", symbol: "EDGE", decimals: 6, is_latest: true}
+          - {token_id: "lambo.near", symbol: "LAMBO", decimals: 6, is_latest: true}
+          - {token_id: "no-pool.near", symbol: "NOPOOL", decimals: 6, is_latest: true}
+          - {token_id: "no-price.near", symbol: "NOPRICE", decimals: 6, is_latest: true}
+          - {token_id: "other-decimals.near", symbol: "OTHER", decimals: 24, is_latest: true}
+          - {token_id: "far-apart.near", symbol: "FAR", decimals: 6, is_latest: true}
+          - {token_id: "near-enough.near", symbol: "NEAR1", decimals: 6, is_latest: true}
+          # The contract answered with an error, so its row is final and no list fills in behind it.
+          - {token_id: "contract-said-no.near", symbol: null, decimals: null, is_latest: true}
+      - input: ref('stg_oneclick__tokens')
+        rows:
+          - {near_token_id: "listed-by-1click.near", symbol: "ONE", decimals: 8}
+      - input: ref('stg_rhea__token_prices')
+        rows:
+          - {token_id: "listed-by-rhea.near", symbol: "RHE", decimals: 6}
+          - {token_id: "contract-said-no.near", symbol: "NO", decimals: 6}
+      - input: ref('fct_token_prices')
+        rows:
+          - {snapshot_date: "2026-11-05", token_id: "native:near", price_usd: 4.0, price_source: "oneclick", price_date: "2026-11-05", price_decimals: 24, depth_usd: 1000.0, is_vetted: true}
+          - {snapshot_date: "2026-11-05", token_id: "wrap.near", price_usd: 4.0, price_source: "oneclick", price_date: "2026-11-05", price_decimals: 24, depth_usd: 1000.0, is_vetted: true}
+          # USDC's own price is here, so a join on symbol would value usdc-fake.near at 1.0 and not 0.25.
+          - {snapshot_date: "2026-11-05", token_id: "usdc.real", price_usd: 1.0, price_source: "oneclick", price_date: "2026-11-05", price_decimals: 6, depth_usd: 1000.0, is_vetted: true}
+          - {snapshot_date: "2026-11-05", token_id: "registry.near", price_usd: 500.0, price_source: "rhea", price_date: "2026-11-05", price_decimals: 6, depth_usd: 1.0, is_vetted: true}
+          - {snapshot_date: "2026-11-05", token_id: "usdc-fake.near", price_usd: 0.25, price_source: "rhea", price_date: "2026-11-01", price_decimals: 6, depth_usd: 100.0, is_vetted: false}
+          - {snapshot_date: "2026-11-05", token_id: "at-limit.near", price_usd: 1.0, price_source: "rhea", price_date: "2026-11-05", price_decimals: 6, depth_usd: 1.0, is_vetted: false}
+          - {snapshot_date: "2026-11-05", token_id: "lambo.near", price_usd: 512.0, price_source: "rhea", price_date: "2026-11-01", price_decimals: 6, depth_usd: 4.0, is_vetted: false}
+          - {snapshot_date: "2026-11-05", token_id: "no-pool.near", price_usd: 1.0, price_source: "rhea", price_date: "2026-11-05", price_decimals: 6, depth_usd: 0.0, is_vetted: false}
+          - {snapshot_date: "2026-11-05", token_id: "no-decimals.near", price_usd: 1.0, price_source: "rhea", price_date: "2026-11-05", price_decimals: 6, depth_usd: 100.0, is_vetted: false}
+          - {snapshot_date: "2026-11-05", token_id: "other-decimals.near", price_usd: 1.0, price_source: "rhea", price_date: "2026-11-05", price_decimals: 18, depth_usd: 100.0, is_vetted: false}
+          - {snapshot_date: "2026-11-05", token_id: "far-apart.near", price_usd: 1.0, price_source: "oneclick", price_date: "2026-11-05", price_decimals: 6, price_gap_pct: 30.0, depth_usd: 100.0, is_vetted: true}
+          - {snapshot_date: "2026-11-05", token_id: "near-enough.near", price_usd: 1.0, price_source: "oneclick", price_date: "2026-11-05", price_decimals: 6, price_gap_pct: 19.0, depth_usd: 100.0, is_vetted: true}
+          - {snapshot_date: "2026-11-05", token_id: "listed-by-rhea.near", price_usd: 1.0, price_source: "rhea", price_date: "2026-11-05", price_decimals: 6, depth_usd: 100.0, is_vetted: false}
+          - {snapshot_date: "2026-11-05", token_id: "listed-by-1click.near", price_usd: 2.0, price_source: "oneclick", price_date: "2026-11-05", price_decimals: 8, depth_usd: 0.0, is_vetted: true}
+          - {snapshot_date: "2026-11-05", token_id: "contract-said-no.near", price_usd: 1.0, price_source: "rhea", price_date: "2026-11-05", price_decimals: 6, depth_usd: 100.0, is_vetted: false}
+    expect:
+      rows:
+        - {snapshot_date: "2026-11-05", token_id: "native:near", price_usd: 4.0, price_source: "oneclick", price_date: "2026-11-05", value_usd: 8.0, value_status: "valued"}
+        - {snapshot_date: "2026-11-05", token_id: "wrap.near", price_usd: 4.0, price_source: "oneclick", price_date: "2026-11-05", value_usd: 4.0, value_status: "valued"}
+        # The price of 11-05 does not reach back to a snapshot with no price of its own.
+        - {snapshot_date: "2026-10-28", token_id: "wrap.near", price_usd: null, price_source: null, price_date: null, value_usd: null, value_status: "no_price"}
+        # On the registry, so a position far beyond its depth still counts.
+        - {snapshot_date: "2026-11-05", token_id: "registry.near", price_usd: 500.0, price_source: "rhea", price_date: "2026-11-05", value_usd: 500.0, value_status: "valued"}
+        # Valued at its own 0.25, not at USDC's 1.0.
+        - {snapshot_date: "2026-11-05", token_id: "usdc-fake.near", price_usd: 0.25, price_source: "rhea", price_date: "2026-11-01", value_usd: 10.0, value_status: "valued"}
+        # Exactly three times its depth is the last value allowed.
+        - {snapshot_date: "2026-11-05", token_id: "at-limit.near", price_usd: 1.0, price_source: "rhea", price_date: "2026-11-05", value_usd: 3.0, value_status: "valued"}
+        # 90M tokens at a price set by $4 of wNEAR would read $46B. The price stays visible and the value stays empty.
+        - {snapshot_date: "2026-11-05", token_id: "lambo.near", price_usd: 512.0, price_source: "rhea", price_date: "2026-11-01", value_usd: null, value_status: "thin_price"}
+        - {snapshot_date: "2026-11-05", token_id: "no-pool.near", price_usd: 1.0, price_source: "rhea", price_date: "2026-11-05", value_usd: null, value_status: "thin_price"}
+        - {snapshot_date: "2026-11-05", token_id: "no-price.near", price_usd: null, price_source: null, price_date: null, value_usd: null, value_status: "no_price"}
+        - {snapshot_date: "2026-11-05", token_id: "no-decimals.near", price_usd: 1.0, price_source: "rhea", price_date: "2026-11-05", value_usd: null, value_status: "no_decimals"}
+        - {snapshot_date: "2026-11-05", token_id: "nothing.near", price_usd: null, price_source: null, price_date: null, value_usd: null, value_status: "no_price"}
+        - {snapshot_date: "2026-11-05", token_id: "other-decimals.near", price_usd: 1.0, price_source: "rhea", price_date: "2026-11-05", value_usd: null, value_status: "decimals_disagree"}
+        - {snapshot_date: "2026-11-05", token_id: "far-apart.near", price_usd: 1.0, price_source: "oneclick", price_date: "2026-11-05", value_usd: null, value_status: "sources_disagree"}
+        - {snapshot_date: "2026-11-05", token_id: "near-enough.near", price_usd: 1.0, price_source: "oneclick", price_date: "2026-11-05", value_usd: 1.0, value_status: "valued"}
+        # The lists' own decimals stand in where no contract has answered: 2 tokens at 1.0, and 3 tokens at 2.0.
+        - {snapshot_date: "2026-11-05", token_id: "listed-by-rhea.near", price_usd: 1.0, price_source: "rhea", price_date: "2026-11-05", value_usd: 2.0, value_status: "valued"}
+        - {snapshot_date: "2026-11-05", token_id: "listed-by-1click.near", price_usd: 2.0, price_source: "oneclick", price_date: "2026-11-05", value_usd: 6.0, value_status: "valued"}
+        # A contract that answered without decimals is final, so Rhea's 6 does not fill in.
+        - {snapshot_date: "2026-11-05", token_id: "contract-said-no.near", price_usd: 1.0, price_source: "rhea", price_date: "2026-11-05", value_usd: null, value_status: "no_decimals"}

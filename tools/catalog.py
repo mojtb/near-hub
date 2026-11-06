@@ -18,15 +18,15 @@ ROOT = Path(__file__).resolve().parents[1]
 DOCS = ROOT / "docs"
 AREAS = [
     ("Calendar and registry", ["dim_date", "dim_entity", "dim_token", "dim_event", "dim_block_day", "dim_protocol", "dim_source"]),
-    ("Chain usage, supply and parameters", ["fct_chain_daily", "fct_supply_daily", "fct_protocol_config", "fct_contract_daily", "fct_receiver_sample_daily"]),
+    ("Chain usage, supply and parameters", ["fct_chain_daily", "fct_supply_daily", "fct_circulating_supply_daily", "fct_protocol_config", "fct_contract_daily", "fct_receiver_sample_daily"]),
     ("NEAR Intents and revenue", ["fct_intents_daily", "fct_intents_chain_daily", "fct_intents_asset_daily", "fct_intents_fee_channels",
                                   "fct_intents_dashboard_readings", "fct_dune_intents_asset_daily", "fct_dune_dashboard_results",
                                   "fct_intents_1click_daily", "fct_intents_1click_channel_daily", "fct_intents_1click_pair_daily", "fct_intents_1click_route_daily", "fct_intents_1click_size_daily",
                                   "fct_intents_1click_fee_recipient_daily", "fct_revenue_capture", "fct_revenue_page_emissions", "fct_revenue_page_monthly"]),
     ("Wallets", ["fct_wallet_transfers", "fct_wallet_flows_daily", "fct_wallet_counterparties", "fct_revenue_inflows_daily", "fct_wallet_balance_daily", "fct_wallet_holdings", "fct_token_holders"]),
     ("Security and staking", ["fct_validator_epoch", "fct_validator_summary", "fct_chain_signatures_daily", "fct_mpc_state", "fct_mpc_participants", "fct_mpc_operators", "fct_lst_snapshot"]),
-    ("Capital and DeFi", ["fct_protocol_tvl_daily", "fct_protocol_fees_snapshot", "fct_stablecoin_assets", "fct_yield_pools"]),
-    ("Market and peers", ["fct_market_daily", "fct_peer_daily", "fct_etf_nrr_daily", "fct_etf_nrr_chain_daily"]),
+    ("Capital and DeFi", ["fct_protocol_tvl_daily", "fct_exchange_balance_daily", "fct_protocol_fees_snapshot", "fct_stablecoin_assets", "fct_yield_pools"]),
+    ("Market and peers", ["fct_market_daily", "fct_token_prices", "fct_peer_daily", "fct_etf_nrr_daily", "fct_etf_nrr_chain_daily"]),
     ("Developers and governance", ["fct_dev_activity_weekly", "fct_repo_snapshot", "fct_catalog_projects", "fct_governance_threads", "fct_governance_proposals", "fct_venear_snapshot"]),
     ("Data quality", ["dq_reconciliation", "dq_freshness", "dq_revisions", "dq_ingest_runs", "dq_provenance"]),
 ]
@@ -123,23 +123,27 @@ def expected_results(con: duckdb.DuckDBPyConnection) -> str:
     """The README block that `make verify` holds to the warehouse. Each line is a question with its answer."""
     one = lambda sql: con.execute(sql).fetchone()
     tables, columns = one("select count(distinct table_name), count(*) from information_schema.columns where table_schema = 'gold'")
-    as_of = one("select max(as_of) from gold.dq_freshness")[0]
+    as_of, last_day = one("select max(as_of), mode(latest_data_day) from gold.dq_freshness")
+    dune_day = one("select max(snapshot_date) - 1 from gold.fct_intents_dashboard_readings")[0]
     agree, differ = one("select count(*) filter (where status = 'agree'), count(*) filter (where status = 'differs') from gold.dq_reconciliation")
     minted, config = one("select value_a, value_b from gold.dq_reconciliation where check_id = 'issuance_rate_30d_minted_vs_config'")
     llama, wallets = one("select value_a, value_b from gold.dq_reconciliation where check_id = 'intents_revenue_all_time_defillama_vs_wallets'")
     nb, dune = one("select value_a, value_b from gold.dq_reconciliation where check_id = 'intents_volume_all_time_nearblocks_vs_dune_public'")
     participants, threshold = one("select participants, threshold from gold.fct_mpc_state order by snapshot_date desc limit 1")
-    channel, share = one("select referral, share_of_listed_fees from gold.fct_intents_fee_channels order by snapshot_date desc, channel_rank limit 1")
+    channel, share, channel_read = one("select referral, share_of_listed_fees, snapshot_date from gold.fct_intents_fee_channels order by snapshot_date desc, channel_rank limit 1")
     chain_shares, fund_shares = one("select value_a, value_b from gold.dq_reconciliation where check_id = 'etf_nrr_shares_chain_vs_fund'")
+    circulating, circulating_share = one("select circulating_supply_near, circulating_share_of_total from gold.fct_circulating_supply_daily order by date_day desc limit 1")
+    live_chain, live_nearblocks = one("select value_a, value_b from gold.dq_reconciliation where check_id = 'circulating_supply_last_live_day_chain_vs_nearblocks'")
     lines = [
-        f"- Data through: **{as_of}**",
+        f"- Data through: **{last_day}**, the last full UTC day before the pinned snapshot of {as_of}; `dq_freshness` lists any source that ends earlier",
         f"- Gold tables and columns: **{tables}** and **{columns}**",
         f"- Reconciliation: **{agree}** comparisons agree, **{differ}** differ, each with a written explanation",
         f"- Issuance over the last 30 days, from supply change plus burn: **{minted * 100:.2f}%** a year, against **{config * 100:.2f}%** in the protocol config",
+        f"- Circulating supply, built from NEAR's lockup contracts: **{circulating / 1e6:,.2f}M** NEAR, **{circulating_share * 100:.2f}%** of total supply; on 2025-08-26, the last day NearBlocks computed its own, **{live_chain / 1e6:,.2f}M** against **{live_nearblocks / 1e6:,.2f}M**",
         f"- Captured Intents revenue, all time: **${llama / 1e6:.2f}M** per DefiLlama, **${wallets / 1e6:.2f}M** rebuilt from wallet transfers",
-        f"- Public Intents volume, all time: **${nb / 1e9:.2f}B** per NearBlocks, **${dune / 1e9:.2f}B** per NEAR's dashboard on Dune",
+        f"- Public Intents volume, all time through {dune_day}, the last full day of the latest Dune reading: **${nb / 1e9:.2f}B** per NearBlocks, **${dune / 1e9:.2f}B** per NEAR's dashboard on Dune",
         f"- Chain Signatures: **{participants}** MPC participants with a threshold of **{threshold}**",
-        f"- Largest Intents fee channel, per NEAR's dashboard on Dune: **{channel}**, with **{share * 100:.0f}%** of listed fees",
+        f"- Largest Intents fee channel, per NEAR's dashboard on Dune as read on {channel_read}: **{channel}**, with **{share * 100:.0f}%** of listed fees",
         f"- Bitwise NEAR ETF shares outstanding: **{fund_shares:,.0f}** per the fund, **{chain_shares:,.0f}** counted on chain in whole baskets",
     ]
     return "\n".join(lines)

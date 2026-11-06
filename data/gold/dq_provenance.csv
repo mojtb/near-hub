@@ -4,77 +4,91 @@ coinbase,candles,2026-11-02,1,785,,https://api.exchange.coinbase.com/products/NE
 coinbase,candles,2026-11-03,1,784,,https://api.exchange.coinbase.com/products/NEAR-USD/candles,2026-11-03T09:02:08+00:00,2026-11-03T09:02:08+00:00,""
 coinbase,candles,2026-11-04,1,785,,https://api.exchange.coinbase.com/products/NEAR-USD/candles,2026-11-04T08:37:42+00:00,2026-11-04T08:37:42+00:00,""
 coinbase,candles,2026-11-05,1,787,,https://api.exchange.coinbase.com/products/NEAR-USD/candles,2026-11-05T09:02:35+00:00,2026-11-05T09:02:35+00:00,""
+coinbase,candles,2026-11-06,1,791,,https://api.exchange.coinbase.com/products/NEAR-USD/candles,2026-11-06T09:04:40+00:00,2026-11-06T09:04:40+00:00,""
 coinmetrics,asset_metrics,2026-11-01,7,2234521,,https://community-api.coinmetrics.io/v4/timeseries/asset-metrics,2026-11-01T20:23:12+00:00,2026-11-01T20:23:49+00:00,""
 coinmetrics,asset_metrics,2026-11-02,7,15569,,https://community-api.coinmetrics.io/v4/timeseries/asset-metrics,2026-11-02T07:59:19+00:00,2026-11-02T07:59:58+00:00,""
 coinmetrics,asset_metrics,2026-11-03,7,15571,,https://community-api.coinmetrics.io/v4/timeseries/asset-metrics,2026-11-03T09:02:08+00:00,2026-11-03T09:02:47+00:00,""
 coinmetrics,asset_metrics,2026-11-04,7,15572,,https://community-api.coinmetrics.io/v4/timeseries/asset-metrics,2026-11-04T08:37:42+00:00,2026-11-04T08:38:21+00:00,""
 coinmetrics,asset_metrics,2026-11-05,7,15576,,https://community-api.coinmetrics.io/v4/timeseries/asset-metrics,2026-11-05T09:02:35+00:00,2026-11-05T09:03:14+00:00,""
+coinmetrics,asset_metrics,2026-11-06,7,15577,,https://community-api.coinmetrics.io/v4/timeseries/asset-metrics,2026-11-06T09:04:41+00:00,2026-11-06T09:05:19+00:00,""
 defillama,chain_dex_volume,2026-10-28,1,84252,,https://api.llama.fi/overview/dexs/near,2026-11-01T20:18:23+00:00,2026-11-01T20:18:23+00:00,"imported from the near-deflation-clock scaffold (re-serialised JSON, original fetch time 2026-10-28T23:25:32+00:00)"
 defillama,chain_dex_volume,2026-11-01,7,976538,,https://api.llama.fi/overview/dexs/Aptos,2026-11-01T20:18:13+00:00,2026-11-01T20:18:19+00:00,""
 defillama,chain_dex_volume,2026-11-02,7,980994,,https://api.llama.fi/overview/dexs/Aptos,2026-11-02T07:46:58+00:00,2026-11-02T07:47:01+00:00,""
 defillama,chain_dex_volume,2026-11-03,7,982541,,https://api.llama.fi/overview/dexs/Aptos,2026-11-03T08:00:31+00:00,2026-11-03T08:00:34+00:00,""
 defillama,chain_dex_volume,2026-11-04,7,983050,,https://api.llama.fi/overview/dexs/Aptos,2026-11-04T07:36:31+00:00,2026-11-04T07:36:35+00:00,""
 defillama,chain_dex_volume,2026-11-05,7,988660,,https://api.llama.fi/overview/dexs/Aptos,2026-11-05T07:59:08+00:00,2026-11-05T07:59:13+00:00,""
+defillama,chain_dex_volume,2026-11-06,7,989602,,https://api.llama.fi/overview/dexs/Aptos,2026-11-06T08:01:02+00:00,2026-11-06T08:01:08+00:00,""
 defillama,chain_fees,2026-10-28,1,58855,,https://api.llama.fi/overview/fees/near,2026-11-01T20:18:23+00:00,2026-11-01T20:18:23+00:00,"imported from the near-deflation-clock scaffold (re-serialised JSON, original fetch time 2026-10-28T23:25:30+00:00)"
 defillama,chain_fees,2026-11-01,14,5196489,,https://api.llama.fi/overview/fees/Aptos,2026-11-01T20:17:53+00:00,2026-11-01T20:18:12+00:00,""
 defillama,chain_fees,2026-11-02,14,5210737,,https://api.llama.fi/overview/fees/Aptos,2026-11-02T07:46:42+00:00,2026-11-02T07:46:57+00:00,""
 defillama,chain_fees,2026-11-03,14,5235120,,https://api.llama.fi/overview/fees/Aptos,2026-11-03T08:00:23+00:00,2026-11-03T08:00:30+00:00,""
 defillama,chain_fees,2026-11-04,14,5247254,,https://api.llama.fi/overview/fees/Aptos,2026-11-04T07:36:23+00:00,2026-11-04T07:36:31+00:00,""
 defillama,chain_fees,2026-11-05,14,5270577,,https://api.llama.fi/overview/fees/Aptos,2026-11-05T07:58:55+00:00,2026-11-05T07:59:07+00:00,""
+defillama,chain_fees,2026-11-06,14,5298897,,https://api.llama.fi/overview/fees/Aptos,2026-11-06T08:00:47+00:00,2026-11-06T08:01:01+00:00,""
 defillama,chain_tvl,2026-10-28,1,90245,,https://api.llama.fi/v2/historicalChainTvl/Near,2026-11-01T20:18:23+00:00,2026-11-01T20:18:23+00:00,"imported from the near-deflation-clock scaffold (re-serialised JSON, original fetch time 2026-10-28T23:25:27+00:00)"
 defillama,chain_tvl,2026-11-01,7,491676,,https://api.llama.fi/v2/historicalChainTvl/Aptos,2026-11-01T20:17:47+00:00,2026-11-01T20:17:50+00:00,""
 defillama,chain_tvl,2026-11-02,7,491929,,https://api.llama.fi/v2/historicalChainTvl/Aptos,2026-11-02T07:46:38+00:00,2026-11-02T07:46:41+00:00,""
 defillama,chain_tvl,2026-11-03,7,492182,,https://api.llama.fi/v2/historicalChainTvl/Aptos,2026-11-03T08:00:18+00:00,2026-11-03T08:00:21+00:00,""
 defillama,chain_tvl,2026-11-04,7,492435,,https://api.llama.fi/v2/historicalChainTvl/Aptos,2026-11-04T07:36:20+00:00,2026-11-04T07:36:22+00:00,""
 defillama,chain_tvl,2026-11-05,7,492688,,https://api.llama.fi/v2/historicalChainTvl/Aptos,2026-11-05T07:58:50+00:00,2026-11-05T07:58:54+00:00,""
+defillama,chain_tvl,2026-11-06,7,492941,,https://api.llama.fi/v2/historicalChainTvl/Aptos,2026-11-06T08:00:41+00:00,2026-11-06T08:00:46+00:00,""
 defillama,chains,2026-11-01,1,57828,,https://api.llama.fi/v2/chains,2026-11-01T20:17:47+00:00,2026-11-01T20:17:47+00:00,""
 defillama,chains,2026-11-02,1,57895,,https://api.llama.fi/v2/chains,2026-11-02T07:46:37+00:00,2026-11-02T07:46:37+00:00,""
 defillama,chains,2026-11-03,1,57856,,https://api.llama.fi/v2/chains,2026-11-03T08:00:18+00:00,2026-11-03T08:00:18+00:00,""
 defillama,chains,2026-11-04,1,57839,,https://api.llama.fi/v2/chains,2026-11-04T07:36:19+00:00,2026-11-04T07:36:19+00:00,""
 defillama,chains,2026-11-05,1,57833,,https://api.llama.fi/v2/chains,2026-11-05T07:58:49+00:00,2026-11-05T07:58:49+00:00,""
+defillama,chains,2026-11-06,1,57952,,https://api.llama.fi/v2/chains,2026-11-06T08:00:41+00:00,2026-11-06T08:00:41+00:00,""
 defillama,intents_fees,2026-10-28,4,251429,,https://api.llama.fi/summary/fees/near-intents?dataType=dailyFees,2026-11-01T20:18:23+00:00,2026-11-01T20:18:23+00:00,"imported from the near-deflation-clock scaffold (re-serialised JSON, original fetch time 2026-10-28T23:25:25+00:00)"
 defillama,intents_fees,2026-11-01,5,181990,,https://api.llama.fi/summary/fees/near-intents,2026-11-01T20:18:21+00:00,2026-11-01T20:18:25+00:00,""
 defillama,intents_fees,2026-11-02,5,182285,,https://api.llama.fi/summary/fees/near-intents,2026-11-02T07:47:02+00:00,2026-11-02T07:47:05+00:00,""
 defillama,intents_fees,2026-11-03,5,182614,,https://api.llama.fi/summary/fees/near-intents,2026-11-03T08:00:35+00:00,2026-11-03T08:00:38+00:00,""
 defillama,intents_fees,2026-11-04,5,182890,,https://api.llama.fi/summary/fees/near-intents,2026-11-04T07:36:36+00:00,2026-11-04T07:36:38+00:00,""
 defillama,intents_fees,2026-11-05,5,183229,,https://api.llama.fi/summary/fees/near-intents,2026-11-05T07:59:14+00:00,2026-11-05T07:59:17+00:00,""
+defillama,intents_fees,2026-11-06,5,183562,,https://api.llama.fi/summary/fees/near-intents,2026-11-06T08:01:10+00:00,2026-11-06T08:01:13+00:00,""
 defillama,intents_volume,2026-10-28,1,84105,,https://api.llama.fi/summary/dexs/near-intents,2026-11-01T20:18:23+00:00,2026-11-01T20:18:23+00:00,"imported from the near-deflation-clock scaffold (re-serialised JSON, original fetch time 2026-10-28T23:25:16+00:00)"
 defillama,intents_volume,2026-11-01,1,49768,,https://api.llama.fi/summary/dexs/near-intents,2026-11-01T20:18:20+00:00,2026-11-01T20:18:20+00:00,""
 defillama,intents_volume,2026-11-02,1,49831,,https://api.llama.fi/summary/dexs/near-intents,2026-11-02T07:47:01+00:00,2026-11-02T07:47:01+00:00,""
 defillama,intents_volume,2026-11-03,1,49910,,https://api.llama.fi/summary/dexs/near-intents,2026-11-03T08:00:35+00:00,2026-11-03T08:00:35+00:00,""
 defillama,intents_volume,2026-11-04,1,49983,,https://api.llama.fi/summary/dexs/near-intents,2026-11-04T07:36:35+00:00,2026-11-04T07:36:35+00:00,""
 defillama,intents_volume,2026-11-05,1,50052,,https://api.llama.fi/summary/dexs/near-intents,2026-11-05T07:59:13+00:00,2026-11-05T07:59:13+00:00,""
+defillama,intents_volume,2026-11-06,1,50121,,https://api.llama.fi/summary/dexs/near-intents,2026-11-06T08:01:09+00:00,2026-11-06T08:01:09+00:00,""
 defillama,peer_price,2026-11-01,49,634114,,https://coins.llama.fi/chart/coingecko:aptos,2026-11-01T20:42:59+00:00,2026-11-01T20:43:49+00:00,""
 defillama,peer_price,2026-11-02,7,5950,,https://coins.llama.fi/chart/coingecko:aptos,2026-11-02T07:48:22+00:00,2026-11-02T07:48:25+00:00,""
 defillama,peer_price,2026-11-03,7,5949,,https://coins.llama.fi/chart/coingecko:aptos,2026-11-03T08:01:06+00:00,2026-11-03T08:01:09+00:00,""
 defillama,peer_price,2026-11-04,7,5948,,https://coins.llama.fi/chart/coingecko:aptos,2026-11-04T07:37:11+00:00,2026-11-04T07:37:14+00:00,""
 defillama,peer_price,2026-11-05,7,5938,,https://coins.llama.fi/chart/coingecko:aptos,2026-11-05T08:00:09+00:00,2026-11-05T08:00:13+00:00,""
+defillama,peer_price,2026-11-06,7,5931,,https://coins.llama.fi/chart/coingecko:aptos,2026-11-06T08:02:29+00:00,2026-11-06T08:02:34+00:00,""
 defillama,protocol_tvl,2026-11-01,25,1106738,22601,https://api.llama.fi/protocol/allstake,2026-11-01T20:18:52+00:00,2026-11-01T20:22:29+00:00,trimmed: metadata plus the chainTvls.Near.tvl series
 defillama,protocol_tvl,2026-11-02,25,1107946,22626,https://api.llama.fi/protocol/allstake,2026-11-02T07:47:13+00:00,2026-11-02T07:48:18+00:00,trimmed: metadata plus the chainTvls.Near.tvl series
 defillama,protocol_tvl,2026-11-03,25,1109152,22651,https://api.llama.fi/protocol/allstake,2026-11-03T08:00:39+00:00,2026-11-03T08:01:02+00:00,trimmed: metadata plus the chainTvls.Near.tvl series
 defillama,protocol_tvl,2026-11-04,25,1110361,22676,https://api.llama.fi/protocol/allstake,2026-11-04T07:36:40+00:00,2026-11-04T07:37:07+00:00,trimmed: metadata plus the chainTvls.Near.tvl series
 defillama,protocol_tvl,2026-11-05,25,1111589,22701,https://api.llama.fi/protocol/allstake,2026-11-05T07:59:19+00:00,2026-11-05T08:00:04+00:00,trimmed: metadata plus the chainTvls.Near.tvl series
+defillama,protocol_tvl,2026-11-06,25,1112795,22726,https://api.llama.fi/protocol/allstake,2026-11-06T08:01:20+00:00,2026-11-06T08:02:24+00:00,trimmed: metadata plus the chainTvls.Near.tvl series
 defillama,protocols,2026-11-01,1,74154,46,https://api.llama.fi/protocols,2026-11-01T20:18:30+00:00,2026-11-01T20:18:30+00:00,trimmed: only protocols listing Near in chains
 defillama,protocols,2026-11-02,1,74182,46,https://api.llama.fi/protocols,2026-11-02T07:47:06+00:00,2026-11-02T07:47:06+00:00,trimmed: only protocols listing Near in chains
 defillama,protocols,2026-11-03,1,74339,46,https://api.llama.fi/protocols,2026-11-03T08:00:38+00:00,2026-11-03T08:00:38+00:00,trimmed: only protocols listing Near in chains
 defillama,protocols,2026-11-04,1,74325,46,https://api.llama.fi/protocols,2026-11-04T07:36:38+00:00,2026-11-04T07:36:38+00:00,trimmed: only protocols listing Near in chains
 defillama,protocols,2026-11-05,1,76014,47,https://api.llama.fi/protocols,2026-11-05T07:59:18+00:00,2026-11-05T07:59:18+00:00,trimmed: only protocols listing Near in chains
+defillama,protocols,2026-11-06,1,76051,47,https://api.llama.fi/protocols,2026-11-06T08:01:13+00:00,2026-11-06T08:01:13+00:00,trimmed: only protocols listing Near in chains
 defillama,stablecoin_assets,2026-11-01,1,106960,269,https://stablecoins.llama.fi/stablecoins,2026-11-01T20:22:35+00:00,2026-11-01T20:22:35+00:00,trimmed: chainCirculating limited to peer chains
 defillama,stablecoin_assets,2026-11-02,1,106980,269,https://stablecoins.llama.fi/stablecoins,2026-11-02T07:48:21+00:00,2026-11-02T07:48:21+00:00,trimmed: chainCirculating limited to peer chains
 defillama,stablecoin_assets,2026-11-03,1,108231,274,https://stablecoins.llama.fi/stablecoins,2026-11-03T08:01:06+00:00,2026-11-03T08:01:06+00:00,trimmed: chainCirculating limited to peer chains
 defillama,stablecoin_assets,2026-11-04,1,108902,276,https://stablecoins.llama.fi/stablecoins,2026-11-04T07:37:11+00:00,2026-11-04T07:37:11+00:00,trimmed: chainCirculating limited to peer chains
 defillama,stablecoin_assets,2026-11-05,1,108782,276,https://stablecoins.llama.fi/stablecoins,2026-11-05T08:00:08+00:00,2026-11-05T08:00:08+00:00,trimmed: chainCirculating limited to peer chains
+defillama,stablecoin_assets,2026-11-06,1,109183,276,https://stablecoins.llama.fi/stablecoins,2026-11-06T08:02:28+00:00,2026-11-06T08:02:28+00:00,trimmed: chainCirculating limited to peer chains
 defillama,stablecoin_chain,2026-10-28,1,470131,,https://stablecoins.llama.fi/stablecoincharts/Near,2026-11-01T20:18:23+00:00,2026-11-01T20:18:23+00:00,"imported from the near-deflation-clock scaffold (re-serialised JSON, original fetch time 2026-10-28T23:25:35+00:00)"
 defillama,stablecoin_chain,2026-11-01,7,4270829,,https://stablecoins.llama.fi/stablecoincharts/Aptos,2026-11-01T20:22:31+00:00,2026-11-01T20:22:35+00:00,""
 defillama,stablecoin_chain,2026-11-02,7,4274765,,https://stablecoins.llama.fi/stablecoincharts/Aptos,2026-11-02T07:48:18+00:00,2026-11-02T07:48:21+00:00,""
 defillama,stablecoin_chain,2026-11-03,7,4278982,,https://stablecoins.llama.fi/stablecoincharts/Aptos,2026-11-03T08:01:02+00:00,2026-11-03T08:01:05+00:00,""
 defillama,stablecoin_chain,2026-11-04,7,4283087,,https://stablecoins.llama.fi/stablecoincharts/Aptos,2026-11-04T07:37:07+00:00,2026-11-04T07:37:10+00:00,""
 defillama,stablecoin_chain,2026-11-05,7,4287260,,https://stablecoins.llama.fi/stablecoincharts/Aptos,2026-11-05T08:00:05+00:00,2026-11-05T08:00:08+00:00,""
+defillama,stablecoin_chain,2026-11-06,7,4305142,,https://stablecoins.llama.fi/stablecoincharts/Aptos,2026-11-06T08:02:25+00:00,2026-11-06T08:02:28+00:00,""
 defillama,yield_pools,2026-11-01,1,7341,10,https://yields.llama.fi/pools,2026-11-01T20:22:41+00:00,2026-11-01T20:22:41+00:00,trimmed: only pools with chain Near
 defillama,yield_pools,2026-11-02,1,7351,10,https://yields.llama.fi/pools,2026-11-02T07:48:25+00:00,2026-11-02T07:48:25+00:00,trimmed: only pools with chain Near
 defillama,yield_pools,2026-11-03,1,7328,10,https://yields.llama.fi/pools,2026-11-03T08:01:09+00:00,2026-11-03T08:01:09+00:00,trimmed: only pools with chain Near
 defillama,yield_pools,2026-11-04,1,7370,10,https://yields.llama.fi/pools,2026-11-04T07:37:15+00:00,2026-11-04T07:37:15+00:00,trimmed: only pools with chain Near
 defillama,yield_pools,2026-11-05,1,7308,10,https://yields.llama.fi/pools,2026-11-05T08:00:14+00:00,2026-11-05T08:00:14+00:00,trimmed: only pools with chain Near
+defillama,yield_pools,2026-11-06,1,7329,10,https://yields.llama.fi/pools,2026-11-06T08:02:34+00:00,2026-11-06T08:02:34+00:00,trimmed: only pools with chain Near
 dune_public,near_intents_dashboard,2026-11-01,1,5778,118,https://dune.com/near/near-intents,2026-11-01T20:46:52+00:00,2026-11-01T20:46:52+00:00,"read once from the public page by an AI-driven browser at the repository owner's request; not through the API; tile values are as displayed, rounded to whole dollars"
 dune_public,query_results,2026-11-01,1,184996,2541,https://dune.com/public/execution,2026-11-01T23:22:13+00:00,2026-11-01T23:22:13+00:00,"Derived from the NEAR Intents dashboard on Dune by @near, https://dune.com/near/near-intents. Read by hand: the repository's owner opened the query's public page in their own browser without logging in and copied the request and response from the Network tab; not through the API"
 fastnear,account_full,2026-10-28,4,99747,,https://api.fastnear.com/v1/account/1csfundsadmin.sputnik-dao.near/full,2026-11-01T20:18:23+00:00,2026-11-01T20:18:23+00:00,"imported from the near-deflation-clock scaffold (re-serialised JSON, original fetch time 2026-10-28T23:25:49+00:00)"
@@ -83,284 +97,343 @@ fastnear,account_full,2026-11-02,12,1196282,,https://api.fastnear.com/v1/account
 fastnear,account_full,2026-11-03,12,1200655,,https://api.fastnear.com/v1/account/1csfundsadmin.sputnik-dao.near/full,2026-11-03T08:02:58+00:00,2026-11-03T08:03:00+00:00,""
 fastnear,account_full,2026-11-04,12,1205412,,https://api.fastnear.com/v1/account/1csfundsadmin.sputnik-dao.near/full,2026-11-04T07:38:34+00:00,2026-11-04T07:38:37+00:00,""
 fastnear,account_full,2026-11-05,12,1208414,,https://api.fastnear.com/v1/account/1csfundsadmin.sputnik-dao.near/full,2026-11-05T08:02:15+00:00,2026-11-05T08:02:19+00:00,""
+fastnear,account_full,2026-11-06,12,1214852,,https://api.fastnear.com/v1/account/1csfundsadmin.sputnik-dao.near/full,2026-11-06T08:06:58+00:00,2026-11-06T08:07:00+00:00,""
 fastnear,ft_top_holders,2026-11-01,7,62452,,https://api.fastnear.com/v1/ft/17208628f84f5d6ad33f0da3bbbeb27ffcb398eac501a31bd6ad2011e36133a1/top,2026-11-01T20:48:47+00:00,2026-11-01T20:49:24+00:00,""
 fastnear,ft_top_holders,2026-11-02,7,62467,,https://api.fastnear.com/v1/ft/17208628f84f5d6ad33f0da3bbbeb27ffcb398eac501a31bd6ad2011e36133a1/top,2026-11-02T07:50:56+00:00,2026-11-02T07:51:35+00:00,""
 fastnear,ft_top_holders,2026-11-03,7,62514,,https://api.fastnear.com/v1/ft/17208628f84f5d6ad33f0da3bbbeb27ffcb398eac501a31bd6ad2011e36133a1/top,2026-11-03T08:03:00+00:00,2026-11-03T08:03:01+00:00,""
 fastnear,ft_top_holders,2026-11-04,7,62613,,https://api.fastnear.com/v1/ft/17208628f84f5d6ad33f0da3bbbeb27ffcb398eac501a31bd6ad2011e36133a1/top,2026-11-04T07:38:37+00:00,2026-11-04T07:38:38+00:00,""
 fastnear,ft_top_holders,2026-11-05,7,62766,,https://api.fastnear.com/v1/ft/17208628f84f5d6ad33f0da3bbbeb27ffcb398eac501a31bd6ad2011e36133a1/top,2026-11-05T08:02:19+00:00,2026-11-05T08:02:20+00:00,""
+fastnear,ft_top_holders,2026-11-06,7,62702,,https://api.fastnear.com/v1/ft/17208628f84f5d6ad33f0da3bbbeb27ffcb398eac501a31bd6ad2011e36133a1/top,2026-11-06T08:07:00+00:00,2026-11-06T08:07:02+00:00,""
 fastnear,transfers,2026-11-01,131,8728221,12134,https://transfers.main.fastnear.com/v0/transfers,2026-11-01T20:31:32+00:00,2026-11-01T21:01:04+00:00,""
 fastnear,transfers,2026-11-02,6,188536,248,https://transfers.main.fastnear.com/v0/transfers,2026-11-02T07:58:44+00:00,2026-11-02T07:59:16+00:00,""
 fastnear,transfers,2026-11-03,6,209359,276,https://transfers.main.fastnear.com/v0/transfers,2026-11-03T08:03:35+00:00,2026-11-03T08:03:36+00:00,""
 fastnear,transfers,2026-11-04,6,240147,317,https://transfers.main.fastnear.com/v0/transfers,2026-11-04T07:38:48+00:00,2026-11-04T07:38:49+00:00,""
 fastnear,transfers,2026-11-05,6,261843,346,https://transfers.main.fastnear.com/v0/transfers,2026-11-05T08:03:07+00:00,2026-11-05T08:03:08+00:00,""
+fastnear,transfers,2026-11-06,8,289604,383,https://transfers.main.fastnear.com/v0/transfers,2026-11-06T08:07:21+00:00,2026-11-06T08:07:23+00:00,""
 fastnear,tx_counts,2026-11-01,1,2632,47,https://tx.main.fastnear.com/v0/account,2026-11-01T20:31:29+00:00,2026-11-01T20:31:29+00:00,assembled: txs_count from one call per registry account
 fastnear,tx_counts,2026-11-02,1,2687,48,https://tx.main.fastnear.com/v0/account,2026-11-02T07:58:43+00:00,2026-11-02T07:58:43+00:00,assembled: txs_count from one call per registry account
 fastnear,tx_counts,2026-11-03,1,2687,48,https://tx.main.fastnear.com/v0/account,2026-11-03T08:03:35+00:00,2026-11-03T08:03:35+00:00,assembled: txs_count from one call per registry account
 fastnear,tx_counts,2026-11-04,1,2687,48,https://tx.main.fastnear.com/v0/account,2026-11-04T07:38:48+00:00,2026-11-04T07:38:48+00:00,assembled: txs_count from one call per registry account
 fastnear,tx_counts,2026-11-05,1,2687,48,https://tx.main.fastnear.com/v0/account,2026-11-05T08:03:06+00:00,2026-11-05T08:03:06+00:00,assembled: txs_count from one call per registry account
+fastnear,tx_counts,2026-11-06,1,3520,63,https://tx.main.fastnear.com/v0/account,2026-11-06T08:07:20+00:00,2026-11-06T08:07:20+00:00,assembled: txs_count from one call per registry account
 github,commit_activity,2026-11-01,18,50629,,https://api.github.com/repos/MystenLabs/sui/stats/commit_activity,2026-11-01T20:29:00+00:00,2026-11-01T20:29:34+00:00,""
 github,commit_activity,2026-11-02,18,50629,,https://api.github.com/repos/MystenLabs/sui/stats/commit_activity,2026-11-02T07:48:39+00:00,2026-11-02T07:48:52+00:00,""
 github,commit_activity,2026-11-03,18,50638,,https://api.github.com/repos/MystenLabs/sui/stats/commit_activity,2026-11-03T08:01:24+00:00,2026-11-03T08:02:13+00:00,""
 github,commit_activity,2026-11-04,18,50645,,https://api.github.com/repos/MystenLabs/sui/stats/commit_activity,2026-11-04T07:37:29+00:00,2026-11-04T07:37:41+00:00,""
 github,commit_activity,2026-11-05,18,50648,,https://api.github.com/repos/MystenLabs/sui/stats/commit_activity,2026-11-05T08:00:28+00:00,2026-11-05T08:01:18+00:00,""
+github,commit_activity,2026-11-06,18,50652,,https://api.github.com/repos/MystenLabs/sui/stats/commit_activity,2026-11-06T08:02:48+00:00,2026-11-06T08:03:38+00:00,""
+github,commits_weekly,2026-11-05,18,40046,936,https://api.github.com/repos/MystenLabs/sui/commits,2026-11-05T19:54:29+00:00,2026-11-05T19:58:10+00:00,"assembled: 968 commits on the default branch from the commits list, counted per week by committer date, with authors reduced to a count per week"
+github,commits_weekly,2026-11-06,18,40047,936,https://api.github.com/repos/MystenLabs/sui/commits,2026-11-06T08:03:49+00:00,2026-11-06T08:06:07+00:00,"assembled: 970 commits on the default branch from the commits list, counted per week by committer date, with authors reduced to a count per week"
 github,contributors,2026-11-01,18,749751,,https://api.github.com/repos/MystenLabs/sui/stats/contributors,2026-11-01T20:29:56+00:00,2026-11-01T20:55:40+00:00,""
 github,contributors,2026-11-02,18,749843,2585,https://api.github.com/repos/MystenLabs/sui/stats/contributors,2026-11-02T07:48:54+00:00,2026-11-02T07:49:21+00:00,trimmed: author identities and empty weeks removed
 github,contributors,2026-11-03,18,750674,2585,https://api.github.com/repos/MystenLabs/sui/stats/contributors,2026-11-03T08:02:15+00:00,2026-11-03T08:02:40+00:00,trimmed: author identities and empty weeks removed
 github,contributors,2026-11-04,18,751034,2586,https://api.github.com/repos/MystenLabs/sui/stats/contributors,2026-11-04T07:37:43+00:00,2026-11-04T07:38:17+00:00,trimmed: author identities and empty weeks removed
 github,contributors,2026-11-05,18,751460,2587,https://api.github.com/repos/MystenLabs/sui/stats/contributors,2026-11-05T08:01:20+00:00,2026-11-05T08:01:57+00:00,trimmed: author identities and empty weeks removed
+github,contributors,2026-11-06,18,751748,2586,https://api.github.com/repos/MystenLabs/sui/stats/contributors,2026-11-06T08:06:09+00:00,2026-11-06T08:06:40+00:00,trimmed: author identities and empty weeks removed
 github,repos,2026-11-01,18,124637,,https://api.github.com/repos/MystenLabs/sui,2026-11-01T20:28:46+00:00,2026-11-01T20:28:59+00:00,""
 github,repos,2026-11-02,18,124655,,https://api.github.com/repos/MystenLabs/sui,2026-11-02T07:48:26+00:00,2026-11-02T07:48:39+00:00,""
 github,repos,2026-11-03,18,124655,,https://api.github.com/repos/MystenLabs/sui,2026-11-03T08:01:10+00:00,2026-11-03T08:01:22+00:00,""
 github,repos,2026-11-04,18,124658,,https://api.github.com/repos/MystenLabs/sui,2026-11-04T07:37:15+00:00,2026-11-04T07:37:28+00:00,""
 github,repos,2026-11-05,18,124658,,https://api.github.com/repos/MystenLabs/sui,2026-11-05T08:00:14+00:00,2026-11-05T08:00:27+00:00,""
+github,repos,2026-11-06,18,124658,,https://api.github.com/repos/MystenLabs/sui,2026-11-06T08:02:35+00:00,2026-11-06T08:02:47+00:00,""
 gov,search,2026-11-01,5,306467,,https://gov.near.org/search.json,2026-11-01T20:22:46+00:00,2026-11-01T20:22:53+00:00,""
 gov,search,2026-11-02,5,306467,,https://gov.near.org/search.json,2026-11-02T07:49:23+00:00,2026-11-02T07:49:30+00:00,""
 gov,search,2026-11-03,5,306479,,https://gov.near.org/search.json,2026-11-03T08:02:42+00:00,2026-11-03T08:02:50+00:00,""
 gov,search,2026-11-04,5,306479,,https://gov.near.org/search.json,2026-11-04T07:38:18+00:00,2026-11-04T07:38:26+00:00,""
 gov,search,2026-11-05,5,306479,,https://gov.near.org/search.json,2026-11-05T08:01:59+00:00,2026-11-05T08:02:06+00:00,""
+gov,search,2026-11-06,5,306481,,https://gov.near.org/search.json,2026-11-06T08:06:41+00:00,2026-11-06T08:06:49+00:00,""
 gov,topics,2026-11-01,4,379080,,https://gov.near.org/t/41140.json,2026-11-01T20:22:55+00:00,2026-11-01T20:23:01+00:00,""
 gov,topics,2026-11-02,4,379115,,https://gov.near.org/t/41140.json,2026-11-02T07:49:32+00:00,2026-11-02T07:49:38+00:00,""
 gov,topics,2026-11-03,4,379149,,https://gov.near.org/t/41140.json,2026-11-03T08:02:52+00:00,2026-11-03T08:02:58+00:00,""
 gov,topics,2026-11-04,4,379157,,https://gov.near.org/t/41140.json,2026-11-04T07:38:28+00:00,2026-11-04T07:38:34+00:00,""
 gov,topics,2026-11-05,4,379150,,https://gov.near.org/t/41140.json,2026-11-05T08:02:09+00:00,2026-11-05T08:02:14+00:00,""
+gov,topics,2026-11-06,4,379150,,https://gov.near.org/t/41140.json,2026-11-06T08:06:51+00:00,2026-11-06T08:06:57+00:00,""
 intents_explorer,daily_tally,2026-11-03,34,3543191,574841,https://explorer.near-intents.org/api/v0/transactions,2026-11-03T08:04:57+00:00,2026-11-03T09:01:19+00:00,assembled: counted from this UTC day's rows; no row or wallet address is kept
 intents_explorer,daily_tally,2026-11-04,27,3434026,578474,https://explorer.near-intents.org/api/v0/transactions,2026-11-04T07:40:44+00:00,2026-11-04T08:36:42+00:00,assembled: counted from this UTC day's rows; no row or wallet address is kept
 intents_explorer,daily_tally,2026-11-05,32,3010959,569439,https://explorer.near-intents.org/api/v0/transactions,2026-11-05T08:06:00+00:00,2026-11-05T09:01:11+00:00,assembled: counted from this UTC day's rows; no row or wallet address is kept
+intents_explorer,daily_tally,2026-11-06,50,2393322,539232,https://explorer.near-intents.org/api/v0/transactions,2026-11-06T08:12:33+00:00,2026-11-06T09:03:39+00:00,assembled: counted from this UTC day's rows; no row or wallet address is kept
 metapool,metrics,2026-11-01,1,6465,,https://validators.narwallets.com/metrics,2026-11-01T20:28:45+00:00,2026-11-01T20:28:45+00:00,""
 metapool,metrics,2026-11-02,1,6488,,https://validators.narwallets.com/metrics,2026-11-02T07:46:37+00:00,2026-11-02T07:46:37+00:00,""
 metapool,metrics,2026-11-03,1,6487,,https://validators.narwallets.com/metrics,2026-11-03T08:00:18+00:00,2026-11-03T08:00:18+00:00,""
 metapool,metrics,2026-11-04,1,6494,,https://validators.narwallets.com/metrics,2026-11-04T07:36:19+00:00,2026-11-04T07:36:19+00:00,""
 metapool,metrics,2026-11-05,1,6478,,https://validators.narwallets.com/metrics,2026-11-05T07:58:49+00:00,2026-11-05T07:58:49+00:00,""
+metapool,metrics,2026-11-06,1,6484,,https://validators.narwallets.com/metrics,2026-11-06T08:00:41+00:00,2026-11-06T08:00:41+00:00,""
 metapool,metrics_parsed,2026-11-01,1,6885,,https://validators.narwallets.com/metrics,2026-11-01T20:28:45+00:00,2026-11-01T20:28:45+00:00,derived from metrics/prometheus by ingest/parsers/prometheus.py
 metapool,metrics_parsed,2026-11-02,1,6904,,https://validators.narwallets.com/metrics,2026-11-02T07:46:37+00:00,2026-11-02T07:46:37+00:00,derived from metrics/prometheus by ingest/parsers/prometheus.py
 metapool,metrics_parsed,2026-11-03,1,6905,,https://validators.narwallets.com/metrics,2026-11-03T08:00:18+00:00,2026-11-03T08:00:18+00:00,derived from metrics/prometheus by ingest/parsers/prometheus.py
 metapool,metrics_parsed,2026-11-04,1,6908,,https://validators.narwallets.com/metrics,2026-11-04T07:36:19+00:00,2026-11-04T07:36:19+00:00,derived from metrics/prometheus by ingest/parsers/prometheus.py
 metapool,metrics_parsed,2026-11-05,1,6896,,https://validators.narwallets.com/metrics,2026-11-05T07:58:49+00:00,2026-11-05T07:58:49+00:00,derived from metrics/prometheus by ingest/parsers/prometheus.py
+metapool,metrics_parsed,2026-11-06,1,6902,,https://validators.narwallets.com/metrics,2026-11-06T08:00:41+00:00,2026-11-06T08:00:41+00:00,derived from metrics/prometheus by ingest/parsers/prometheus.py
 nearblocks,address_stats,2026-10-28,1,62098,,https://api.nearblocks.io/v3/address-stats?limit=365,2026-11-01T20:18:23+00:00,2026-11-01T20:18:23+00:00,"imported from the near-deflation-clock scaffold (re-serialised JSON, original fetch time 2026-10-28T23:27:12+00:00)"
 nearblocks,address_stats,2026-11-01,1,1856,,https://api.nearblocks.io/v3/address-stats,2026-11-01T20:24:31+00:00,2026-11-01T20:24:31+00:00,""
 nearblocks,address_stats,2026-11-02,1,1856,,https://api.nearblocks.io/v3/address-stats,2026-11-02T08:34:12+00:00,2026-11-02T08:34:12+00:00,""
 nearblocks,address_stats,2026-11-03,1,1855,,https://api.nearblocks.io/v3/address-stats,2026-11-03T09:03:41+00:00,2026-11-03T09:03:41+00:00,""
 nearblocks,address_stats,2026-11-04,1,1855,,https://api.nearblocks.io/v3/address-stats,2026-11-04T08:39:15+00:00,2026-11-04T08:39:15+00:00,""
 nearblocks,address_stats,2026-11-05,1,1855,,https://api.nearblocks.io/v3/address-stats,2026-11-05T09:04:08+00:00,2026-11-05T09:04:08+00:00,""
+nearblocks,address_stats,2026-11-06,1,1856,,https://api.nearblocks.io/v3/address-stats,2026-11-06T09:06:14+00:00,2026-11-06T09:06:14+00:00,""
 nearblocks,block_stats,2026-11-01,1,88472,,https://api.nearblocks.io/v3/block-stats,2026-11-01T20:24:52+00:00,2026-11-01T20:24:52+00:00,""
 nearblocks,block_stats,2026-11-02,1,3400,,https://api.nearblocks.io/v3/block-stats,2026-11-02T08:34:33+00:00,2026-11-02T08:34:33+00:00,""
 nearblocks,block_stats,2026-11-03,1,3400,,https://api.nearblocks.io/v3/block-stats,2026-11-03T09:04:24+00:00,2026-11-03T09:04:24+00:00,""
 nearblocks,block_stats,2026-11-04,1,3400,,https://api.nearblocks.io/v3/block-stats,2026-11-04T08:40:00+00:00,2026-11-04T08:40:00+00:00,""
 nearblocks,block_stats,2026-11-05,1,3398,,https://api.nearblocks.io/v3/block-stats,2026-11-05T09:04:51+00:00,2026-11-05T09:04:51+00:00,""
+nearblocks,block_stats,2026-11-06,1,3400,,https://api.nearblocks.io/v3/block-stats,2026-11-06T09:06:57+00:00,2026-11-06T09:06:57+00:00,""
 nearblocks,blocks_24h,2026-10-28,1,204,,https://api.nearblocks.io/v3/blocks/stats,2026-11-01T20:18:23+00:00,2026-11-01T20:18:23+00:00,"imported from the near-deflation-clock scaffold (re-serialised JSON, original fetch time 2026-10-28T23:26:19+00:00)"
 nearblocks,blocks_24h,2026-11-01,1,178,,https://api.nearblocks.io/v3/blocks/stats,2026-11-01T20:23:17+00:00,2026-11-01T20:23:17+00:00,""
 nearblocks,blocks_24h,2026-11-02,1,178,,https://api.nearblocks.io/v3/blocks/stats,2026-11-02T08:32:58+00:00,2026-11-02T08:32:58+00:00,""
 nearblocks,blocks_24h,2026-11-03,1,178,,https://api.nearblocks.io/v3/blocks/stats,2026-11-03T09:02:59+00:00,2026-11-03T09:02:59+00:00,""
 nearblocks,blocks_24h,2026-11-04,1,178,,https://api.nearblocks.io/v3/blocks/stats,2026-11-04T08:38:33+00:00,2026-11-04T08:38:33+00:00,""
 nearblocks,blocks_24h,2026-11-05,1,178,,https://api.nearblocks.io/v3/blocks/stats,2026-11-05T09:03:26+00:00,2026-11-05T09:03:26+00:00,""
+nearblocks,blocks_24h,2026-11-06,1,179,,https://api.nearblocks.io/v3/blocks/stats,2026-11-06T09:05:32+00:00,2026-11-06T09:05:32+00:00,""
 nearblocks,charts_v1,2026-10-28,1,1775995,,https://api.nearblocks.io/v1/charts,2026-11-01T20:18:23+00:00,2026-11-01T20:18:23+00:00,"imported from the near-deflation-clock scaffold (re-serialised JSON, original fetch time 2026-10-28T23:26:52+00:00)"
 nearblocks,charts_v1,2026-11-01,1,1535940,,https://api.nearblocks.io/v1/charts,2026-11-01T20:26:38+00:00,2026-11-01T20:26:38+00:00,legacy endpoint; full daily history from 2020-07-21
 nearblocks,charts_v1,2026-11-02,1,1536612,,https://api.nearblocks.io/v1/charts,2026-11-02T08:36:20+00:00,2026-11-02T08:36:20+00:00,legacy endpoint; full daily history from 2020-07-21
 nearblocks,charts_v1,2026-11-03,1,1537285,,https://api.nearblocks.io/v1/charts,2026-11-03T09:05:56+00:00,2026-11-03T09:05:56+00:00,legacy endpoint; full daily history from 2020-07-21
 nearblocks,charts_v1,2026-11-04,1,1537959,,https://api.nearblocks.io/v1/charts,2026-11-04T08:41:32+00:00,2026-11-04T08:41:32+00:00,legacy endpoint; full daily history from 2020-07-21
 nearblocks,charts_v1,2026-11-05,1,1538632,,https://api.nearblocks.io/v1/charts,2026-11-05T09:06:24+00:00,2026-11-05T09:06:24+00:00,legacy endpoint; full daily history from 2020-07-21
+nearblocks,charts_v1,2026-11-06,1,1539307,,https://api.nearblocks.io/v1/charts,2026-11-06T09:08:32+00:00,2026-11-06T09:08:32+00:00,legacy endpoint; full daily history from 2020-07-21
 nearblocks,contract_txns,2026-10-28,1,51080,,https://api.nearblocks.io/v3/accounts/v1.signer/stats/txns?limit=365,2026-11-01T20:18:23+00:00,2026-11-01T20:18:23+00:00,"imported from the near-deflation-clock scaffold (re-serialised JSON, original fetch time 2026-10-28T23:28:15+00:00)"
 nearblocks,contract_txns,2026-11-01,39,1535472,,https://api.nearblocks.io/v3/accounts/0here.tg/stats/txns,2026-11-01T20:26:48+00:00,2026-11-01T20:33:28+00:00,""
 nearblocks,contract_txns,2026-11-02,39,64144,,https://api.nearblocks.io/v3/accounts/0here.tg/stats/txns,2026-11-02T08:36:29+00:00,2026-11-02T08:43:09+00:00,""
 nearblocks,contract_txns,2026-11-03,39,64140,,https://api.nearblocks.io/v3/accounts/0here.tg/stats/txns,2026-11-03T09:06:01+00:00,2026-11-03T09:11:24+00:00,""
 nearblocks,contract_txns,2026-11-04,39,64133,,https://api.nearblocks.io/v3/accounts/0here.tg/stats/txns,2026-11-04T08:41:37+00:00,2026-11-04T08:46:28+00:00,""
 nearblocks,contract_txns,2026-11-05,39,64129,,https://api.nearblocks.io/v3/accounts/0here.tg/stats/txns,2026-11-05T09:06:30+00:00,2026-11-05T09:11:22+00:00,""
+nearblocks,contract_txns,2026-11-06,54,620460,,https://api.nearblocks.io/v3/accounts/0-relay.hot.tg/stats/txns,2026-11-06T09:08:37+00:00,2026-11-06T09:16:02+00:00,""
 nearblocks,intents_accounts,2026-10-28,1,19732,,https://api.nearblocks.io/v3/intents/account-stats?limit=365,2026-11-01T20:18:23+00:00,2026-11-01T20:18:23+00:00,"imported from the near-deflation-clock scaffold (re-serialised JSON, original fetch time 2026-10-28T23:27:53+00:00)"
 nearblocks,intents_accounts,2026-11-01,1,539,,https://api.nearblocks.io/v3/intents/account-stats,2026-11-01T20:25:44+00:00,2026-11-01T20:25:44+00:00,""
 nearblocks,intents_accounts,2026-11-02,1,538,,https://api.nearblocks.io/v3/intents/account-stats,2026-11-02T08:35:26+00:00,2026-11-02T08:35:26+00:00,""
 nearblocks,intents_accounts,2026-11-03,1,537,,https://api.nearblocks.io/v3/intents/account-stats,2026-11-03T09:04:54+00:00,2026-11-03T09:04:54+00:00,""
 nearblocks,intents_accounts,2026-11-04,1,535,,https://api.nearblocks.io/v3/intents/account-stats,2026-11-04T08:40:30+00:00,2026-11-04T08:40:30+00:00,""
 nearblocks,intents_accounts,2026-11-05,1,534,,https://api.nearblocks.io/v3/intents/account-stats,2026-11-05T09:05:21+00:00,2026-11-05T09:05:21+00:00,""
+nearblocks,intents_accounts,2026-11-06,1,533,,https://api.nearblocks.io/v3/intents/account-stats,2026-11-06T09:07:27+00:00,2026-11-06T09:07:27+00:00,""
 nearblocks,intents_chains,2026-11-01,1,12785,,https://api.nearblocks.io/v3/intents/blockchain-stats,2026-11-01T20:26:06+00:00,2026-11-01T20:26:06+00:00,""
 nearblocks,intents_chains,2026-11-02,1,500,,https://api.nearblocks.io/v3/intents/blockchain-stats,2026-11-02T08:35:47+00:00,2026-11-02T08:35:47+00:00,""
 nearblocks,intents_chains,2026-11-03,1,500,,https://api.nearblocks.io/v3/intents/blockchain-stats,2026-11-03T09:05:06+00:00,2026-11-03T09:05:06+00:00,""
 nearblocks,intents_chains,2026-11-04,1,500,,https://api.nearblocks.io/v3/intents/blockchain-stats,2026-11-04T08:40:42+00:00,2026-11-04T08:40:42+00:00,""
 nearblocks,intents_chains,2026-11-05,1,500,,https://api.nearblocks.io/v3/intents/blockchain-stats,2026-11-05T09:05:33+00:00,2026-11-05T09:05:33+00:00,""
+nearblocks,intents_chains,2026-11-06,1,500,,https://api.nearblocks.io/v3/intents/blockchain-stats,2026-11-06T09:07:39+00:00,2026-11-06T09:07:39+00:00,""
 nearblocks,intents_swaps,2026-10-28,1,30361,,https://api.nearblocks.io/v3/intents/swap-stats?limit=365,2026-11-01T20:18:23+00:00,2026-11-01T20:18:23+00:00,"imported from the near-deflation-clock scaffold (re-serialised JSON, original fetch time 2026-10-28T23:27:43+00:00)"
 nearblocks,intents_swaps,2026-11-01,1,878,,https://api.nearblocks.io/v3/intents/swap-stats,2026-11-01T20:25:34+00:00,2026-11-01T20:25:34+00:00,""
 nearblocks,intents_swaps,2026-11-02,1,877,,https://api.nearblocks.io/v3/intents/swap-stats,2026-11-02T08:35:15+00:00,2026-11-02T08:35:15+00:00,""
 nearblocks,intents_swaps,2026-11-03,1,878,,https://api.nearblocks.io/v3/intents/swap-stats,2026-11-03T09:04:48+00:00,2026-11-03T09:04:48+00:00,""
 nearblocks,intents_swaps,2026-11-04,1,877,,https://api.nearblocks.io/v3/intents/swap-stats,2026-11-04T08:40:24+00:00,2026-11-04T08:40:24+00:00,""
 nearblocks,intents_swaps,2026-11-05,1,877,,https://api.nearblocks.io/v3/intents/swap-stats,2026-11-05T09:05:15+00:00,2026-11-05T09:05:15+00:00,""
+nearblocks,intents_swaps,2026-11-06,1,877,,https://api.nearblocks.io/v3/intents/swap-stats,2026-11-06T09:07:21+00:00,2026-11-06T09:07:21+00:00,""
 nearblocks,intents_tokens,2026-11-01,1,13057,,https://api.nearblocks.io/v3/intents/token-stats,2026-11-01T20:25:55+00:00,2026-11-01T20:25:55+00:00,""
 nearblocks,intents_tokens,2026-11-02,1,513,,https://api.nearblocks.io/v3/intents/token-stats,2026-11-02T08:35:36+00:00,2026-11-02T08:35:36+00:00,""
 nearblocks,intents_tokens,2026-11-03,1,513,,https://api.nearblocks.io/v3/intents/token-stats,2026-11-03T09:05:00+00:00,2026-11-03T09:05:00+00:00,""
 nearblocks,intents_tokens,2026-11-04,1,513,,https://api.nearblocks.io/v3/intents/token-stats,2026-11-04T08:40:36+00:00,2026-11-04T08:40:36+00:00,""
 nearblocks,intents_tokens,2026-11-05,1,512,,https://api.nearblocks.io/v3/intents/token-stats,2026-11-05T09:05:27+00:00,2026-11-05T09:05:27+00:00,""
+nearblocks,intents_tokens,2026-11-06,1,511,,https://api.nearblocks.io/v3/intents/token-stats,2026-11-06T09:07:33+00:00,2026-11-06T09:07:33+00:00,""
 nearblocks,intents_totals,2026-10-28,1,324,,https://api.nearblocks.io/v3/intents/stats,2026-11-01T20:18:23+00:00,2026-11-01T20:18:23+00:00,"imported from the near-deflation-clock scaffold (re-serialised JSON, original fetch time 2026-10-28T23:26:41+00:00)"
 nearblocks,intents_totals,2026-11-01,1,277,,https://api.nearblocks.io/v3/intents/stats,2026-11-01T20:23:39+00:00,2026-11-01T20:23:39+00:00,""
 nearblocks,intents_totals,2026-11-02,1,277,,https://api.nearblocks.io/v3/intents/stats,2026-11-02T08:33:20+00:00,2026-11-02T08:33:20+00:00,""
 nearblocks,intents_totals,2026-11-03,1,277,,https://api.nearblocks.io/v3/intents/stats,2026-11-03T09:03:12+00:00,2026-11-03T09:03:12+00:00,""
 nearblocks,intents_totals,2026-11-04,1,277,,https://api.nearblocks.io/v3/intents/stats,2026-11-04T08:38:46+00:00,2026-11-04T08:38:46+00:00,""
 nearblocks,intents_totals,2026-11-05,1,276,,https://api.nearblocks.io/v3/intents/stats,2026-11-05T09:03:39+00:00,2026-11-05T09:03:39+00:00,""
+nearblocks,intents_totals,2026-11-06,1,275,,https://api.nearblocks.io/v3/intents/stats,2026-11-06T09:05:44+00:00,2026-11-06T09:05:44+00:00,""
 nearblocks,intents_volume,2026-10-28,1,42000,,https://api.nearblocks.io/v3/intents/volume-stats?limit=365,2026-11-01T20:18:23+00:00,2026-11-01T20:18:23+00:00,"imported from the near-deflation-clock scaffold (re-serialised JSON, original fetch time 2026-10-28T23:27:33+00:00)"
 nearblocks,intents_volume,2026-11-01,1,1326,,https://api.nearblocks.io/v3/intents/volume-stats,2026-11-01T20:25:23+00:00,2026-11-01T20:25:23+00:00,""
 nearblocks,intents_volume,2026-11-02,1,1326,,https://api.nearblocks.io/v3/intents/volume-stats,2026-11-02T08:35:05+00:00,2026-11-02T08:35:05+00:00,""
 nearblocks,intents_volume,2026-11-03,1,1326,,https://api.nearblocks.io/v3/intents/volume-stats,2026-11-03T09:04:42+00:00,2026-11-03T09:04:42+00:00,""
 nearblocks,intents_volume,2026-11-04,1,1324,,https://api.nearblocks.io/v3/intents/volume-stats,2026-11-04T08:40:18+00:00,2026-11-04T08:40:18+00:00,""
 nearblocks,intents_volume,2026-11-05,1,1324,,https://api.nearblocks.io/v3/intents/volume-stats,2026-11-05T09:05:09+00:00,2026-11-05T09:05:09+00:00,""
+nearblocks,intents_volume,2026-11-06,1,1323,,https://api.nearblocks.io/v3/intents/volume-stats,2026-11-06T09:07:15+00:00,2026-11-06T09:07:15+00:00,""
 nearblocks,intents_volume_by_asset,2026-11-01,1,8192855,,https://api.nearblocks.io/v3/intents/volume-stats/assets,2026-11-01T20:26:29+00:00,2026-11-01T20:26:29+00:00,""
 nearblocks,intents_volume_by_asset,2026-11-02,1,337495,,https://api.nearblocks.io/v3/intents/volume-stats/assets,2026-11-02T08:36:09+00:00,2026-11-02T08:36:09+00:00,""
 nearblocks,intents_volume_by_asset,2026-11-03,1,340130,,https://api.nearblocks.io/v3/intents/volume-stats/assets,2026-11-03T09:05:50+00:00,2026-11-03T09:05:50+00:00,""
 nearblocks,intents_volume_by_asset,2026-11-04,1,325610,,https://api.nearblocks.io/v3/intents/volume-stats/assets,2026-11-04T08:41:26+00:00,2026-11-04T08:41:26+00:00,""
 nearblocks,intents_volume_by_asset,2026-11-05,1,318578,,https://api.nearblocks.io/v3/intents/volume-stats/assets,2026-11-05T09:06:18+00:00,2026-11-05T09:06:18+00:00,""
+nearblocks,intents_volume_by_asset,2026-11-06,1,308572,,https://api.nearblocks.io/v3/intents/volume-stats/assets,2026-11-06T09:08:25+00:00,2026-11-06T09:08:25+00:00,""
 nearblocks,intents_volume_by_chain,2026-10-28,1,1167412,,https://api.nearblocks.io/v3/intents/volume-stats/blockchains?limit=365,2026-11-01T20:18:23+00:00,2026-11-01T20:18:23+00:00,"imported from the near-deflation-clock scaffold (re-serialised JSON, original fetch time 2026-10-28T23:28:05+00:00)"
 nearblocks,intents_volume_by_chain,2026-11-01,1,36993,,https://api.nearblocks.io/v3/intents/volume-stats/blockchains,2026-11-01T20:26:16+00:00,2026-11-01T20:26:16+00:00,""
 nearblocks,intents_volume_by_chain,2026-11-02,1,37081,,https://api.nearblocks.io/v3/intents/volume-stats/blockchains,2026-11-02T08:35:58+00:00,2026-11-02T08:35:58+00:00,""
 nearblocks,intents_volume_by_chain,2026-11-03,1,37174,,https://api.nearblocks.io/v3/intents/volume-stats/blockchains,2026-11-03T09:05:12+00:00,2026-11-03T09:05:12+00:00,""
 nearblocks,intents_volume_by_chain,2026-11-04,1,36015,,https://api.nearblocks.io/v3/intents/volume-stats/blockchains,2026-11-04T08:40:48+00:00,2026-11-04T08:40:48+00:00,""
 nearblocks,intents_volume_by_chain,2026-11-05,1,36184,,https://api.nearblocks.io/v3/intents/volume-stats/blockchains,2026-11-05T09:05:39+00:00,2026-11-05T09:05:39+00:00,""
+nearblocks,intents_volume_by_chain,2026-11-06,1,35555,,https://api.nearblocks.io/v3/intents/volume-stats/blockchains,2026-11-06T09:07:46+00:00,2026-11-06T09:07:46+00:00,""
 nearblocks,mpc_operators,2026-11-01,1,3713,,https://api.nearblocks.io/v3/multichain/mpcs,2026-11-01T20:23:49+00:00,2026-11-01T20:23:49+00:00,""
 nearblocks,mpc_operators,2026-11-02,1,3713,,https://api.nearblocks.io/v3/multichain/mpcs,2026-11-02T08:33:30+00:00,2026-11-02T08:33:30+00:00,""
 nearblocks,mpc_operators,2026-11-03,1,3713,,https://api.nearblocks.io/v3/multichain/mpcs,2026-11-03T09:03:17+00:00,2026-11-03T09:03:17+00:00,""
 nearblocks,mpc_operators,2026-11-04,1,3713,,https://api.nearblocks.io/v3/multichain/mpcs,2026-11-04T08:38:52+00:00,2026-11-04T08:38:52+00:00,""
 nearblocks,mpc_operators,2026-11-05,1,3713,,https://api.nearblocks.io/v3/multichain/mpcs,2026-11-05T09:03:44+00:00,2026-11-05T09:03:44+00:00,""
+nearblocks,mpc_operators,2026-11-06,1,3713,,https://api.nearblocks.io/v3/multichain/mpcs,2026-11-06T09:05:50+00:00,2026-11-06T09:05:50+00:00,""
 nearblocks,price_stats,2026-11-01,1,41255,,https://api.nearblocks.io/v3/price-stats,2026-11-01T20:25:02+00:00,2026-11-01T20:25:02+00:00,""
 nearblocks,price_stats,2026-11-02,1,1592,,https://api.nearblocks.io/v3/price-stats,2026-11-02T08:34:44+00:00,2026-11-02T08:34:44+00:00,""
 nearblocks,price_stats,2026-11-03,1,1592,,https://api.nearblocks.io/v3/price-stats,2026-11-03T09:04:30+00:00,2026-11-03T09:04:30+00:00,""
 nearblocks,price_stats,2026-11-04,1,1592,,https://api.nearblocks.io/v3/price-stats,2026-11-04T08:40:06+00:00,2026-11-04T08:40:06+00:00,""
 nearblocks,price_stats,2026-11-05,1,1592,,https://api.nearblocks.io/v3/price-stats,2026-11-05T09:04:57+00:00,2026-11-05T09:04:57+00:00,""
+nearblocks,price_stats,2026-11-06,1,1592,,https://api.nearblocks.io/v3/price-stats,2026-11-06T09:07:03+00:00,2026-11-06T09:07:03+00:00,""
 nearblocks,signatures_24h,2026-11-01,1,62,,https://api.nearblocks.io/v3/multichain/signatures/stats,2026-11-01T20:23:59+00:00,2026-11-01T20:23:59+00:00,""
 nearblocks,signatures_24h,2026-11-02,1,62,,https://api.nearblocks.io/v3/multichain/signatures/stats,2026-11-02T08:33:41+00:00,2026-11-02T08:33:41+00:00,""
 nearblocks,signatures_24h,2026-11-03,1,62,,https://api.nearblocks.io/v3/multichain/signatures/stats,2026-11-03T09:03:23+00:00,2026-11-03T09:03:23+00:00,""
 nearblocks,signatures_24h,2026-11-04,1,62,,https://api.nearblocks.io/v3/multichain/signatures/stats,2026-11-04T08:38:57+00:00,2026-11-04T08:38:57+00:00,""
 nearblocks,signatures_24h,2026-11-05,1,62,,https://api.nearblocks.io/v3/multichain/signatures/stats,2026-11-05T09:03:50+00:00,2026-11-05T09:03:50+00:00,""
+nearblocks,signatures_24h,2026-11-06,1,62,,https://api.nearblocks.io/v3/multichain/signatures/stats,2026-11-06T09:05:56+00:00,2026-11-06T09:05:56+00:00,""
 nearblocks,signer_stats,2026-11-01,1,29433,,https://api.nearblocks.io/v3/signer-stats,2026-11-01T20:24:41+00:00,2026-11-01T20:24:41+00:00,""
 nearblocks,signer_stats,2026-11-02,1,1158,,https://api.nearblocks.io/v3/signer-stats,2026-11-02T08:34:23+00:00,2026-11-02T08:34:23+00:00,""
 nearblocks,signer_stats,2026-11-03,1,1158,,https://api.nearblocks.io/v3/signer-stats,2026-11-03T09:04:18+00:00,2026-11-03T09:04:18+00:00,""
 nearblocks,signer_stats,2026-11-04,1,1158,,https://api.nearblocks.io/v3/signer-stats,2026-11-04T08:39:54+00:00,2026-11-04T08:39:54+00:00,""
 nearblocks,signer_stats,2026-11-05,1,1158,,https://api.nearblocks.io/v3/signer-stats,2026-11-05T09:04:45+00:00,2026-11-05T09:04:45+00:00,""
+nearblocks,signer_stats,2026-11-06,1,1158,,https://api.nearblocks.io/v3/signer-stats,2026-11-06T09:06:51+00:00,2026-11-06T09:06:51+00:00,""
 nearblocks,signer_totals,2026-11-01,1,64,,https://api.nearblocks.io/v3/signer-stats/total,2026-11-01T20:24:10+00:00,2026-11-01T20:24:10+00:00,""
 nearblocks,signer_totals,2026-11-02,1,64,,https://api.nearblocks.io/v3/signer-stats/total,2026-11-02T08:33:51+00:00,2026-11-02T08:33:51+00:00,""
 nearblocks,signer_totals,2026-11-03,1,64,,https://api.nearblocks.io/v3/signer-stats/total,2026-11-03T09:03:29+00:00,2026-11-03T09:03:29+00:00,""
 nearblocks,signer_totals,2026-11-04,1,64,,https://api.nearblocks.io/v3/signer-stats/total,2026-11-04T08:39:03+00:00,2026-11-04T08:39:03+00:00,""
 nearblocks,signer_totals,2026-11-05,1,64,,https://api.nearblocks.io/v3/signer-stats/total,2026-11-05T09:03:56+00:00,2026-11-05T09:03:56+00:00,""
+nearblocks,signer_totals,2026-11-06,1,64,,https://api.nearblocks.io/v3/signer-stats/total,2026-11-06T09:06:02+00:00,2026-11-06T09:06:02+00:00,""
 nearblocks,stats,2026-10-28,1,428,,https://api.nearblocks.io/v3/stats,2026-11-01T20:18:23+00:00,2026-11-01T20:18:23+00:00,"imported from the near-deflation-clock scaffold (re-serialised JSON, original fetch time 2026-10-28T23:25:58+00:00)"
 nearblocks,stats,2026-11-01,1,375,,https://api.nearblocks.io/v3/stats,2026-11-01T20:22:57+00:00,2026-11-01T20:22:57+00:00,""
 nearblocks,stats,2026-11-02,1,375,,https://api.nearblocks.io/v3/stats,2026-11-02T08:32:38+00:00,2026-11-02T08:32:38+00:00,""
 nearblocks,stats,2026-11-03,1,375,,https://api.nearblocks.io/v3/stats,2026-11-03T09:02:48+00:00,2026-11-03T09:02:48+00:00,""
 nearblocks,stats,2026-11-04,1,374,,https://api.nearblocks.io/v3/stats,2026-11-04T08:38:22+00:00,2026-11-04T08:38:22+00:00,""
 nearblocks,stats,2026-11-05,1,376,,https://api.nearblocks.io/v3/stats,2026-11-05T09:03:14+00:00,2026-11-05T09:03:14+00:00,""
+nearblocks,stats,2026-11-06,1,376,,https://api.nearblocks.io/v3/stats,2026-11-06T09:05:20+00:00,2026-11-06T09:05:20+00:00,""
 nearblocks,stats_v1,2026-10-28,1,575,,https://api.nearblocks.io/v1/stats,2026-11-01T20:18:23+00:00,2026-11-01T20:18:23+00:00,"imported from the near-deflation-clock scaffold (re-serialised JSON, original fetch time 2026-10-28T23:26:09+00:00)"
 nearblocks,stats_v1,2026-11-01,1,479,,https://api.nearblocks.io/v1/stats,2026-11-01T20:23:07+00:00,2026-11-01T20:23:07+00:00,""
 nearblocks,stats_v1,2026-11-02,1,479,,https://api.nearblocks.io/v1/stats,2026-11-02T08:32:48+00:00,2026-11-02T08:32:48+00:00,""
 nearblocks,stats_v1,2026-11-03,1,480,,https://api.nearblocks.io/v1/stats,2026-11-03T09:02:53+00:00,2026-11-03T09:02:53+00:00,""
 nearblocks,stats_v1,2026-11-04,1,478,,https://api.nearblocks.io/v1/stats,2026-11-04T08:38:27+00:00,2026-11-04T08:38:27+00:00,""
 nearblocks,stats_v1,2026-11-05,1,480,,https://api.nearblocks.io/v1/stats,2026-11-05T09:03:20+00:00,2026-11-05T09:03:20+00:00,""
+nearblocks,stats_v1,2026-11-06,1,480,,https://api.nearblocks.io/v1/stats,2026-11-06T09:05:26+00:00,2026-11-06T09:05:26+00:00,""
 nearblocks,tvl_stats,2026-10-28,1,26309,,https://api.nearblocks.io/v3/tvl-stats?limit=365,2026-11-01T20:18:23+00:00,2026-11-01T20:18:23+00:00,"imported from the near-deflation-clock scaffold (re-serialised JSON, original fetch time 2026-10-28T23:27:23+00:00)"
 nearblocks,tvl_stats,2026-11-01,1,794,,https://api.nearblocks.io/v3/tvl-stats,2026-11-01T20:25:13+00:00,2026-11-01T20:25:13+00:00,""
 nearblocks,tvl_stats,2026-11-02,1,794,,https://api.nearblocks.io/v3/tvl-stats,2026-11-02T08:34:54+00:00,2026-11-02T08:34:54+00:00,""
 nearblocks,tvl_stats,2026-11-03,1,794,,https://api.nearblocks.io/v3/tvl-stats,2026-11-03T09:04:36+00:00,2026-11-03T09:04:36+00:00,""
 nearblocks,tvl_stats,2026-11-04,1,794,,https://api.nearblocks.io/v3/tvl-stats,2026-11-04T08:40:12+00:00,2026-11-04T08:40:12+00:00,""
 nearblocks,tvl_stats,2026-11-05,1,794,,https://api.nearblocks.io/v3/tvl-stats,2026-11-05T09:05:03+00:00,2026-11-05T09:05:03+00:00,""
+nearblocks,tvl_stats,2026-11-06,1,794,,https://api.nearblocks.io/v3/tvl-stats,2026-11-06T09:07:09+00:00,2026-11-06T09:07:09+00:00,""
 nearblocks,txn_stats,2026-10-28,1,67093,,https://api.nearblocks.io/v3/txn-stats?limit=365,2026-11-01T20:18:23+00:00,2026-11-01T20:18:23+00:00,"imported from the near-deflation-clock scaffold (re-serialised JSON, original fetch time 2026-10-28T23:27:01+00:00)"
 nearblocks,txn_stats,2026-11-01,1,2055,,https://api.nearblocks.io/v3/txn-stats,2026-11-01T20:24:20+00:00,2026-11-01T20:24:20+00:00,""
 nearblocks,txn_stats,2026-11-02,1,2055,,https://api.nearblocks.io/v3/txn-stats,2026-11-02T08:34:02+00:00,2026-11-02T08:34:02+00:00,""
 nearblocks,txn_stats,2026-11-03,1,2055,,https://api.nearblocks.io/v3/txn-stats,2026-11-03T09:03:35+00:00,2026-11-03T09:03:35+00:00,""
 nearblocks,txn_stats,2026-11-04,1,2055,,https://api.nearblocks.io/v3/txn-stats,2026-11-04T08:39:09+00:00,2026-11-04T08:39:09+00:00,""
 nearblocks,txn_stats,2026-11-05,1,2054,,https://api.nearblocks.io/v3/txn-stats,2026-11-05T09:04:02+00:00,2026-11-05T09:04:02+00:00,""
+nearblocks,txn_stats,2026-11-06,1,2054,,https://api.nearblocks.io/v3/txn-stats,2026-11-06T09:06:08+00:00,2026-11-06T09:06:08+00:00,""
 nearblocks,txns_24h,2026-10-28,1,163,,https://api.nearblocks.io/v3/txns/stats,2026-11-01T20:18:23+00:00,2026-11-01T20:18:23+00:00,"imported from the near-deflation-clock scaffold (re-serialised JSON, original fetch time 2026-10-28T23:26:30+00:00)"
 nearblocks,txns_24h,2026-11-01,1,141,,https://api.nearblocks.io/v3/txns/stats,2026-11-01T20:23:28+00:00,2026-11-01T20:23:28+00:00,""
 nearblocks,txns_24h,2026-11-02,1,141,,https://api.nearblocks.io/v3/txns/stats,2026-11-02T08:33:09+00:00,2026-11-02T08:33:09+00:00,""
 nearblocks,txns_24h,2026-11-03,1,141,,https://api.nearblocks.io/v3/txns/stats,2026-11-03T09:03:05+00:00,2026-11-03T09:03:05+00:00,""
 nearblocks,txns_24h,2026-11-04,1,141,,https://api.nearblocks.io/v3/txns/stats,2026-11-04T08:38:39+00:00,2026-11-04T08:38:39+00:00,""
 nearblocks,txns_24h,2026-11-05,1,141,,https://api.nearblocks.io/v3/txns/stats,2026-11-05T09:03:32+00:00,2026-11-05T09:03:32+00:00,""
+nearblocks,txns_24h,2026-11-06,1,141,,https://api.nearblocks.io/v3/txns/stats,2026-11-06T09:05:38+00:00,2026-11-06T09:05:38+00:00,""
 nearblocks,wallet_balance,2026-10-28,2,71216,,https://api.nearblocks.io/v3/accounts/buybacks.multisignature.near/stats/balance?limit=365,2026-11-01T20:18:23+00:00,2026-11-01T20:18:23+00:00,"imported from the near-deflation-clock scaffold (re-serialised JSON, original fetch time 2026-10-28T23:28:37+00:00)"
 nearblocks,wallet_balance,2026-11-01,5,73277,,https://api.nearblocks.io/v3/accounts/1csfundsadmin.sputnik-dao.near/stats/balance,2026-11-01T20:33:38+00:00,2026-11-01T20:34:31+00:00,""
 nearblocks,wallet_balance,2026-11-02,6,12536,,https://api.nearblocks.io/v3/accounts/1csfundsadmin.sputnik-dao.near/stats/balance,2026-11-02T08:43:20+00:00,2026-11-02T08:44:12+00:00,""
 nearblocks,wallet_balance,2026-11-03,6,12131,,https://api.nearblocks.io/v3/accounts/1csfundsadmin.sputnik-dao.near/stats/balance,2026-11-03T09:11:30+00:00,2026-11-03T09:12:00+00:00,""
 nearblocks,wallet_balance,2026-11-04,6,12131,,https://api.nearblocks.io/v3/accounts/1csfundsadmin.sputnik-dao.near/stats/balance,2026-11-04T08:46:34+00:00,2026-11-04T08:47:04+00:00,""
 nearblocks,wallet_balance,2026-11-05,6,12131,,https://api.nearblocks.io/v3/accounts/1csfundsadmin.sputnik-dao.near/stats/balance,2026-11-05T09:11:28+00:00,2026-11-05T09:11:58+00:00,""
+nearblocks,wallet_balance,2026-11-06,6,12131,,https://api.nearblocks.io/v3/accounts/1csfundsadmin.sputnik-dao.near/stats/balance,2026-11-06T09:16:08+00:00,2026-11-06T09:16:38+00:00,""
 nearcatalog,projects,2026-11-01,1,158219,,https://api.nearcatalog.xyz/projects,2026-11-01T20:22:44+00:00,2026-11-01T20:22:44+00:00,""
 nearcatalog,projects,2026-11-02,1,158219,,https://api.nearcatalog.xyz/projects,2026-11-02T07:49:22+00:00,2026-11-02T07:49:22+00:00,""
 nearcatalog,projects,2026-11-03,1,158219,,https://api.nearcatalog.xyz/projects,2026-11-03T08:02:41+00:00,2026-11-03T08:02:41+00:00,""
 nearcatalog,projects,2026-11-04,1,158650,,https://api.nearcatalog.xyz/projects,2026-11-04T07:38:17+00:00,2026-11-04T07:38:17+00:00,""
 nearcatalog,projects,2026-11-05,1,158650,,https://api.nearcatalog.xyz/projects,2026-11-05T08:01:58+00:00,2026-11-05T08:01:58+00:00,""
+nearcatalog,projects,2026-11-06,1,159121,,https://api.nearcatalog.xyz/projects,2026-11-06T08:06:41+00:00,2026-11-06T08:06:41+00:00,""
 neardata,receiver_sample,2026-11-01,1,48363,,neardata/receiver_sample,2026-11-01T21:04:22+00:00,2026-11-01T21:04:22+00:00,"manifest line rebuilt before the first commit, after a concurrent-write bug during the first run; fetch time is the file's modified time"
 neardata,receiver_sample,2026-11-02,13,317370,2138,https://mainnet.neardata.xyz/v0/block,2026-11-02T08:07:24+00:00,2026-11-02T08:32:37+00:00,aggregated from 96 evenly spaced blocks; raw blocks discarded
 neardata,receiver_sample,2026-11-03,22,738307,4938,https://mainnet.neardata.xyz/v0/block,2026-11-03T09:21:17+00:00,2026-11-03T10:11:32+00:00,aggregated from 96 evenly spaced blocks; raw blocks discarded
 neardata,receiver_sample,2026-11-04,21,548972,3649,https://mainnet.neardata.xyz/v0/block,2026-11-04T08:55:55+00:00,2026-11-04T09:37:34+00:00,aggregated from 96 evenly spaced blocks; raw blocks discarded
 neardata,receiver_sample,2026-11-05,21,524515,3461,https://mainnet.neardata.xyz/v0/block,2026-11-05T09:21:10+00:00,2026-11-05T10:02:18+00:00,aggregated from 96 evenly spaced blocks; raw blocks discarded
+neardata,receiver_sample,2026-11-06,21,533763,3596,https://mainnet.neardata.xyz/v0/block,2026-11-06T09:32:57+00:00,2026-11-06T10:15:17+00:00,aggregated from 96 evenly spaced blocks; raw blocks discarded
 nrr_fund,figures,2026-11-02,1,11436,77,https://nrretf.com/,2026-11-02T13:53:18+00:00,2026-11-02T13:53:18+00:00,assembled: figures read from the page's embedded data; the page itself is not kept
 nrr_fund,figures,2026-11-03,1,11503,77,https://nrretf.com/,2026-11-03T09:13:16+00:00,2026-11-03T09:13:16+00:00,assembled: figures read from the page's embedded data; the page itself is not kept
 nrr_fund,figures,2026-11-04,1,11571,77,https://nrretf.com/,2026-11-04T08:48:26+00:00,2026-11-04T08:48:26+00:00,assembled: figures read from the page's embedded data; the page itself is not kept
 nrr_fund,figures,2026-11-05,1,11638,77,https://nrretf.com/,2026-11-05T09:13:14+00:00,2026-11-05T09:13:14+00:00,assembled: figures read from the page's embedded data; the page itself is not kept
+nrr_fund,figures,2026-11-06,1,11708,77,https://nrretf.com/,2026-11-06T09:25:30+00:00,2026-11-06T09:25:30+00:00,assembled: figures read from the page's embedded data; the page itself is not kept
 oneclick,tokens,2026-11-01,1,53346,,https://1click.chaindefuser.com/v0/tokens,2026-11-01T20:23:03+00:00,2026-11-01T20:23:03+00:00,""
 oneclick,tokens,2026-11-02,1,53377,,https://1click.chaindefuser.com/v0/tokens,2026-11-02T07:59:17+00:00,2026-11-02T07:59:17+00:00,""
 oneclick,tokens,2026-11-03,1,53381,,https://1click.chaindefuser.com/v0/tokens,2026-11-03T08:03:36+00:00,2026-11-03T08:03:36+00:00,""
 oneclick,tokens,2026-11-04,1,54730,,https://1click.chaindefuser.com/v0/tokens,2026-11-04T07:38:49+00:00,2026-11-04T07:38:49+00:00,""
 oneclick,tokens,2026-11-05,1,54714,,https://1click.chaindefuser.com/v0/tokens,2026-11-05T08:03:09+00:00,2026-11-05T08:03:09+00:00,""
+oneclick,tokens,2026-11-06,1,54648,,https://1click.chaindefuser.com/v0/tokens,2026-11-06T08:07:24+00:00,2026-11-06T08:07:24+00:00,""
 revenue_page,html,2026-11-01,1,488949,,https://revenue.near.org/,2026-11-01T20:23:05+00:00,2026-11-01T20:23:05+00:00,""
 revenue_page,html,2026-11-02,1,490674,,https://revenue.near.org/,2026-11-02T07:59:18+00:00,2026-11-02T07:59:18+00:00,""
 revenue_page,html,2026-11-03,1,491120,,https://revenue.near.org/,2026-11-03T08:03:38+00:00,2026-11-03T08:03:38+00:00,""
 revenue_page,html,2026-11-04,1,491485,,https://revenue.near.org/,2026-11-04T07:38:50+00:00,2026-11-04T07:38:50+00:00,""
 revenue_page,html,2026-11-05,1,493206,,https://revenue.near.org/,2026-11-05T08:03:10+00:00,2026-11-05T08:03:10+00:00,""
+revenue_page,html,2026-11-06,1,493881,,https://revenue.near.org/,2026-11-06T08:07:25+00:00,2026-11-06T08:07:25+00:00,""
 revenue_page,parsed,2026-11-01,1,289697,,https://revenue.near.org/,2026-11-01T20:23:05+00:00,2026-11-01T20:23:05+00:00,derived from html/page by ingest/parsers/revenue_page.py
 revenue_page,parsed,2026-11-02,1,290973,,https://revenue.near.org/,2026-11-02T07:59:18+00:00,2026-11-02T07:59:18+00:00,derived from html/page by ingest/parsers/revenue_page.py
 revenue_page,parsed,2026-11-03,1,291367,,https://revenue.near.org/,2026-11-03T08:03:38+00:00,2026-11-03T08:03:38+00:00,derived from html/page by ingest/parsers/revenue_page.py
 revenue_page,parsed,2026-11-04,1,291509,,https://revenue.near.org/,2026-11-04T07:38:50+00:00,2026-11-04T07:38:50+00:00,derived from html/page by ingest/parsers/revenue_page.py
 revenue_page,parsed,2026-11-05,1,292839,,https://revenue.near.org/,2026-11-05T08:03:10+00:00,2026-11-05T08:03:10+00:00,derived from html/page by ingest/parsers/revenue_page.py
+revenue_page,parsed,2026-11-06,1,293367,,https://revenue.near.org/,2026-11-06T08:07:25+00:00,2026-11-06T08:07:25+00:00,derived from html/page by ingest/parsers/revenue_page.py
 rhea,token_prices,2026-11-01,1,631643,,https://indexer.ref.finance/list-token-price,2026-11-01T20:17:37+00:00,2026-11-01T20:17:37+00:00,""
 rhea,token_prices,2026-11-02,1,631763,,https://indexer.ref.finance/list-token-price,2026-11-02T07:46:36+00:00,2026-11-02T07:46:36+00:00,""
 rhea,token_prices,2026-11-03,1,638092,,https://indexer.ref.finance/list-token-price,2026-11-03T08:00:18+00:00,2026-11-03T08:00:18+00:00,""
 rhea,token_prices,2026-11-04,1,642353,,https://indexer.ref.finance/list-token-price,2026-11-04T07:36:18+00:00,2026-11-04T07:36:18+00:00,""
 rhea,token_prices,2026-11-05,1,645108,,https://indexer.ref.finance/list-token-price,2026-11-05T07:58:48+00:00,2026-11-05T07:58:48+00:00,""
+rhea,token_prices,2026-11-06,1,650570,,https://indexer.ref.finance/list-token-price,2026-11-06T08:00:40+00:00,2026-11-06T08:00:40+00:00,""
 rhea,top_pools,2026-11-01,1,1257721,,https://api.ref.finance/list-top-pools,2026-11-01T20:17:32+00:00,2026-11-01T20:17:32+00:00,""
 rhea,top_pools,2026-11-02,1,1258403,,https://api.ref.finance/list-top-pools,2026-11-02T07:46:35+00:00,2026-11-02T07:46:35+00:00,""
 rhea,top_pools,2026-11-03,1,1258658,,https://api.ref.finance/list-top-pools,2026-11-03T08:00:15+00:00,2026-11-03T08:00:15+00:00,""
 rhea,top_pools,2026-11-04,1,1260582,,https://api.ref.finance/list-top-pools,2026-11-04T07:36:16+00:00,2026-11-04T07:36:16+00:00,""
 rhea,top_pools,2026-11-05,1,1262418,,https://api.ref.finance/list-top-pools,2026-11-05T07:58:46+00:00,2026-11-05T07:58:46+00:00,""
+rhea,top_pools,2026-11-06,1,1263226,,https://api.ref.finance/list-top-pools,2026-11-06T08:00:39+00:00,2026-11-06T08:00:39+00:00,""
 rpc,accounts,2026-11-01,1,14228,48,https://free.rpc.fastnear.com,2026-11-01T20:54:05+00:00,2026-11-01T20:54:05+00:00,assembled: one view_account call per registry account
 rpc,accounts,2026-11-02,1,14228,48,https://free.rpc.fastnear.com,2026-11-02T13:50:07+00:00,2026-11-02T13:50:07+00:00,assembled: one view_account call per registry account
 rpc,accounts,2026-11-03,1,14227,48,https://free.rpc.fastnear.com,2026-11-03T09:12:11+00:00,2026-11-03T09:12:11+00:00,assembled: one view_account call per registry account
 rpc,accounts,2026-11-04,1,14227,48,https://free.rpc.fastnear.com,2026-11-04T08:47:15+00:00,2026-11-04T08:47:15+00:00,assembled: one view_account call per registry account
 rpc,accounts,2026-11-05,1,14229,48,https://free.rpc.fastnear.com,2026-11-05T09:12:09+00:00,2026-11-05T09:12:09+00:00,assembled: one view_account call per registry account
+rpc,accounts,2026-11-06,1,18659,63,https://free.rpc.fastnear.com,2026-11-06T09:16:51+00:00,2026-11-06T09:16:51+00:00,assembled: one view_account call per registry account
 rpc,block_day,2026-11-01,3,83698,297,https://archival-rpc.mainnet.fastnear.com,2026-11-01T20:48:17+00:00,2026-11-01T21:05:42+00:00,"assembled: header fields of one block per UTC day, within 120 s after 00:00"
 rpc,block_day,2026-11-02,2,120374,427,https://archival-rpc.mainnet.fastnear.com,2026-11-02T09:31:55+00:00,2026-11-02T13:52:18+00:00,"assembled: header fields of one block per UTC day, within 120 s after 00:00"
 rpc,block_day,2026-11-03,1,282,1,https://archival-rpc.mainnet.fastnear.com,2026-11-03T09:12:16+00:00,2026-11-03T09:12:16+00:00,"assembled: header fields of one block per UTC day, within 120 s after 00:00"
 rpc,block_day,2026-11-04,1,283,1,https://archival-rpc.mainnet.fastnear.com,2026-11-04T08:47:26+00:00,2026-11-04T08:47:26+00:00,"assembled: header fields of one block per UTC day, within 120 s after 00:00"
 rpc,block_day,2026-11-05,1,283,1,https://archival-rpc.mainnet.fastnear.com,2026-11-05T09:12:14+00:00,2026-11-05T09:12:14+00:00,"assembled: header fields of one block per UTC day, within 120 s after 00:00"
+rpc,block_day,2026-11-06,1,282,1,https://archival-rpc.mainnet.fastnear.com,2026-11-06T09:16:54+00:00,2026-11-06T09:16:54+00:00,"assembled: header fields of one block per UTC day, within 120 s after 00:00"
 rpc,contract_views,2026-10-28,1,3930,,https://free.rpc.fastnear.com,2026-11-01T20:18:23+00:00,2026-11-01T20:18:23+00:00,"imported from the near-deflation-clock scaffold (re-serialised JSON, original fetch time 2026-10-28T23:25:14+00:00)"
 rpc,contract_views,2026-11-01,16,21667,,https://free.rpc.fastnear.com,2026-11-01T20:52:59+00:00,2026-11-01T20:53:14+00:00,result bytes decoded to JSON
 rpc,contract_views,2026-11-02,16,21667,,https://free.rpc.fastnear.com,2026-11-02T13:49:57+00:00,2026-11-02T13:49:59+00:00,result bytes decoded to JSON
 rpc,contract_views,2026-11-03,16,21707,,https://free.rpc.fastnear.com,2026-11-03T09:12:01+00:00,2026-11-03T09:12:03+00:00,result bytes decoded to JSON
 rpc,contract_views,2026-11-04,16,21732,,https://free.rpc.fastnear.com,2026-11-04T08:47:05+00:00,2026-11-04T08:47:07+00:00,result bytes decoded to JSON
 rpc,contract_views,2026-11-05,16,21701,,https://free.rpc.fastnear.com,2026-11-05T09:11:59+00:00,2026-11-05T09:12:02+00:00,result bytes decoded to JSON
+rpc,contract_views,2026-11-06,16,55672,,https://free.rpc.fastnear.com,2026-11-06T09:16:39+00:00,2026-11-06T09:16:41+00:00,result bytes decoded to JSON
+rpc,ft_metadata,2026-11-06,1,276517,2000,https://free.rpc.fastnear.com,2026-11-06T09:22:59+00:00,2026-11-06T09:22:59+00:00,"assembled: one ft_metadata view per token, read once; icon and reference dropped, spec, name and symbol cut to printable characters and 32, 128 and 64 characters"
 rpc,gas_price,2026-10-28,1,78,,https://free.rpc.fastnear.com,2026-11-01T20:18:23+00:00,2026-11-01T20:18:23+00:00,"imported from the near-deflation-clock scaffold (re-serialised JSON, original fetch time 2026-10-28T23:25:12+00:00)"
 rpc,gas_price,2026-11-01,1,71,,https://free.rpc.fastnear.com,2026-11-01T20:52:57+00:00,2026-11-01T20:52:57+00:00,""
 rpc,gas_price,2026-11-02,1,71,,https://free.rpc.fastnear.com,2026-11-02T13:49:57+00:00,2026-11-02T13:49:57+00:00,""
 rpc,gas_price,2026-11-03,1,71,,https://free.rpc.fastnear.com,2026-11-03T09:12:01+00:00,2026-11-03T09:12:01+00:00,""
 rpc,gas_price,2026-11-04,1,71,,https://free.rpc.fastnear.com,2026-11-04T08:47:05+00:00,2026-11-04T08:47:05+00:00,""
 rpc,gas_price,2026-11-05,1,71,,https://free.rpc.fastnear.com,2026-11-05T09:11:59+00:00,2026-11-05T09:11:59+00:00,""
+rpc,gas_price,2026-11-06,1,71,,https://free.rpc.fastnear.com,2026-11-06T09:16:38+00:00,2026-11-06T09:16:38+00:00,""
 rpc,hos_proposals,2026-11-01,1,169528,30,https://free.rpc.fastnear.com,2026-11-01T20:53:18+00:00,2026-11-01T20:53:18+00:00,assembled from get_proposals pages; result bytes decoded to JSON
 rpc,hos_proposals,2026-11-02,1,169528,30,https://free.rpc.fastnear.com,2026-11-02T13:50:00+00:00,2026-11-02T13:50:00+00:00,assembled from get_proposals pages; result bytes decoded to JSON
 rpc,hos_proposals,2026-11-03,1,169530,30,https://free.rpc.fastnear.com,2026-11-03T09:12:04+00:00,2026-11-03T09:12:04+00:00,assembled from get_proposals pages; result bytes decoded to JSON
 rpc,hos_proposals,2026-11-04,1,169530,30,https://free.rpc.fastnear.com,2026-11-04T08:47:08+00:00,2026-11-04T08:47:08+00:00,assembled from get_proposals pages; result bytes decoded to JSON
 rpc,hos_proposals,2026-11-05,1,169530,30,https://free.rpc.fastnear.com,2026-11-05T09:12:02+00:00,2026-11-05T09:12:02+00:00,assembled from get_proposals pages; result bytes decoded to JSON
+rpc,hos_proposals,2026-11-06,1,169530,30,https://free.rpc.fastnear.com,2026-11-06T09:16:41+00:00,2026-11-06T09:16:41+00:00,assembled from get_proposals pages; result bytes decoded to JSON
+rpc,lockups,2026-11-05,3,3080351,6660,https://archival-rpc.mainnet.fastnear.com,2026-11-05T15:57:26+00:00,2026-11-05T16:10:41+00:00,"assembled: the end-of-day running balance per day with a native transfer, plus one view_account read per account; transfers themselves are not kept"
+rpc,lockups,2026-11-06,2,4632,29,https://archival-rpc.mainnet.fastnear.com,2026-11-06T09:24:12+00:00,2026-11-06T09:25:30+00:00,"assembled: the end-of-day running balance per day with a native transfer, plus one view_account read per account; transfers themselves are not kept"
 rpc,nrr_pool_daily,2026-11-01,1,262394,35,https://archival-rpc.mainnet.fastnear.com,2026-11-02T13:45:09+00:00,2026-11-02T13:45:09+00:00,"assembled: the wallets Bitwise lists for NRR at the first block of each UTC day, read at past blocks; other delegators kept only as a total"
 rpc,nrr_pool_daily,2026-11-02,1,30349,3,https://archival-rpc.mainnet.fastnear.com,2026-11-02T13:53:22+00:00,2026-11-02T13:53:22+00:00,"assembled: the wallets Bitwise lists for NRR at the first block of each UTC day, read at past blocks; other delegators kept only as a total"
 rpc,nrr_pool_daily,2026-11-03,1,29938,3,https://archival-rpc.mainnet.fastnear.com,2026-11-03T09:13:20+00:00,2026-11-03T09:13:20+00:00,"assembled: the wallets Bitwise lists for NRR at the first block of each UTC day, read at past blocks; other delegators kept only as a total"
 rpc,nrr_pool_daily,2026-11-04,1,29527,3,https://archival-rpc.mainnet.fastnear.com,2026-11-04T08:48:30+00:00,2026-11-04T08:48:30+00:00,"assembled: the wallets Bitwise lists for NRR at the first block of each UTC day, read at past blocks; other delegators kept only as a total"
 rpc,nrr_pool_daily,2026-11-05,1,29249,3,https://archival-rpc.mainnet.fastnear.com,2026-11-05T09:13:18+00:00,2026-11-05T09:13:18+00:00,"assembled: the wallets Bitwise lists for NRR at the first block of each UTC day, read at past blocks; other delegators kept only as a total"
+rpc,nrr_pool_daily,2026-11-06,1,28971,3,https://archival-rpc.mainnet.fastnear.com,2026-11-06T09:25:35+00:00,2026-11-06T09:25:35+00:00,"assembled: the wallets Bitwise lists for NRR at the first block of each UTC day, read at past blocks; other delegators kept only as a total"
 rpc,protocol_config,2026-10-28,1,12217,,https://free.rpc.fastnear.com,2026-11-01T20:18:23+00:00,2026-11-01T20:18:23+00:00,"imported from the near-deflation-clock scaffold (re-serialised JSON, original fetch time 2026-10-28T23:25:08+00:00)"
 rpc,protocol_config,2026-11-01,1,9638,,https://free.rpc.fastnear.com,2026-11-01T20:52:56+00:00,2026-11-01T20:52:56+00:00,""
 rpc,protocol_config,2026-11-02,1,9638,,https://free.rpc.fastnear.com,2026-11-02T13:49:57+00:00,2026-11-02T13:49:57+00:00,""
 rpc,protocol_config,2026-11-03,1,9638,,https://free.rpc.fastnear.com,2026-11-03T09:12:00+00:00,2026-11-03T09:12:00+00:00,""
 rpc,protocol_config,2026-11-04,1,9638,,https://free.rpc.fastnear.com,2026-11-04T08:47:05+00:00,2026-11-04T08:47:05+00:00,""
 rpc,protocol_config,2026-11-05,1,9661,,https://free.rpc.fastnear.com,2026-11-05T09:11:59+00:00,2026-11-05T09:11:59+00:00,""
+rpc,protocol_config,2026-11-06,1,9661,,https://free.rpc.fastnear.com,2026-11-06T09:16:38+00:00,2026-11-06T09:16:38+00:00,""
 rpc,status,2026-10-28,1,6403,,https://free.rpc.fastnear.com,2026-11-01T20:18:23+00:00,2026-11-01T20:18:23+00:00,"imported from the near-deflation-clock scaffold (re-serialised JSON, original fetch time 2026-10-28T23:25:06+00:00)"
 rpc,status,2026-11-01,1,4869,,https://free.rpc.fastnear.com,2026-11-01T20:52:56+00:00,2026-11-01T20:52:56+00:00,""
 rpc,status,2026-11-02,1,4875,,https://free.rpc.fastnear.com,2026-11-02T13:49:57+00:00,2026-11-02T13:49:57+00:00,""
 rpc,status,2026-11-03,1,4874,,https://free.rpc.fastnear.com,2026-11-03T09:12:00+00:00,2026-11-03T09:12:00+00:00,""
 rpc,status,2026-11-04,1,4875,,https://free.rpc.fastnear.com,2026-11-04T08:47:04+00:00,2026-11-04T08:47:04+00:00,""
 rpc,status,2026-11-05,1,4870,,https://free.rpc.fastnear.com,2026-11-05T09:11:59+00:00,2026-11-05T09:11:59+00:00,""
+rpc,status,2026-11-06,1,4870,,https://free.rpc.fastnear.com,2026-11-06T09:16:38+00:00,2026-11-06T09:16:38+00:00,""
 rpc,validators_current,2026-10-28,1,131048,,https://free.rpc.fastnear.com,2026-11-01T20:18:23+00:00,2026-11-01T20:18:23+00:00,"imported from the near-deflation-clock scaffold (re-serialised JSON, original fetch time 2026-10-28T23:25:10+00:00); trimmed: per-shard arrays and public keys dropped"
 rpc,validators_current,2026-11-01,1,130394,375,https://free.rpc.fastnear.com,2026-11-01T20:52:58+00:00,2026-11-01T20:52:58+00:00,trimmed: per-shard arrays and public keys dropped
 rpc,validators_current,2026-11-02,1,129292,372,https://free.rpc.fastnear.com,2026-11-02T13:49:57+00:00,2026-11-02T13:49:57+00:00,trimmed: per-shard arrays and public keys dropped
 rpc,validators_current,2026-11-03,1,129752,375,https://free.rpc.fastnear.com,2026-11-03T09:12:01+00:00,2026-11-03T09:12:01+00:00,trimmed: per-shard arrays and public keys dropped
 rpc,validators_current,2026-11-04,1,131255,379,https://free.rpc.fastnear.com,2026-11-04T08:47:05+00:00,2026-11-04T08:47:05+00:00,trimmed: per-shard arrays and public keys dropped
 rpc,validators_current,2026-11-05,1,121826,350,https://free.rpc.fastnear.com,2026-11-05T09:11:59+00:00,2026-11-05T09:11:59+00:00,trimmed: per-shard arrays and public keys dropped
+rpc,validators_current,2026-11-06,1,119647,337,https://free.rpc.fastnear.com,2026-11-06T09:16:38+00:00,2026-11-06T09:16:38+00:00,trimmed: per-shard arrays and public keys dropped
 rpc,validators_epoch,2026-11-02,80,11404029,32757,https://archival-rpc.mainnet.fastnear.com,2026-11-02T09:31:57+00:00,2026-11-02T13:53:18+00:00,trimmed: per-shard arrays and public keys dropped
 rpc,validators_epoch,2026-11-03,31,4484324,12825,https://archival-rpc.mainnet.fastnear.com,2026-11-03T09:12:17+00:00,2026-11-03T09:13:14+00:00,trimmed: per-shard arrays and public keys dropped
 rpc,validators_epoch,2026-11-04,20,2825065,8059,https://archival-rpc.mainnet.fastnear.com,2026-11-04T08:47:27+00:00,2026-11-04T08:48:06+00:00,trimmed: per-shard arrays and public keys dropped
 rpc,validators_epoch,2026-11-05,28,4062851,11618,https://archival-rpc.mainnet.fastnear.com,2026-11-05T09:12:16+00:00,2026-11-05T09:13:14+00:00,trimmed: per-shard arrays and public keys dropped
+rpc,validators_epoch,2026-11-06,28,4124520,11826,https://archival-rpc.mainnet.fastnear.com,2026-11-06T09:16:56+00:00,2026-11-06T09:17:54+00:00,trimmed: per-shard arrays and public keys dropped
