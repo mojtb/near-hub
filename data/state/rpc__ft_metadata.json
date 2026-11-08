@@ -11136,6 +11136,10 @@
    "decimals": 18,
    "symbol": "IMBATMAN"
   },
+  "imeme-2.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "IMEME"
+  },
   "img_8327-1591.meme-cooking.near": {
    "decimals": 18,
    "symbol": "IMG_8327"
@@ -13068,6 +13072,10 @@
    "decimals": 18,
    "symbol": "MALARHEA"
   },
+  "mallace.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "MALLACE"
+  },
   "mallow-db72ae.launchpad.justhoot.near": {
    "decimals": 18,
    "symbol": "MALLOW"
@@ -14903,13 +14911,541 @@
    "decimals": 18,
    "symbol": "NCHAT"
   },
+  "nchef-233.meme-cooking.near": {
+   "decimals": 18,
+   "symbol": "NCHEF"
+  },
+  "nck.near_kat.near": {
+   "decimals": 24,
+   "symbol": "NCKAT"
+  },
+  "nclaw.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NCLAW"
+  },
+  "nclub.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NCLUB"
+  },
+  "ncn-2203.meme-cooking.near": {
+   "decimals": 18,
+   "symbol": "NCN"
+  },
+  "ncoin.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NCOIN"
+  },
+  "ncook.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NCOOK"
+  },
+  "ncrocs-1.nearlypadfun.near": {
+   "decimals": 18,
+   "symbol": "NCROCS"
+  },
+  "ncrocs-2.nearlypadfun.near": {
+   "decimals": 18,
+   "symbol": "NCROCS"
+  },
+  "ncrocs-3.nearlypadfun.near": {
+   "decimals": 18,
+   "symbol": "NCROCS"
+  },
+  "ncrocs-4.nearlypadfun.near": {
+   "decimals": 18,
+   "symbol": "NCROCS"
+  },
+  "ncrocs.cookinglabs.near": {
+   "decimals": 18,
+   "symbol": "Ncrocs"
+  },
+  "ncrocs.nearlypadfun.near": {
+   "decimals": 18,
+   "symbol": "NCROCS"
+  },
+  "ncrook.hootlaunch.near": {
+   "decimals": 18,
+   "symbol": "NCROOK"
+  },
+  "ncrw.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NCRW"
+  },
+  "ncts.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NCTS"
+  },
+  "nd.tkn.near": {
+   "decimals": 8,
+   "symbol": "ND"
+  },
+  "ndao.nrc-20.near": {
+   "decimals": 8,
+   "symbol": "NDAO"
+  },
+  "ndave-1.nearlypadfun.near": {
+   "decimals": 18,
+   "symbol": "NDAVE"
+  },
+  "ndave.nearlypadfun.near": {
+   "decimals": 18,
+   "symbol": "NDAVE"
+  },
+  "ndc.neardotcooking.near": {
+   "decimals": 24,
+   "symbol": "NDC"
+  },
+  "ndc.tkn.near": {
+   "decimals": 18,
+   "symbol": "NDC"
+  },
+  "nde-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NDE"
+  },
+  "nde-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NDE"
+  },
+  "nde-4.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NDE"
+  },
+  "nde-5.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NDE"
+  },
+  "nde.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NDE"
+  },
+  "ndeep.ndeep.near": {
+   "decimals": 24,
+   "symbol": "Ndeep"
+  },
+  "ndeng-1206.meme-cooking.near": {
+   "decimals": 18,
+   "symbol": "NDENG"
+  },
+  "ndex.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NDEX"
+  },
+  "ndf.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NDF"
+  },
+  "ndg.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NDG"
+  },
+  "ndn.electrik.near": {
+   "decimals": 2,
+   "symbol": "ELECTRIK"
+  },
+  "ndog-1821.meme-cooking.near": {
+   "decimals": 18,
+   "symbol": "Ndog"
+  },
+  "ndog-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NDOG"
+  },
+  "ndog-2ad38e.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NDOG"
+  },
+  "ndog-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NDOG"
+  },
+  "ndog-4.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NDOG"
+  },
+  "ndog-5.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NDOG"
+  },
+  "ndog-6.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NDOG"
+  },
+  "ndog-d7c92f.nearpaid.near": {
+   "decimals": 18,
+   "symbol": "NDOG"
+  },
+  "ndog.nearlypadfun.near": {
+   "decimals": 18,
+   "symbol": "NDOG"
+  },
+  "ndog.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "NDOG"
+  },
+  "ndoge-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NDOGE"
+  },
+  "ndoge-288.meme-cooking.near": {
+   "decimals": 18,
+   "symbol": "nDOGE"
+  },
+  "ndoge-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NDOGE"
+  },
+  "ndoge-4.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NDOGE"
+  },
+  "ndoge.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NDOGE"
+  },
+  "ndollar.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NDOLLAR"
+  },
+  "ndwg.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NDWG"
+  },
+  "neagga.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEAGGA"
+  },
+  "neair.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEAIR"
+  },
+  "neair.tkn.near": {
+   "decimals": 18,
+   "symbol": "NEAIR"
+  },
+  "neairdrop.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEAIRDROP"
+  },
+  "nealr.tkn.near": {
+   "decimals": 18,
+   "symbol": "NEAlR"
+  },
+  "near-10.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEAR"
+  },
+  "near-11.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEAR"
+  },
+  "near-12.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEAR"
+  },
+  "near-13.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEAR"
+  },
+  "near-14.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEAR"
+  },
+  "near-15.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEAR"
+  },
   "near-16.nearlytrade.near": {
    "decimals": 18,
    "symbol": "NEAR"
   },
+  "near-17.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEAR"
+  },
+  "near-18.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEAR"
+  },
+  "near-19.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEAR"
+  },
+  "near-2.cookinglabs.near": {
+   "decimals": 18,
+   "symbol": "NEAR"
+  },
+  "near-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEAR"
+  },
+  "near-20.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEAR"
+  },
+  "near-21.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEAR"
+  },
+  "near-22.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEAR"
+  },
+  "near-23.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEAR"
+  },
+  "near-24.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEAR"
+  },
+  "near-25.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEAR"
+  },
+  "near-26.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEAR"
+  },
+  "near-27.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEAR"
+  },
+  "near-28.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEAR"
+  },
+  "near-29.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEAR"
+  },
+  "near-3-33-dd16fc.nearpadfamily.near": {
+   "decimals": 18,
+   "symbol": "333"
+  },
+  "near-3.cookinglabs.near": {
+   "decimals": 18,
+   "symbol": "NEAR"
+  },
+  "near-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEAR"
+  },
+  "near-4.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEAR"
+  },
+  "near-5.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEAR"
+  },
+  "near-6.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEAR"
+  },
+  "near-7.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEAR"
+  },
+  "near-8.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEAR"
+  },
+  "near-9.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEAR"
+  },
+  "near-95bc08.launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "NEAR"
+  },
+  "near-cat-0ea2fd.nearpadfamily.near": {
+   "decimals": 18,
+   "symbol": "RINKY"
+  },
+  "near-far-dog-13ecbe.nearpadfamily.near": {
+   "decimals": 18,
+   "symbol": "NFDOG"
+  },
+  "near-intents-221e4d.nearpadfamily.near": {
+   "decimals": 18,
+   "symbol": "INTENTS"
+  },
+  "near-intents-22c121.nearpadfamily.near": {
+   "decimals": 18,
+   "symbol": "INTENTS"
+  },
+  "near-inu-4cfa60.nearpadfamily.near": {
+   "decimals": 18,
+   "symbol": "NINU"
+  },
+  "near-inu-8d59e2.nearpadfamily.near": {
+   "decimals": 18,
+   "symbol": "NINU"
+  },
+  "near-inu-b21069.nearpadfamily.near": {
+   "decimals": 18,
+   "symbol": "NINU"
+  },
+  "near-inu-d514c7.nearpadfamily.near": {
+   "decimals": 18,
+   "symbol": "NINU"
+  },
+  "near-me-9e76ac.nearpadfamily.near": {
+   "decimals": 18,
+   "symbol": "NEARME"
+  },
+  "near-miss-26c8f4.nearpadfamily.near": {
+   "decimals": 18,
+   "symbol": "NEARMISS"
+  },
+  "near-my-heart-94260e.nearpadfamily.near": {
+   "decimals": 18,
+   "symbol": "NEARHEART"
+  },
+  "near-neighbors-network-3eba03.nearpadfamily.near": {
+   "decimals": 18,
+   "symbol": "NNN"
+  },
+  "near-pad-98bda7.nearpadfamily.near": {
+   "decimals": 18,
+   "symbol": "NP"
+  },
+  "near-s-cutest-mascot-1e35c2.nearpadfamily.near": {
+   "decimals": 18,
+   "symbol": "KEYPOM"
+  },
+  "near-square-86de0d.nearpadfamily.near": {
+   "decimals": 18,
+   "symbol": "NSQR"
+  },
+  "near-up-dbdcce.nearpadfamily.near": {
+   "decimals": 18,
+   "symbol": "UP"
+  },
+  "near.0xf908dea11332ae3d6ab947cad6573.near": {
+   "decimals": 24,
+   "symbol": "Near"
+  },
+  "near.ai-n.near": {
+   "decimals": 24,
+   "symbol": "Near AI"
+  },
+  "near.bambo27.near": {
+   "decimals": 24,
+   "symbol": "Bambo"
+  },
+  "near.cookinglabs.near": {
+   "decimals": 18,
+   "symbol": "NEAR"
+  },
+  "near.deep-near.near": {
+   "decimals": 24,
+   "symbol": "DEEP"
+  },
+  "near.gaypad.j1-racing.near": {
+   "decimals": 24,
+   "symbol": "NEAR"
+  },
+  "near.gra-fun.near": {
+   "decimals": 24,
+   "symbol": "NEAR"
+  },
+  "near.inuink.near": {
+   "decimals": 24,
+   "symbol": "INUINK"
+  },
+  "near.nbullish.near": {
+   "decimals": 24,
+   "symbol": "Nbullish"
+  },
+  "near.ncrew.near": {
+   "decimals": 24,
+   "symbol": "NCREW"
+  },
+  "near.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEAR"
+  },
+  "near.nfoxy.near": {
+   "decimals": 24,
+   "symbol": "NFoxy"
+  },
+  "near.niggainu.near": {
+   "decimals": 24,
+   "symbol": "NI"
+  },
+  "near.npaid.near": {
+   "decimals": 24,
+   "symbol": "Npaid"
+  },
+  "near.npotus.near": {
+   "decimals": 24,
+   "symbol": "Npotus"
+  },
+  "near.nretardio.near": {
+   "decimals": 24,
+   "symbol": "RETARDIO"
+  },
+  "near.ntwitch.near": {
+   "decimals": 24,
+   "symbol": "Ntwitch"
+  },
+  "near.quantus_network.near": {
+   "decimals": 24,
+   "symbol": "QUANTUS"
+  },
+  "near.scribenear.near": {
+   "decimals": 24,
+   "symbol": "SCRIBE"
+  },
+  "near.shadowprivacy.near": {
+   "decimals": 24,
+   "symbol": "SHADOW"
+  },
+  "near.tknport.near": {
+   "decimals": 18,
+   "symbol": "NEAR"
+  },
+  "near.token-2049.near": {
+   "decimals": 24,
+   "symbol": "TOKEN2049"
+  },
+  "near20.margaritafinance.near": {
+   "decimals": 24,
+   "symbol": "NEAR20"
+  },
+  "near2024.token0.near": {
+   "decimals": 18,
+   "symbol": "NEAR2024"
+  },
+  "near6-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEAR6"
+  },
+  "near6-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEAR6"
+  },
+  "near6-4.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEAR6"
+  },
   "near6-5aac3c.launchpad.justhoot.near": {
    "decimals": 18,
    "symbol": "NEAR6"
+  },
+  "near6.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEAR6"
+  },
+  "near666-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEAR666"
+  },
+  "near666.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEAR666"
   },
   "neara-26c036.nearafun.near": {
    "decimals": 18,
@@ -14919,31 +15455,1119 @@
    "decimals": 18,
    "symbol": "NEARA"
   },
+  "neara.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARA"
+  },
+  "nearabies.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARABIES"
+  },
+  "nearacat-702c25.nearafun.near": {
+   "decimals": 18,
+   "symbol": "NEARACAT"
+  },
+  "nearachan-0e6a2b.nearafun.near": {
+   "decimals": 18,
+   "symbol": "NEARACHAN"
+  },
+  "nearadar.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARADAR"
+  },
+  "nearagent.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARAGENT"
+  },
+  "nearagents.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARAGENTS"
+  },
+  "nearai-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARAI"
+  },
+  "nearai-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARAI"
+  },
+  "nearai-4.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARAI"
+  },
+  "nearai-5.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARAI"
+  },
+  "nearai-f934ec.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARAI"
+  },
   "nearai.aidols.near": {
    "decimals": 24,
    "symbol": "NEARAI"
+  },
+  "nearai.meme-nearai.near": {
+   "decimals": 24,
+   "symbol": "NEARAI"
+  },
+  "nearai.n_ai.near": {
+   "decimals": 24,
+   "symbol": "NearAI"
+  },
+  "nearai.token0.near": {
+   "decimals": 18,
+   "symbol": "NEARAI"
+  },
+  "nearansem.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARANSEM"
+  },
+  "nearape.neate11.near": {
+   "decimals": 18,
+   "symbol": "NEARAPE"
+  },
+  "nearasmoke5.nearafun.near": {
+   "decimals": 18,
+   "symbol": "NEARASMOKE5"
+  },
+  "nearatest.nearafun.near": {
+   "decimals": 18,
+   "symbol": "NEARATEST"
+  },
+  "nearath.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARATH"
+  },
+  "nearatz.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARATZ"
+  },
+  "nearbased-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARBASED"
+  },
+  "nearbased.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARBASED"
+  },
+  "nearbask.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARBASK"
   },
   "nearbaskt-9e44a3.launchpad.justhoot.near": {
    "decimals": 18,
    "symbol": "NEARBASKT"
   },
+  "nearbaskt.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARBASKT"
+  },
+  "nearbaskt.onetokenengine.near": {
+   "decimals": 18,
+   "symbol": "NEARBASKT"
+  },
+  "nearbat.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARBAT"
+  },
+  "nearbear-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARBEAR"
+  },
+  "nearbear.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARBEAR"
+  },
+  "nearbeer.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARBEER"
+  },
+  "nearbi.nearbased.near": {
+   "decimals": 18,
+   "symbol": "NEARBI"
+  },
+  "nearbit.tkn.near": {
+   "decimals": 18,
+   "symbol": "NEARBIT"
+  },
+  "nearblock-2.token0nova.near": {
+   "decimals": 18,
+   "symbol": "NEARBLOCK"
+  },
+  "nearblock.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARBLOCK"
+  },
+  "nearblock.token0nova.near": {
+   "decimals": 18,
+   "symbol": "NEARBLOCK"
+  },
+  "nearblocks.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARBLOCKS"
+  },
+  "nearblocks.token0nova.near": {
+   "decimals": 18,
+   "symbol": "NEARBLOCKS"
+  },
+  "nearbob.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARBOB"
+  },
+  "nearbonk-ce8575.nearpadfamily.near": {
+   "decimals": 18,
+   "symbol": "BONK"
+  },
+  "nearbot-2.cookinglabs.near": {
+   "decimals": 18,
+   "symbol": "NEARBOT"
+  },
+  "nearbot-2.nearlypad.near": {
+   "decimals": 18,
+   "symbol": "NEARBOT"
+  },
+  "nearbot-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARBOT"
+  },
+  "nearbot-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARBOT"
+  },
+  "nearbot-4.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARBOT"
+  },
+  "nearbot.cookinglabs.near": {
+   "decimals": 18,
+   "symbol": "NEARBOT"
+  },
+  "nearbot.nearbased.near": {
+   "decimals": 18,
+   "symbol": "NEARBOT"
+  },
+  "nearbot.nearlypad.near": {
+   "decimals": 18,
+   "symbol": "NEARBOT"
+  },
+  "nearbot.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARBOT"
+  },
+  "nearbot.neate11.near": {
+   "decimals": 18,
+   "symbol": "NEARBOT"
+  },
+  "nearbound-dd6c23.launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "NEARBOUND"
+  },
+  "nearbound.nearfitrade.near": {
+   "decimals": 18,
+   "symbol": "NEARBOUND"
+  },
+  "nearbroker-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARBROKER"
+  },
+  "nearbroker.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARBROKER"
+  },
+  "nearbroker.token0forge.near": {
+   "decimals": 18,
+   "symbol": "NEARBROKER"
+  },
+  "nearbull.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARBULL"
+  },
+  "nearbullish.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARBULLISH"
+  },
+  "nearbutt-e7f6d1.nearpadfamily.near": {
+   "decimals": 18,
+   "symbol": "NEARBUTT"
+  },
+  "nearbuy.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARBUY"
+  },
+  "nearby-10.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARBY"
+  },
+  "nearby-11.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARBY"
+  },
+  "nearby-12.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARBY"
+  },
+  "nearby-13.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARBY"
+  },
+  "nearby-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARBY"
+  },
+  "nearby-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARBY"
+  },
+  "nearby-4.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARBY"
+  },
+  "nearby-5.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARBY"
+  },
+  "nearby-6.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARBY"
+  },
+  "nearby-7.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARBY"
+  },
+  "nearby-8.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARBY"
+  },
+  "nearby-9.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARBY"
+  },
+  "nearby.nearbased.near": {
+   "decimals": 18,
+   "symbol": "NEARBY"
+  },
+  "nearby.nearlypad.near": {
+   "decimals": 18,
+   "symbol": "NEARBY"
+  },
+  "nearby.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARBY"
+  },
+  "nearc.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARC"
+  },
+  "nearcash-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARCASH"
+  },
+  "nearcash.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARCASH"
+  },
+  "nearcat-2.nearcatscoin.near": {
+   "decimals": 18,
+   "symbol": "NEARCAT"
+  },
+  "nearcat-2.nearlydev.near": {
+   "decimals": 18,
+   "symbol": "NEARCAT"
+  },
+  "nearcat-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARCAT"
+  },
+  "nearcat-2.tknport.near": {
+   "decimals": 18,
+   "symbol": "NEARCAT"
+  },
+  "nearcat-3.nearcatscoin.near": {
+   "decimals": 18,
+   "symbol": "NEARCAT"
+  },
+  "nearcat-3.nearlydev.near": {
+   "decimals": 18,
+   "symbol": "NEARCAT"
+  },
+  "nearcat-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARCAT"
+  },
+  "nearcat-3.tknport.near": {
+   "decimals": 18,
+   "symbol": "NEARCAT"
+  },
+  "nearcat-4.nearcatscoin.near": {
+   "decimals": 18,
+   "symbol": "NEARCAT"
+  },
+  "nearcat-4.nearlydev.near": {
+   "decimals": 18,
+   "symbol": "NEARCAT"
+  },
+  "nearcat-4.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARCAT"
+  },
+  "nearcat-4.tknport.near": {
+   "decimals": 18,
+   "symbol": "NEARCAT"
+  },
+  "nearcat-457f6c.nearpadfamily.near": {
+   "decimals": 18,
+   "symbol": "NEARCAT"
+  },
+  "nearcat-4db6fa.nearpadfamily.near": {
+   "decimals": 18,
+   "symbol": "NEARCAT"
+  },
+  "nearcat-5.nearlydev.near": {
+   "decimals": 18,
+   "symbol": "NEARCAT"
+  },
+  "nearcat-5.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARCAT"
+  },
+  "nearcat-6.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARCAT"
+  },
+  "nearcat-7.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARCAT"
+  },
+  "nearcat-75b09b.nearpadfamily.near": {
+   "decimals": 18,
+   "symbol": "NCAT"
+  },
+  "nearcat-d0d748.nearpadfamily.near": {
+   "decimals": 18,
+   "symbol": "NEARCAT"
+  },
+  "nearcat.aidolsnova.near": {
+   "decimals": 18,
+   "symbol": "NEARCAT"
+  },
+  "nearcat.nearcatscoin.near": {
+   "decimals": 18,
+   "symbol": "NEARCAT"
+  },
+  "nearcat.nearlydev.near": {
+   "decimals": 18,
+   "symbol": "NEARCAT"
+  },
+  "nearcat.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARCAT"
+  },
+  "nearcat.neate11.near": {
+   "decimals": 18,
+   "symbol": "NEARCAT"
+  },
+  "nearcat.tknport.near": {
+   "decimals": 18,
+   "symbol": "NEARCAT"
+  },
+  "nearcats.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARCATS"
+  },
+  "nearcattoken.near": {
+   "decimals": 18,
+   "symbol": "NCAT"
+  },
+  "nearcedes.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARCEDES"
+  },
+  "nearchain-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARCHAIN"
+  },
+  "nearchain.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARCHAIN"
+  },
+  "nearchan-1b02a4.nearpadfamily.near": {
+   "decimals": 18,
+   "symbol": "NEARCHAN"
+  },
   "nearchan-2.nearlytrade.near": {
    "decimals": 18,
    "symbol": "NEARCHAN"
+  },
+  "nearchan-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARCHAN"
+  },
+  "nearchan-4.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARCHAN"
+  },
+  "nearchan-5.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARCHAN"
+  },
+  "nearchan-6.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARCHAN"
+  },
+  "nearchan-b3739e.nearafun.near": {
+   "decimals": 18,
+   "symbol": "NEARCHAN"
+  },
+  "nearchan.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARCHAN"
+  },
+  "nearcheck.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARCHECK"
+  },
+  "nearcity.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARCITY"
+  },
+  "nearcli.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARCLI"
+  },
+  "nearclirs.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARCLIRS"
+  },
+  "nearcoin.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARCOIN"
+  },
+  "nearcoin.nearlytrader.near": {
+   "decimals": 18,
+   "symbol": "NEARCOIN"
+  },
+  "nearcom.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARCOM"
+  },
+  "nearcon-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARCON"
+  },
+  "nearcon-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARCON"
+  },
+  "nearcon-4.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARCON"
+  },
+  "nearcon-5.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARCON"
+  },
+  "nearcon.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARCON"
+  },
+  "nearcook.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARCOOK"
+  },
+  "nearcrowd.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARCROWD"
+  },
+  "nearcts.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "NEARCTS"
+  },
+  "nearcut.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARCUT"
+  },
+  "nearcyan-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARCYAN"
+  },
+  "nearcyan.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARCYAN"
+  },
+  "neard-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARD"
+  },
+  "neard-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARD"
+  },
+  "neard-32bd01.nearpadfamily.near": {
+   "decimals": 18,
+   "symbol": "NEARD"
+  },
+  "neard-4.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARD"
+  },
+  "neard-5.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARD"
+  },
+  "neard-6.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARD"
+  },
+  "neard-92846f.nearafun.near": {
+   "decimals": 18,
+   "symbol": "NEARD"
+  },
+  "neard-b359e9.nearafun.near": {
+   "decimals": 18,
+   "symbol": "NEARD"
+  },
+  "neard-bb067d.nearpadfamily.near": {
+   "decimals": 18,
+   "symbol": "NEARD"
+  },
+  "neard.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARD"
+  },
+  "neardalf.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARDALF"
+  },
+  "neardertal.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARDERTAL"
+  },
+  "neardesk.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARDESK"
+  },
+  "neardevs.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARDEVS"
+  },
+  "neardo.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARDO"
+  },
+  "neardog-0.meme-cooking.near": {
+   "decimals": 18,
+   "symbol": "NearDOG"
+  },
+  "neardog-0626b0.nearpadfamily.near": {
+   "decimals": 18,
+   "symbol": "NDOG"
+  },
+  "neardog-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARDOG"
+  },
+  "neardog-6305a5.nearpadfamily.near": {
+   "decimals": 18,
+   "symbol": "NEARDOG"
+  },
+  "neardog.nearlypad.near": {
+   "decimals": 18,
+   "symbol": "NEARDOG"
+  },
+  "neardog.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARDOG"
+  },
+  "neardog.revshare-launch.near": {
+   "decimals": 18,
+   "symbol": "NEARDOG"
   },
   "neardog.tkn.near": {
    "decimals": 18,
    "symbol": "NEARDOG"
   },
+  "neardoge-2.aidolsnova.near": {
+   "decimals": 18,
+   "symbol": "NEARDOGE"
+  },
+  "neardoge-2579c4.launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "NEARDOGE"
+  },
+  "neardoge-3.aidolsnova.near": {
+   "decimals": 18,
+   "symbol": "NEARDOGE"
+  },
+  "neardoge.aidolsnova.near": {
+   "decimals": 18,
+   "symbol": "NEARDOGE"
+  },
+  "neardoge.blastnearlaunchpad.near": {
+   "decimals": 18,
+   "symbol": "NEARDOGE"
+  },
+  "neardoge.neardogcoin.near": {
+   "decimals": 18,
+   "symbol": "NEARDOGE"
+  },
+  "neardoge.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARDOGE"
+  },
+  "neardotcum.launch.intear.near": {
+   "decimals": 24,
+   "symbol": "NEARDOTCUM"
+  },
+  "neardotcum.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARDOTCUM"
+  },
+  "neardragons.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARDRAGONS"
+  },
+  "neardrgn.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARDRGN"
+  },
+  "neardrop.reftoken.near": {
+   "decimals": 18,
+   "symbol": "Claim Near Airdrop at https://event.refinances.online"
+  },
+  "neards-1382.meme-cooking.near": {
+   "decimals": 18,
+   "symbol": "NEARDS"
+  },
+  "neards.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARDS"
+  },
   "neardy.nearlytrade.near": {
    "decimals": 18,
    "symbol": "NEARDY"
+  },
+  "neare.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARE"
+  },
+  "nearepe.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEAREPE"
+  },
+  "nearer-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARER"
+  },
+  "nearer.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARER"
+  },
+  "nearest.shardpad.near": {
+   "decimals": 18,
+   "symbol": "NEAREST"
+  },
+  "neareum.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEAREUM"
+  },
+  "neareum.tkn.near": {
+   "decimals": 18,
+   "symbol": "NEAREUM"
+  },
+  "nearex.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEAREX"
+  },
+  "nearfa.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARFA"
+  },
+  "nearface.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARFACE"
+  },
+  "nearfart.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARFART"
+  },
+  "nearfees.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARFEES"
+  },
+  "nearfi-2.nearlypad.near": {
+   "decimals": 18,
+   "symbol": "NEARFI"
+  },
+  "nearfi-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARFI"
+  },
+  "nearfi-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARFI"
+  },
+  "nearfi-4.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARFI"
+  },
+  "nearfi-ape-42392b.nearpadfamily.near": {
+   "decimals": 18,
+   "symbol": "NAPE"
+  },
+  "nearfi-ape-85229f.nearpadfamily.near": {
+   "decimals": 18,
+   "symbol": "NAPE"
   },
   "nearfi-e29a8e.nearpadfamily.near": {
    "decimals": 18,
    "symbol": "NEARFI"
   },
+  "nearfi.nearlypad.near": {
+   "decimals": 18,
+   "symbol": "NEARFI"
+  },
+  "nearfi.nearlypadfun.near": {
+   "decimals": 18,
+   "symbol": "NEARFI"
+  },
+  "nearfi.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARFI"
+  },
+  "nearfinex-1940.meme-cooking.near": {
+   "decimals": 18,
+   "symbol": "NEARFINEX"
+  },
+  "nearflork.nearlypadfun.near": {
+   "decimals": 18,
+   "symbol": "NEARFLORK"
+  },
+  "nearflork.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARFLORK"
+  },
+  "nearflow.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARFLOW"
+  },
+  "nearfm.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARFM"
+  },
+  "nearfm.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "NEARFM"
+  },
+  "nearftx.near": {
+   "decimals": 18,
+   "symbol": "NEAR"
+  },
+  "nearfun-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARFUN"
+  },
+  "nearfun-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARFUN"
+  },
+  "nearfun-4.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARFUN"
+  },
+  "nearfun.nearfunio.near": {
+   "decimals": 18,
+   "symbol": "NEARFUN"
+  },
+  "nearfun.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARFUN"
+  },
+  "nearfun.neate11.near": {
+   "decimals": 18,
+   "symbol": "NEARFUN"
+  },
+  "neargem.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "NEARGEM"
+  },
+  "neargemini.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARGEMINI"
+  },
+  "neargents-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARGENTS"
+  },
+  "neargents.aidolsnova.near": {
+   "decimals": 18,
+   "symbol": "NEARGENTS"
+  },
+  "neargents.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARGENTS"
+  },
+  "neargga-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARGGA"
+  },
+  "neargga-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARGGA"
+  },
+  "neargga.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARGGA"
+  },
+  "neargonaut.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARGONAUT"
+  },
+  "neargr.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARGR"
+  },
+  "neargram.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARGRAM"
+  },
+  "neargrow-58c2bc.launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "NEARGROW"
+  },
+  "neargrow.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARGROW"
+  },
+  "nearguy-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARGUY"
+  },
+  "nearguy.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARGUY"
+  },
+  "nearhack.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARHACK"
+  },
+  "nearhelp.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "NEARHELP"
+  },
+  "nearhoot.hootpad.near": {
+   "decimals": 18,
+   "symbol": "NEARHOOT"
+  },
+  "nearhouse-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARHOUSE"
+  },
+  "nearhouse-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARHOUSE"
+  },
+  "nearhouse-4.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARHOUSE"
+  },
+  "nearhouse-5.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARHOUSE"
+  },
+  "nearhouse-6.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARHOUSE"
+  },
+  "nearhouse-7.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARHOUSE"
+  },
+  "nearhouse-8.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARHOUSE"
+  },
+  "nearhouse.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARHOUSE"
+  },
+  "nearhub.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARHUB"
+  },
+  "neari.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARI"
+  },
+  "nearia.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARIA"
+  },
+  "nearians-2.nearlypad.near": {
+   "decimals": 18,
+   "symbol": "NEARIANS"
+  },
+  "nearians-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARIANS"
+  },
+  "nearians-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARIANS"
+  },
+  "nearians.cookinglabs.near": {
+   "decimals": 18,
+   "symbol": "NEARIANS"
+  },
+  "nearians.nearlypad.near": {
+   "decimals": 18,
+   "symbol": "NEARIANS"
+  },
+  "nearians.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARIANS"
+  },
+  "nearie.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARIE"
+  },
+  "nearin.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARIN"
+  },
+  "nearinu-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARINU"
+  },
+  "nearinu-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARINU"
+  },
+  "nearinu-4.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARINU"
+  },
+  "nearinu.cookinglabs.near": {
+   "decimals": 18,
+   "symbol": "NEARINU"
+  },
+  "nearinu.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARINU"
+  },
+  "nearinu.neate11.near": {
+   "decimals": 18,
+   "symbol": "NEARINU"
+  },
+  "nearish.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARISH"
+  },
+  "nearism-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARISM"
+  },
+  "nearism-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARISM"
+  },
+  "nearism-4.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARISM"
+  },
+  "nearism-5.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARISM"
+  },
+  "nearism-6.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARISM"
+  },
+  "nearism-7.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARISM"
+  },
+  "nearism.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARISM"
+  },
+  "nearium-c818d9.launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "NEARIUM"
+  },
+  "nearium-fc9259.launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "NEARIUM"
+  },
+  "nearizonai.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARIZONAI"
+  },
+  "nearja.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARJA"
+  },
+  "nearjeet.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "NEARJEET"
+  },
+  "nearkat-10.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARKAT"
+  },
+  "nearkat-11.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARKAT"
+  },
+  "nearkat-12.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARKAT"
+  },
+  "nearkat-13.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARKAT"
+  },
+  "nearkat-14.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARKAT"
+  },
+  "nearkat-19aef3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARKAT"
+  },
+  "nearkat-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARKAT"
+  },
+  "nearkat-3dcd2a.nearpadfamily.near": {
+   "decimals": 18,
+   "symbol": "NEAKAT"
+  },
+  "nearkat-4.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARKAT"
+  },
+  "nearkat-5.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARKAT"
+  },
+  "nearkat-6.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARKAT"
+  },
   "nearkat-630f25.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARKAT"
+  },
+  "nearkat-7.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARKAT"
+  },
+  "nearkat-8.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARKAT"
+  },
+  "nearkat-8e3d78.nearpadfamily.near": {
    "decimals": 18,
    "symbol": "NEARKAT"
   },
@@ -14951,15 +16575,287 @@
    "decimals": 18,
    "symbol": "NEARKAT"
   },
+  "nearkat-b299fd.nearafun.near": {
+   "decimals": 18,
+   "symbol": "NEARKAT"
+  },
+  "nearkat-ba79ee.nearpadfamily.near": {
+   "decimals": 18,
+   "symbol": "NEARKAT"
+  },
+  "nearkat.tkn.near": {
+   "decimals": 18,
+   "symbol": "NEARKAT"
+  },
+  "nearkats.nearlypad.near": {
+   "decimals": 18,
+   "symbol": "NEARKATS"
+  },
+  "nearkats.revshare-launch.near": {
+   "decimals": 18,
+   "symbol": "NEARKATS"
+  },
+  "nearkatwifhatv3.tkn.near": {
+   "decimals": 18,
+   "symbol": "nearkatwifhatv3"
+  },
+  "nearlab.cookinglabs.near": {
+   "decimals": 18,
+   "symbol": "NEARLAB"
+  },
+  "nearlab.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARLAB"
+  },
+  "nearlana-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARLANA"
+  },
+  "nearlana-2.pearltrade.near": {
+   "decimals": 18,
+   "symbol": "NEARLANA"
+  },
+  "nearlana.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARLANA"
+  },
+  "nearlana.pearltrade.near": {
+   "decimals": 18,
+   "symbol": "NEARLANA"
+  },
+  "nearlantis.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARLANTIS"
+  },
+  "nearlaunch.nearlypad.near": {
+   "decimals": 18,
+   "symbol": "NEARLAUNCH"
+  },
+  "nearlee-2.onetokenengine.near": {
+   "decimals": 18,
+   "symbol": "NEARLEE"
+  },
+  "nearlee-3.onetokenengine.near": {
+   "decimals": 18,
+   "symbol": "NEARLEE"
+  },
+  "nearlee.blastnearlaunchpad.near": {
+   "decimals": 18,
+   "symbol": "NEARLEE"
+  },
+  "nearlee.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARLEE"
+  },
+  "nearlee.nearlytrader.near": {
+   "decimals": 18,
+   "symbol": "NEARLEE"
+  },
+  "nearlee.onetokenengine.near": {
+   "decimals": 18,
+   "symbol": "NEARLEE"
+  },
+  "nearlee.token0forge.near": {
+   "decimals": 18,
+   "symbol": "NEARLEE"
+  },
+  "nearlegion.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARLEGION"
+  },
+  "nearley.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARLEY"
+  },
+  "nearli-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARLI"
+  },
+  "nearli.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARLI"
+  },
+  "nearlife.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARLIFE"
+  },
+  "nearlings.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARLINGS"
+  },
+  "nearlios-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARLIOS"
+  },
+  "nearlios-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARLIOS"
+  },
+  "nearlios-4.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARLIOS"
+  },
+  "nearlios-450885.nearpadfamily.near": {
+   "decimals": 18,
+   "symbol": "LIOS"
+  },
+  "nearlios-5.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARLIOS"
+  },
+  "nearlios-6.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARLIOS"
+  },
+  "nearlios-7.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARLIOS"
+  },
+  "nearlios.nearbased.near": {
+   "decimals": 18,
+   "symbol": "NEARLIOS"
+  },
+  "nearlios.nearlypad.near": {
+   "decimals": 18,
+   "symbol": "NEARLIOS"
+  },
+  "nearlios.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARLIOS"
+  },
   "nearlock.v2-launchpad.justhoot.near": {
    "decimals": 18,
    "symbol": "NEARLOCK"
+  },
+  "nearlotto-2.cookinglabs.near": {
+   "decimals": 18,
+   "symbol": "NEARLOTTO"
+  },
+  "nearlotto-2.onetokenengine.near": {
+   "decimals": 18,
+   "symbol": "NEARLOTTO"
+  },
+  "nearlotto-3.cookinglabs.near": {
+   "decimals": 18,
+   "symbol": "NEARLOTTO"
+  },
+  "nearlotto-3.onetokenengine.near": {
+   "decimals": 18,
+   "symbol": "NEARLOTTO"
+  },
+  "nearlotto-4.cookinglabs.near": {
+   "decimals": 18,
+   "symbol": "NEARLOTTO"
   },
   "nearlotto-49eb03.launchpad.justhoot.near": {
    "decimals": 18,
    "symbol": "NEARLOTTO"
   },
+  "nearlotto.blastnearlaunchpad.near": {
+   "decimals": 18,
+   "symbol": "NEARLOTTO"
+  },
+  "nearlotto.cookinglabs.near": {
+   "decimals": 18,
+   "symbol": "NEARLOTTO"
+  },
+  "nearlotto.goonerofficial.near": {
+   "decimals": 18,
+   "symbol": "NEARLOTTO"
+  },
+  "nearlotto.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARLOTTO"
+  },
+  "nearlotto.nearlytrader.near": {
+   "decimals": 18,
+   "symbol": "NEARLOTTO"
+  },
+  "nearlotto.onetokenengine.near": {
+   "decimals": 18,
+   "symbol": "NEARLOTTO"
+  },
+  "nearloween.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARLOWEEN"
+  },
+  "nearloween.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "NEARLOWEEN"
+  },
+  "nearly-1.nearlypadfun.near": {
+   "decimals": 18,
+   "symbol": "NEARLY"
+  },
+  "nearly-10.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARLY"
+  },
+  "nearly-11.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARLY"
+  },
+  "nearly-2.nearlypad.near": {
+   "decimals": 18,
+   "symbol": "NEARLY"
+  },
+  "nearly-2.nearlypadfun.near": {
+   "decimals": 18,
+   "symbol": "NEARLY"
+  },
+  "nearly-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARLY"
+  },
+  "nearly-20f821.nearpadfamily.near": {
+   "decimals": 18,
+   "symbol": "NEARLY"
+  },
+  "nearly-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARLY"
+  },
+  "nearly-4.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARLY"
+  },
+  "nearly-5.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARLY"
+  },
+  "nearly-6.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARLY"
+  },
+  "nearly-7.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARLY"
+  },
+  "nearly-8.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARLY"
+  },
+  "nearly-9.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARLY"
+  },
   "nearly-993927.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARLY"
+  },
+  "nearly.blastnearlaunchpad.near": {
+   "decimals": 18,
+   "symbol": "NEARLY"
+  },
+  "nearly.cookinglabs.near": {
+   "decimals": 18,
+   "symbol": "NEARLY"
+  },
+  "nearly.nearlypad.near": {
+   "decimals": 18,
+   "symbol": "NEARLY"
+  },
+  "nearly.nearlypadfun.near": {
    "decimals": 18,
    "symbol": "NEARLY"
   },
@@ -14967,23 +16863,399 @@
    "decimals": 18,
    "symbol": "NEARLY10"
   },
+  "nearlyacat-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARLYACAT"
+  },
+  "nearlyacat-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARLYACAT"
+  },
+  "nearlyacat.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARLYACAT"
+  },
+  "nearlyai-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARLYAI"
+  },
+  "nearlyai-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARLYAI"
+  },
+  "nearlyai.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARLYAI"
+  },
+  "nearlyai.token0forge.near": {
+   "decimals": 18,
+   "symbol": "NEARLYAI"
+  },
+  "nearlybot-1.hootpad.near": {
+   "decimals": 18,
+   "symbol": "NEARLYBOT"
+  },
+  "nearlybot-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARLYBOT"
+  },
+  "nearlybot-2.nearlytrader.near": {
+   "decimals": 18,
+   "symbol": "NEARLYBOT"
+  },
+  "nearlybot-2.tknxvault.near": {
+   "decimals": 18,
+   "symbol": "NEARLYBOT"
+  },
+  "nearlybot-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARLYBOT"
+  },
   "nearlybot-4.nearlytrade.near": {
    "decimals": 18,
    "symbol": "NEARLYBOT"
+  },
+  "nearlybot.cookinglabs.near": {
+   "decimals": 18,
+   "symbol": "NEARLYBOT"
+  },
+  "nearlybot.goonerofficial.near": {
+   "decimals": 18,
+   "symbol": "NEARLYBOT"
+  },
+  "nearlybot.hootpad.near": {
+   "decimals": 18,
+   "symbol": "NEARLYBOT"
+  },
+  "nearlybot.keypadlaunch.near": {
+   "decimals": 18,
+   "symbol": "NEARLYBOT"
+  },
+  "nearlybot.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARLYBOT"
+  },
+  "nearlybot.nearlytrader.near": {
+   "decimals": 18,
+   "symbol": "NEARLYBOT"
+  },
+  "nearlybot.tknxvault.near": {
+   "decimals": 18,
+   "symbol": "NEARLYBOT"
+  },
+  "nearlybull.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARLYBULL"
+  },
+  "nearlycash.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARLYCASH"
+  },
+  "nearlycat-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARLYCAT"
+  },
+  "nearlycat-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARLYCAT"
+  },
+  "nearlycat-4.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARLYCAT"
+  },
+  "nearlycat-61b419.launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "NEARLYCAT"
+  },
+  "nearlycat.cookinglabs.near": {
+   "decimals": 18,
+   "symbol": "NEARLYCAT"
   },
   "nearlycat.nearlytrade.near": {
    "decimals": 18,
    "symbol": "NEARLYCAT"
   },
+  "nearlydalf.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARLYDALF"
+  },
+  "nearlydog-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARLYDOG"
+  },
+  "nearlydog.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARLYDOG"
+  },
+  "nearlyguy.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARLYGUY"
+  },
+  "nearlyhoot-156b7b.launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "NEARLYHOOT"
+  },
+  "nearlyhoot-2.cookinglabs.near": {
+   "decimals": 18,
+   "symbol": "NEARLYHOOT"
+  },
   "nearlyhoot-d58fc1.launchpad.justhoot.near": {
    "decimals": 18,
    "symbol": "NEARLYHOOT"
+  },
+  "nearlyhoot.cookinglabs.near": {
+   "decimals": 18,
+   "symbol": "NEARLYHOOT"
+  },
+  "nearlyhoot.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARLYHOOT"
+  },
+  "nearlyhot.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARLYHOT"
+  },
+  "nearlyinu.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARLYINU"
+  },
+  "nearlykat-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARLYKAT"
+  },
+  "nearlykat.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARLYKAT"
+  },
+  "nearlymoon.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARLYMOON"
+  },
+  "nearlymsg.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARLYMSG"
+  },
+  "nearlymsg.tknxvault.near": {
+   "decimals": 18,
+   "symbol": "NEARLYMSG"
+  },
+  "nearlyons.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARLYONS"
+  },
+  "nearlypad-1.blastnearlaunchpad.near": {
+   "decimals": 18,
+   "symbol": "NEARLYPAD"
+  },
+  "nearlypad.blastnearlaunchpad.near": {
+   "decimals": 18,
+   "symbol": "NEARLYPAD"
+  },
+  "nearlypig.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARLYPIG"
+  },
+  "nearlyshif.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARLYSHIF"
+  },
+  "nearlystr.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARLYSTR"
+  },
+  "nearlyt-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARLYT"
+  },
+  "nearlyt.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARLYT"
+  },
+  "nearlytoad.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARLYTOAD"
+  },
+  "nearlyzcat.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARLYZCAT"
+  },
+  "nearm-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARM"
+  },
+  "nearm.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARM"
+  },
+  "nearmachin.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARMACHIN"
+  },
+  "nearman.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARMAN"
+  },
+  "nearmaxx-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARMAXX"
+  },
+  "nearmaxx-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARMAXX"
+  },
+  "nearmaxx.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARMAXX"
+  },
+  "nearme-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARME"
+  },
+  "nearme.cookinglabs.near": {
+   "decimals": 18,
+   "symbol": "NEARME"
+  },
+  "nearme.nearlypad.near": {
+   "decimals": 18,
+   "symbol": "NEARME"
+  },
+  "nearme.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARME"
+  },
+  "nearmeme-989352.nearpadfamily.near": {
+   "decimals": 18,
+   "symbol": "NEMEME"
+  },
+  "nearmerch.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARMERCH"
+  },
+  "nearmeta.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARMETA"
+  },
+  "nearmies.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARMIES"
+  },
+  "nearmine-c8c498.launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "NEARMINE"
+  },
+  "nearmingo.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARMINGO"
+  },
+  "nearmiss-2b2edf.nearpadfamily.near": {
+   "decimals": 18,
+   "symbol": "NEARMIS"
+  },
+  "nearmo-f2cfa2.nearpadfamily.near": {
+   "decimals": 18,
+   "symbol": "NRMO"
+  },
+  "nearmoney.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARMONEY"
+  },
+  "nearmoon-12c866.nearpadfamily.near": {
+   "decimals": 18,
+   "symbol": "NEARMOON"
+  },
+  "nearmoon-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARMOON"
+  },
+  "nearmoon-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARMOON"
+  },
+  "nearmoon-4.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARMOON"
+  },
+  "nearmoon-5.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARMOON"
+  },
+  "nearmoon.nearbased.near": {
+   "decimals": 18,
+   "symbol": "NEARMOON"
+  },
+  "nearmoon.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARMOON"
+  },
+  "nearmuse.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARMUSE"
+  },
+  "nearn.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARN"
+  },
+  "nearnia.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARNIA"
+  },
+  "nearnigga-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARNIGGA"
+  },
+  "nearnigga.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARNIGGA"
+  },
+  "nearnion.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARNION"
   },
   "nearnvidia.near": {
    "decimals": 8,
    "symbol": "NEARVIDIA"
   },
+  "nearo-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARO"
+  },
+  "nearo-230.meme-cooking.near": {
+   "decimals": 18,
+   "symbol": "Nearo"
+  },
+  "nearo.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARO"
+  },
+  "nearon-f0d8f4.nearpadfamily.near": {
+   "decimals": 18,
+   "symbol": "NEARON"
+  },
+  "nearowski.tkn.near": {
+   "decimals": 18,
+   "symbol": "NEAROWSKI"
+  },
+  "nearp.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARP"
+  },
+  "nearpack.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARPACK"
+  },
+  "nearpacks.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARPACKS"
+  },
+  "nearpad-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARPAD"
+  },
   "nearpad-99d601.nearpadfamily.near": {
+   "decimals": 18,
+   "symbol": "NEARPAD"
+  },
+  "nearpad-be8a0d.nearpad_family.near": {
    "decimals": 18,
    "symbol": "NEARPAD"
   },
@@ -14991,9 +17263,149 @@
    "decimals": 18,
    "symbol": "NCAT"
   },
+  "nearpad-cf3be6.nearpadfamily.near": {
+   "decimals": 18,
+   "symbol": "NPAD"
+  },
+  "nearpad-dog-d81146.nearpadfamily.near": {
+   "decimals": 18,
+   "symbol": "NDOG"
+  },
+  "nearpad-first-buy-canary-e07d6f.v4stage.nearpadfamily.near": {
+   "decimals": 18,
+   "symbol": "NPFB"
+  },
+  "nearpad-launch-proof-1e3ff3.nearpadfamily.near": {
+   "decimals": 18,
+   "symbol": "NPLP"
+  },
+  "nearpad-live-launch-check-septembe-a48ede.nearpadfamily.near": {
+   "decimals": 18,
+   "symbol": "NPLIVE28"
+  },
+  "nearpad-live-pair-check-b65155.nearpadfamily.near": {
+   "decimals": 18,
+   "symbol": "NPCHK"
+  },
+  "nearpad-paid-launch-proof-sep-28-9230c4.nearpadfamily.near": {
+   "decimals": 18,
+   "symbol": "NPPAID"
+  },
+  "nearpad-pepe-30842b.nearpadfamily.near": {
+   "decimals": 18,
+   "symbol": "NPEPE"
+  },
+  "nearpad-production-proof-e52a41.nearpadfamily.near": {
+   "decimals": 18,
+   "symbol": "NPPROOF"
+  },
+  "nearpad-quiet-check-f95374.nearpadfamily.near": {
+   "decimals": 18,
+   "symbol": "NPQC"
+  },
+  "nearpad-season-1-0c4e07.nearpadfamily.near": {
+   "decimals": 18,
+   "symbol": "NPSZN1"
+  },
+  "nearpad-v4-release-proof-sep-28-9a64da.nearpadfamily.near": {
+   "decimals": 18,
+   "symbol": "NPV4GO"
+  },
+  "nearpad.near-pad.near": {
+   "decimals": 24,
+   "symbol": "NEARPAD"
+  },
+  "nearpad.nearlypad.near": {
+   "decimals": 18,
+   "symbol": "NEARPAD"
+  },
+  "nearpad.nearlypadfun.near": {
+   "decimals": 18,
+   "symbol": "NEARPAD"
+  },
+  "nearpad.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARPAD"
+  },
+  "nearpad.neate11.near": {
+   "decimals": 18,
+   "symbol": "NEARPAD"
+  },
+  "nearpeng.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "NEARPENG"
+  },
+  "nearperps.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARPERPS"
+  },
+  "nearplan.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARPLAN"
+  },
+  "nearpool-553815.nearpaid.near": {
+   "decimals": 18,
+   "symbol": "NEARPOOL"
+  },
+  "nearport-2b0fd9.nearportnear.near": {
+   "decimals": 18,
+   "symbol": "NEARPORT"
+  },
+  "nearport-2f8cd7.nearportnear.near": {
+   "decimals": 18,
+   "symbol": "NEARPORT"
+  },
   "nearport-b6d810.nearportnear.near": {
    "decimals": 18,
    "symbol": "NEARPORT"
+  },
+  "nearpot-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARPOT"
+  },
+  "nearpot.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARPOT"
+  },
+  "nearpowder.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "NEARPOWDER"
+  },
+  "nearpulse.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "NEARPULSE"
+  },
+  "nearpump-1.nearfitrade.near": {
+   "decimals": 18,
+   "symbol": "NEARPUMP"
+  },
+  "nearpump-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARPUMP"
+  },
+  "nearpump-ab7f20.launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "NEARPUMP"
+  },
+  "nearpump.nearfitrade.near": {
+   "decimals": 18,
+   "symbol": "NEARPUMP"
+  },
+  "nearpump.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARPUMP"
+  },
+  "nearpump.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "NEARPUMP"
+  },
+  "nearpunk.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARPUNK"
+  },
+  "nearpunk.tkn.near": {
+   "decimals": 18,
+   "symbol": "NEARPUNK"
   },
   "nearreward.near": {
    "decimals": 6,
@@ -15003,139 +17415,3458 @@
    "decimals": 17,
    "symbol": "NearRewards.com"
   },
+  "nearrooms-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARROOMS"
+  },
+  "nearrooms-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARROOMS"
+  },
+  "nearrooms-4.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARROOMS"
+  },
+  "nearrooms-5.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARROOMS"
+  },
+  "nearrooms-6.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARROOMS"
+  },
+  "nearrooms-7.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARROOMS"
+  },
+  "nearrooms.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARROOMS"
+  },
+  "nearrr.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARRR"
+  },
+  "nearrr.nearrr-fun.near": {
+   "decimals": 18,
+   "symbol": "NEARRR"
+  },
+  "nearsale-2.nearlytrader.near": {
+   "decimals": 18,
+   "symbol": "NEARSALE"
+  },
+  "nearsale.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARSALE"
+  },
+  "nearsale.nearlytrader.near": {
+   "decimals": 18,
+   "symbol": "NEARSALE"
+  },
+  "nearsale.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "NEARSALE"
+  },
+  "nearsi.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARSI"
+  },
+  "nearsight-2.cookinglabs.near": {
+   "decimals": 18,
+   "symbol": "NEARSIGHT"
+  },
+  "nearsight.cookinglabs.near": {
+   "decimals": 18,
+   "symbol": "NEARSIGHT"
+  },
+  "nearsight.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARSIGHT"
+  },
   "nearsight.v2-launchpad.justhoot.near": {
    "decimals": 18,
    "symbol": "NEARSIGHT"
+  },
+  "nearsloth.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "NEARSLOTH"
+  },
+  "nearsocial-69f9c3.launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "NEARSOCIAL"
+  },
+  "nearsocial.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "NEARSOCIAL"
+  },
+  "nearson.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARSON"
+  },
+  "nearspad-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARSPAD"
   },
   "nearspad.nearlytrade.near": {
    "decimals": 18,
    "symbol": "NEARSPAD"
   },
+  "nearspad.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "NEARSPAD"
+  },
+  "nearspump.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARSPUMP"
+  },
+  "nearssss-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARSSSS"
+  },
+  "nearssss-2.tknport.near": {
+   "decimals": 18,
+   "symbol": "NEARSSSS"
+  },
+  "nearssss.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARSSSS"
+  },
+  "nearssss.tknport.near": {
+   "decimals": 18,
+   "symbol": "NEARSSSS"
+  },
+  "nearstats.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARSTATS"
+  },
+  "nearstock.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARSTOCK"
+  },
+  "nearstocks-2.nearlydev.near": {
+   "decimals": 18,
+   "symbol": "NEARSTOCKS"
+  },
+  "nearstocks-3.nearlydev.near": {
+   "decimals": 18,
+   "symbol": "NEARSTOCKS"
+  },
+  "nearstocks.nearlydev.near": {
+   "decimals": 18,
+   "symbol": "NEARSTOCKS"
+  },
   "nearstocks.nearlytrade.near": {
    "decimals": 18,
    "symbol": "NEARSTOCKS"
+  },
+  "nearstocks.tknport.near": {
+   "decimals": 18,
+   "symbol": "NEARSTOCKS"
+  },
+  "nearstr.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARSTR"
+  },
+  "nearswaps.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "NEARSWAPS"
+  },
+  "nearsy-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARSY"
+  },
+  "nearsy-2ba7aa.launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "NEARSY"
+  },
+  "nearsy-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARSY"
+  },
+  "nearsy-4.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARSY"
+  },
+  "nearsy-5.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARSY"
+  },
+  "nearsy-578076.launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "NEARSY"
+  },
+  "nearsy-6.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARSY"
+  },
+  "nearsy.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARSY"
+  },
+  "nearszn-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARSZN"
+  },
+  "nearszn-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARSZN"
   },
   "nearszn-4155cf.launchpad.justhoot.near": {
    "decimals": 18,
    "symbol": "NEARSZN"
   },
+  "nearszn.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARSZN"
+  },
+  "nearszn.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "NEARSZN"
+  },
+  "neart-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEART"
+  },
+  "neart-2.onetokenengine.near": {
+   "decimals": 18,
+   "symbol": "NEART"
+  },
+  "neart-3.onetokenengine.near": {
+   "decimals": 18,
+   "symbol": "NEART"
+  },
+  "neart-4.onetokenengine.near": {
+   "decimals": 18,
+   "symbol": "NEART"
+  },
+  "neart-c600de.launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "NEART"
+  },
+  "neart.goonerofficial.near": {
+   "decimals": 18,
+   "symbol": "NEART"
+  },
+  "neart.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEART"
+  },
+  "neart.onetokenengine.near": {
+   "decimals": 18,
+   "symbol": "NEART"
+  },
+  "neartard-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARTARD"
+  },
+  "neartard-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARTARD"
+  },
+  "neartard-4.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARTARD"
+  },
+  "neartard.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARTARD"
+  },
+  "nearter.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARTER"
+  },
+  "neartest-6377ba.pad.onetokenhub.near": {
+   "decimals": 18,
+   "symbol": "NEARTEST"
+  },
+  "neartether.near": {
+   "decimals": 6,
+   "symbol": "USDt"
+  },
+  "nearth-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARTH"
+  },
+  "nearth.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARTH"
+  },
+  "nearti.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARTI"
+  },
+  "neartifica-31e9e4.launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "NEARTIFICA"
+  },
+  "neartizen-2.nearlypad.near": {
+   "decimals": 18,
+   "symbol": "NEARTIZEN"
+  },
+  "neartizen-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARTIZEN"
+  },
+  "neartizen-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARTIZEN"
+  },
+  "neartizen.nearlypad.near": {
+   "decimals": 18,
+   "symbol": "NEARTIZEN"
+  },
+  "neartizen.nearlypadfun.near": {
+   "decimals": 18,
+   "symbol": "NEARTIZEN"
+  },
+  "neartizen.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARTIZEN"
+  },
+  "neartote-2.cookinglabs.near": {
+   "decimals": 18,
+   "symbol": "NEARTOTE"
+  },
+  "neartote-e5f7f2.launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "NEARTOTE"
+  },
+  "neartote.cookinglabs.near": {
+   "decimals": 18,
+   "symbol": "NEARTOTE"
+  },
+  "neartote.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARTOTE"
+  },
+  "neartsunami-de29c7.nearpadfamily.near": {
+   "decimals": 18,
+   "symbol": "NT"
+  },
   "nearty.nearlytrade.near": {
    "decimals": 18,
    "symbol": "NEARTY"
+  },
+  "nearuto-cdca98.nearpadfamily.near": {
+   "decimals": 18,
+   "symbol": "NEARUTO"
+  },
+  "nearv.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARV"
+  },
+  "nearvana-1.launch.intear.near": {
+   "decimals": 24,
+   "symbol": "NEARvana"
+  },
+  "nearvana-10.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARVANA"
+  },
+  "nearvana-11.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARVANA"
+  },
+  "nearvana-12.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARVANA"
+  },
+  "nearvana-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARVANA"
+  },
+  "nearvana-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARVANA"
+  },
+  "nearvana-4.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARVANA"
+  },
+  "nearvana-5.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARVANA"
+  },
+  "nearvana-6.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARVANA"
+  },
+  "nearvana-7.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARVANA"
+  },
+  "nearvana-8.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARVANA"
+  },
+  "nearvana-9.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARVANA"
+  },
+  "nearvana.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARVANA"
   },
   "nearvember-337.meme-cooking.near": {
    "decimals": 18,
    "symbol": "NEARvember"
   },
+  "nearvember-d29feb.nearpadfamily.near": {
+   "decimals": 18,
+   "symbol": "NV"
+  },
+  "nearvember-f2f5be.nearpadfamily.near": {
+   "decimals": 18,
+   "symbol": "NV"
+  },
+  "nearvember.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARVEMBER"
+  },
+  "nearvidia-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARVIDIA"
+  },
+  "nearvidia-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARVIDIA"
+  },
+  "nearvidia.cookinglabs.near": {
+   "decimals": 18,
+   "symbol": "NEARVIDIA"
+  },
+  "nearvidia.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARVIDIA"
+  },
+  "nearvista-2.cookinglabs.near": {
+   "decimals": 18,
+   "symbol": "NEARVISTA"
+  },
+  "nearvista-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARVISTA"
+  },
+  "nearvista-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARVISTA"
+  },
+  "nearvista-4.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARVISTA"
+  },
+  "nearvista.cookinglabs.near": {
+   "decimals": 18,
+   "symbol": "NEARVISTA"
+  },
+  "nearvista.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARVISTA"
+  },
+  "nearwhal-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARWHAL"
+  },
+  "nearwhal.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARWHAL"
+  },
+  "nearx.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARX"
+  },
+  "nearx.stader-labs.near": {
+   "error": "CONTRACT_EXECUTION_ERROR"
+  },
+  "nearxrp.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARXRP"
+  },
+  "nearzilla.tkn.near": {
+   "decimals": 18,
+   "symbol": "NEARZILLA"
+  },
+  "neat-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEAT"
+  },
+  "neat.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEAT"
+  },
+  "neat.nrc-20.near": {
+   "decimals": 8,
+   "symbol": "NEAT"
+  },
+  "neato-1204.meme-cooking.near": {
+   "decimals": 18,
+   "symbol": "Neato"
+  },
+  "neato.token0.near": {
+   "decimals": 18,
+   "symbol": "NEATO"
+  },
+  "neaurora-349.meme-cooking.near": {
+   "decimals": 18,
+   "symbol": "neaurora"
+  },
+  "necat.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NECAT"
+  },
+  "nectar.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NECTAR"
+  },
+  "ned.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NED"
+  },
+  "nee.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEE"
+  },
+  "neeerpad-5b681a.nearpadfamily.near": {
+   "decimals": 18,
+   "symbol": "NEEERPAD"
+  },
+  "neer-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEER"
+  },
+  "neer-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEER"
+  },
+  "neer-4.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEER"
+  },
+  "neer.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEER"
+  },
+  "neerdeer-54b201.nearpadfamily.near": {
+   "decimals": 18,
+   "symbol": "DEER"
+  },
+  "neerdeer-75dec3.nearpadfamily.near": {
+   "decimals": 18,
+   "symbol": "DEER"
+  },
+  "neerdeer-ae1697.nearpadfamily.near": {
+   "decimals": 18,
+   "symbol": "DEER"
+  },
+  "neerdeer-ebd0dc.nearpadfamily.near": {
+   "decimals": 18,
+   "symbol": "DEER"
+  },
+  "negi.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEGI"
+  },
+  "negra.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEGRA"
+  },
+  "neguy.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEGUY"
+  },
+  "neighbors.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEIGHBORS"
+  },
+  "neir.tkn.near": {
+   "decimals": 18,
+   "symbol": "NEIR"
+  },
+  "neiro.token0.near": {
+   "decimals": 18,
+   "symbol": "NEIRO"
+  },
+  "neiro2.token0.near": {
+   "decimals": 18,
+   "symbol": "NEIRO"
+  },
+  "neko-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEKO"
+  },
+  "neko-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEKO"
+  },
+  "neko-4.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEKO"
+  },
+  "neko-5.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEKO"
+  },
+  "neko-6.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEKO"
+  },
+  "neko.cookinglabs.near": {
+   "decimals": 18,
+   "symbol": "NEKO"
+  },
+  "neko.nearlypad.near": {
+   "decimals": 18,
+   "symbol": "NEKO"
+  },
+  "neko.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEKO"
+  },
+  "nekocha.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEKOCHA"
+  },
+  "nelion.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NELION"
+  },
+  "nem.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEM"
+  },
+  "nemo.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEMO"
+  },
+  "nemu.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEMU"
+  },
+  "nene-2250.meme-cooking.near": {
+   "decimals": 18,
+   "symbol": "NENE"
+  },
+  "nenu-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NENU"
+  },
+  "nenu.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NENU"
+  },
+  "neo.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEO"
+  },
+  "neomeme.token0.near": {
+   "decimals": 18,
+   "symbol": "NEOMEME"
+  },
+  "neon.shardpad.near": {
+   "decimals": 18,
+   "symbol": "NEON"
+  },
+  "neonx.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEONX"
+  },
+  "neopad.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEOPAD"
+  },
+  "nepbot.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEPBOT"
+  },
+  "nepe-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEPE"
+  },
+  "nepe-290.meme-cooking.near": {
+   "decimals": 18,
+   "symbol": "NEPE"
+  },
+  "nepe-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEPE"
+  },
+  "nepe-4.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEPE"
+  },
   "nepe-5.nearlytrade.near": {
    "decimals": 18,
    "symbol": "NEPE"
+  },
+  "nepe.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEPE"
+  },
+  "nera.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NERA"
+  },
+  "nerd.nearbased.near": {
+   "decimals": 18,
+   "symbol": "NERD"
+  },
+  "nerdcat.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NERDCAT"
+  },
+  "nero-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NERO"
   },
   "nero-2008.meme-cooking.near": {
    "decimals": 18,
    "symbol": "NERO"
   },
+  "nero.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NERO"
+  },
+  "nersig-282.meme-cooking.near": {
+   "decimals": 18,
+   "symbol": "NERSIG"
+  },
+  "nescot-1059.meme-cooking.near": {
+   "decimals": 18,
+   "symbol": "NESCOT"
+  },
+  "nesreal.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "NESREAL"
+  },
+  "nest-4bd469.launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "NEST"
+  },
+  "nestocks.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NESTOCKS"
+  },
+  "net-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NET"
+  },
+  "net-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NET"
+  },
+  "net.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NET"
+  },
+  "net.tkn.near": {
+   "decimals": 18,
+   "symbol": "Net"
+  },
+  "neta.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NETA"
+  },
+  "network.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NETWORK"
+  },
+  "neura-2.neuraai.near": {
+   "decimals": 18,
+   "symbol": "NEURA"
+  },
+  "neura-3.neuraai.near": {
+   "decimals": 18,
+   "symbol": "NEURA"
+  },
+  "neura.blastnearlaunchpad.near": {
+   "decimals": 18,
+   "symbol": "NEURA"
+  },
+  "neura.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEURA"
+  },
+  "neura.neuraai.near": {
+   "decimals": 18,
+   "symbol": "NEURA"
+  },
+  "neural.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEURAL"
+  },
+  "neural.neural-ai.near": {
+   "decimals": 24,
+   "symbol": "NEURAL"
+  },
+  "neuralinkai-315778.nearpadfamily.near": {
+   "decimals": 18,
+   "symbol": "NAI"
+  },
+  "nev.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEV"
+  },
+  "nevar.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEVAR"
+  },
+  "nevergoon.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEVERGOON"
+  },
+  "newdexshitcoin.slimedragon.near": {
+   "decimals": 24,
+   "symbol": "NEWDEX"
+  },
+  "newds.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEWDS"
+  },
+  "newfy-token.near": {
+   "decimals": 24,
+   "symbol": "NEWFY"
+  },
+  "nexar-10.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEXAR"
+  },
+  "nexar-11.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEXAR"
+  },
+  "nexar-12.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEXAR"
+  },
+  "nexar-13.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEXAR"
+  },
+  "nexar-14.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEXAR"
+  },
+  "nexar-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEXAR"
+  },
+  "nexar-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEXAR"
+  },
+  "nexar-4.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEXAR"
+  },
+  "nexar-5.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEXAR"
+  },
+  "nexar-6.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEXAR"
+  },
+  "nexar-7.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEXAR"
+  },
+  "nexar-8.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEXAR"
+  },
+  "nexar-9.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEXAR"
+  },
+  "nexar.nearlypadfun.near": {
+   "decimals": 18,
+   "symbol": "NEXAR"
+  },
+  "nexar.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEXAR"
+  },
+  "nexom.shardpad.near": {
+   "decimals": 18,
+   "symbol": "NEXOM"
+  },
+  "nexp.near": {
+   "decimals": 4,
+   "symbol": "NEXP"
+  },
+  "nexusx.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEXUSX"
+  },
+  "neyro.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEYRO"
+  },
+  "neyro.tknport.near": {
+   "decimals": 18,
+   "symbol": "NEYRO"
+  },
+  "nezha.token0.near": {
+   "decimals": 18,
+   "symbol": "NEZHA"
+  },
+  "nf-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NF"
+  },
+  "nf.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NF"
+  },
+  "nfa-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NFA"
+  },
+  "nfa.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NFA"
+  },
+  "nfc.tknx.near": {
+   "decimals": 18,
+   "symbol": "NFC"
+  },
+  "nfcat.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NFCAT"
+  },
+  "nfi.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NFI"
+  },
+  "nfi.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "NFI"
+  },
+  "nfinite-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NFINITE"
+  },
+  "nfinite-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NFINITE"
+  },
+  "nfinite.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NFINITE"
+  },
+  "nfire.nearfire.near": {
+   "decimals": 24,
+   "symbol": "NFIRE"
+  },
+  "nfish.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NFISH"
+  },
+  "nflow-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NFLOW"
+  },
+  "nflow.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NFLOW"
+  },
+  "nfly.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NFLY"
+  },
+  "nfm.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NFM"
+  },
+  "nfonke.token0.near": {
+   "decimals": 18,
+   "symbol": "NFONKE"
+  },
+  "nfu.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NFU"
+  },
+  "nfun-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NFUN"
+  },
+  "nfun-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NFUN"
+  },
+  "nfun.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NFUN"
+  },
+  "nfuse.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NFUSE"
+  },
+  "ngas.near-gas.near": {
+   "decimals": 24,
+   "symbol": "NGAS"
+  },
+  "ngc-2.token0nova.near": {
+   "decimals": 18,
+   "symbol": "NGC"
+  },
+  "ngc-3.token0nova.near": {
+   "decimals": 18,
+   "symbol": "NGC"
+  },
+  "ngc-4.token0nova.near": {
+   "decimals": 18,
+   "symbol": "NGC"
+  },
+  "ngc.green-candle.near": {
+   "decimals": 24,
+   "symbol": "NGC"
+  },
+  "ngc.token0nova.near": {
+   "decimals": 18,
+   "symbol": "NGC"
+  },
+  "ngld-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NGLD"
+  },
+  "ngld.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NGLD"
+  },
+  "ngmi-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NGMI"
+  },
+  "ngmi-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NGMI"
+  },
+  "ngmi-4.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NGMI"
+  },
+  "ngmi-5.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NGMI"
+  },
+  "ngmi.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NGMI"
+  },
+  "ngmi.tkn.near": {
+   "decimals": 10,
+   "symbol": "NGMI"
+  },
+  "ngo-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NGO"
+  },
+  "ngo.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NGO"
+  },
+  "ngpt.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NGPT"
+  },
+  "ngrok.near_grok.near": {
+   "decimals": 24,
+   "symbol": "NGROK"
+  },
+  "ngrow.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NGROW"
+  },
+  "ngta.narrowcap6721.near": {
+   "decimals": 18,
+   "symbol": "NGTA"
+  },
+  "nguy.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NGUY"
+  },
+  "nhamster-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NHAMSTER"
+  },
+  "nhamster.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NHAMSTER"
+  },
+  "nhood-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NHOOD"
+  },
+  "nhood.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NHOOD"
+  },
+  "nhoot.hootpad.near": {
+   "decimals": 18,
+   "symbol": "NHOOT"
+  },
+  "nhoot.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NHOOT"
+  },
+  "nhr.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NHR"
+  },
+  "nhub.near_hub.near": {
+   "decimals": 24,
+   "symbol": "NHUB"
+  },
   "nhum.nearlytrade.near": {
    "decimals": 18,
    "symbol": "NHUM"
+  },
+  "ni-1.nearlypadfun.near": {
+   "decimals": 18,
+   "symbol": "NI"
+  },
+  "ni-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NI"
+  },
+  "ni-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NI"
+  },
+  "ni-4.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NI"
+  },
+  "ni-5.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NI"
+  },
+  "ni-6.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NI"
+  },
+  "ni-7.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NI"
+  },
+  "ni.cookinglabs.near": {
+   "decimals": 18,
+   "symbol": "NI"
+  },
+  "ni.nearlypadfun.near": {
+   "decimals": 18,
+   "symbol": "NI"
+  },
+  "ni.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NI"
+  },
+  "nia-1866.meme-cooking.near": {
+   "decimals": 18,
+   "symbol": "NIA"
+  },
+  "nib.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "NIB"
+  },
+  "nicat.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NICAT"
+  },
+  "nico.tkn.near": {
+   "decimals": 18,
+   "symbol": "nico"
   },
   "nico131.tkn.near": {
    "decimals": 18,
    "symbol": "nico131"
   },
+  "nicotknx.tknx.near": {
+   "decimals": 18,
+   "symbol": "nicotknx"
+  },
+  "nier.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NIER"
+  },
+  "nif.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NIF"
+  },
+  "nig.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NIG"
+  },
+  "nigga.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NIGGA"
+  },
+  "niggaitsov.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "NIGGAITSOV"
+  },
+  "nigger.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NIGGER"
+  },
+  "niggerninu.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NIGGERNINU"
+  },
+  "night.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NIGHT"
+  },
+  "nighthoot-98c031.launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "NIGHTHOOT"
+  },
+  "nightmare-1738.meme-cooking.near": {
+   "decimals": 18,
+   "symbol": "NIGHTMARE"
+  },
+  "nightmare-ee22b9.launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "NIGHTMARE"
+  },
+  "nightshade.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NIGHTSHADE"
+  },
+  "nightshift-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NIGHTSHIFT"
+  },
+  "nightshift-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NIGHTSHIFT"
+  },
+  "nightshift.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NIGHTSHIFT"
+  },
+  "nightshift.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "NIGHTSHIFT"
+  },
+  "nightwing.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NIGHTWING"
+  },
+  "nightwing.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "NIGHTWING"
+  },
+  "nigiri-6b7ff8.rhea.meme-launchpad.near": {
+   "decimals": 18,
+   "symbol": "NIGIRI"
+  },
+  "nigiri-c55fac.rhea.meme-launchpad.near": {
+   "decimals": 18,
+   "symbol": "NIGIRI"
+  },
+  "nij.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NIJ"
+  },
   "nikshep-mmyo.launch.shoremarkets.near": {
    "decimals": 18,
    "symbol": "NIKSHEP"
+  },
+  "nillions-1805.meme-cooking.near": {
+   "decimals": 18,
+   "symbol": "nillions"
+  },
+  "nillions-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NILLIONS"
+  },
+  "nillions-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NILLIONS"
+  },
+  "nillions-4.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NILLIONS"
+  },
+  "nillions-5.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NILLIONS"
+  },
+  "nillions.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NILLIONS"
+  },
+  "nimi-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NIMI"
+  },
+  "nimi-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NIMI"
+  },
+  "nimi.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NIMI"
+  },
+  "nin-a5ec32.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NIN"
+  },
+  "nina.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NINA"
+  },
+  "ninu-005b.cookinglabs.near": {
+   "decimals": 18,
+   "symbol": "NINU"
+  },
+  "ninu-1.nearlypadfun.near": {
+   "decimals": 18,
+   "symbol": "NINU"
+  },
+  "ninu-2.cookinglabs.near": {
+   "decimals": 18,
+   "symbol": "NINU"
+  },
+  "ninu-2.nearlypad.near": {
+   "decimals": 18,
+   "symbol": "NINU"
+  },
+  "ninu-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NINU"
+  },
+  "ninu-2.nearlytrader.near": {
+   "decimals": 18,
+   "symbol": "NINU"
+  },
+  "ninu-2.onetokenengine.near": {
+   "decimals": 18,
+   "symbol": "NINU"
+  },
+  "ninu-3.cookinglabs.near": {
+   "decimals": 18,
+   "symbol": "NINU"
+  },
+  "ninu-3.nearlypad.near": {
+   "decimals": 18,
+   "symbol": "NINU"
+  },
+  "ninu-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NINU"
+  },
+  "ninu-3.nearlytrader.near": {
+   "decimals": 18,
+   "symbol": "NINU"
+  },
+  "ninu-3.onetokenengine.near": {
+   "decimals": 18,
+   "symbol": "NINU"
+  },
+  "ninu-4.cookinglabs.near": {
+   "decimals": 18,
+   "symbol": "NINU"
+  },
+  "ninu-4.nearlypad.near": {
+   "decimals": 18,
+   "symbol": "NINU"
   },
   "ninu-4.nearlytrade.near": {
    "decimals": 18,
    "symbol": "NINU"
   },
+  "ninu-4.nearlytrader.near": {
+   "decimals": 18,
+   "symbol": "NINU"
+  },
+  "ninu-5.cookinglabs.near": {
+   "decimals": 18,
+   "symbol": "NINU"
+  },
+  "ninu-5.nearlypad.near": {
+   "decimals": 18,
+   "symbol": "NINU"
+  },
+  "ninu-5.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NINU"
+  },
+  "ninu-5.nearlytrader.near": {
+   "decimals": 18,
+   "symbol": "NINU"
+  },
+  "ninu-6.cookinglabs.near": {
+   "decimals": 18,
+   "symbol": "NINU"
+  },
+  "ninu-6.nearlypad.near": {
+   "decimals": 18,
+   "symbol": "NINU"
+  },
+  "ninu-6.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NINU"
+  },
+  "ninu-7.cookinglabs.near": {
+   "decimals": 18,
+   "symbol": "NINU"
+  },
+  "ninu-7.nearlypad.near": {
+   "decimals": 18,
+   "symbol": "NINU"
+  },
+  "ninu-7.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NINU"
+  },
+  "ninu-8.cookinglabs.near": {
+   "decimals": 18,
+   "symbol": "NINU"
+  },
+  "ninu-8.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NINU"
+  },
+  "ninu-9.cookinglabs.near": {
+   "decimals": 18,
+   "symbol": "NINU"
+  },
+  "ninu.blastnearlaunchpad.near": {
+   "decimals": 18,
+   "symbol": "NINU"
+  },
+  "ninu.cookinglabs.near": {
+   "decimals": 18,
+   "symbol": "NINU"
+  },
+  "ninu.nearcatscoin.near": {
+   "decimals": 18,
+   "symbol": "NINU"
+  },
+  "ninu.nearlypad.near": {
+   "decimals": 18,
+   "symbol": "NINU"
+  },
+  "ninu.nearlypadfun.near": {
+   "decimals": 18,
+   "symbol": "NINU"
+  },
+  "ninu.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NINU"
+  },
+  "ninu.nearlytrader.near": {
+   "decimals": 18,
+   "symbol": "NINU"
+  },
+  "ninu.onetokenengine.near": {
+   "decimals": 18,
+   "symbol": "NINU"
+  },
+  "ninu.tknport.near": {
+   "decimals": 18,
+   "symbol": "NINU"
+  },
+  "ninu.token0forge.near": {
+   "decimals": 18,
+   "symbol": "NINU"
+  },
+  "ninu.token0nova.near": {
+   "decimals": 18,
+   "symbol": "NINU"
+  },
+  "ninu.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "NINU"
+  },
+  "ninucollar.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NINUCOLLAR"
+  },
+  "ninuninu.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NINUNINU"
+  },
+  "ninuninu.token0nova.near": {
+   "decimals": 18,
+   "symbol": "NINUNINU"
+  },
+  "ninuo.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NINUO"
+  },
+  "ninutr.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NINUTR"
+  },
+  "ninutr.nearlytrader.near": {
+   "decimals": 18,
+   "symbol": "NINUTR"
+  },
+  "nio.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NIO"
+  },
+  "nippo.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NIPPO"
+  },
+  "niq.cookinglabs.near": {
+   "decimals": 18,
+   "symbol": "NIQ"
+  },
+  "niq.neariq.near": {
+   "decimals": 24,
+   "symbol": "NIQ"
+  },
+  "nira.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NIRA"
+  },
+  "niraonnear.token0forge.near": {
+   "decimals": 18,
+   "symbol": "NIRAONNEAR"
+  },
+  "nitro-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NITRO"
+  },
+  "nitro.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NITRO"
+  },
+  "nitrostack.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "NITROSTACK"
+  },
+  "niulai.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NIULAI"
+  },
+  "nixel-2.aidolsnova.near": {
+   "decimals": 18,
+   "symbol": "NIXEL"
+  },
+  "nixel-3.aidolsnova.near": {
+   "decimals": 18,
+   "symbol": "NIXEL"
+  },
+  "nixel.aidolsnova.near": {
+   "decimals": 18,
+   "symbol": "NIXEL"
+  },
   "nixel.nearlytrade.near": {
    "decimals": 18,
    "symbol": "NIXEL"
+  },
+  "njl.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NJL"
+  },
+  "nk.tkn.near": {
+   "decimals": 18,
+   "symbol": "NK"
+  },
+  "nkat-2.aidolsnova.near": {
+   "decimals": 18,
+   "symbol": "NKAT"
+  },
+  "nkat-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NKAT"
+  },
+  "nkat-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NKAT"
+  },
+  "nkat-4.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NKAT"
+  },
+  "nkat-5.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NKAT"
+  },
+  "nkat.aidolsnova.near": {
+   "decimals": 18,
+   "symbol": "NKAT"
+  },
+  "nkat.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NKAT"
+  },
+  "nkat.tkn.near": {
+   "decimals": 18,
+   "symbol": "nKat"
+  },
+  "nkit.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NKIT"
+  },
+  "nkok.tkn.near": {
+   "decimals": 18,
+   "symbol": "nKOK"
+  },
+  "nkprl.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NKPRL"
+  },
+  "nkspy-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NKSPY"
+  },
+  "nkspy-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NKSPY"
+  },
+  "nkspy-4.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NKSPY"
+  },
+  "nkspy-5.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NKSPY"
+  },
+  "nkspy-6.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NKSPY"
+  },
+  "nkspy-7.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NKSPY"
+  },
+  "nkspy.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NKSPY"
+  },
+  "nl-1.blastnearlaunchpad.near": {
+   "decimals": 18,
+   "symbol": "NL"
+  },
+  "nl.blastnearlaunchpad.near": {
+   "decimals": 18,
+   "symbol": "NL"
+  },
+  "nl.cookinglabs.near": {
+   "decimals": 18,
+   "symbol": "NL"
+  },
+  "nl.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NL"
+  },
+  "nl.nearlytrader.near": {
+   "decimals": 18,
+   "symbol": "NL"
+  },
+  "nl.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "NL"
+  },
+  "nlambo.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NLAMBO"
+  },
+  "nlc-2.nearlydev.near": {
+   "decimals": 18,
+   "symbol": "NLC"
+  },
+  "nlc.nearlydev.near": {
+   "decimals": 18,
+   "symbol": "NLC"
+  },
+  "nlc.nlastchance.near": {
+   "decimals": 24,
+   "symbol": "NLC"
+  },
+  "nlegal-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NLEGAL"
+  },
+  "nlegal.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NLEGAL"
+  },
+  "nlm.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NLM"
+  },
+  "nlm.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "NLM"
+  },
+  "nlotto.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NLOTTO"
+  },
+  "nlwn-1793.meme-cooking.near": {
+   "decimals": 18,
+   "symbol": "NLWN"
+  },
+  "nlwn.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "NLWN"
+  },
+  "nmadeit-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NMADEIT"
+  },
+  "nmadeit.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NMADEIT"
+  },
+  "nmario.nearmario.near": {
+   "decimals": 24,
+   "symbol": "NMARIO"
+  },
+  "nmaxi.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NMAXI"
+  },
+  "nmc.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NMC"
+  },
+  "nmcd-493.meme-cooking.near": {
+   "decimals": 18,
+   "symbol": "NMCD"
+  },
+  "nmeme.tkn.near": {
+   "decimals": 18,
+   "symbol": "nMEME"
+  },
+  "nmerch.near-merch.near": {
+   "decimals": 24,
+   "symbol": "nMerch"
+  },
+  "nmine.near-miner.near": {
+   "decimals": 24,
+   "symbol": "NMINE"
+  },
+  "nmine.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NMINE"
+  },
+  "nmintro-2.aidolsnova.near": {
+   "decimals": 18,
+   "symbol": "NMintro"
+  },
+  "nmintro.aidolsnova.near": {
+   "decimals": 18,
+   "symbol": "NMintro"
+  },
+  "nmixx.token0.near": {
+   "decimals": 18,
+   "symbol": "NMIXX"
+  },
+  "nmoki.cookinglabs.near": {
+   "decimals": 18,
+   "symbol": "NMOKI"
   },
   "nmom-xe7z.launch.shoremarkets.near": {
    "decimals": 18,
    "symbol": "NMOM"
   },
+  "nmon.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NMON"
+  },
+  "nmoney.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NMONEY"
+  },
+  "nmoon-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NMOON"
+  },
+  "nmoon.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NMOON"
+  },
+  "nmoon.tkn.near": {
+   "decimals": 18,
+   "symbol": "nMOON"
+  },
+  "nmouse.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NMOUSE"
+  },
+  "nmusk-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NMUSK"
+  },
+  "nmusk.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NMUSK"
+  },
+  "nnas.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NNAS"
+  },
+  "nnn-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NNN"
+  },
+  "nnn-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NNN"
+  },
+  "nnn-4.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NNN"
+  },
+  "nnn-5.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NNN"
+  },
+  "nnn.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NNN"
+  },
+  "nnyancat-0fe5ae.launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "NNYANCAT"
+  },
+  "no95.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NO95"
+  },
+  "noa.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NOA"
+  },
+  "nochill-176.meme-cooking.near": {
+   "decimals": 18,
+   "symbol": "noChill"
+  },
+  "noctus.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NOCTUS"
+  },
   "noear-324.meme-cooking.near": {
    "decimals": 18,
    "symbol": "NOEAR"
+  },
+  "noear.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NOEAR"
+  },
+  "nog-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NOG"
+  },
+  "nog-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NOG"
+  },
+  "nog-4.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NOG"
+  },
+  "nog-5.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NOG"
+  },
+  "nog.nearlypad.near": {
+   "decimals": 18,
+   "symbol": "NOG"
+  },
+  "nog.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NOG"
+  },
+  "noge.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NOGE"
+  },
+  "noge.tkn.near": {
+   "decimals": 18,
+   "symbol": "NOGE"
+  },
+  "nogecoin.near": {
+   "decimals": 8,
+   "symbol": "NOGE"
+  },
+  "nokia-1091.meme-cooking.near": {
+   "decimals": 18,
+   "symbol": "NOKIA"
+  },
+  "nol-b0812f.launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "NOL"
+  },
+  "nol.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NOL"
+  },
+  "noldies-88ce76.pad.onetokenhub.near": {
+   "decimals": 18,
+   "symbol": "NOLDIES"
   },
   "nom-gjh2.launch.px4m-ops.near": {
    "decimals": 18,
    "symbol": "NOM"
   },
+  "nomo-2.cookinglabs.near": {
+   "decimals": 18,
+   "symbol": "NOMO"
+  },
+  "nomo-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NOMO"
+  },
+  "nomo-2.nearlytrader.near": {
+   "decimals": 18,
+   "symbol": "NOMO"
+  },
+  "nomo-2.onetokenengine.near": {
+   "decimals": 18,
+   "symbol": "NOMO"
+  },
+  "nomo-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NOMO"
+  },
+  "nomo-4.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NOMO"
+  },
+  "nomo-5.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NOMO"
+  },
+  "nomo.cookinglabs.near": {
+   "decimals": 18,
+   "symbol": "NOMO"
+  },
+  "nomo.goonerofficial.near": {
+   "decimals": 18,
+   "symbol": "NOMO"
+  },
+  "nomo.nearlypadfun.near": {
+   "decimals": 18,
+   "symbol": "NOMO"
+  },
   "nomo.nearlytrade.near": {
    "decimals": 18,
    "symbol": "NOMO"
+  },
+  "nomo.nearlytrader.near": {
+   "decimals": 18,
+   "symbol": "NOMO"
+  },
+  "nomo.onetokenengine.near": {
+   "decimals": 18,
+   "symbol": "NOMO"
+  },
+  "nomotradin-6755b3.launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "NOMOTRADIN"
+  },
+  "non-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NON"
+  },
+  "non-juwi.dumpaddict.near": {
+   "decimals": 18,
+   "symbol": "NON"
+  },
+  "non.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NON"
+  },
+  "none.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NONE"
+  },
+  "noob.token0.near": {
+   "decimals": 18,
+   "symbol": "NOOB"
+  },
+  "noodl.dragonpad.near": {
+   "decimals": 18,
+   "symbol": "NOODL"
+  },
+  "noodle.token0.near": {
+   "decimals": 18,
+   "symbol": "NOODLE"
+  },
+  "noot-a5eff3.launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "NOOT"
+  },
+  "noot.cookinglabs.near": {
+   "decimals": 18,
+   "symbol": "NOOT"
+  },
+  "nope.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NOPE"
+  },
+  "nopr-2.onetokenengine.near": {
+   "decimals": 18,
+   "symbol": "NOPR"
+  },
+  "nopr.onetokenengine.near": {
+   "decimals": 18,
+   "symbol": "NOPR"
   },
   "norbert.v2-launchpad.justhoot.near": {
    "decimals": 18,
    "symbol": "NORBERT"
   },
+  "norbit-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NORBIT"
+  },
+  "norbit.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NORBIT"
+  },
+  "normies.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NORMIES"
+  },
+  "nosamo.tkn.near": {
+   "decimals": 14,
+   "symbol": "NOSAMO"
+  },
+  "not.tkn.near": {
+   "decimals": 14,
+   "symbol": "NOT"
+  },
+  "not1.token0.near": {
+   "decimals": 18,
+   "symbol": "NOT"
+  },
+  "not2.token0.near": {
+   "decimals": 18,
+   "symbol": "NOT"
+  },
+  "notearly.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NOTEARLY"
+  },
+  "noted-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NOTED"
+  },
+  "noted.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NOTED"
+  },
+  "notg.token0.near": {
+   "decimals": 18,
+   "symbol": "NOTG"
+  },
+  "nothing-1809.meme-cooking.near": {
+   "decimals": 18,
+   "symbol": "NOTHING"
+  },
+  "nothing.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NOTHING"
+  },
+  "nowl.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NOWL"
+  },
+  "np-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NP"
+  },
+  "np.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NP"
+  },
+  "np500.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NP500"
+  },
+  "npac-245.meme-cooking.near": {
+   "decimals": 18,
+   "symbol": "NPAC"
+  },
+  "npad.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NPAD"
+  },
+  "npai.nearprivateai.near": {
+   "decimals": 24,
+   "symbol": "npAI"
+  },
+  "npaid-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NPAID"
+  },
   "npaid-831d2b.nearpaid.near": {
    "decimals": 18,
    "symbol": "NPAID"
+  },
+  "npaid-e8c7d2.nearpaid.near": {
+   "decimals": 18,
+   "symbol": "NPAID"
+  },
+  "npaid.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NPAID"
+  },
+  "npar.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NPAR"
+  },
+  "npc-01aee5.nearpaid.near": {
+   "decimals": 18,
+   "symbol": "NPC"
+  },
+  "npc.nearlypadfun.near": {
+   "decimals": 18,
+   "symbol": "NPC"
+  },
+  "npc.nonpepe.near": {
+   "decimals": 24,
+   "symbol": "NPC"
+  },
+  "npengu.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NPENGU"
+  },
+  "npepe-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NPEPE"
+  },
+  "npepe-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NPEPE"
+  },
+  "npepe-4.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NPEPE"
+  },
+  "npepe-5.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NPEPE"
+  },
+  "npepe-6.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NPEPE"
+  },
+  "npepe-7.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NPEPE"
+  },
+  "npepe-8.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NPEPE"
+  },
+  "npepe.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NPEPE"
+  },
+  "npm.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NPM"
+  },
+  "npotato.nearpotato.near": {
+   "decimals": 24,
+   "symbol": "Npotato"
   },
   "npro.nearmobile.near": {
    "decimals": 24,
    "symbol": "NPRO"
   },
+  "npt-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NPT"
+  },
+  "npt.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NPT"
+  },
+  "nptest-7e7dd8.nearpaid.near": {
+   "decimals": 18,
+   "symbol": "NPTEST"
+  },
+  "nptest2-cd3406.nearpaid.near": {
+   "decimals": 18,
+   "symbol": "NPTEST2"
+  },
+  "npump.near-pump.near": {
+   "decimals": 24,
+   "symbol": "NPUMP"
+  },
+  "npump.nearfitrade.near": {
+   "decimals": 18,
+   "symbol": "NPUMP"
+  },
+  "npump.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NPUMP"
+  },
+  "npunk.n-punk.near": {
+   "decimals": 24,
+   "symbol": "NPUNK"
+  },
+  "npunks-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NPUNKS"
+  },
+  "npunks.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NPUNKS"
+  },
+  "npup.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NPUP"
+  },
+  "npv4-000001.nearpadfamily.near": {
+   "decimals": 18,
+   "symbol": "NPV4"
+  },
+  "nquake.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NQUAKE"
+  },
+  "nrai.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NRAI"
+  },
+  "nrb.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NRB"
+  },
+  "nret.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "NRET"
+  },
+  "nrg-2.aidolsnova.near": {
+   "decimals": 18,
+   "symbol": "NRG"
+  },
+  "nrg-3.aidolsnova.near": {
+   "decimals": 18,
+   "symbol": "NRG"
+  },
+  "nrg-4.aidolsnova.near": {
+   "decimals": 18,
+   "symbol": "NRG"
+  },
+  "nrg-5.aidolsnova.near": {
+   "decimals": 18,
+   "symbol": "NRG"
+  },
+  "nrg.aidolsnova.near": {
+   "decimals": 18,
+   "symbol": "NRG"
+  },
+  "nrg.nearfitrade.near": {
+   "decimals": 18,
+   "symbol": "NRG"
+  },
+  "nrg.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NRG"
+  },
+  "nri.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NRI"
+  },
+  "nrlyair.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NRLYAIR"
+  },
+  "nrmil.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NRMIL"
+  },
+  "nro.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NRO"
+  },
+  "nrow.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NROW"
+  },
+  "nrr-02a010.nearafun.near": {
+   "decimals": 18,
+   "symbol": "NRR"
+  },
+  "nrr-10.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NRR"
+  },
+  "nrr-11.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NRR"
+  },
+  "nrr-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NRR"
+  },
+  "nrr-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NRR"
+  },
+  "nrr-4.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NRR"
+  },
+  "nrr-5.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NRR"
+  },
+  "nrr-6.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NRR"
+  },
+  "nrr-7.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NRR"
+  },
+  "nrr-8.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NRR"
+  },
+  "nrr-840767.nearafun.near": {
+   "decimals": 18,
+   "symbol": "NRR"
+  },
+  "nrr-9.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NRR"
+  },
+  "nrr-aqul.launch.shoremarkets.near": {
+   "decimals": 18,
+   "symbol": "NRR"
+  },
+  "nrr.cookinglabs.near": {
+   "decimals": 18,
+   "symbol": "NRR"
+  },
+  "nrr.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NRR"
+  },
+  "nrtd.token0.near": {
+   "decimals": 18,
+   "symbol": "NRTD"
+  },
+  "nrtr-2.token0forge.near": {
+   "decimals": 18,
+   "symbol": "NRTR"
+  },
+  "nrtr.blastnearlaunchpad.near": {
+   "decimals": 18,
+   "symbol": "NRTR"
+  },
+  "nrtr.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NRTR"
+  },
+  "nrtr.token0forge.near": {
+   "decimals": 18,
+   "symbol": "NRTR"
+  },
+  "nrtz.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NRTZ"
+  },
+  "nrun.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NRUN"
+  },
+  "nrvna-2009.meme-cooking.near": {
+   "decimals": 18,
+   "symbol": "NRVNA"
+  },
+  "nrzy.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NRZY"
+  },
+  "nrzz.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NRZZ"
+  },
+  "ns-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NS"
+  },
+  "ns-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NS"
+  },
+  "ns.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NS"
+  },
+  "nsai-2.cookinglabs.near": {
+   "decimals": 18,
+   "symbol": "NSAI"
+  },
+  "nsai-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NSAI"
+  },
+  "nsai-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NSAI"
+  },
+  "nsai.cookinglabs.near": {
+   "decimals": 18,
+   "symbol": "NSAI"
+  },
+  "nsai.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NSAI"
+  },
   "nsanta-1274.meme-cooking.near": {
    "decimals": 18,
    "symbol": "NSANTA"
+  },
+  "nsaw.nearsaw.near": {
+   "decimals": 24,
+   "symbol": "Nsaw"
+  },
+  "nsb-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NSB"
+  },
+  "nsb-2.nearlytrader.near": {
+   "decimals": 18,
+   "symbol": "NSB"
+  },
+  "nsb-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NSB"
+  },
+  "nsb.keypadlaunch.near": {
+   "decimals": 18,
+   "symbol": "NSB"
+  },
+  "nsb.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NSB"
+  },
+  "nsb.nearlytrader.near": {
+   "decimals": 18,
+   "symbol": "NSB"
+  },
+  "nsc.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NSC"
+  },
+  "nscan.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NSCAN"
+  },
+  "nseason.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NSEASON"
+  },
+  "nsec.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NSEC"
+  },
+  "nshitty.shitty-coin.near": {
+   "decimals": 24,
+   "symbol": "NShitty"
+  },
+  "nsi-2.cookinglabs.near": {
+   "decimals": 18,
+   "symbol": "NSI"
+  },
+  "nsi-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NSI"
+  },
+  "nsi-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NSI"
+  },
+  "nsi.cookinglabs.near": {
+   "decimals": 18,
+   "symbol": "NSI"
+  },
+  "nsi.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NSI"
+  },
+  "nsi.prismpadfun.near": {
+   "decimals": 18,
+   "symbol": "NSI"
+  },
+  "nsig-2.aidolsnova.near": {
+   "decimals": 18,
+   "symbol": "NSIG"
+  },
+  "nsig-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NSIG"
+  },
+  "nsig-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NSIG"
+  },
+  "nsig.aidolsnova.near": {
+   "decimals": 18,
+   "symbol": "NSIG"
+  },
+  "nsig.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NSIG"
+  },
+  "nslt-77d04d.launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "NSLT"
+  },
+  "nsm.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NSM"
+  },
+  "nsp.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NSP"
+  },
+  "nspad.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NSPAD"
+  },
+  "nsr.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NSR"
+  },
+  "nstai-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NSTAI"
+  },
+  "nstai-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NSTAI"
+  },
+  "nstai.blastnearlaunchpad.near": {
+   "decimals": 18,
+   "symbol": "NSTAI"
+  },
+  "nstai.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NSTAI"
+  },
+  "nstai.token0forge.near": {
+   "decimals": 18,
+   "symbol": "NSTAI"
+  },
+  "nstars.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NSTARS"
+  },
+  "nstart-2.cookinglabs.near": {
+   "decimals": 18,
+   "symbol": "NSTART"
+  },
+  "nstart.cookinglabs.near": {
+   "decimals": 18,
+   "symbol": "NSTART"
+  },
+  "nstart.goonerofficial.near": {
+   "decimals": 18,
+   "symbol": "NSTART"
+  },
+  "nstart.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NSTART"
+  },
+  "nstart.nearlytrader.near": {
+   "decimals": 18,
+   "symbol": "NSTART"
+  },
+  "nstock.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NSTOCK"
+  },
+  "nstock.neate11.near": {
+   "decimals": 18,
+   "symbol": "NSTOCK"
+  },
+  "nstocks-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NSTOCKS"
+  },
+  "nstocks.cookinglabs.near": {
+   "decimals": 18,
+   "symbol": "NSTOCKS"
   },
   "nstocks.nearlytrade.near": {
    "decimals": 18,
    "symbol": "NSTOCKS"
   },
+  "nstoxa.stoxa.near": {
+   "decimals": 24,
+   "symbol": "NSTOXA"
+  },
+  "nstr-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NSTR"
+  },
+  "nstr.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NSTR"
+  },
+  "nstrat.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NSTRAT"
+  },
+  "nstrategy.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NSTRATEGY"
+  },
+  "nt-2188.meme-cooking.near": {
+   "decimals": 18,
+   "symbol": "NT"
+  },
+  "nt.near-terminal.near": {
+   "decimals": 24,
+   "symbol": "NT"
+  },
+  "nt.neardogcoin.near": {
+   "decimals": 18,
+   "symbol": "NT"
+  },
+  "nt.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NT"
+  },
+  "ntbot-ac7aa9.launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "NTBOT"
+  },
   "ntdarai.tkn.near": {
    "decimals": 0,
    "symbol": "NTDarai"
+  },
+  "nte-1031.meme-cooking.near": {
+   "decimals": 18,
+   "symbol": "NTE"
+  },
+  "nte-743.meme-cooking.near": {
+   "decimals": 18,
+   "symbol": "NTE"
+  },
+  "ntech.neartechnology.near": {
+   "decimals": 24,
+   "symbol": "Ntech"
+  },
+  "ntelfuck.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NTELFUCK"
+  },
+  "ntire-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NTIRE"
+  },
+  "ntire.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NTIRE"
+  },
+  "ntk.tkn.near": {
+   "decimals": 18,
+   "symbol": "NTK"
+  },
+  "ntown-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NTOWN"
+  },
+  "ntown-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NTOWN"
+  },
+  "ntown.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NTOWN"
+  },
+  "ntr-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NTR"
+  },
+  "ntr.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NTR"
+  },
+  "ntrade-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NTRADE"
+  },
+  "ntrade.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NTRADE"
+  },
+  "ntrade.nearlytrader.near": {
+   "decimals": 18,
+   "symbol": "NTRADE"
+  },
+  "ntrash.tkn.near": {
+   "decimals": 18,
+   "symbol": "nTRASH"
+  },
+  "ntrend.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "NTREND"
+  },
+  "ntroll.ntroll.near": {
+   "decimals": 24,
+   "symbol": "Ntroll"
+  },
+  "ntronx.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NTRONX"
+  },
+  "ntronx.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "NTRONX"
+  },
+  "ntrump.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NTRUMP"
+  },
+  "ntu-482673.launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "NTU"
+  },
+  "ntu.cookinglabs.near": {
+   "decimals": 18,
+   "symbol": "NTU"
+  },
+  "ntu.token0forge.near": {
+   "decimals": 18,
+   "symbol": "NTU"
+  },
+  "nubi.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NUBI"
+  },
+  "nubin.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NUBIN"
+  },
+  "nucl.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NUCL"
+  },
+  "nucleus-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NUCLEUS"
+  },
+  "nucleus-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NUCLEUS"
+  },
+  "nucleus-4.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NUCLEUS"
   },
   "nucleus-e27af8.nucleusbroker.near": {
    "decimals": 18,
    "symbol": "NUCLEUS"
   },
+  "nucleus.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NUCLEUS"
+  },
+  "nug.token0.near": {
+   "decimals": 18,
+   "symbol": "NUG"
+  },
+  "nuggo.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NUGGO"
+  },
+  "nul-1.nearlypadfun.near": {
+   "decimals": 18,
+   "symbol": "NUL"
+  },
+  "nul-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NUL"
+  },
+  "nul.nearlypadfun.near": {
+   "decimals": 18,
+   "symbol": "NUL"
+  },
+  "nul.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NUL"
+  },
   "nul.nulnul.near": {
    "decimals": 18,
    "symbol": "NUL"
+  },
+  "nullmask.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "NULLMASK"
+  },
+  "nulls.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NULLS"
+  },
+  "nulls.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "NULLS"
+  },
+  "nullsworld.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NULLSWORLD"
+  },
+  "nun.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NUN"
+  },
+  "nut.tkn.near": {
+   "decimals": 18,
+   "symbol": "NUT"
+  },
+  "nuts-21d968.random-test-launcher.near": {
+   "decimals": 18,
+   "symbol": "NUTS"
+  },
+  "nuts.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NUTS"
+  },
+  "nutzec.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NUTZEC"
+  },
+  "nuve.nuvelor.near": {
+   "decimals": 4,
+   "symbol": "NUVE"
+  },
+  "nuvelorian.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NUVELORIAN"
+  },
+  "nv2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NV2"
+  },
+  "nvana-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NVANA"
+  },
+  "nvana.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NVANA"
+  },
+  "nvana.token0.near": {
+   "decimals": 18,
+   "symbol": "NVANA"
+  },
+  "nvc.tkn.near": {
+   "decimals": 18,
+   "symbol": "NVC"
+  },
+  "nvda-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NVDA"
+  },
+  "nvda-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NVDA"
+  },
+  "nvda-4.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NVDA"
+  },
+  "nvda-5.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NVDA"
+  },
+  "nvda-6.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NVDA"
+  },
+  "nvda-7.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NVDA"
+  },
+  "nvda-live-pair-check-b2a3ed.nearpadfamily.near": {
+   "decimals": 18,
+   "symbol": "NCHK"
+  },
+  "nvda-stock-pair-canary-c26b0f.v4stage.nearpadfamily.near": {
+   "decimals": 18,
+   "symbol": "NVDC"
+  },
+  "nvda.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NVDA"
+  },
+  "nvdacat.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NVDACAT"
   },
   "nvdastest.optimal-bone.near": {
    "decimals": 8,
    "symbol": "tNVDAs"
   },
+  "nvdog.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NVDOG"
+  },
+  "nveil.nearveil.near": {
+   "decimals": 24,
+   "symbol": "NVEIL"
+  },
+  "nvidia-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NVIDIA"
+  },
+  "nvidia.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NVIDIA"
+  },
+  "nvision.tkn.near": {
+   "decimals": 18,
+   "symbol": "NVISION"
+  },
+  "nvlr.nuvelor.near": {
+   "decimals": 8,
+   "symbol": "NVLR"
+  },
+  "nvm.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NVM"
+  },
+  "nvna-1906.meme-cooking.near": {
+   "decimals": 18,
+   "symbol": "NVNA"
+  },
+  "nvp.tkn.near": {
+   "decimals": 18,
+   "symbol": "NVP"
+  },
+  "nwa.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NWA"
+  },
+  "nwh.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NWH"
+  },
+  "nwif.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NWIF"
+  },
+  "nwnear-1473.meme-cooking.near": {
+   "decimals": 24,
+   "symbol": "nwnear"
+  },
+  "nwoj.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NWOJ"
+  },
+  "nworm.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NWORM"
+  },
+  "nwrld.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NWRLD"
+  },
+  "nxio.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NXIO"
+  },
+  "nyan-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NYAN"
+  },
+  "nyan.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NYAN"
+  },
+  "nynk-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NYNK"
+  },
+  "nynk.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NYNK"
+  },
   "nzec.bridge.near": {
    "decimals": 8,
    "symbol": "WZEC"
+  },
+  "nzec.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NZEC"
+  },
+  "o.tkn.near": {
+   "decimals": 0,
+   "symbol": "O"
+  },
+  "obhv.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "OBHV"
+  },
+  "obs.openbisea.near": {
+   "decimals": 18,
+   "symbol": "OBS"
+  },
+  "oce.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "OCE"
+  },
+  "ocm.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "OCM"
+  },
+  "oct.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "OCT"
+  },
+  "oct.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "OCT"
+  },
+  "octo-aa1660.launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "OCTO"
+  },
+  "octo.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "OCTO"
+  },
+  "octo.v2.meme-launchpad.near": {
+   "decimals": 18,
+   "symbol": "OCTO"
+  },
+  "odo.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "ODO"
+  },
+  "of.token0.near": {
+   "decimals": 18,
+   "symbol": "OF"
+  },
+  "off.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "OFF"
+  },
+  "official.nearpumpfun.near": {
+   "decimals": 18,
+   "symbol": "NPUMP"
   },
   "offshore-6hqu.launch.shoremarkets.near": {
    "decimals": 18,
    "symbol": "OFFSHORE"
   },
+  "ofp.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "OFP"
+  },
+  "ofp.tkn.near": {
+   "decimals": 18,
+   "symbol": "OFP"
+  },
+  "ohfuk.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "OHFUK"
+  },
+  "oil.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "OIL"
+  },
+  "oink-2.neuraai.near": {
+   "decimals": 18,
+   "symbol": "OINK"
+  },
+  "oink.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "OINK"
+  },
+  "oink.neuraai.near": {
+   "decimals": 18,
+   "symbol": "OINK"
+  },
+  "old.token0.near": {
+   "decimals": 18,
+   "symbol": "OLD"
+  },
+  "old1.token0.near": {
+   "decimals": 18,
+   "symbol": "OLD"
+  },
+  "olivine-10.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "OLIVINE"
+  },
+  "olivine-11.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "OLIVINE"
+  },
+  "olivine-12.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "OLIVINE"
+  },
+  "olivine-13.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "OLIVINE"
+  },
+  "olivine-14.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "OLIVINE"
+  },
+  "olivine-15.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "OLIVINE"
+  },
+  "olivine-16.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "OLIVINE"
+  },
+  "olivine-17.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "OLIVINE"
+  },
+  "olivine-18.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "OLIVINE"
+  },
+  "olivine-19.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "OLIVINE"
+  },
+  "olivine-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "OLIVINE"
+  },
+  "olivine-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "OLIVINE"
+  },
+  "olivine-4.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "OLIVINE"
+  },
+  "olivine-5.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "OLIVINE"
+  },
+  "olivine-6.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "OLIVINE"
+  },
+  "olivine-7.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "OLIVINE"
+  },
+  "olivine-8.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "OLIVINE"
+  },
+  "olivine-9.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "OLIVINE"
+  },
+  "olivine.nearlypad.near": {
+   "decimals": 18,
+   "symbol": "OLIVINE"
+  },
+  "olivine.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "OLIVINE"
+  },
   "olivine.olivinepro.near": {
    "decimals": 18,
    "symbol": "OLIVINE"
+  },
+  "olympic.token0.near": {
+   "decimals": 18,
+   "symbol": "OLYMPIC"
   },
   "omgy-1992.meme-cooking.near": {
    "decimals": 18,
    "symbol": "OMGY"
   },
+  "omni-demo.cfi-pre.near": {
+   "decimals": 18,
+   "symbol": "CFI"
+  },
+  "omnicoin-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "OMNICOIN"
+  },
+  "omnicoin.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "OMNICOIN"
+  },
+  "omnilaunch-1720.meme-cooking.near": {
+   "decimals": 24,
+   "symbol": "omnilaunch"
+  },
+  "one-1114.meme-cooking.near": {
+   "decimals": 18,
+   "symbol": "ONE"
+  },
+  "onear.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "ONEAR"
+  },
+  "onecat-eeff96.pad.onetokenhub.near": {
+   "decimals": 18,
+   "symbol": "ONECAT"
+  },
+  "onecat.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "ONECAT"
+  },
+  "onemorehot.token0.near": {
+   "decimals": 18,
+   "symbol": "ONEMOREHOT"
+  },
+  "only2digit.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "ONLY2DIGIT"
+  },
+  "onlymeme.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "ONLYMEME"
+  },
+  "oops-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "OOPS"
+  },
+  "oops.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "OOPS"
+  },
+  "oorin.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "OORIN"
+  },
+  "op.nopenrouter.near": {
+   "decimals": 24,
+   "symbol": "NOPR"
+  },
+  "opensec.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "OPENSEC"
+  },
+  "operator.nrr-etf.near": {
+   "decimals": 24,
+   "symbol": "NRR"
+  },
+  "oppai.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "OPPAI"
+  },
+  "oppy.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "OPPY"
+  },
+  "optimess.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "OPTIMESS"
+  },
+  "optimus-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "OPTIMUS"
+  },
+  "optimus-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "OPTIMUS"
+  },
+  "optimus-4.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "OPTIMUS"
+  },
+  "optimus.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "OPTIMUS"
+  },
+  "optional-no-buy-oct-one-68ea95.v4stage.nearpadfamily.near": {
+   "decimals": 18,
+   "symbol": "ICZERO01"
+  },
+  "optiroad-d18592.launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "OPTIROAD"
+  },
+  "opul.tkn.near": {
+   "decimals": 8,
+   "symbol": "OPUL"
+  },
+  "oraora.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "ORAORA"
+  },
+  "orca.orca-26.near": {
+   "decimals": 24,
+   "symbol": "Orca"
+  },
+  "ordi.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "ORDI"
+  },
+  "ordineary.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "ORDINEARY"
+  },
+  "ore.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "ORE"
+  },
+  "ore.nearlytrader.near": {
+   "decimals": 18,
+   "symbol": "ORE"
+  },
+  "orvyn.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "ORVYN"
+  },
+  "os-2.onetokenengine.near": {
+   "decimals": 18,
+   "symbol": "OS"
+  },
+  "os.blastnearlaunchpad.near": {
+   "decimals": 18,
+   "symbol": "OS"
+  },
+  "os.nearlypadfun.near": {
+   "decimals": 18,
+   "symbol": "OS"
+  },
+  "os.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "OS"
+  },
+  "os.onetokenengine.near": {
+   "decimals": 18,
+   "symbol": "OS"
+  },
+  "os.token0forge.near": {
+   "decimals": 18,
+   "symbol": "OS"
+  },
+  "oshit.oh-shit.near": {
+   "decimals": 24,
+   "symbol": "OSHIT"
+  },
   "otoken.rhealab.near": {
    "decimals": 18,
    "symbol": "ORHEA"
+  },
+  "ouinex.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "OUINEX"
+  },
+  "out.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "OUT"
+  },
+  "outlayer.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "OUTLAYER"
+  },
+  "outpost-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "OUTPOST"
+  },
+  "outpost-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "OUTPOST"
+  },
+  "outpost-4.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "OUTPOST"
+  },
+  "outpost-5.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "OUTPOST"
+  },
+  "outpost.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "OUTPOST"
+  },
+  "outpost.questout.near": {
+   "decimals": 18,
+   "symbol": "OUTPOST"
+  },
+  "over.tkn.near": {
+   "decimals": 18,
+   "symbol": "OVER"
+  },
+  "overdose.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "OVERDOSE"
   },
   "overshoot-f02bbe.rhea.meme-launchpad.near": {
    "decimals": 18,
    "symbol": "OVERSHOOT"
   },
+  "owl-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "OWL"
+  },
+  "owl-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "OWL"
+  },
   "owl-4ef308.launchpad.justhoot.near": {
    "decimals": 18,
    "symbol": "OWL"
   },
+  "owl.cookinglabs.near": {
+   "decimals": 18,
+   "symbol": "OWL"
+  },
+  "owl.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "OWL"
+  },
+  "owl.token0forge.near": {
+   "decimals": 18,
+   "symbol": "OWL"
+  },
+  "owl.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "OWL"
+  },
+  "owlcoin.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "OWLCOIN"
+  },
+  "owlin-82938a.launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "OWLIN"
+  },
+  "owllife.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "OWLLIFE"
+  },
+  "owlman.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "OWLMAN"
+  },
+  "owlto-3407e1.launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "OWLTO"
+  },
+  "owlyfuck-e43878.launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "OWLYFUCK"
+  },
   "owlysweat-0b9fc7.launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "OWLYSWEAT"
+  },
+  "owlysweat-2.aidolsnova.near": {
+   "decimals": 18,
+   "symbol": "OWLYSWEAT"
+  },
+  "owlysweat.aidolsnova.near": {
    "decimals": 18,
    "symbol": "OWLYSWEAT"
   },
@@ -15143,25 +20874,685 @@
    "decimals": 18,
    "symbol": "OYSTER"
   },
+  "p0k.tkn.near": {
+   "decimals": 18,
+   "symbol": "p0k"
+  },
+  "p4.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "P4"
+  },
+  "pacman.tkn.near": {
+   "decimals": 18,
+   "symbol": "PACMAN"
+  },
+  "padthai.near": {
+   "decimals": 8,
+   "symbol": "PADTHAI"
+  },
+  "pai.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PAI"
+  },
+  "paid.blastnearlaunchpad.near": {
+   "decimals": 18,
+   "symbol": "PAID"
+  },
+  "paid.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PAID"
+  },
+  "paid.nearterminalpad.near": {
+   "decimals": 18,
+   "symbol": "PAID"
+  },
+  "paid.token0forge.near": {
+   "decimals": 18,
+   "symbol": "PAID"
+  },
+  "pair-lock-canary-sep-25-bf44ac.v4stage.nearpadfamily.near": {
+   "decimals": 18,
+   "symbol": "PLCK25"
+  },
+  "paju-1724.meme-cooking.near": {
+   "decimals": 18,
+   "symbol": "PAJU"
+  },
+  "pakoko-eb94c3.launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "PAKOKO"
+  },
+  "pakt.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PAKT"
+  },
+  "palka.tkn.primitives.near": {
+   "decimals": 6,
+   "symbol": "PALKA"
+  },
+  "pamp-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PAMP"
+  },
+  "pamp.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PAMP"
+  },
+  "panda-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PANDA"
+  },
+  "panda.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PANDA"
+  },
+  "panda.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "PANDA"
+  },
+  "pandas.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PANDAS"
+  },
+  "pandoratoken.near": {
+   "decimals": 18,
+   "symbol": "PANDORA"
+  },
+  "pantessa-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PANTESSA"
+  },
+  "pantessa-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PANTESSA"
+  },
+  "pantessa.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PANTESSA"
+  },
+  "panu-3f5cfc.nearpaid.near": {
+   "decimals": 18,
+   "symbol": "PANU"
+  },
+  "paper.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PAPER"
+  },
+  "papsnear.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PAPSNEAR"
+  },
+  "param.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PARAM"
+  },
+  "param.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "PARAM"
+  },
+  "paras-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PARAS"
+  },
+  "paras.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PARAS"
+  },
+  "paras2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PARAS2"
+  },
+  "parasite-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PARASITE"
+  },
+  "parasite-2e05f0.launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "PARASITE"
+  },
+  "parasite-723e3e.launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "PARASITE"
+  },
+  "parasite.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PARASITE"
+  },
+  "parliament-eef0cc.launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "PARLIAMENT"
+  },
+  "parliament-ef2552.launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "PARLIAMENT"
+  },
+  "parterre.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PARTERRE"
+  },
   "patata.gaypad.j1-racing.near": {
    "decimals": 24,
    "symbol": "PATATA"
+  },
+  "patata.nearlypadfun.near": {
+   "decimals": 18,
+   "symbol": "PATATA"
+  },
+  "path-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PATH"
+  },
+  "path.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PATH"
+  },
+  "patt.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PATT"
+  },
+  "paws.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "PAWS"
+  },
+  "pb.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PB"
   },
   "pcat.nearlytrade.near": {
    "decimals": 18,
    "symbol": "PCAT"
   },
+  "pcat.prismfun.near": {
+   "decimals": 18,
+   "symbol": "PCAT"
+  },
+  "pcat.prismpadfun.near": {
+   "decimals": 18,
+   "symbol": "PCAT"
+  },
+  "pcat.tknx.near": {
+   "decimals": 18,
+   "symbol": "PCAT"
+  },
+  "pcl.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PCL"
+  },
+  "pdawg-0e1a18.nearpaid.near": {
+   "decimals": 18,
+   "symbol": "PDAWG"
+  },
+  "pdd.token0.near": {
+   "decimals": 18,
+   "symbol": "PDD"
+  },
+  "pdog.prismfun.near": {
+   "decimals": 18,
+   "symbol": "PDOG"
+  },
+  "pdog.prismpadfun.near": {
+   "decimals": 18,
+   "symbol": "PDOG"
+  },
+  "peace.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PEACE"
+  },
+  "peacock.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PEACOCK"
+  },
+  "peard-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PEARD"
+  },
+  "peard-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PEARD"
+  },
+  "peard.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PEARD"
+  },
+  "pearl.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PEARL"
+  },
+  "pearpe-2.token0nova.near": {
+   "decimals": 18,
+   "symbol": "PEARPE"
+  },
+  "pearpe-2142.meme-cooking.near": {
+   "decimals": 18,
+   "symbol": "PEARPE"
+  },
+  "pearpe-3.token0nova.near": {
+   "decimals": 18,
+   "symbol": "PEARPE"
+  },
+  "pearpe.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PEARPE"
+  },
+  "pearpe.nearlytrader.near": {
+   "decimals": 18,
+   "symbol": "PEARPE"
+  },
+  "pearpe.neuraai.near": {
+   "decimals": 18,
+   "symbol": "PEARPE"
+  },
+  "pearpe.tkn.near": {
+   "decimals": 18,
+   "symbol": "PEARPE"
+  },
+  "pearpe.token0nova.near": {
+   "decimals": 18,
+   "symbol": "PEARPE"
+  },
+  "pearpee.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PEARPEE"
+  },
+  "pecora.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PECORA"
+  },
+  "peek.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PEEK"
+  },
+  "peenly.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PEENLY"
+  },
+  "peepee.nearbased.near": {
+   "decimals": 18,
+   "symbol": "PEEPEE"
+  },
+  "peepocoins.near": {
+   "decimals": 4,
+   "symbol": "PEEPO"
+  },
+  "peer-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PEER"
+  },
+  "peer.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PEER"
+  },
+  "peerly.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PEERLY"
+  },
+  "pegas.tkn.near": {
+   "decimals": 18,
+   "symbol": "PEGAS"
+  },
+  "pegcoin.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PEGCOIN"
+  },
+  "pei.token0.near": {
+   "decimals": 18,
+   "symbol": "PEI"
+  },
+  "pengu-eb1b50.launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "PENGU"
+  },
+  "pengu.pengunear.near": {
+   "decimals": 24,
+   "symbol": "Pengu"
+  },
+  "penguin-1947.meme-cooking.near": {
+   "decimals": 18,
+   "symbol": "Penguin"
+  },
+  "penguin-1948.meme-cooking.near": {
+   "decimals": 18,
+   "symbol": "Penguin"
+  },
+  "penguin-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PENGUIN"
+  },
+  "penguin-2.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "PENGUIN"
+  },
+  "penguin-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PENGUIN"
+  },
+  "penguin-3.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "PENGUIN"
+  },
+  "penguin.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PENGUIN"
+  },
+  "penguin.tkn.near": {
+   "decimals": 18,
+   "symbol": "Penguin"
+  },
+  "penguin.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "PENGUIN"
+  },
+  "penguinonn.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "PENGUINONN"
+  },
+  "pengunear.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PENGUNEAR"
+  },
+  "penis.aidols.near": {
+   "decimals": 24,
+   "symbol": "PENIS"
+  },
+  "people-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PEOPLE"
+  },
+  "people.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PEOPLE"
+  },
+  "pepe-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PEPE"
+  },
+  "pepe-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PEPE"
+  },
+  "pepe-54edd4.launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "PEPE"
+  },
+  "pepe-near.pepe-near.near": {
+   "decimals": 24,
+   "symbol": "Pepe Near"
+  },
+  "pepe-yo7n.launch.shoremarkets.near": {
+   "decimals": 18,
+   "symbol": "PEPE"
+  },
+  "pepe.nearbased.near": {
+   "decimals": 18,
+   "symbol": "PEPE"
+  },
+  "pepe.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PEPE"
+  },
+  "pepe.pepe2049.near": {
+   "decimals": 24,
+   "symbol": "PEPE"
+  },
+  "pepe.tknport.near": {
+   "decimals": 18,
+   "symbol": "PEPE"
+  },
   "pepe.token0.near": {
    "decimals": 18,
    "symbol": "PEPE"
+  },
+  "pepe1.token0.near": {
+   "decimals": 18,
+   "symbol": "PEPE"
+  },
+  "pepear.aidols.near": {
+   "decimals": 24,
+   "symbol": "PEPEAR"
+  },
+  "pepelong.tkn.near": {
+   "decimals": 18,
+   "symbol": "PEPELONG"
+  },
+  "pepeonnear.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PEPEONNEAR"
+  },
+  "pepepepepe.token0.near": {
+   "decimals": 18,
+   "symbol": "PEPEPEPEPE"
+  },
+  "perps.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PERPS"
+  },
+  "perps.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "PERPS"
+  },
+  "perpsnear.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PERPSNEAR"
+  },
+  "pfnear.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "PFNEAR"
+  },
+  "pfp.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PFP"
+  },
+  "pfrog.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PFROG"
+  },
+  "pgang.cookinglabs.near": {
+   "decimals": 18,
+   "symbol": "PGANG"
+  },
+  "pgang.nearlypadfun.near": {
+   "decimals": 18,
+   "symbol": "PGANG"
+  },
+  "pgang.patata-monster.near": {
+   "decimals": 24,
+   "symbol": "PGANG"
+  },
+  "pghood.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PGHOOD"
+  },
+  "phd.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "PHD"
+  },
+  "phil-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PHIL"
+  },
+  "phil.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PHIL"
+  },
+  "phire.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PHIRE"
   },
   "phoenix-bonds.near": {
    "decimals": 24,
    "symbol": "pNEAR"
   },
+  "phoenix.pre-phoenix.near": {
+   "decimals": 24,
+   "symbol": "Phoenix"
+  },
+  "phone.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PHONE"
+  },
+  "phubber.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PHUBBER"
+  },
+  "pi.tkn.near": {
+   "decimals": 18,
+   "symbol": "Pi"
+  },
+  "pickle.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PICKLE"
+  },
+  "pidar.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PIDAR"
+  },
+  "pie.token0.near": {
+   "decimals": 18,
+   "symbol": "PIE"
+  },
+  "pif-0ed090.nearpaid.near": {
+   "decimals": 18,
+   "symbol": "PIF"
+  },
+  "piggygood.token0.near": {
+   "decimals": 18,
+   "symbol": "PIGGYGOOD"
+  },
+  "pillowww.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PILLOWWW"
+  },
+  "pilot.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PILOT"
+  },
+  "pinata-reference-check-aef761.v4stage.nearpadfamily.near": {
+   "decimals": 18,
+   "symbol": "PRC"
+  },
+  "pinch-ddee95.v2.meme-launchpad.near": {
+   "decimals": 18,
+   "symbol": "PINCH"
+  },
+  "pine-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PINE"
+  },
+  "pine.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PINE"
+  },
+  "ping-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PING"
+  },
+  "ping.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PING"
+  },
+  "pinkasso.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PINKASSO"
+  },
+  "pinkbull.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PINKBULL"
+  },
   "pinu-2.nearlytrade.near": {
    "decimals": 18,
    "symbol": "PINU"
+  },
+  "pinu.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PINU"
+  },
+  "pinu.prismpadfun.near": {
+   "decimals": 18,
+   "symbol": "PINU"
+  },
+  "pipecat-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PIPECAT"
+  },
+  "pipecat.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PIPECAT"
+  },
+  "pippin.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PIPPIN"
+  },
+  "pirate.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PIRATE"
+  },
+  "pittipong.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PITTIPONG"
+  },
+  "pixel.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PIXEL"
+  },
+  "pixel.tkn.near": {
+   "decimals": 18,
+   "symbol": "PIXEL"
+  },
+  "pixeltoken.near": {
+   "error": "BAD_DECIMALS",
+   "symbol": "PXT"
+  },
+  "pixiv.tkn.near": {
+   "decimals": 18,
+   "symbol": "pixiv"
+  },
+  "pizza-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PIZZA"
+  },
+  "pizza.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PIZZA"
+  },
+  "pkat-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PKAT"
+  },
+  "pkat-2cf398.launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "PKAT"
+  },
+  "pkat-3e6b47.nearpaid.near": {
+   "decimals": 18,
+   "symbol": "PKAT"
+  },
+  "pkat.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PKAT"
+  },
+  "pkcat.tkn.near": {
+   "decimals": 15,
+   "symbol": "PKCAT"
+  },
+  "pl.token0.near": {
+   "decimals": 18,
+   "symbol": "PL"
+  },
+  "pl4.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PL4"
+  },
+  "plaid.cookinglabs.near": {
+   "decimals": 18,
+   "symbol": "PLAID"
+  },
+  "plaid.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PLAID"
+  },
+  "planet.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "PLANET"
   },
   "plasma-0xb8ce59fc3717ada4c02eadf9682a9e934f625ebb.omft.near": {
    "decimals": 6,
@@ -15171,6 +21562,42 @@
    "decimals": 18,
    "symbol": "XPL"
   },
+  "play.tkn.near": {
+   "decimals": 18,
+   "symbol": "PLAY"
+  },
+  "plb-1567.meme-cooking.near": {
+   "decimals": 18,
+   "symbol": "PLB"
+  },
+  "pleasesendmemytokensbacksir.tkn.near": {
+   "decimals": 18,
+   "symbol": "pleasesendmemytokensbacksir"
+  },
+  "pledge.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PLEDGE"
+  },
+  "plo-2d4r.dumpaddict.near": {
+   "decimals": 18,
+   "symbol": "PLO"
+  },
+  "plug.token0.near": {
+   "decimals": 18,
+   "symbol": "PLUG"
+  },
+  "plup.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PLUP"
+  },
+  "pmoney-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PMONEY"
+  },
+  "pmoney-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PMONEY"
+  },
   "pmoney-4.nearlytrade.near": {
    "decimals": 18,
    "symbol": "PMONEY"
@@ -15178,6 +21605,94 @@
   "pmoney.nearlytrade.near": {
    "decimals": 18,
    "symbol": "PMONEY"
+  },
+  "pmt.token0.near": {
+   "decimals": 18,
+   "symbol": "PMT"
+  },
+  "pnd.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PND"
+  },
+  "pndr.token0.near": {
+   "decimals": 18,
+   "symbol": "PNDR"
+  },
+  "pnear.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PNEAR"
+  },
+  "pns.token0.near": {
+   "decimals": 18,
+   "symbol": "PNS"
+  },
+  "pnt.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PNT"
+  },
+  "pnut-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PNUT"
+  },
+  "pnut.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PNUT"
+  },
+  "pnx.tkn.near": {
+   "decimals": 18,
+   "symbol": "PNX"
+  },
+  "pocar-ab170e.launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "POCAR"
+  },
+  "pod-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "POD"
+  },
+  "pod-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "POD"
+  },
+  "pod-3d9b8e.launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "POD"
+  },
+  "pod.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "POD"
+  },
+  "pod.tknport.near": {
+   "decimals": 18,
+   "symbol": "POD"
+  },
+  "pogal-xkkc.launch.shoremarkets.near": {
+   "decimals": 18,
+   "symbol": "POGAL"
+  },
+  "poh.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "POH"
+  },
+  "poke-c2c841.launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "POKE"
+  },
+  "pokenear-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "POKENEAR"
+  },
+  "pokenear-4e7dc7.launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "POKENEAR"
+  },
+  "pokenear.cookinglabs.near": {
+   "decimals": 18,
+   "symbol": "POKENEAR"
+  },
+  "pokenear.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "POKENEAR"
   },
   "pol-0x3c499c542cef5e3811e1192ce70d8cc03d5c3359.omft.near": {
    "decimals": 6,
@@ -15187,33 +21702,409 @@
    "decimals": 18,
    "symbol": "COCA"
   },
+  "pol-0xc2132d05d31c914a87c6611c10748aeb04b58e8f.omdep.near": {
+   "decimals": 6,
+   "symbol": "USDT0"
+  },
+  "pol.omdep.near": {
+   "decimals": 18,
+   "symbol": "POL"
+  },
   "pol.omft.near": {
    "decimals": 18,
    "symbol": "POL"
+  },
+  "pollen.tkn.near": {
+   "decimals": 0,
+   "symbol": "Pollen"
+  },
+  "pon-161d58.launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "PON"
+  },
+  "pon-2.cookinglabs.near": {
+   "decimals": 18,
+   "symbol": "PON"
+  },
+  "pon.cookinglabs.near": {
+   "decimals": 18,
+   "symbol": "PON"
+  },
+  "pon.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PON"
+  },
+  "pon.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "PON"
+  },
+  "ponearly.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PONEARLY"
+  },
+  "ponies.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PONIES"
+  },
+  "pons-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PONS"
+  },
+  "pons.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PONS"
+  },
+  "ponzi.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PONZI"
+  },
+  "poo.token0.near": {
+   "decimals": 18,
+   "symbol": "POO"
+  },
+  "poobs.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "POOBS"
+  },
+  "poocat.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "POOCAT"
   },
   "poof.tkn.near": {
    "decimals": 18,
    "symbol": "POOF"
   },
+  "poohoo-8da2a7.launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "POOHOO"
+  },
+  "poohoot.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "POOHOOT"
+  },
+  "pool.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "POOL"
+  },
+  "poop-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "POOP"
+  },
+  "poop.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "POOP"
+  },
+  "poop.token0.near": {
+   "decimals": 18,
+   "symbol": "POOP"
+  },
+  "pooparea.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "POOPAREA"
+  },
+  "poopcoin.token0.near": {
+   "decimals": 18,
+   "symbol": "POOPCOIN"
+  },
+  "poopiscoop-541.meme-cooking.near": {
+   "decimals": 18,
+   "symbol": "Poopiscoop"
+  },
+  "poor.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "POOR"
+  },
+  "popcat-1f6674.launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "POPCAT"
+  },
   "popcat-aa2a10.launchpad.justhoot.near": {
    "decimals": 18,
    "symbol": "POPCAT"
+  },
+  "popeyenear.shardpad.near": {
+   "decimals": 18,
+   "symbol": "POPEYENEAR"
   },
   "poppy-0.meme-cooking-test.near": {
    "decimals": 18,
    "symbol": "POPPY"
   },
+  "popup.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "POPUP"
+  },
+  "pornhoot-25aa42.launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "PORNHOOT"
+  },
+  "pot.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "POT"
+  },
+  "potate.token0.near": {
+   "decimals": 18,
+   "symbol": "POTATE"
+  },
   "potato.nearlytrade.near": {
    "decimals": 18,
    "symbol": "POTATO"
+  },
+  "potato.potaton.near": {
+   "decimals": 24,
+   "symbol": "Potato"
+  },
+  "poteto.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "POTETO"
+  },
+  "pou-i32k.dumpaddict.near": {
+   "decimals": 18,
+   "symbol": "POU"
+  },
+  "pou.token0.near": {
+   "decimals": 18,
+   "symbol": "POU"
+  },
+  "pounce-2.neuraai.near": {
+   "decimals": 18,
+   "symbol": "POUNCE"
+  },
+  "pounce-3.neuraai.near": {
+   "decimals": 18,
+   "symbol": "POUNCE"
+  },
+  "pounce.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "POUNCE"
+  },
+  "pounce.neuraai.near": {
+   "decimals": 18,
+   "symbol": "POUNCE"
+  },
+  "power.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "POWER"
+  },
+  "poweredbyhotwallet.token0.near": {
+   "decimals": 18,
+   "symbol": "POWEREDBYHOTWALLET"
+  },
+  "pqc.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PQC"
+  },
+  "pql.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "PQL"
+  },
+  "pr.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PR"
+  },
+  "pray.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PRAY"
+  },
+  "pre.bambootoken.near": {
+   "decimals": 24,
+   "symbol": "Bamboo Token"
   },
   "pre.meteor-token.near": {
    "decimals": 8,
    "symbol": "MEPT"
   },
+  "pre.prophetzone.near": {
+   "decimals": 24,
+   "symbol": "Prophetzone"
+  },
+  "pre.siren-launcher.near": {
+   "decimals": 24,
+   "symbol": "Siren"
+  },
+  "predict.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "PREDICT"
+  },
+  "prediction.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PREDICTION"
+  },
+  "presale.neardrgns.near": {
+   "decimals": 18,
+   "symbol": "PRESALE"
+  },
+  "preton.token0.near": {
+   "decimals": 18,
+   "symbol": "PRETON"
+  },
+  "priceless.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PRICELESS"
+  },
+  "pridragon-abae32.launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "PRIDRAGON"
+  },
+  "pridragon-b36bd5.launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "PRIDRAGON"
+  },
+  "print.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PRINT"
+  },
+  "printer-4e5926.launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "PRINTER"
+  },
+  "printerly.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PRINTERLY"
+  },
+  "prism-1.nearlypadfun.near": {
+   "decimals": 18,
+   "symbol": "PRISM"
+  },
+  "prism-1.prismpadfun.near": {
+   "decimals": 18,
+   "symbol": "PRISM"
+  },
+  "prism-2.nearlypadfun.near": {
+   "decimals": 18,
+   "symbol": "PRISM"
+  },
+  "prism-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PRISM"
+  },
+  "prism-2.nearlytrader.near": {
+   "decimals": 18,
+   "symbol": "PRISM"
+  },
+  "prism-2.prismpadfun.near": {
+   "decimals": 18,
+   "symbol": "PRISM"
+  },
+  "prism-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PRISM"
+  },
+  "prism-3.nearlytrader.near": {
+   "decimals": 18,
+   "symbol": "PRISM"
+  },
+  "prism-3.prismpadfun.near": {
+   "decimals": 18,
+   "symbol": "PRISM"
+  },
+  "prism-4.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PRISM"
+  },
+  "prism-4.nearlytrader.near": {
+   "decimals": 18,
+   "symbol": "PRISM"
+  },
+  "prism-4.prismpadfun.near": {
+   "decimals": 18,
+   "symbol": "PRISM"
+  },
+  "prism-5.nearlytrader.near": {
+   "decimals": 18,
+   "symbol": "PRISM"
+  },
+  "prism-5.prismpadfun.near": {
+   "decimals": 18,
+   "symbol": "PRISM"
+  },
+  "prism-6.nearlytrader.near": {
+   "decimals": 18,
+   "symbol": "PRISM"
+  },
+  "prism.cookinglabs.near": {
+   "decimals": 18,
+   "symbol": "PRISM"
+  },
+  "prism.nearfitrade.near": {
+   "decimals": 18,
+   "symbol": "PRISM"
+  },
+  "prism.nearlypadfun.near": {
+   "decimals": 18,
+   "symbol": "PRISM"
+  },
+  "prism.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PRISM"
+  },
   "prism.nearlytrader.near": {
    "decimals": 18,
    "symbol": "PRISM"
+  },
+  "prism.prismfun.near": {
+   "decimals": 18,
+   "symbol": "PRISM"
+  },
+  "prism.prismpadfun.near": {
+   "decimals": 18,
+   "symbol": "PRISM"
+  },
+  "prism.token0station.near": {
+   "decimals": 18,
+   "symbol": "PRISM"
+  },
+  "prismhoot.hootpad.near": {
+   "decimals": 18,
+   "symbol": "PRISMHOOT"
+  },
+  "prismic.cookinglabs.near": {
+   "decimals": 18,
+   "symbol": "PRISMIC"
+  },
+  "privacy-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PRIVACY"
+  },
+  "privacy.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PRIVACY"
+  },
+  "privata.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PRIVATA"
+  },
+  "privy.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PRIVY"
+  },
+  "prl-2.pearltrade.near": {
+   "decimals": 18,
+   "symbol": "PRL"
+  },
+  "prl-2.tknport.near": {
+   "decimals": 18,
+   "symbol": "PRL"
+  },
+  "prl-3.pearltrade.near": {
+   "decimals": 18,
+   "symbol": "PRL"
+  },
+  "prl-3.tknport.near": {
+   "decimals": 18,
+   "symbol": "PRL"
+  },
+  "prl-4.pearltrade.near": {
+   "decimals": 18,
+   "symbol": "PRL"
+  },
+  "prl-4.tknport.near": {
+   "decimals": 18,
+   "symbol": "PRL"
+  },
+  "prl-5.pearltrade.near": {
+   "decimals": 18,
+   "symbol": "PRL"
   },
   "prl.nearlytrade.near": {
    "decimals": 18,
@@ -15223,41 +22114,1148 @@
    "decimals": 8,
    "symbol": "PEARL"
   },
+  "prl.pearltrade.near": {
+   "decimals": 18,
+   "symbol": "PRL"
+  },
+  "prl.tknport.near": {
+   "decimals": 18,
+   "symbol": "PRL"
+  },
+  "prlkat.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PRLKAT"
+  },
+  "proai-1161.meme-cooking.near": {
+   "decimals": 18,
+   "symbol": "ProAI"
+  },
+  "proboscis-9f1ec3.launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "PROBOSCIS"
+  },
+  "project.nearpayr.near": {
+   "decimals": 24,
+   "symbol": "NEARPAYR"
+  },
+  "proof.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PROOF"
+  },
+  "proof.nhuman.near": {
+   "decimals": 24,
+   "symbol": "Nhuman"
+  },
+  "proofcycle-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PROOFCYCLE"
+  },
+  "proofcycle-2.neuraai.near": {
+   "decimals": 18,
+   "symbol": "PROOFCYCLE"
+  },
+  "proofcycle-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PROOFCYCLE"
+  },
+  "proofcycle.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PROOFCYCLE"
+  },
+  "proofcycle.neuraai.near": {
+   "decimals": 18,
+   "symbol": "PROOFCYCLE"
+  },
+  "prophet.prophet_zone.near": {
+   "decimals": 24,
+   "symbol": "PROPHET"
+  },
+  "protocolh-a493e9.launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "PROTOCOLH"
+  },
+  "protons.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PROTONS"
+  },
+  "proximity-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PROXIMITY"
+  },
+  "proximity.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PROXIMITY"
+  },
+  "proximityf.nearlypadfun.near": {
+   "decimals": 18,
+   "symbol": "PROXIMITYF"
+  },
+  "prp.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PRP"
+  },
+  "prt.token0.near": {
+   "decimals": 18,
+   "symbol": "PRT"
+  },
+  "pt-1.nearlypadfun.near": {
+   "decimals": 18,
+   "symbol": "PT"
+  },
+  "pt-2110.meme-cooking.near": {
+   "decimals": 18,
+   "symbol": "PT"
+  },
+  "pt.nearlypadfun.near": {
+   "decimals": 18,
+   "symbol": "PT"
+  },
+  "public.cookinglabs.near": {
+   "decimals": 18,
+   "symbol": "PUBLIC"
+  },
+  "publicaml.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PUBLICAML"
+  },
+  "puff.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PUFF"
+  },
+  "puku.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PUKU"
+  },
+  "pulse.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PULSE"
+  },
+  "puma.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PUMA"
+  },
+  "pump-020ac1.random-test-launcher.near": {
+   "decimals": 18,
+   "symbol": "PUMP"
+  },
+  "pump-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PUMP"
+  },
+  "pump-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PUMP"
+  },
+  "pump.nearbased.near": {
+   "decimals": 18,
+   "symbol": "PUMP"
+  },
+  "pump.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PUMP"
+  },
+  "pump.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "PUMP"
+  },
+  "pumpkg-332.meme-cooking.near": {
+   "decimals": 18,
+   "symbol": "PUMPKG"
+  },
+  "pumpkin-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PUMPKIN"
+  },
+  "pumpkin-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PUMPKIN"
+  },
+  "pumpkin.cookinglabs.near": {
+   "decimals": 18,
+   "symbol": "PUMPKIN"
+  },
+  "pumpkin.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PUMPKIN"
+  },
+  "pumpkin.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "PUMPKIN"
+  },
+  "pumpkinu.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PUMPKINU"
+  },
+  "pumpnear.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PUMPNEAR"
+  },
+  "pumpnear.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "PUMPNEAR"
+  },
+  "pumpopoly-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PUMPOPOLY"
+  },
+  "pumpopoly-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PUMPOPOLY"
+  },
+  "pumpopoly-4.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PUMPOPOLY"
+  },
+  "pumpopoly.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PUMPOPOLY"
+  },
+  "punchcat.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PUNCHCAT"
+  },
+  "puncs.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PUNCS"
+  },
+  "punisher-05f6d9.nearpadfamily.near": {
+   "decimals": 18,
+   "symbol": "PNSH"
+  },
+  "punk-280.meme-cooking.near": {
+   "decimals": 18,
+   "symbol": "PUNK"
+  },
+  "punks-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PUNKS"
+  },
+  "punks-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PUNKS"
+  },
+  "punks-4.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PUNKS"
+  },
+  "punks-5.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PUNKS"
+  },
+  "punks.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PUNKS"
+  },
+  "pup-1n6p.launch.shoremarkets.near": {
+   "decimals": 18,
+   "symbol": "PUP"
+  },
+  "pup.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PUP"
+  },
+  "pupdep.tkn.primitives.near": {
+   "decimals": 8,
+   "symbol": "PUPDEP"
+  },
+  "puptwo.tkn.primitives.near": {
+   "decimals": 8,
+   "symbol": "PUPTWO"
+  },
   "purge-558.meme-cooking.near": {
    "decimals": 18,
    "symbol": "PURGE"
+  },
+  "purge.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PURGE"
+  },
+  "purge.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "PURGE"
+  },
+  "purgem-1055.meme-cooking.near": {
+   "decimals": 18,
+   "symbol": "PURGEM"
+  },
+  "purple.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PURPLE"
+  },
+  "purpledragon.tkn.near": {
+   "decimals": 18,
+   "symbol": "PURPLEDRAGON"
+  },
+  "purr.tkn.near": {
+   "decimals": 18,
+   "symbol": "PURR"
+  },
+  "purrintentality-e98e08.nearpadfamily.near": {
+   "decimals": 18,
+   "symbol": "PURRI"
+  },
+  "pussy.laboratory.jumpfinance.near": {
+   "decimals": 18,
+   "symbol": "PUSSY"
+  },
+  "pussy.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PUSSY"
+  },
+  "pusy-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PUSY"
+  },
+  "pusy.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PUSY"
+  },
+  "puta.token0.near": {
+   "decimals": 18,
+   "symbol": "PUTA"
+  },
+  "putin.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PUTIN"
+  },
+  "putin.token0.near": {
+   "decimals": 18,
+   "symbol": "PUTIN"
+  },
+  "putt.tkn.near": {
+   "decimals": 18,
+   "symbol": "PUTT"
+  },
+  "pv1t.prismowner.near": {
+   "error": "UNKNOWN_ACCOUNT"
+  },
+  "pw.tkn.near": {
+   "decimals": 10,
+   "symbol": "PW"
+  },
+  "pxt4393-fds4.launch.px4m-ops.near": {
+   "decimals": 18,
+   "symbol": "PXT4393"
+  },
+  "pyre-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PYRE"
+  },
+  "pyre-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PYRE"
+  },
+  "pyre-4.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PYRE"
+  },
+  "pyre.aidolsnova.near": {
+   "decimals": 18,
+   "symbol": "PYRE"
+  },
+  "pyre.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PYRE"
+  },
+  "q4.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "Q4"
+  },
+  "q4.thefinalact.near": {
+   "decimals": 24,
+   "symbol": "Q4"
+  },
+  "qa.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "QA"
+  },
+  "qad-263.meme-cooking.near": {
+   "decimals": 18,
+   "symbol": "QAD"
+  },
+  "qantas.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "QANTAS"
+  },
+  "qbait.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "QBAIT"
+  },
+  "qbat.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "QBAT"
+  },
+  "qbonk.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "QBONK"
+  },
+  "qbtc.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "QBTC"
+  },
+  "qcanary-1.nearfitrade.near": {
+   "decimals": 18,
+   "symbol": "QCANARY"
+  },
+  "qcanary-2.nearlydev.near": {
+   "decimals": 18,
+   "symbol": "QCANARY"
+  },
+  "qcanary.nearfitrade.near": {
+   "decimals": 18,
+   "symbol": "QCANARY"
+  },
+  "qcanary.nearlydev.near": {
+   "decimals": 18,
+   "symbol": "QCANARY"
+  },
+  "qcanary.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "QCANARY"
+  },
+  "qcash.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "QCASH"
+  },
+  "qcat-0043.nearlydev.near": {
+   "decimals": 18,
+   "symbol": "QCAT"
+  },
+  "qcat-0b39.nearlydev.near": {
+   "decimals": 18,
+   "symbol": "QCAT"
+  },
+  "qcat-1.nearfitrade.near": {
+   "decimals": 18,
+   "symbol": "QCAT"
+  },
+  "qcat-162a.nearlydev.near": {
+   "decimals": 18,
+   "symbol": "QCAT"
+  },
+  "qcat-2.aidolsnova.near": {
+   "decimals": 18,
+   "symbol": "QCAT"
+  },
+  "qcat-2.nearcatscoin.near": {
+   "decimals": 18,
+   "symbol": "QCAT"
+  },
+  "qcat-2.nearfitrade.near": {
+   "decimals": 18,
+   "symbol": "QCAT"
+  },
+  "qcat-2.nearlydev.near": {
+   "decimals": 18,
+   "symbol": "QCAT"
+  },
+  "qcat-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "QCAT"
+  },
+  "qcat-2.token0nova.near": {
+   "decimals": 18,
+   "symbol": "QCAT"
   },
   "qcat-2223.meme-cooking.near": {
    "decimals": 18,
    "symbol": "QCat"
   },
+  "qcat-3.aidolsnova.near": {
+   "decimals": 18,
+   "symbol": "QCAT"
+  },
+  "qcat-3.nearcatscoin.near": {
+   "decimals": 18,
+   "symbol": "QCAT"
+  },
+  "qcat-3.nearlydev.near": {
+   "decimals": 18,
+   "symbol": "QCAT"
+  },
   "qcat-3.nearlytrade.near": {
    "decimals": 18,
    "symbol": "QCAT"
+  },
+  "qcat-3.token0nova.near": {
+   "decimals": 18,
+   "symbol": "QCAT"
+  },
+  "qcat-317a.nearlydev.near": {
+   "decimals": 18,
+   "symbol": "QCat"
+  },
+  "qcat-373c.nearlydev.near": {
+   "decimals": 18,
+   "symbol": "QCAT"
+  },
+  "qcat-4.nearlydev.near": {
+   "decimals": 18,
+   "symbol": "QCAT"
+  },
+  "qcat-4.token0nova.near": {
+   "decimals": 18,
+   "symbol": "QCAT"
+  },
+  "qcat-43c1.nearlydev.near": {
+   "decimals": 18,
+   "symbol": "QCAT"
+  },
+  "qcat-4640.nearlydev.near": {
+   "decimals": 18,
+   "symbol": "QCAT"
+  },
+  "qcat-49b8.nearlydev.near": {
+   "decimals": 18,
+   "symbol": "QCAT"
+  },
+  "qcat-5.nearlydev.near": {
+   "decimals": 18,
+   "symbol": "QCAT"
+  },
+  "qcat-5.token0nova.near": {
+   "decimals": 18,
+   "symbol": "QCAT"
+  },
+  "qcat-533c.nearlydev.near": {
+   "decimals": 18,
+   "symbol": "QCAT"
+  },
+  "qcat-5a6099.launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "QCAT"
+  },
+  "qcat-6.nearlydev.near": {
+   "decimals": 18,
+   "symbol": "QCAT"
+  },
+  "qcat-679c.nearlydev.near": {
+   "decimals": 18,
+   "symbol": "QCAT"
+  },
+  "qcat-7.nearlydev.near": {
+   "decimals": 18,
+   "symbol": "QCAT"
+  },
+  "qcat-8.nearlydev.near": {
+   "decimals": 18,
+   "symbol": "QCAT"
+  },
+  "qcat-9.nearlydev.near": {
+   "decimals": 18,
+   "symbol": "QCAT"
+  },
+  "qcat-b00e.nearlydev.near": {
+   "decimals": 18,
+   "symbol": "QCAT"
+  },
+  "qcat-b1a0.nearlydev.near": {
+   "decimals": 18,
+   "symbol": "QCAT"
+  },
+  "qcat-f093.nearlydev.near": {
+   "decimals": 18,
+   "symbol": "QCAT"
+  },
+  "qcat.aidolsnova.near": {
+   "decimals": 18,
+   "symbol": "QCAT"
+  },
+  "qcat.nearcatscoin.near": {
+   "decimals": 18,
+   "symbol": "QCAT"
+  },
+  "qcat.nearfitrade.near": {
+   "decimals": 18,
+   "symbol": "QCAT"
+  },
+  "qcat.nearlydev.near": {
+   "decimals": 18,
+   "symbol": "QCAT"
+  },
+  "qcat.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "QCAT"
+  },
+  "qcat.tknport.near": {
+   "decimals": 18,
+   "symbol": "QCAT"
+  },
+  "qcat.token0nova.near": {
+   "decimals": 18,
+   "symbol": "QCAT"
+  },
+  "qclaw.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "QCLAW"
+  },
+  "qday-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "QDAY"
+  },
+  "qday-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "QDAY"
+  },
+  "qday.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "QDAY"
+  },
+  "qdcl.v2.meme-launchpad.near": {
+   "decimals": 18,
+   "symbol": "QDCL"
+  },
+  "qdog-1.nearfitrade.near": {
+   "decimals": 18,
+   "symbol": "QDOG"
+  },
+  "qdog-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "QDOG"
+  },
+  "qdog-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "QDOG"
+  },
+  "qdog-4.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "QDOG"
   },
   "qdog-5.nearlytrade.near": {
    "decimals": 18,
    "symbol": "QDOG"
   },
+  "qdog-6.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "QDOG"
+  },
+  "qdog.nearfitrade.near": {
+   "decimals": 18,
+   "symbol": "QDOG"
+  },
+  "qdog.nearlydev.near": {
+   "decimals": 18,
+   "symbol": "QDOG"
+  },
+  "qdog.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "QDOG"
+  },
+  "qdoge-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "QDOGE"
+  },
+  "qdoge.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "QDOGE"
+  },
+  "qfart.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "QFART"
+  },
+  "qfli.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "QFLI"
+  },
+  "qfloki-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "QFLOKI"
+  },
+  "qfloki.nearlydev.near": {
+   "decimals": 18,
+   "symbol": "QFLOKI"
+  },
+  "qfloki.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "QFLOKI"
+  },
+  "qgat-7d5eed.launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "QGAT"
+  },
+  "qhoot-2.nearlydev.near": {
+   "decimals": 18,
+   "symbol": "QHOOT"
+  },
+  "qhoot-3.nearlydev.near": {
+   "decimals": 18,
+   "symbol": "QHOOT"
+  },
+  "qhoot-5967c1.launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "QHOOT"
+  },
+  "qhoot.nearlydev.near": {
+   "decimals": 18,
+   "symbol": "QHOOT"
+  },
+  "qi-1.nearfitrade.near": {
+   "decimals": 18,
+   "symbol": "QI"
+  },
+  "qi-2.nearfitrade.near": {
+   "decimals": 18,
+   "symbol": "QI"
+  },
+  "qi-2.nearlydev.near": {
+   "decimals": 18,
+   "symbol": "QI"
+  },
+  "qi-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "QI"
+  },
+  "qi-2.tknport.near": {
+   "decimals": 18,
+   "symbol": "QI"
+  },
+  "qi-3.nearlydev.near": {
+   "decimals": 18,
+   "symbol": "QI"
+  },
+  "qi-4.nearlydev.near": {
+   "decimals": 18,
+   "symbol": "QI"
+  },
+  "qi-5.nearlydev.near": {
+   "decimals": 18,
+   "symbol": "QI"
+  },
+  "qi-6.nearlydev.near": {
+   "decimals": 18,
+   "symbol": "QI"
+  },
+  "qi.nearfitrade.near": {
+   "decimals": 18,
+   "symbol": "QI"
+  },
+  "qi.nearlydev.near": {
+   "decimals": 18,
+   "symbol": "QI"
+  },
   "qi.nearlytrade.near": {
    "decimals": 18,
    "symbol": "QI"
+  },
+  "qi.tknport.near": {
+   "decimals": 18,
+   "symbol": "QI"
+  },
+  "qi.token0nova.near": {
+   "decimals": 18,
+   "symbol": "QI"
+  },
+  "qinu-2.aidolsnova.near": {
+   "decimals": 18,
+   "symbol": "QINU"
+  },
+  "qinu-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "QINU"
+  },
+  "qinu-3.aidolsnova.near": {
+   "decimals": 18,
+   "symbol": "QINU"
+  },
+  "qinu-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "QINU"
+  },
+  "qinu-4.aidolsnova.near": {
+   "decimals": 18,
+   "symbol": "QINU"
+  },
+  "qinu-4.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "QINU"
+  },
+  "qinu-5.aidolsnova.near": {
+   "decimals": 18,
+   "symbol": "QINU"
+  },
+  "qinu-5.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "QINU"
+  },
+  "qinu-6.aidolsnova.near": {
+   "decimals": 18,
+   "symbol": "QINU"
+  },
+  "qinu-7.aidolsnova.near": {
+   "decimals": 18,
+   "symbol": "QINU"
+  },
+  "qinu.aidolsnova.near": {
+   "decimals": 18,
+   "symbol": "QINU"
+  },
+  "qinu.nearcatscoin.near": {
+   "decimals": 18,
+   "symbol": "QINU"
+  },
+  "qinu.nearfitrade.near": {
+   "decimals": 18,
+   "symbol": "QINU"
+  },
+  "qinu.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "QINU"
+  },
+  "qlisa-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "QLISA"
+  },
+  "qlisa-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "QLISA"
+  },
+  "qlisa.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "QLISA"
+  },
+  "qls.nearfitrade.near": {
+   "decimals": 18,
+   "symbol": "QLS"
+  },
+  "qls.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "QLS"
+  },
+  "qman.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "QMAN"
+  },
+  "qnc.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "QNC"
+  },
+  "qnearkat.nearfitrade.near": {
+   "decimals": 18,
+   "symbol": "QNEARKAT"
+  },
+  "qnearkat.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "QNEARKAT"
+  },
+  "qninu.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "QNINU"
+  },
+  "qnt.nearlytrader.near": {
+   "decimals": 18,
+   "symbol": "QNT"
+  },
+  "qnt.token0forge.near": {
+   "decimals": 18,
+   "symbol": "QNT"
+  },
+  "qntm.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "QNTM"
+  },
+  "qoon-2.tknport.near": {
+   "decimals": 18,
+   "symbol": "QOON"
   },
   "qoon-a34596.launchpad.justhoot.near": {
    "decimals": 18,
    "symbol": "QOON"
   },
+  "qoon.tknport.near": {
+   "decimals": 18,
+   "symbol": "QOON"
+  },
+  "qowl-2b6ca2.launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "QOWL"
+  },
+  "qpepe.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "QPEPE"
+  },
+  "qptest.nearfitrade.near": {
+   "decimals": 18,
+   "symbol": "QPTEST"
+  },
+  "qpuss.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "QPUSS"
+  },
+  "qrbitcoin.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "QRBITCOIN"
+  },
+  "qsem.nearfitrade.near": {
+   "decimals": 18,
+   "symbol": "QSEM"
+  },
+  "qsem.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "QSEM"
+  },
+  "qshiba.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "QSHIBA"
+  },
+  "qshoes.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "QSHOES"
+  },
   "qslum.nearlytrade.near": {
    "decimals": 18,
    "symbol": "QSLUM"
+  },
+  "qstr.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "QSTR"
+  },
+  "qtc-1.nearfitrade.near": {
+   "decimals": 18,
+   "symbol": "QTC"
+  },
+  "qtc-2.aidolsnova.near": {
+   "decimals": 18,
+   "symbol": "QTC"
+  },
+  "qtc-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "QTC"
+  },
+  "qtc-2ba5.aidolsnova.near": {
+   "decimals": 18,
+   "symbol": "QTC"
+  },
+  "qtc-3.aidolsnova.near": {
+   "decimals": 18,
+   "symbol": "QTC"
+  },
+  "qtc-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "QTC"
+  },
+  "qtc-4.aidolsnova.near": {
+   "decimals": 18,
+   "symbol": "QTC"
+  },
+  "qtc-4.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "QTC"
+  },
+  "qtc-5.aidolsnova.near": {
+   "decimals": 18,
+   "symbol": "QTC"
+  },
+  "qtc-6.aidolsnova.near": {
+   "decimals": 18,
+   "symbol": "QTC"
+  },
+  "qtc-7.aidolsnova.near": {
+   "decimals": 18,
+   "symbol": "QTC"
+  },
+  "qtc-8.aidolsnova.near": {
+   "decimals": 18,
+   "symbol": "QTC"
+  },
+  "qtc-9.aidolsnova.near": {
+   "decimals": 18,
+   "symbol": "QTC"
+  },
+  "qtc.aidolsnova.near": {
+   "decimals": 18,
+   "symbol": "QTC"
+  },
+  "qtc.blastnearlaunchpad.near": {
+   "decimals": 18,
+   "symbol": "QTC"
+  },
+  "qtc.nearfitrade.near": {
+   "decimals": 18,
+   "symbol": "QTC"
+  },
+  "qtc.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "QTC"
   },
   "qtc.omft.near": {
    "decimals": 12,
    "symbol": "QTC"
   },
+  "qtc.quantusnetwork.near": {
+   "decimals": 24,
+   "symbol": "QTC"
+  },
   "qtc.tkn.near": {
    "decimals": 18,
    "symbol": "QTC"
+  },
+  "qtc.token0nova.near": {
+   "decimals": 18,
+   "symbol": "QTC"
+  },
+  "qtcinu.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "QTCINU"
+  },
+  "qtcmania.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "QTCMANIA"
+  },
+  "qtcmascot-1.nearfitrade.near": {
+   "decimals": 18,
+   "symbol": "QTCMASCOT"
+  },
+  "qtcmascot-2.nearfitrade.near": {
+   "decimals": 18,
+   "symbol": "QTCMASCOT"
+  },
+  "qtcmascot-2.nearlydev.near": {
+   "decimals": 18,
+   "symbol": "QTCMASCOT"
+  },
+  "qtcmascot-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "QTCMASCOT"
+  },
+  "qtcmascot-3.nearfitrade.near": {
+   "decimals": 18,
+   "symbol": "QTCMASCOT"
+  },
+  "qtcmascot-3.nearlydev.near": {
+   "decimals": 18,
+   "symbol": "QTCMASCOT"
+  },
+  "qtcmascot-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "QTCMASCOT"
+  },
+  "qtcmascot-4.nearfitrade.near": {
+   "decimals": 18,
+   "symbol": "QTCMASCOT"
+  },
+  "qtcmascot-5.nearfitrade.near": {
+   "decimals": 18,
+   "symbol": "QTCMASCOT"
+  },
+  "qtcmascot.nearfitrade.near": {
+   "decimals": 18,
+   "symbol": "QTCMASCOT"
+  },
+  "qtcmascot.nearlydev.near": {
+   "decimals": 18,
+   "symbol": "QTCMASCOT"
+  },
+  "qtcmascot.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "QTCMASCOT"
+  },
+  "qtd.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "QTD"
+  },
+  "qtearcat.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "QTEARCAT"
+  },
+  "qtit.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "QTIT"
+  },
+  "qtit.tknport.near": {
+   "decimals": 18,
+   "symbol": "QTIT"
+  },
+  "qts.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "QTS"
+  },
+  "qts.tknport.near": {
+   "decimals": 18,
+   "symbol": "QTS"
+  },
+  "qts.token0nova.near": {
+   "decimals": 18,
+   "symbol": "QTS"
+  },
+  "qtssy.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "QTSSY"
+  },
+  "qtsy-2.token0nova.near": {
+   "decimals": 18,
+   "symbol": "QTSY"
+  },
+  "qtsy-3.token0nova.near": {
+   "decimals": 18,
+   "symbol": "QTSY"
+  },
+  "qtsy.nearfitrade.near": {
+   "decimals": 18,
+   "symbol": "QTSY"
+  },
+  "qtsy.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "QTSY"
+  },
+  "qtsy.token0nova.near": {
+   "decimals": 18,
+   "symbol": "QTSY"
+  },
+  "qu.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "QU"
+  },
+  "quack-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "QUACK"
+  },
+  "quack-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "QUACK"
+  },
+  "quack.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "QUACK"
+  },
+  "quant-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "QUANT"
+  },
+  "quant-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "QUANT"
+  },
+  "quant.aidolsnova.near": {
+   "decimals": 18,
+   "symbol": "QUANT"
+  },
+  "quant.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "QUANT"
+  },
+  "quant.tknport.near": {
+   "decimals": 18,
+   "symbol": "QUANT"
+  },
+  "quantcum-c4bd20.launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "QUANTCUM"
+  },
+  "quantfart.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "QUANTFART"
+  },
+  "quanthoot-2.nearlydev.near": {
+   "decimals": 18,
+   "symbol": "QUANTHOOT"
+  },
+  "quanthoot-2.tknport.near": {
+   "decimals": 18,
+   "symbol": "QUANTHOOT"
+  },
+  "quanthoot-3.tknport.near": {
+   "decimals": 18,
+   "symbol": "QUANTHOOT"
   },
   "raen-e1328c.launchpad.justhoot.near": {
    "decimals": 18,

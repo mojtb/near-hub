@@ -1,13 +1,13 @@
 token_id,symbol,token_class,tracks_holders,evidence_level,source_url,note,decimals,price_usd,coingecko_id,priced_on
-17208628f84f5d6ad33f0da3bbbeb27ffcb398eac501a31bd6ad2011e36133a1,USDC,stablecoin,true,token_list,https://1click.chaindefuser.com/v0/tokens,native Circle USDC on NEAR,6,0.999705,usd-coin,2026-11-07
+17208628f84f5d6ad33f0da3bbbeb27ffcb398eac501a31bd6ad2011e36133a1,USDC,stablecoin,true,token_list,https://1click.chaindefuser.com/v0/tokens,native Circle USDC on NEAR,6,0.999573,usd-coin,2026-11-08
 a0b86991c6218b36c1d19d4a2e9eb0ce3606eb48.factory.bridge.near,USDC.e,bridged_stablecoin,false,third_party_code,https://github.com/DefiLlama/DefiLlama-Adapters/blob/main/projects/helper/coreAssets.json,"bridged through Rainbow; not listed by 1Click, so decimals were read from ft_metadata on 2026-11-05",6,,,
 dac17f958d2ee523a2206206994597c13d831ec7.factory.bridge.near,USDT.e,bridged_stablecoin,false,third_party_code,https://github.com/DefiLlama/DefiLlama-Adapters/blob/main/projects/helper/coreAssets.json,"bridged through Rainbow; not listed by 1Click, so decimals were read from ft_metadata on 2026-11-05",6,,,
 linear-protocol.near,LiNEAR,liquid_staking,true,third_party_code,https://github.com/DefiLlama/DefiLlama-Adapters/blob/main/projects/helper/coreAssets.json,"not listed by 1Click, so decimals were read from ft_metadata on 2026-11-05",24,,,
 lst.rhealab.near,rNEAR,liquid_staking,true,documented,https://guide.rhea.finance/developers/contracts,"not listed by 1Click, so decimals were read from ft_metadata on 2026-11-05",24,,,
-meta-pool.near,stNEAR,liquid_staking,true,observed,https://validators.narwallets.com/metrics,contract state matches Meta Pool's published metrics,24,5.7,staked-near,2026-11-07
-nbtc.bridge.near,nBTC,bridged_btc,false,token_list,https://1click.chaindefuser.com/v0/tokens,,8,75955.0,bitcoin,2026-11-07
-token.rhealab.near,RHEA,protocol_token,true,documented,https://guide.rhea.finance/developers/contracts,,18,0.04230176,rhea-2,2026-11-07
-token.sweat,SWEAT,consumer_token,false,token_list,https://1click.chaindefuser.com/v0/tokens,,18,7.034e-05,sweatcoin,2026-11-07
-usdt.tether-token.near,USDT,stablecoin,true,token_list,https://1click.chaindefuser.com/v0/tokens,native Tether on NEAR,6,0.999173,tether,2026-11-07
-wrap.near,wNEAR,native_wrapped,true,token_list,https://1click.chaindefuser.com/v0/tokens,,24,3.75,wrapped-near,2026-11-07
+meta-pool.near,stNEAR,liquid_staking,true,observed,https://validators.narwallets.com/metrics,contract state matches Meta Pool's published metrics,24,5.63,staked-near,2026-11-08
+nbtc.bridge.near,nBTC,bridged_btc,false,token_list,https://1click.chaindefuser.com/v0/tokens,,8,75775.0,bitcoin,2026-11-08
+token.rhealab.near,RHEA,protocol_token,true,documented,https://guide.rhea.finance/developers/contracts,,18,0.03908735,rhea-2,2026-11-08
+token.sweat,SWEAT,consumer_token,false,token_list,https://1click.chaindefuser.com/v0/tokens,,18,6.788e-05,sweatcoin,2026-11-08
+usdt.tether-token.near,USDT,stablecoin,true,token_list,https://1click.chaindefuser.com/v0/tokens,native Tether on NEAR,6,0.998983,tether,2026-11-08
+wrap.near,wNEAR,native_wrapped,true,token_list,https://1click.chaindefuser.com/v0/tokens,,24,3.7,wrapped-near,2026-11-08
 xtoken.rhealab.near,xRHEA,protocol_token,false,documented,https://guide.rhea.finance/developers/contracts,"not listed by 1Click, so decimals were read from ft_metadata on 2026-11-05",18,,,
