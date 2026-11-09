@@ -27,12 +27,12 @@ If you prefer a container, run `docker build -t near-thesis . && docker run --rm
 These lines are generated from the warehouse, and `make verify` fails if they stop matching it.
 
 <!-- expected:start -->
-- Data through: **2026-11-07**, the last full UTC day before the pinned snapshot of 2026-11-08; `dq_freshness` lists any source that ends earlier
+- Data through: **2026-11-08**, the last full UTC day before the pinned snapshot of 2026-11-09; `dq_freshness` lists any source that ends earlier
 - Gold tables and columns: **64** and **608**
 - Reconciliation: **61** comparisons agree, **9** differ, each with a written explanation
-- Issuance over the last 30 days, from supply change plus burn: **2.50%** a year, against **2.50%** in the protocol config
-- Circulating supply, built from NEAR's lockup contracts: **1,308.99M** NEAR, **99.84%** of total supply; on 2025-08-26, the last day NearBlocks computed its own, **1,249.72M** against **1,249.65M**
-- Captured Intents revenue, all time: **$9.63M** per DefiLlama, **$9.60M** rebuilt from wallet transfers
+- Issuance over the last 30 days, from supply change plus burn: **2.47%** a year, against **2.50%** in the protocol config
+- Circulating supply, built from NEAR's lockup contracts: **1,309.07M** NEAR, **99.84%** of total supply; on 2025-08-26, the last day NearBlocks computed its own, **1,249.72M** against **1,249.65M**
+- Captured Intents revenue, all time: **$9.66M** per DefiLlama, **$9.64M** rebuilt from wallet transfers
 - Public Intents volume, all time through 2026-10-31, the last full day of the latest Dune reading: **$33.30B** per NearBlocks, **$32.93B** per NEAR's dashboard on Dune
 - Chain Signatures: **15** MPC participants with a threshold of **10**
 - Largest Intents fee channel, per NEAR's dashboard on Dune as read on 2026-11-01: **swapkit**, with **73%** of listed fees
