@@ -1,4 +1,6 @@
--- Daily blocks, chunks, gas price and shard count. Also carries gas_fee and total_supply, which are read from v1 instead.
+-- Daily blocks, chunks, shards, gas price, gas used, gas fee and total supply from NearBlocks /v3/block-stats.
+-- Gas fee, gas used and total supply equal /v1/charts to the unit on every day both hold, so gold reads them from here
+-- first: /v1 is switched off on 2026-11-22. Amounts arrive in yoctoNEAR.
 with files as ({{ bronze_files('nearblocks__block_stats') }}),
 
 rows as (
@@ -12,7 +14,10 @@ typed as (
         cast(r->>'blocks' as bigint) as blocks,
         cast(r->>'chunks' as bigint) as chunks,
         cast(r->>'shards' as integer) as shards,
-        cast(r->>'gas_price' as double) as gas_price_yocto
+        cast(r->>'gas_price' as double) as gas_price_yocto,
+        cast(r->>'gas_used' as double) as gas_used,
+        {{ yocto_to_near("r->>'gas_fee'") }} as gas_fee_near,
+        {{ yocto_to_near("r->>'total_supply'") }} as total_supply_near
     from rows
 )
 

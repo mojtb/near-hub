@@ -1,5 +1,5 @@
 -- Native NEAR balance per crawled wallet per day: the last running balance FastNear reports that day,
--- carried forward over days without transfers. NearBlocks' own series sits beside it as a check.
+-- carried forward over days without transfers. dq_reconciliation compares it with NearBlocks' own balance series.
 with last_of_day as (
     select
         account_id,
@@ -35,14 +35,7 @@ filled as (
         l.balance_near is not null as has_transfer_on_day
     from spine s
     left join last_of_day l using (account_id, date_day)
-),
-
-nearblocks as (
-    select account_id, date_day, balance_near as balance_near_nearblocks
-    from {{ ref('stg_nearblocks__wallet_balance') }}
-    where is_latest
 )
 
-select f.date_day, f.account_id, f.balance_near, f.has_transfer_on_day, n.balance_near_nearblocks
-from filled f
-left join nearblocks n using (account_id, date_day)
+select date_day, account_id, balance_near, has_transfer_on_day
+from filled

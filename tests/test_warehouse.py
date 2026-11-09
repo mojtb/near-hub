@@ -57,7 +57,8 @@ def _silver(path: str, files: list) -> str:
     macros = jinja2.Environment().from_string(MACROS).module
     rows = " union all ".join(f"select cast('{day}' as date) as snapshot_date, 'all' as file_key, '{json.dumps(doc)}'::json as doc" for day, doc in files)
     model = (Path(__file__).resolve().parents[1] / "warehouse" / "models" / "silver" / path).read_text()
-    return jinja2.Environment().from_string(model).render(bronze_files=lambda table: rows, explode=macros.explode, is_latest=macros.is_latest)
+    return jinja2.Environment().from_string(model).render(bronze_files=lambda table: rows, explode=macros.explode, is_latest=macros.is_latest,
+                                                          unix_day=macros.unix_day, yocto_to_near=macros.yocto_to_near)
 
 
 def test_oneclick_asset_id_names_the_near_contract(con):
@@ -175,3 +176,20 @@ def test_lockup_counts_only_while_it_exists(con):
 
 def test_lockup_vesting_hidden_behind_a_hash_counts_as_no_vesting(con):
     assert _locked(con, YEAR_NS, kind="hash", lockup_start=0.0) == 0.0
+
+
+def test_defillama_price_is_dated_by_the_nearest_midnight(con):
+    # DefiLlama stamps a daily point near the midnight that ends the day, a few seconds or up to hours either side.
+    # 2026-11-02 00:00:03 closes 2026-11-01 and 2026-11-02 23:59:57 closes 2026-11-02. Taking the raw timestamp's day put
+    # both on 2026-11-02 and left 2026-11-01 empty.
+    midnight_nov_2 = 1793577600
+    prices = [{"timestamp": midnight_nov_2 + 3, "price": 2.0}, {"timestamp": midnight_nov_2 + 86397, "price": 2.5},
+              {"timestamp": midnight_nov_2 + 2 * 86400 + 5400, "price": 3.0}]
+    doc = {"coins": {"coingecko:near": {"prices": prices}}}
+    bronze = f"select cast('2026-11-05' as date) as snapshot_date, 'near__recent' as file_key, '{json.dumps(doc)}'::json as doc"
+    macros = jinja2.Environment().from_string(MACROS).module
+    model = (Path(__file__).resolve().parents[1] / "warehouse" / "models" / "silver" / "defillama" / "stg_defillama__peer_price.sql").read_text()
+    sql = jinja2.Environment().from_string(model).render(bronze_files=lambda table: bronze, explode=macros.explode,
+                                                         is_latest=macros.is_latest, unix_day=macros.unix_day)
+    rows = con.execute(f"select cast(date_day as varchar), price_usd from ({sql}) order by 1").fetchall()
+    assert rows == [("2026-11-01", 2.0), ("2026-11-02", 2.5), ("2026-11-03", 3.0)]

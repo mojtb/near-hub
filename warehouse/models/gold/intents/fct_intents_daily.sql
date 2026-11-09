@@ -1,22 +1,23 @@
--- NEAR Intents per UTC day, one column per source so they can be compared.
--- revenue.near.org counts every route, confidential Intents included; NearBlocks counts public Intents only.
--- DefiLlama's volume equals NearBlocks' from 2026-04-01 to 08-31 and revenue.near.org's from 09-01, and before April
--- 2026 all three agree (docs/DATA_AUDIT_2026-11-05.md, finding 3).
-with llama_fees as (
-    pivot (select date_day, data_type, value_usd from {{ ref('stg_defillama__intents_fees') }} where is_latest)
-    on data_type in ('dailyFees', 'dailyRevenue', 'dailyHoldersRevenue', 'dailyProtocolRevenue', 'dailySupplySideRevenue')
-    using sum(value_usd)
-    group by date_day
-),
+-- NEAR Intents per UTC day, one column per measure.
+-- All-route volume and gross fees come from revenue.near.org, which counts confidential routes too. On days the page does
+-- not have, DefiLlama fills in: 22 days of December 2024 and 7 days between 2025-03-08 and 05-14 for volume, 5 days of May
+-- 2025 for fees. volume_basis and fees_basis say which source a day's figure is from. DefiLlama's own series cannot stand
+-- alone, because its scope changes during 2026: it counts public routes only from 2026-04-01 (volume to 08-31, fees to
+-- 09-13), so dq_reconciliation compares it with the page and NearBlocks instead (docs/REDUNDANCY_AUDIT_2026-11-09.md).
+-- Public volume, swaps, accounts, tokens and chains come from NearBlocks, which sees public Intents only. Captured revenue
+-- is DefiLlama's, which is the revenue wallets' NEAR at the day's close; fct_revenue_inflows_daily rebuilds it from transfers.
+with llama_volume as (select date_day, volume_usd from {{ ref('stg_defillama__intents_volume') }} where is_latest),
 
-llama_fee_reads as (
-    select date_day, min(snapshot_date) as snapshot_date
+llama_fees as (
+    select
+        date_day,
+        sum(value_usd) filter (where data_type = 'dailyFees') as fees_usd,
+        sum(value_usd) filter (where data_type = 'dailyRevenue') as revenue_usd,
+        min(snapshot_date) as snapshot_date
     from {{ ref('stg_defillama__intents_fees') }}
-    where is_latest
+    where is_latest and data_type in ('dailyFees', 'dailyRevenue')
     group by date_day
 ),
-
-llama_volume as (select date_day, volume_usd from {{ ref('stg_defillama__intents_volume') }} where is_latest),
 
 nb as (
     pivot (select date_day, metric, daily_value from {{ ref('stg_nearblocks__intents_daily') }} where is_latest)
@@ -31,39 +32,39 @@ nb_cumulative as (
     where is_latest and metric = 'volume_usd'
 ),
 
-page_volume as (select date_day, volume_usd, cumulative_volume_usd from {{ ref('stg_revenue_page__volume_daily') }} where is_latest),
-page_fees as (select date_day, snapshot_date, fees_usd, total_fees_near, cumulative_fees_usd from {{ ref('stg_revenue_page__fees_daily') }} where is_latest),
+page_volume as (select date_day, volume_usd from {{ ref('stg_revenue_page__volume_daily') }} where is_latest),
+page_fees as (select date_day, snapshot_date, fees_usd from {{ ref('stg_revenue_page__fees_daily') }} where is_latest),
 page_tvl as (select date_day, confidential_tvl_usd from {{ ref('stg_revenue_page__confidential_tvl') }} where is_latest)
 
 select
     d.date_day,
-    llama_volume.volume_usd as volume_usd_defillama,
-    nb.volume_usd as volume_usd_nearblocks,
-    page_volume.volume_usd as volume_usd_revenue_page,
-    nb_cumulative.cumulative_volume_usd as cumulative_volume_usd_nearblocks,
-    page_volume.cumulative_volume_usd as cumulative_volume_usd_revenue_page,
-    cast(nb.swaps as bigint) as swaps_nearblocks,
-    cast(nb.accounts as bigint) as accounts_nearblocks,
-    cast(nb.tokens as bigint) as tokens_nearblocks,
-    cast(nb.chains as bigint) as chains_nearblocks,
-    llama_fees.dailyFees as fees_usd_defillama,
-    page_fees.fees_usd as fees_usd_revenue_page,
-    page_fees.total_fees_near as fees_near_revenue_page,
-    llama_fees.dailyRevenue as revenue_usd_defillama,
-    llama_fees.dailyHoldersRevenue as holders_revenue_usd_defillama,
-    llama_fees.dailyProtocolRevenue as treasury_revenue_usd_defillama,
-    llama_fees.dailySupplySideRevenue as supply_side_revenue_usd_defillama,
+    coalesce(page_volume.volume_usd, llama_volume.volume_usd) as volume_usd,
+    case
+        when page_volume.volume_usd is not null then 'revenue_page'
+        when llama_volume.volume_usd is not null then 'defillama'
+    end as volume_basis,
+    nb.volume_usd as public_volume_usd,
+    nb_cumulative.cumulative_volume_usd as public_volume_cumulative_usd,
+    cast(nb.swaps as bigint) as public_swaps,
+    cast(nb.accounts as bigint) as public_accounts,
+    cast(nb.tokens as bigint) as public_tokens,
+    cast(nb.chains as bigint) as public_chains,
+    coalesce(page_fees.fees_usd, llama_fees.fees_usd) as fees_usd,
+    case
+        when page_fees.fees_usd is not null then 'revenue_page'
+        when llama_fees.fees_usd is not null then 'defillama'
+    end as fees_basis,
+    llama_fees.revenue_usd,
     page_tvl.confidential_tvl_usd,
     -- Both sources rewrite a day's fees and revenue after first publishing them. Age is counted from each source's
     -- own newest read, not today, so a pinned build gives the same answer and a missed fetch settles nothing.
     coalesce(
-        least(page_fees.snapshot_date, llama_fee_reads.snapshot_date) - d.date_day < {{ var('intents_fee_settle_nights') }},
+        least(page_fees.snapshot_date, llama_fees.snapshot_date) - d.date_day < {{ var('intents_fee_settle_nights') }},
         false
     ) as is_fee_revenue_provisional
 from {{ ref('dim_date') }} d
 left join llama_volume using (date_day)
 left join llama_fees using (date_day)
-left join llama_fee_reads using (date_day)
 left join nb using (date_day)
 left join nb_cumulative using (date_day)
 left join page_volume using (date_day)

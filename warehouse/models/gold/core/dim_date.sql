@@ -15,6 +15,8 @@ days as (
 select
     date_day,
     cast(date_trunc('week', date_day) as date) as week_start,
+    -- GitHub cuts its weeks on Sunday, and fct_dev_activity_weekly follows it. dayofweek is 0 on a Sunday.
+    date_day - cast(dayofweek(date_day) as integer) as week_start_sunday,
     cast(date_trunc('month', date_day) as date) as month_start,
     cast(date_trunc('quarter', date_day) as date) as quarter_start,
     year(date_day) as calendar_year,

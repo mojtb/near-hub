@@ -3,7 +3,9 @@
 -- prices it. A list counts whole tokens with its own decimals, so its price and its decimals belong together, and the lists'
 -- decimals matched the contract on every token read so far. A contract that has answered, even with an error, is final: no
 -- list fills in behind it. A token with none of the three stays empty. value_usd uses the price read in the same snapshot,
--- joined on token_id. value_status says why a row has no value.
+-- joined on token_id from fct_token_prices, which holds the price itself. value_status says why a row has no value.
+-- Native NEAR is the RPC view_account balance read the same night, where there is one: FastNear's account state for
+-- treasury.near read 47.76 NEAR on every snapshot while the account held about 1.59M, because it misses epoch rewards.
 with list_metadata as (
     -- One answer per token across every read. Decimals never varied between reads, and 1Click's figures win over Rhea's.
     select
@@ -40,7 +42,17 @@ holdings as (
             when l.decimals is not null then 'price_list'
         end as metadata_source,
         h.last_update_height
-    from {{ ref('stg_fastnear__holdings') }} h
+    from (
+        select
+            f.snapshot_date,
+            f.account_id,
+            f.token_id,
+            case when f.token_id = 'native:near' then coalesce(a.balance_raw, f.balance_raw) else f.balance_raw end as balance_raw,
+            f.last_update_height
+        from {{ ref('stg_fastnear__holdings') }} f
+        left join {{ ref('stg_rpc__accounts') }} a
+            on f.token_id = 'native:near' and a.account_id = f.account_id and a.snapshot_date = f.snapshot_date and a.account_exists
+    ) h
     left join {{ ref('dim_token') }} t on t.token_id = h.token_id
     left join {{ ref('stg_rpc__ft_metadata') }} m on m.token_id = h.token_id and m.is_latest
     left join list_metadata l on l.token_id = h.token_id
@@ -61,9 +73,6 @@ priced as (
     select
         h.*,
         p.price_usd,
-        p.price_source,
-        p.price_date,
-        p.depth_usd as price_depth_usd,
         case
             when p.price_usd is null then 'no_price'
             when h.decimals is null then 'no_decimals'
@@ -86,10 +95,6 @@ select
     decimals,
     metadata_source,
     last_update_height,
-    price_usd,
-    price_source,
-    price_date,
-    price_depth_usd,
     case when value_status = 'valued' then amount_token * price_usd end as value_usd,
     value_status
 from priced

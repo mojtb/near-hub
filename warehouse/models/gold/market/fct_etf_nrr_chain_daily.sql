@@ -67,8 +67,9 @@ select
     s.moved_near * m.price_usd as moved_value_usd,
     s.near_in_wallets + d.other_delegators_near as pool_near,
     s.near_in_wallets / (s.near_in_wallets + d.other_delegators_near) as share_of_pool,
-    s.near_in_wallets / m.circulating_supply_near as share_of_circulating_supply,
+    s.near_in_wallets / cs.circulating_supply_near as share_of_circulating_supply,
     d.snapshot_date
 from settled s
 join days d using (date_day)
 left join {{ ref('fct_market_daily') }} m using (date_day)
+left join {{ ref('fct_circulating_supply_daily') }} cs using (date_day)

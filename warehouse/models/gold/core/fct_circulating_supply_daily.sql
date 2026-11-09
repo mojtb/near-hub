@@ -2,6 +2,7 @@
 -- moment, and NEAR Explorer computed it as total supply, minus what each lockup contract still locks, minus the balances of
 -- lockup.near and contributors.near. This follows Explorer, at the close of each day. It starts on 2020-10-13, when transfers
 -- were enabled: before that no token could move. See docs/CIRCULATING_SUPPLY.md for the method and its tests.
+-- Total supply is read from fct_supply_daily, which holds it, and is not repeated here.
 with schedules as (
     select *, {{ lockup_dates() }}
     from {{ ref('stg_rpc__lockups') }}
@@ -14,8 +15,8 @@ days as (
         total_supply_near,
         -- The first moment of the next day, in nanoseconds since 1970, which closes this one.
         (date_diff('day', date '1970-01-01', date_day) + 1) * 86400e9 as close_ns
-    from {{ ref('stg_nearblocks__charts_v1') }}
-    where is_latest and date_day >= date '2020-10-13'
+    from {{ ref('fct_supply_daily') }}
+    where date_day >= date '2020-10-13' and total_supply_near is not null
 ),
 
 locked as (
@@ -46,7 +47,6 @@ foundation as (
 
 select
     d.date_day,
-    d.total_supply_near,
     l.lockup_locked_near,
     f.foundation_locked_near,
     d.total_supply_near - l.lockup_locked_near - f.foundation_locked_near as circulating_supply_near,

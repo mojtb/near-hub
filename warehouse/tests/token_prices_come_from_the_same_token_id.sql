@@ -1,5 +1,6 @@
 -- Each price traces back to its own list under the same token id in the same read, and 1Click wins wherever it has a price.
 -- A join on symbol fails this: usdc-4d51ec.launchpad.justhoot.near calls itself USDC, and 1Click does not list that contract.
+-- fct_wallet_holdings carries no price of its own, so its values are held to these prices by wallet_holdings_value_follows_its_status.
 with oneclick as (
     select snapshot_date, near_token_id as token_id, max(case when price_usd > 0 then price_usd end) as price_usd
     from {{ ref('stg_oneclick__tokens') }}
@@ -25,17 +26,6 @@ price_rows as (
     where p.price_date > p.snapshot_date
         or p.price_usd is distinct from coalesce(o.price_usd, r.price_usd)
         or p.price_source <> case when o.price_usd is not null then 'oneclick' else 'rhea' end
-),
-
-holding_rows as (
-    select h.token_id, h.snapshot_date, h.price_usd, h.price_source, h.price_date, null::double as oneclick_usd, null::double as rhea_usd
-    from {{ ref('fct_wallet_holdings') }} h
-    left join {{ ref('fct_token_prices') }} p on p.snapshot_date = h.snapshot_date and p.token_id = h.token_id
-    where h.price_usd is distinct from p.price_usd
-        or h.price_source is distinct from p.price_source
-        or h.price_date is distinct from p.price_date
 )
 
 select * from price_rows
-union all
-select * from holding_rows
