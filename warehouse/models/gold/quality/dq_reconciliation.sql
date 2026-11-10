@@ -1,10 +1,23 @@
--- Every place two sources should tell the same story, side by side. `independence` matters: DefiLlama and
--- revenue.near.org both read NEAR's own Dune uploads, so their agreement proves little. NearBlocks, the wallet
--- transfers and the chain itself are independent checks. A gap beyond tolerance must have a written explanation
--- in registry/reconciliation_notes.csv, or `make verify` fails.
-{% set as_of_days = 30 %}
-
+-- depends_on: {{ ref('stg_nearblocks__charts_v1') }}, {{ ref('stg_nearblocks__price_stats') }}
+-- Every place two sources should tell the same story, side by side. Gold keeps one column per measure, so the sources a
+-- gold table chooses between are read here from silver. `independence` matters: DefiLlama and revenue.near.org both read
+-- NEAR's own Dune uploads, so their agreement proves little. NearBlocks, the wallet transfers and the chain itself are
+-- independent checks. A gap beyond tolerance must have a written explanation in registry/reconciliation_notes.csv, or
+-- `make verify` fails.
 with intents as (select * from {{ ref('fct_intents_daily') }}),
+
+-- The Intents sources fct_intents_daily chooses between.
+llama_volume as (select date_day, volume_usd from {{ ref('stg_defillama__intents_volume') }} where is_latest),
+
+llama_fees as (
+    select date_day, sum(value_usd) as fees_usd
+    from {{ ref('stg_defillama__intents_fees') }}
+    where is_latest and data_type = 'dailyFees'
+    group by date_day
+),
+
+page_volume as (select date_day, volume_usd, cumulative_volume_usd from {{ ref('stg_revenue_page__volume_daily') }} where is_latest),
+page_fees as (select date_day, fees_usd from {{ ref('stg_revenue_page__fees_daily') }} where is_latest),
 
 dune as (
     select metric, scope, value_usd from {{ ref('fct_intents_dashboard_readings') }}
@@ -17,10 +30,77 @@ dune_day as (
     select max(snapshot_date) - 1 as d from {{ ref('fct_intents_dashboard_readings') }}
 ),
 
+dune_assets as (select * from {{ ref('fct_dune_intents_asset_daily') }}),
+
+last_llama_day as (select max(date_day) as d from llama_volume),
+
+-- NEAR's price per source, each as the close of the UTC day.
+coinmetrics as (
+    select date_day, price_usd, market_cap_usd from {{ ref('stg_coinmetrics__asset_metrics') }}
+    where is_latest and coinmetrics_asset = 'near'
+),
+
+coinbase_close as (select date_day, close_usd from {{ ref('stg_coinbase__candles') }} where is_latest),
+defillama_price as (select date_day, price_usd from {{ ref('stg_defillama__peer_price') }} where is_latest and coin_id = 'near'),
+nearblocks_price as ({{ nearblocks_daily_close() }}),
+
+prices as (
+    select
+        k.date_day,
+        cm.price_usd as price_usd_coinmetrics,
+        cb.close_usd as price_usd_coinbase_close,
+        dl.price_usd as price_usd_defillama,
+        nb.price_usd as price_usd_nearblocks
+    from (
+        select date_day from coinmetrics union select date_day from coinbase_close
+        union select date_day from defillama_price union select date_day from nearblocks_price
+    ) k
+    left join coinmetrics cm using (date_day)
+    left join coinbase_close cb using (date_day)
+    left join defillama_price dl using (date_day)
+    left join nearblocks_price nb using (date_day)
+),
+
+market_30d as (
+    select * from prices
+    where date_day > (select max(date_day) from prices where price_usd_coinmetrics is not null) - 30
+      and price_usd_coinmetrics is not null
+),
+
+nearblocks_v1 as (select * from {{ ref('stg_nearblocks__charts_v1') }} where is_latest),
+
 market_latest_cm as (
-    select * from {{ ref('fct_market_daily') }}
-    where price_usd_coinmetrics is not null and market_cap_usd_coinmetrics is not null and circulating_supply_near_nearblocks is not null
-    order by date_day desc limit 1
+    select
+        cm.date_day,
+        cm.price_usd as price_usd_coinmetrics,
+        cm.market_cap_usd as market_cap_usd_coinmetrics,
+        nb.circulating_supply_near as circulating_supply_near_nearblocks,
+        cs.circulating_supply_near
+    from coinmetrics cm
+    join nearblocks_v1 nb using (date_day)
+    left join {{ ref('fct_circulating_supply_daily') }} cs using (date_day)
+    where cm.price_usd is not null and cm.market_cap_usd is not null and nb.circulating_supply_near is not null
+    order by cm.date_day desc limit 1
+),
+
+-- CoinMetrics' market cap for NEAR has been its price times the previous day's total supply since 2025-10-25 (see the note
+-- on circulating_supply_latest_nearblocks_vs_coinmetrics), so it is a fully diluted value. An earlier check set it against
+-- the chain-built circulating supply and agreed only because 99.84% of supply is unlocked; this one says what it is.
+coinmetrics_supply as (
+    select cm.market_cap_usd / cm.price_usd as implied_supply_near, s.total_supply_near
+    from coinmetrics cm
+    join {{ ref('fct_supply_daily') }} s on s.date_day = cm.date_day - 1
+    where cm.price_usd is not null and cm.market_cap_usd is not null
+    order by cm.date_day desc limit 1
+),
+
+-- Before issuance began nothing was minted, so every fall in supply was gas burned: the only days on which the burn
+-- can be read off the chain and set against the 70% of gas that burn_near assumes.
+burn_before_issuance as (
+    select sum(burn_near) as burn_model_near, sum(-supply_change_near) as supply_fall_near
+    from {{ ref('fct_supply_daily') }}
+    where supply_change_near < 0
+      and date_day < (select min(date_day) from {{ ref('fct_supply_daily') }} where supply_change_near > 0)
 ),
 
 -- NearBlocks stopped computing circulating supply on this day, so it is the last day its figure can test the chain-built one.
@@ -28,11 +108,13 @@ nearblocks_last_live as (select date '2025-08-26' as d),
 
 circulating_years as (
     select
-        year(date_day) as y,
-        avg(circulating_supply_near) as chain,
-        avg(circulating_supply_near_nearblocks) as nearblocks
-    from {{ ref('fct_supply_daily') }}, nearblocks_last_live
-    where date_day <= d and circulating_supply_near is not null and circulating_supply_near_nearblocks is not null
+        year(cs.date_day) as y,
+        avg(cs.circulating_supply_near) as chain,
+        avg(nb.circulating_supply_near) as nearblocks
+    from {{ ref('fct_circulating_supply_daily') }} cs
+    join nearblocks_v1 nb using (date_day)
+    cross join nearblocks_last_live
+    where cs.date_day <= d and nb.circulating_supply_near is not null
     group by 1
 ),
 
@@ -57,26 +139,30 @@ foundation_latest as (
     group by account_id
 ),
 
-dune_assets as (select * from {{ ref('fct_dune_intents_asset_daily') }}),
-
-last_intents_day as (select max(date_day) as d from intents where volume_usd_defillama is not null),
-
+-- Total supply against the chain's own figure in the first block of the next day.
 supply_both as (
-    select * from {{ ref('fct_supply_daily') }}
-    where total_supply_near is not null and onchain_supply_end_of_day_near is not null
+    select s.date_day, s.total_supply_near, b.total_supply_near as onchain_supply_end_of_day_near
+    from {{ ref('fct_supply_daily') }} s
+    join {{ ref('dim_block_day') }} b on b.date_day = s.date_day + 1
+    where s.total_supply_near is not null
 ),
 
-market_30d as (
-    select * from {{ ref('fct_market_daily') }}
-    where date_day > (select max(date_day) from {{ ref('fct_market_daily') }} where price_usd_coinmetrics is not null) - 30
-      and price_usd_coinmetrics is not null
+-- The NearBlocks counts that /v1 and /v3 both serve, over the latest 30 days both hold.
+v1_v3 as (
+    select
+        v1.date_day,
+        v1.txns as txns_v1, t.txns as txns_v3,
+        v1.active_accounts as active_accounts_v1, a.active_accounts as active_accounts_v3,
+        v1.active_contracts as active_contracts_v1, a.active_contracts as active_contracts_v3,
+        v1.txn_fee_near as txn_fee_near_v1, t.txn_fee_near as txn_fee_near_v3,
+        v1.gas_fee_near as gas_fee_near_v1, b.gas_fee_near as gas_fee_near_v3
+    from nearblocks_v1 v1
+    join (select * from {{ ref('stg_nearblocks__txn_stats') }} where is_latest) t using (date_day)
+    left join (select * from {{ ref('stg_nearblocks__address_stats') }} where is_latest) a using (date_day)
+    left join (select * from {{ ref('stg_nearblocks__block_stats') }} where is_latest) b using (date_day)
 ),
 
-chain_30d as (
-    select * from {{ ref('fct_chain_daily') }}
-    where date_day > (select max(date_day) from {{ ref('fct_chain_daily') }} where txns_v1 is not null and txns_v3 is not null) - 30
-      and txns_v1 is not null and txns_v3 is not null
-),
+chain_30d as (select * from v1_v3 where date_day > (select max(date_day) from v1_v3) - 30),
 
 minted_30d as (
     select avg(minted_near) as minted_per_day, arg_max(total_supply_near, date_day) as supply
@@ -98,22 +184,21 @@ minted_ytd as (
 ),
 
 wallets_latest as (
-    select account_id, arg_max(balance_near, date_day) as balance_near, arg_max(balance_near_nearblocks, date_day) as balance_near_nearblocks
+    select account_id, arg_max(balance_near, date_day) as balance_near
     from {{ ref('fct_wallet_balance_daily') }}
     group by account_id
 ),
 
-nearblocks_latest as (
-    select account_id, arg_max(balance_near_nearblocks, date_day) as balance_near_nearblocks, max(date_day) as d
-    from {{ ref('fct_wallet_balance_daily') }}
-    where balance_near_nearblocks is not null
-    group by account_id
+nearblocks_balances as (
+    select account_id, date_day, balance_near from {{ ref('stg_nearblocks__wallet_balance') }} where is_latest
 ),
 
+-- The newest day each crawled wallet has a NearBlocks balance for.
 wallet_at_nearblocks_day as (
-    select n.account_id, n.d, b.balance_near, n.balance_near_nearblocks
-    from nearblocks_latest n
-    join {{ ref('fct_wallet_balance_daily') }} b on b.account_id = n.account_id and b.date_day = n.d
+    select b.account_id, b.date_day as d, b.balance_near, n.balance_near as balance_near_nearblocks
+    from {{ ref('fct_wallet_balance_daily') }} b
+    join nearblocks_balances n using (account_id, date_day)
+    qualify row_number() over (partition by b.account_id order by b.date_day desc) = 1
 ),
 
 inflows as (
@@ -150,8 +235,10 @@ lst_latest as (
 ),
 
 holdings_latest as (
-    select * from {{ ref('fct_wallet_holdings') }}
-    where snapshot_date = (select max(snapshot_date) from {{ ref('fct_wallet_holdings') }})
+    select h.*, p.price_source
+    from {{ ref('fct_wallet_holdings') }} h
+    left join {{ ref('fct_token_prices') }} p on p.snapshot_date = h.snapshot_date and p.token_id = h.token_id
+    where h.snapshot_date = (select max(snapshot_date) from {{ ref('fct_wallet_holdings') }})
 ),
 
 protocol_tvl_latest as (
@@ -170,44 +257,73 @@ intents_holdings as (
     where account_id = 'intents.near'
 ),
 
+-- Transactions to the Chain Signatures contract, from NearBlocks' signer statistics and from its per-contract statistics.
+signer_30d as (
+    select s.date_day, s.txns as signer_stats_txns, c.txns as contract_stats_txns
+    from {{ ref('fct_chain_signatures_daily') }} s
+    join {{ ref('fct_contract_daily') }} c on c.date_day = s.date_day and c.account_id = 'v1.signer'
+    where s.date_day > (select max(date_day) from {{ ref('fct_chain_signatures_daily') }}) - 30
+),
+
+mpc_threshold as (
+    select s.snapshot_date, s.threshold as contract_threshold, max(o.threshold) as nearblocks_threshold
+    from {{ ref('fct_mpc_state') }} s
+    join {{ ref('stg_nearblocks__mpc_operators') }} o using (snapshot_date)
+    group by s.snapshot_date, s.threshold
+    order by s.snapshot_date desc limit 1
+),
+
+-- GitHub's weekly statistic against the default-branch count gold uses, for the repository the catalog cites.
+nearcore_commits as (
+    select sum(s.commits) as statistic, sum(l.commits) as default_branch
+    from {{ ref('stg_github__weekly_commits') }} s
+    join {{ ref('stg_github__weekly_commits_list') }} l using (repo, week_start)
+    where s.is_latest and l.is_latest and s.repo = 'near/nearcore'
+),
+
 checks as (
     select 'intents_volume_all_time_defillama_vs_page' as check_id, 'Intents all-time volume, USD' as metric, null as subject,
-        'DefiLlama, sum of daily' as source_a, (select sum(volume_usd_defillama) from intents) as value_a,
-        'revenue.near.org, cumulative' as source_b, (select max(cumulative_volume_usd_revenue_page) from intents) as value_b,
+        'DefiLlama, sum of daily' as source_a, (select sum(volume_usd) from llama_volume) as value_a,
+        'revenue.near.org, cumulative' as source_b, (select max(cumulative_volume_usd) from page_volume) as value_b,
         3.0 as tolerance_pct, 'same_upstream' as independence
 
     union all select 'intents_volume_all_time_page_vs_dune', 'Intents all-time volume, USD', null,
-        'revenue.near.org, cumulative on the reading''s last day', (select cumulative_volume_usd_revenue_page from intents, dune_day where date_day = d),
+        'revenue.near.org, cumulative on the reading''s last day', (select cumulative_volume_usd from page_volume, dune_day where date_day = d),
         'Dune public page, all scopes', (select value_usd from dune where metric = 'volume_all_time' and scope = 'all'),
         1.0, 'same_upstream'
 
     union all select 'intents_volume_all_time_nearblocks_vs_dune_public', 'Public Intents all-time volume, USD', null,
-        'NearBlocks, cumulative on the reading''s last day', (select cumulative_volume_usd_nearblocks from intents, dune_day where date_day = d),
+        'NearBlocks, cumulative on the reading''s last day', (select public_volume_cumulative_usd from intents, dune_day where date_day = d),
         'Dune public page, public scope', (select value_usd from dune where metric = 'volume_all_time' and scope = 'public'),
         3.0, 'independent'
 
     union all select 'intents_volume_30d_defillama_vs_page', 'Intents trailing 30-day volume, USD', null,
-        'DefiLlama', (select sum(volume_usd_defillama) from intents, last_intents_day where date_day > d - 30),
-        'revenue.near.org', (select sum(volume_usd_revenue_page) from intents, last_intents_day where date_day > d - 30),
+        'DefiLlama', (select sum(volume_usd) from llama_volume, last_llama_day where date_day > d - 30),
+        'revenue.near.org', (select sum(volume_usd) from page_volume, last_llama_day where date_day > d - 30 and date_day <= d),
         1.0, 'same_upstream'
 
     union all select 'intents_volume_2026_apr_aug_defillama_vs_nearblocks', 'Intents volume from 2026-04-01 to 2026-08-31, USD', null,
-        'DefiLlama', (select sum(volume_usd_defillama) from intents where date_day between date '2026-04-01' and date '2026-08-31'),
-        'NearBlocks, public Intents only', (select sum(volume_usd_nearblocks) from intents where date_day between date '2026-04-01' and date '2026-08-31'),
+        'DefiLlama', (select sum(volume_usd) from llama_volume where date_day between date '2026-04-01' and date '2026-08-31'),
+        'NearBlocks, public Intents only', (select sum(public_volume_usd) from intents where date_day between date '2026-04-01' and date '2026-08-31'),
         1.0, 'independent'
 
     union all select 'intents_volume_2026_apr_aug_defillama_vs_page', 'Intents volume from 2026-04-01 to 2026-08-31, USD', null,
-        'DefiLlama', (select sum(volume_usd_defillama) from intents where date_day between date '2026-04-01' and date '2026-08-31'),
-        'revenue.near.org, all routes', (select sum(volume_usd_revenue_page) from intents where date_day between date '2026-04-01' and date '2026-08-31'),
+        'DefiLlama', (select sum(volume_usd) from llama_volume where date_day between date '2026-04-01' and date '2026-08-31'),
+        'revenue.near.org, all routes', (select sum(volume_usd) from page_volume where date_day between date '2026-04-01' and date '2026-08-31'),
         3.0, 'same_upstream'
 
+    union all select 'intents_volume_30d_nearblocks_vs_dune_public', 'Public Intents volume over the 30 days the latest Dune reading covers, USD', null,
+        'NearBlocks, public Intents', (select sum(public_volume_usd) from intents, dune_day where date_day > d - 30 and date_day <= d),
+        'Dune public page, public scope', (select value_usd from dune where metric = 'volume_30d' and scope = 'public'),
+        5.0, 'independent'
+
     union all select 'intents_fees_all_time_defillama_vs_page', 'Intents all-time gross fees, USD', null,
-        'DefiLlama, sum of daily', (select sum(fees_usd_defillama) from intents),
-        'revenue.near.org, cumulative', (select max(fees_usd) from (select sum(fees_usd_revenue_page) as fees_usd from intents)),
+        'DefiLlama, sum of daily', (select sum(fees_usd) from llama_fees),
+        'revenue.near.org, sum of daily', (select sum(fees_usd) from page_fees),
         3.0, 'same_upstream'
 
     union all select 'intents_fees_all_time_page_vs_dune', 'Intents all-time gross fees, USD', null,
-        'revenue.near.org, through the reading''s last day', (select sum(fees_usd_revenue_page) from intents, dune_day where date_day <= d),
+        'revenue.near.org, through the reading''s last day', (select sum(fees_usd) from page_fees, dune_day where date_day <= d),
         'Dune public page', (select value_usd from dune where metric = 'total_generated_fees' and scope = 'all'),
         1.0, 'same_upstream'
 
@@ -219,7 +335,7 @@ checks as (
 
     union all select 'intents_volume_dune_assets_vs_defillama', 'Intents volume over the days read per asset, USD', null,
         'Dune public page, sum of assets', (select sum(volume_usd) from dune_assets),
-        'DefiLlama, same days', (select sum(volume_usd_defillama) from intents where date_day in (select date_day from dune_assets)),
+        'DefiLlama, same days', (select sum(volume_usd) from llama_volume where date_day in (select date_day from dune_assets)),
         1.0, 'same_upstream'
 
     union all select 'intents_volume_30d_dune_assets_vs_tile', 'Intents trailing 30-day volume, USD', null,
@@ -228,25 +344,25 @@ checks as (
         1.0, 'same_upstream'
 
     union all select 'intents_revenue_all_time_defillama_vs_wallets', 'Intents captured revenue, USD', null,
-        'DefiLlama, sum of daily', (select sum(revenue_usd_defillama) from intents),
+        'DefiLlama, sum of daily', (select sum(revenue_usd) from intents),
         'Wallet transfers, same method', (select sum(received_usd) from inflows),
-        15.0, 'independent'
+        3.0, 'independent'
 
     union all select 'intents_revenue_all_time_defillama_vs_page_monthly', 'Intents captured revenue, USD', null,
-        'DefiLlama, sum of daily', (select sum(revenue_usd_defillama) from intents),
-        'revenue.near.org, monthly cumulative', (select max(cumulative_revenue_usd) from {{ ref('fct_revenue_page_monthly') }}),
+        'DefiLlama, sum of daily', (select sum(revenue_usd) from intents),
+        'revenue.near.org, monthly series summed', (select sum(revenue_usd) from {{ ref('fct_revenue_page_monthly') }}),
         5.0, 'same_upstream'
 
     union all select 'intents_revenue_near_page_wallets_vs_transfers', 'NEAR received per revenue wallet', w.account_id,
         'revenue.near.org wallet table', w.received_near,
         'Wallet transfers', i.received_near,
-        10.0, 'independent'
+        3.0, 'independent'
     from page_wallets w left join inflows i using (account_id)
 
     union all select 'intents_confidential_tvl_page_vs_dune', 'Confidential Intents TVL, USD', null,
         'revenue.near.org, on the reading''s last day', (select arg_max(confidential_tvl_usd, date_day) from intents, dune_day where confidential_tvl_usd is not null and date_day <= d),
         'Dune public page', (select value_usd from dune where metric = 'tvl' and scope = 'confidential'),
-        5.0, 'same_upstream'
+        1.0, 'same_upstream'
 
     union all select 'intents_public_tvl_dune_vs_defillama', 'Public Intents TVL, USD', null,
         'Dune public page', (select value_usd from dune where metric = 'tvl' and scope = 'public'),
@@ -254,7 +370,7 @@ checks as (
         15.0, 'independent'
 
     union all select 'supply_latest_nearblocks_vs_chain', 'Total supply at day end, NEAR', null,
-        'NearBlocks /v1/charts', (select arg_max(total_supply_near, date_day) from supply_both),
+        'NearBlocks', (select arg_max(total_supply_near, date_day) from supply_both),
         'Archival RPC, first block of next day', (select arg_max(onchain_supply_end_of_day_near, date_day) from supply_both),
         0.05, 'independent'
 
@@ -263,14 +379,19 @@ checks as (
         'CoinMetrics market cap divided by price', (select market_cap_usd_coinmetrics / price_usd_coinmetrics from market_latest_cm),
         2.0, 'same_upstream'
 
-    union all select 'circulating_supply_latest_chain_vs_coinmetrics', 'Circulating supply on the latest day, NEAR', null,
-        'Total supply minus lockups, read on chain', (select circulating_supply_near from market_latest_cm),
-        'CoinMetrics market cap divided by price', (select market_cap_usd_coinmetrics / price_usd_coinmetrics from market_latest_cm),
-        1.0, 'independent'
+    union all select 'coinmetrics_supply_latest_vs_total_supply', 'Supply behind CoinMetrics'' market cap on its latest day, NEAR', null,
+        'CoinMetrics market cap divided by price', (select implied_supply_near from coinmetrics_supply),
+        'Total supply at the end of the day before', (select total_supply_near from coinmetrics_supply),
+        0.05, 'same_upstream'
+
+    union all select 'burn_before_issuance_model_vs_supply_fall', 'NEAR burned on the days before issuance began', null,
+        'fct_supply_daily.burn_near: 70% of gas fees', (select burn_model_near from burn_before_issuance),
+        'Fall in total supply on the same days', (select supply_fall_near from burn_before_issuance),
+        5.0, 'same_upstream'
 
     union all select 'circulating_supply_last_live_day_chain_vs_nearblocks', 'Circulating supply on 2025-08-26, the last day NearBlocks computed it, NEAR', null,
-        'Total supply minus lockups, read on chain', (select circulating_supply_near from {{ ref('fct_supply_daily') }}, nearblocks_last_live where date_day = d),
-        'NearBlocks /v1/charts', (select circulating_supply_near_nearblocks from {{ ref('fct_supply_daily') }}, nearblocks_last_live where date_day = d),
+        'Total supply minus lockups, read on chain', (select circulating_supply_near from {{ ref('fct_circulating_supply_daily') }}, nearblocks_last_live where date_day = d),
+        'NearBlocks /v1/charts', (select circulating_supply_near from nearblocks_v1, nearblocks_last_live where date_day = d),
         0.1, 'independent'
 
     union all select 'circulating_supply_year_mean_chain_vs_nearblocks', 'Mean circulating supply through 2025-08-26, NEAR', cast(y as varchar),
@@ -283,7 +404,7 @@ checks as (
         'Total supply minus lockups, read on chain', s.circulating_supply_near,
         'NEAR''s published schedule, last updated 2020-10-16', p.value,
         5.0, 'independent'
-    from published_supply p left join {{ ref('fct_supply_daily') }} s on s.date_day = p.reading_date
+    from published_supply p left join {{ ref('fct_circulating_supply_daily') }} s on s.date_day = p.reading_date
 
     union all select 'lockup_locked_latest_formula_vs_contract_views', 'NEAR locked in lockups still running at the latest read', null,
         'Schedule formula', (select sum({{ lockup_locked_near('v.block_ns') }}) from latest_lockup_views v join lockup_schedules using (lockup_no)),
@@ -338,9 +459,39 @@ checks as (
         'NearBlocks v3', (select avg(txns_v3) from chain_30d),
         1.0, 'same_upstream'
 
+    union all select 'txn_fee_30d_v1_vs_v3', 'Mean daily transaction fees over 30 days, NEAR', null,
+        'NearBlocks v1', (select avg(txn_fee_near_v1) from chain_30d),
+        'NearBlocks v3', (select avg(txn_fee_near_v3) from chain_30d),
+        1.0, 'same_upstream'
+
+    union all select 'gas_fee_30d_v1_vs_v3', 'Mean daily gas fees over 30 days, NEAR', null,
+        'NearBlocks /v1/charts', (select avg(gas_fee_near_v1) from chain_30d),
+        'NearBlocks /v3/block-stats', (select avg(gas_fee_near_v3) from chain_30d),
+        0.1, 'same_upstream'
+
+    union all select 'active_contracts_30d_v1_vs_v3', 'Mean daily active contracts over 30 days', null,
+        'NearBlocks v1', (select avg(active_contracts_v1) from chain_30d),
+        'NearBlocks v3', (select avg(active_contracts_v3) from chain_30d),
+        1.0, 'same_upstream'
+
     union all select 'active_accounts_30d_v1_vs_v3', 'Mean daily active accounts over 30 days', null,
         'NearBlocks v1', (select avg(active_accounts_v1) from chain_30d),
         'NearBlocks v3', (select avg(active_accounts_v3) from chain_30d),
+        5.0, 'same_upstream'
+
+    union all select 'signer_txns_30d_signer_stats_vs_contract_stats', 'Mean daily transactions to v1.signer over 30 days', null,
+        'NearBlocks /v3/signer-stats', (select avg(signer_stats_txns) from signer_30d),
+        'NearBlocks /v3/accounts/v1.signer/stats/txns', (select avg(contract_stats_txns) from signer_30d),
+        1.0, 'same_upstream'
+
+    union all select 'mpc_threshold_latest_nearblocks_vs_contract', 'Chain Signatures signing threshold', null,
+        'NearBlocks /v3/multichain/mpcs', (select nearblocks_threshold from mpc_threshold),
+        'v1.signer contract state', (select contract_threshold from mpc_threshold),
+        0.0, 'independent'
+
+    union all select 'commits_52w_statistic_vs_default_branch', 'Commits over the 52 weeks read', 'near/nearcore',
+        'GitHub weekly statistic', (select statistic from nearcore_commits),
+        'GitHub commits list, default branch', (select default_branch from nearcore_commits),
         5.0, 'same_upstream'
 
     union all select 'tvl_latest_defillama_vs_nearblocks', 'NEAR chain TVL, USD', null,
@@ -352,7 +503,7 @@ checks as (
         'DefiLlama chain series', (select stablecoins_usd from {{ ref('fct_peer_daily') }} where chain_id = 'near' and stablecoins_usd is not null order by date_day desc limit 1),
         'DefiLlama, sum of assets', (select sum(circulating) from {{ ref('fct_stablecoin_assets') }}
             where chain_id = 'near' and snapshot_date = (select max(snapshot_date) from {{ ref('fct_stablecoin_assets') }})),
-        5.0, 'same_upstream'
+        3.0, 'same_upstream'
 
     union all select 'wallet_balance_transfers_vs_chain', 'Native balance, NEAR', w.account_id,
         'FastNear running balance', w.balance_near,
@@ -428,6 +579,7 @@ select
         when c.value_a is null or c.value_b is null then 'not_available'
         when 100.0 * abs(cast(c.value_a as double) - cast(c.value_b as double))
             / nullif(greatest(abs(cast(c.value_a as double)), abs(cast(c.value_b as double))), 0) <= c.tolerance_pct then 'agree'
+        when c.value_a = c.value_b then 'agree'
         else 'differs'
     end as status,
     n.explanation

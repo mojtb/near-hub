@@ -582,7 +582,7 @@ snapshot_date,dataset,status,detail,files,seconds
 2026-11-09,nearcatalog/projects,ok,"",1,1.2
 2026-11-09,neardata/receiver_sample,ok,"",1,446.5
 2026-11-09,neardata/receiver_sample_backfill,ok,"",20,2474.9
-2026-11-09,nrr_fund/figures,failed,"ValueError: NRR page: an expected field is missing or malformed: TypeError(""type NoneType doesn't define __round__ method"")",0,0.2
+2026-11-09,nrr_fund/figures,ok,"",1,1.6
 2026-11-09,oneclick/tokens,ok,"",1,0.6
 2026-11-09,revenue_page/page,ok,"",2,1.1
 2026-11-09,rhea/token_prices,ok,"",1,1.9
@@ -599,3 +599,6 @@ snapshot_date,dataset,status,detail,files,seconds
 2026-11-09,rpc/status,ok,"",1,0.3
 2026-11-09,rpc/validators_current,ok,"",1,0.4
 2026-11-09,rpc/validators_epoch,ok,"",28,60.0
+2026-11-10,intents_explorer/daily_tally,partial,"2025-10-31: unreadable USD amount '544,8666'",0,404.7
+2026-11-10,neardata/receiver_sample_backfill,ok,"",0,0.0
+2026-11-10,rpc/validators_epoch,ok,"",0,0.0

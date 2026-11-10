@@ -22,16 +22,14 @@ YIELDS = "https://yields.llama.fi"
 TOP_NEAR_PROTOCOLS = 25
 PRICE_HISTORY_START = date(2020, 9, 1)
 PRICE_POINTS_PER_CALL = 450
-INTENTS_FEE_TYPES = ["dailyFees", "dailyRevenue", "dailyHoldersRevenue", "dailyProtocolRevenue", "dailySupplySideRevenue"]
+# DefiLlama also serves dailyHoldersRevenue, dailyProtocolRevenue and dailySupplySideRevenue for near-intents. They are
+# arithmetic of these two (revenue split at 2026-02-23, and fees minus revenue), so they are not fetched; bronze up to
+# 2026-11-08 holds them.
+INTENTS_FEE_TYPES = ["dailyFees", "dailyRevenue"]
 
 
 def _peer_chains() -> List[str]:
     return [p["llama_chain"] for p in read_registry("peers")]
-
-
-@dataset(SOURCE, "chains")
-def chains(ctx: Context) -> None:
-    fetch(ctx, SOURCE, "chains", "all", f"{API}/v2/chains")
 
 
 @dataset(SOURCE, "chain_tvl")

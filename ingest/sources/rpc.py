@@ -32,6 +32,7 @@ NS_PER_S = 10**9
 BLOCK_DAYS_PER_RUN = 400  # keyless archival calls are slow, so a long backfill spreads over several runs
 RECENT_DAYS = 14
 VALIDATOR_EPOCHS_PER_RUN = 40
+EPOCH_LENGTH_BLOCKS = 43200  # the protocol config's epoch_length; an epoch read with fewer blocks counted is still in progress
 FT_METADATA_CALLS_PER_RUN = 2000  # about 5 minutes at the keyed pace, and about 8,000 tokens take 4 nights
 FT_METADATA_MINUTES_PER_RUN = 40  # a node that rate-limits every call must not stretch the night past the job's timeout
 FT_METADATA_SAVE_EVERY = 200
@@ -53,6 +54,7 @@ VIEW_CALLS: List[Tuple[str, str, Dict[str, Any]]] = [
     ("meta-pool.near", "get_contract_state", {}),
     ("lst.rhealab.near", "ft_price", {}),
     ("lst.rhealab.near", "ft_total_supply", {}),
+    ("lst.rhealab.near", "get_total_staked_balance", {}),
     ("sputnik-dao.near", "get_number_daos", {}),
     ("venear.dao", "get_config", {}),
     ("venear.dao", "ft_total_supply", {}),
@@ -279,9 +281,45 @@ def _flush_block_days(ctx: Context, rows: List[Dict[str, Any]], known: Dict[str,
     return key
 
 
+def _epoch_is_finished(result: Dict[str, Any]) -> bool:
+    """Every block has one expected producer, so a finished epoch's expected blocks add up to its length."""
+    return sum(v.get("num_expected_blocks") or 0 for v in result.get("current_validators", [])) >= EPOCH_LENGTH_BLOCKS
+
+
+def _nightly_epochs_to_read_again(ctx: Context, skip: set) -> List[Tuple[str, str]]:
+    """Epochs the nightly read caught in progress, as (epoch_id, day), newest first.
+
+    `validators_current` reads whichever epoch is running, so its block, chunk and endorsement counts stop where the
+    read happened. Once a later night shows a newer epoch, the earlier one has ended and can be read whole by its id,
+    which the first block of the epoch carries. An epoch already read whole has an `epoch_<height>` file.
+    """
+    seen: Dict[int, Tuple[int, str]] = {}
+    for path in sorted(BRONZE.glob("rpc/validators_current/dt=*/*.json.gz")):
+        doc = json.loads(gzip.decompress(path.read_bytes()))
+        if doc.get("epoch_height") and doc.get("epoch_start_height"):
+            seen.setdefault(int(doc["epoch_height"]), (int(doc["epoch_start_height"]), path.parent.name[len("dt="):]))
+    have = {path.name.split(".")[0][len("epoch_"):] for path in BRONZE.glob("rpc/validators_epoch/dt=*/epoch_*.json.gz")}
+    newest = max(seen, default=None)
+    found = []
+    for height in sorted(seen, reverse=True)[:VALIDATOR_EPOCHS_PER_RUN + 1]:
+        if height == newest or str(height) in have:
+            continue
+        start_height, day = seen[height]
+        block = _result(ctx, ARCHIVAL, "block", {"block_id": start_height})
+        epoch_id = ((block or {}).get("header") or {}).get("epoch_id")
+        if epoch_id and epoch_id not in skip:
+            found.append((epoch_id, day))
+    return found
+
+
 @dataset(SOURCE, "validators_epoch", profile="backfill")
 def validators_epoch(ctx: Context) -> None:
-    """Validator set per epoch, newest first, a batch per run. Older epochs may be unavailable from the node."""
+    """Validator set per finished epoch, newest first, a batch per run. Older epochs may be unavailable from the node.
+
+    Two kinds of epoch are read: the one running at 00:00 UTC of each day, and the one each nightly read caught in
+    progress. An epoch that has not ended yet is left for a later run and nothing is saved, so every file here holds
+    final counts.
+    """
     state = ctx.load_state("rpc__validators_epoch", {"done": [], "unavailable": []})
     epochs: Dict[str, str] = {}
     for path in sorted(BRONZE.glob("rpc/block_day/dt=*/*.json.gz")):
@@ -289,11 +327,14 @@ def validators_epoch(ctx: Context) -> None:
             epochs.setdefault(row["epoch_id"], row["day"])
     skip = set(state["done"]) | set(state["unavailable"])
     todo = [(e, d) for e, d in sorted(epochs.items(), key=lambda kv: kv[1], reverse=True) if e not in skip and d >= "2025-01-01"]
-    for epoch_id, day in todo[:VALIDATOR_EPOCHS_PER_RUN]:
+    nightly = [(e, d) for e, d in _nightly_epochs_to_read_again(ctx, skip) if e not in epochs]
+    for epoch_id, day in (nightly + todo)[:VALIDATOR_EPOCHS_PER_RUN]:
         result = _result(ctx, ARCHIVAL, "validators", {"epoch_id": epoch_id})
         if result is None:
             state["unavailable"].append(epoch_id)
             ctx.save_state("rpc__validators_epoch", state)
+            continue
+        if not _epoch_is_finished(result):
             continue
         ctx.bronze.save_json(SOURCE, "validators_epoch", f"epoch_{result.get('epoch_height')}",
                              {"epoch_id": epoch_id, "seen_on_day": day, **_trim_validators(result)}, url=ARCHIVAL, method="POST",

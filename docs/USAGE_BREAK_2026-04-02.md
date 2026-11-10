@@ -1,6 +1,6 @@
 # The usage break of 2026-04-02
 
-On 2026-04-02 `txns` fell 72% and `active_accounts_v3` fell 84%. Almost all of that came from two batch streams stopping within 17 hours of each other, and they made up most of what these columns counted. Activity outside them carried on at about the same level.
+On 2026-04-02 `txns` fell 72% and `active_accounts_with_relayed` (NearBlocks v3's active accounts) fell 84%. Almost all of that came from two batch streams stopping within 17 hours of each other, and they made up most of what these columns counted. Activity outside them carried on at about the same level.
 
 **What is known:** which accounts stopped, when, and how much of the fall they explain. **What is not known:** why. Neither Cosmose nor NEAR has made a statement that I could find.
 
@@ -8,7 +8,7 @@ On 2026-04-02 `txns` fell 72% and `active_accounts_v3` fell 84%. Almost all of t
 
 Counts per account are NearBlocks' `/v3/accounts/{id}/stats/txns`, read on 2026-11-02. They are not in bronze, so `make verify` does not check them. Chain columns are `gold.fct_chain_daily`.
 
-| Day | `txns` | Kai-Ching | Sweat migration | `txns` without them | `active_accounts_v3` | Kai-Ching accounts | Sweat accounts | v3 without them | `active_accounts_v1` |
+| Day | `txns` | Kai-Ching | Sweat migration | `txns` without them | `active_accounts_with_relayed` | Kai-Ching accounts | Sweat accounts | v3 without them | `active_signers` |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
 | 03-21 | 3,114,793 | 2,272,351 | 0 | 842,442 | 2,323,338 | 1,998,402 | 0 | 324,936 | 135,621 |
 | 03-31 | 4,169,826 | 2,268,809 | 940,541 | 960,476 | 3,282,359 | 1,996,758 | 940,520 | 345,081 | 139,225 |
@@ -56,9 +56,9 @@ Public sources:
 | Column | Across 2026-04-02 | Use it this way |
 |---|---|---|
 | `txns`, `receipts` | Not comparable | Before April, subtract Kai-Ching and the Sweat migration, or start after 04-03 |
-| `active_accounts_v3`, `meta_accounts`, `meta_txns`, `meta_txn_share` | Not comparable | Same |
-| `active_contracts_v1`, `active_contracts_v3`, `new_accounts` | Not comparable | Same. `active_contracts` fell from about 2.2M to about 190,000 |
-| `active_accounts_v1` | Comparable | Distinct signers only, so it misses relayed users. It has breaks of its own: it ran from 251,386 to 592,250 on 02-03 to 02-18, against about 145,000 in March |
+| `active_accounts_with_relayed`, `meta_accounts`, `meta_txns`, `meta_txn_share` | Not comparable | Same |
+| `active_contracts`, `new_accounts` | Not comparable | Same. `active_contracts` fell from about 2.2M to about 190,000 |
+| `active_signers` | Comparable | Distinct signers only, so it misses relayed users. It has breaks of its own: it ran from 251,386 to 592,250 on 02-03 to 02-18, against about 145,000 in March |
 | `gas_fee_near` | A real change | Fell from 2,737 to 777 NEAR a day (1 to 22 March against 3 to 11 April). This is gas actually paid, not a definition problem, so any burn claim needs it. A 48-block sample puts `*.kaiching` at 57% to 75% of gas burned before the stop, and that sample is rough because the stream arrives in bursts |
 
 Three things not to conclude:

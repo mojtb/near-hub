@@ -1,7 +1,7 @@
 -- Every transfer touching a crawled wallet. Amounts are signed from the wallet's point of view: out is negative.
--- amount_usd is FastNear's value at transfer time, which it gives for some transfers only. amount_usd_estimated fills the
--- rest for NEAR and wNEAR with the day's closing price from fct_market_daily, so a series can be summed in USD; the test
--- wallet_usd_estimate_tracks_fastnear holds the two apart by no more than a typical day's move where both exist.
+-- amount_usd is FastNear's value at transfer time where FastNear gives one, and otherwise, for NEAR and wNEAR, the amount
+-- at the day's closing price from fct_market_daily, so a series can be summed in USD. usd_basis says which. The test
+-- wallet_usd_estimate_tracks_fastnear holds the close-price figure to FastNear's where both exist.
 with revenue_wallets as (
     select account_id from {{ ref('entities') }}
     where account_id in ('fefundsadmin.sputnik-dao.near', '1csfundsadmin.sputnik-dao.near', 'buybacks.multisignature.near')
@@ -29,8 +29,7 @@ select
     t.method_name,
     t.amount_raw,
     t.amount_token,
-    t.amount_usd,
-    coalesce(t.amount_usd, case when n.asset_id is not null then t.amount_token * m.price_usd end) as amount_usd_estimated,
+    coalesce(t.amount_usd, case when n.asset_id is not null then t.amount_token * m.price_usd end) as amount_usd,
     case
         when t.amount_usd is not null then 'transfer_time'
         when n.asset_id is not null and m.price_usd is not null then 'daily_close'

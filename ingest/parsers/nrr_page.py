@@ -15,8 +15,11 @@ _NEXT_DATA = re.compile(r'<script id="__NEXT_DATA__"[^>]*>(.*?)</script>', re.S)
 
 
 def _chart(points: List[List[float]]) -> List[Dict[str, Any]]:
-    """Points are [milliseconds, value]. The page's values carry floating-point noise, such as 27.829999999999995."""
-    return [{"day": datetime.fromtimestamp(ms / 1000, tz=timezone.utc).date().isoformat(), "value": round(value, 2)} for ms, value in points]
+    """Points are [milliseconds, value]. The page's values carry floating-point noise, such as 27.829999999999995.
+    A day the chart has not filled yet has a null value: on 2026-11-09 the market price for 2026-11-05 was null while its
+    NAV was there. That day is left out, not read as a redesign; a chart with no values at all still fails."""
+    return [{"day": datetime.fromtimestamp(ms / 1000, tz=timezone.utc).date().isoformat(), "value": round(value, 2)}
+            for ms, value in points if value is not None]
 
 
 def parse(html: str) -> Dict[str, Any]:

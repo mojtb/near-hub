@@ -13,7 +13,7 @@ import pytest
 
 from ingest.bronze import BronzeWriter, safe_key
 from ingest.http import BudgetExceeded, HostPolicy, HttpClient, HttpError
-from ingest.parsers import prometheus, revenue_page
+from ingest.parsers import revenue_page
 from ingest.pipeline import Context, Dataset, Skip, run
 from ingest.settings import load_dotenv, secret
 from ingest.sources.neardata import tally
@@ -168,11 +168,6 @@ def test_revenue_page_parser_fails_loudly_when_a_series_disappears():
 def test_revenue_page_parser_fails_without_a_payload():
     with pytest.raises(ValueError):
         revenue_page.parse("<html>redesigned</html>")
-
-
-def test_prometheus_parser_skips_comments_and_labels():
-    text = "# HELP x\nmetapool_tvl 21234664.61\nlabelled{a=\"b\"} 3\nnot_a_number abc\n"
-    assert prometheus.parse(text) == {"metapool_tvl": 21234664.61}
 
 
 def _block(shards):
@@ -385,8 +380,19 @@ def test_nrr_page_keeps_the_figures_and_cleans_chart_values():
     assert parsed["wallets"] == [{"address": "a" * 64, "balance": 100.5, "active": True}]
 
 
+def test_nrr_page_leaves_out_a_chart_day_not_filled_yet():
+    # On 2026-11-09 the page had the NAV for 2026-11-05 but a null market price for it.
+    from ingest.parsers import nrr_page
+
+    chart = {"nav": [[1790712000000, 26.46], [1793304000000, 23.0]], "marketPrice": [[1790712000000, 26.15], [1793304000000, None]]}
+    parsed = nrr_page.parse(_nrr_page(navAndMarketPrice={"chart": chart}))
+    assert parsed["nav_chart"] == [{"day": "2026-09-29", "value": 26.46}, {"day": "2026-10-29", "value": 23.0}]
+    assert parsed["market_price_chart"] == [{"day": "2026-09-29", "value": 26.15}]
+
+
 @pytest.mark.parametrize("page", [
     "<html>a redesign without the embedded data</html>",
+    _nrr_page(navAndMarketPrice={"chart": {"nav": [[1790712000000, None]], "marketPrice": [[1790712000000, 26.15]]}}),
     _nrr_page(fundDetails={"asOfDate": "2026-10-30"}),
     _nrr_page(holdings={"asOfDate": "2026-10-30", "basket": [{"companyName": "Something else", "shares": 1.0}]}),
     _nrr_page(wallets={"updatedAt": "2026-11-02T12:21:52Z", "walletBalances": []}),
@@ -884,3 +890,61 @@ def test_commits_by_week_cuts_weeks_on_sunday_and_counts_each_author_once():
     weeks = commits_by_week(commits, date(2026, 10, 25), 2)
     assert [w["week"] for w in weeks] == [1792886400, 1793491200]  # 2026-10-25 and 2026-11-01, 00:00 UTC
     assert [(w["total"], w["authors"]) for w in weeks] == [(3, 2), (1, 1)]
+
+
+def _validators_context(tmp_path, monkeypatch, replies, current=None, block_days=None, snapshot="2026-11-10"):
+    """Bronze holds one nightly validators read per {day: (epoch_height, epoch_start_height)} and one block per {day: epoch_id}."""
+    from ingest import sources  # noqa: F401
+    from ingest.sources import rpc
+
+    bronze = tmp_path / "bronze"
+    monkeypatch.setattr("ingest.pipeline.STATE", tmp_path / "state")
+    monkeypatch.setattr(rpc, "BRONZE", bronze)
+    monkeypatch.delenv("FASTNEAR_API_KEY", raising=False)
+    for day, (height, start) in (current or {}).items():
+        path = bronze / f"rpc/validators_current/dt={day}/latest.json.gz"
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(gzip.compress(json.dumps({"epoch_height": height, "epoch_start_height": start, "validators": []}).encode()))
+    for day, epoch_id in (block_days or {}).items():
+        path = bronze / f"rpc/block_day/dt={day}/from_{day}.json.gz"
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(gzip.compress(json.dumps([{"day": day, "epoch_id": epoch_id}]).encode()))
+    http = client(replies)
+    http.policies[rpc.ARCHIVAL.split("/")[2]] = HostPolicy()
+    return rpc, Context(snapshot, http, BronzeWriter(snapshot, root=bronze)), http
+
+
+def _epoch_reply(height, blocks_counted):
+    validators = [{"account_id": "a.pool", "stake": "1", "num_expected_blocks": blocks_counted, "num_produced_blocks": blocks_counted}]
+    return FakeResponse(200, json.dumps({"result": {"epoch_height": height, "epoch_start_height": height * 100, "current_validators": validators}}).encode())
+
+
+def _block_reply(epoch_id):
+    return FakeResponse(200, json.dumps({"result": {"header": {"epoch_id": epoch_id}}}).encode())
+
+
+def test_validators_epoch_reads_a_nightly_epoch_again_once_a_newer_one_is_seen(tmp_path, monkeypatch):
+    current = {"2026-11-08": (10, 1000), "2026-11-09": (13, 1300)}
+    rpc, ctx, http = _validators_context(tmp_path, monkeypatch, [_block_reply("E10"), _epoch_reply(10, 43200)], current=current)
+    rpc.validators_epoch(ctx)
+    ctx.bronze.flush()
+    asked = [(call[2]["json"]["method"], call[2]["json"]["params"]) for call in http.session.calls]
+    assert asked == [("block", {"block_id": 1000}), ("validators", {"epoch_id": "E10"})]  # epoch 13 may still be running
+    saved = json.loads(gzip.decompress((tmp_path / "bronze/rpc/validators_epoch/dt=2026-11-10/epoch_10.json.gz").read_bytes()))
+    assert saved["epoch_id"] == "E10" and saved["seen_on_day"] == "2026-11-08" and saved["validators"][0]["num_expected_blocks"] == 43200
+    assert ctx.load_state("rpc__validators_epoch")["done"] == ["E10"]
+    rpc.validators_epoch(ctx)
+    assert len(http.session.calls) == 2  # the whole epoch is on file, so nothing is asked again
+
+
+def test_validators_epoch_keeps_nothing_from_an_epoch_still_in_progress(tmp_path, monkeypatch):
+    replies = [_epoch_reply(20, 1297), _epoch_reply(20, 43200)]
+    rpc, ctx, http = _validators_context(tmp_path, monkeypatch, replies, block_days={"2026-11-10": "E20"})
+    rpc.validators_epoch(ctx)
+    ctx.bronze.flush()
+    assert not (tmp_path / "bronze/rpc/validators_epoch").exists()
+    assert ctx.load_state("rpc__validators_epoch", {"done": []})["done"] == []
+    rpc.validators_epoch(ctx)  # a later run finds it finished
+    ctx.bronze.flush()
+    assert (tmp_path / "bronze/rpc/validators_epoch/dt=2026-11-10/epoch_20.json.gz").exists()
+    assert ctx.load_state("rpc__validators_epoch")["done"] == ["E20"]

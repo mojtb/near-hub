@@ -1,3 +1,7 @@
--- MPC operators as NearBlocks reports them, per snapshot. Compare with fct_mpc_participants, read from the contract.
-select snapshot_date, operator_account_id, threshold, is_validator, tee_status, tee_expiry, tee_image_hash, node_url
+-- MPC operators as NearBlocks reports them, per snapshot: the list and each node's address. The operator list and threshold
+-- are the contract's, in fct_mpc_participants and fct_mpc_state; a test holds NearBlocks' list to the contract's, and
+-- dq_reconciliation its threshold. NearBlocks also serves is_validator and three TEE fields, which have never held a
+-- value (false, none and empty on every read), so they stay in silver; removed_columns_would_still_be_empty says when
+-- that changes.
+select snapshot_date, operator_account_id, node_url
 from {{ ref('stg_nearblocks__mpc_operators') }}

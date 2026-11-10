@@ -1,25 +1,56 @@
-dataset,model,latest_snapshot,latest_data_day,as_of,days_behind,rows_all_snapshots
-Archival RPC daily block,stg_rpc__block_day,2026-11-09,2026-11-09,2026-11-09,0,731
-Bitwise NEAR ETF NAV and market price,stg_nrr_fund__prices,2026-11-06,2026-11-04,2026-11-09,5,125
-Bitwise NEAR ETF wallets on chain,stg_rpc__nrr_pool_daily,2026-11-09,2026-11-08,2026-11-09,1,3517
-CoinMetrics,stg_coinmetrics__asset_metrics,2026-11-09,2026-11-08,2026-11-09,1,12894
-Coinbase candles,stg_coinbase__candles,2026-11-09,2026-11-08,2026-11-09,1,1639
-DefiLlama Intents fees,stg_defillama__intents_fees,2026-11-09,2026-11-08,2026-11-09,1,26624
-DefiLlama Intents volume,stg_defillama__intents_volume,2026-11-09,2026-11-08,2026-11-09,1,6942
-DefiLlama chain TVL,stg_defillama__chain_tvl,2026-11-09,2026-11-08,2026-11-09,1,124070
-DefiLlama chain fees,stg_defillama__chain_fees,2026-11-09,2026-11-08,2026-11-09,1,203763
-DefiLlama prices,stg_defillama__peer_price,2026-11-09,2026-11-08,2026-11-09,1,14519
-DefiLlama protocol TVL,stg_defillama__protocol_tvl,2026-11-09,2026-11-08,2026-11-09,1,203859
-DefiLlama stablecoins,stg_defillama__stablecoin_chain,2026-11-09,2026-11-08,2026-11-09,1,109166
-"Dune dashboard Intents by asset, read by hand",fct_dune_intents_asset_daily,2026-11-01,2026-10-31,2026-11-09,9,2541
-Intents Explorer daily tally,stg_intents_explorer__days,2026-11-09,2026-11-08,2026-11-09,1,218
-NearBlocks Intents by asset,stg_nearblocks__intents_volume_by_asset,2026-11-09,2026-11-08,2026-11-09,1,50579
-NearBlocks Intents by chain,stg_nearblocks__intents_volume_by_chain,2026-11-09,2026-11-08,2026-11-09,1,13873
-NearBlocks Intents daily,stg_nearblocks__intents_daily,2026-11-09,2026-11-08,2026-11-09,1,2379
-NearBlocks daily accounts,stg_nearblocks__address_stats,2026-11-09,2026-11-08,2026-11-09,1,491
-NearBlocks daily transactions,stg_nearblocks__txn_stats,2026-11-09,2026-11-08,2026-11-09,1,491
-NearBlocks legacy daily charts,stg_nearblocks__charts_v1,2026-11-09,2026-11-08,2026-11-09,1,22972
-NearBlocks per-contract daily,stg_nearblocks__contract_txns,2026-11-09,2026-11-08,2026-11-09,1,23217
-NearBlocks wallet balances,stg_nearblocks__wallet_balance,2026-11-09,2026-11-08,2026-11-09,1,1590
-revenue.near.org fees,stg_revenue_page__fees_daily,2026-11-09,2026-11-08,2026-11-09,1,4878
-revenue.near.org volume,stg_revenue_page__volume_daily,2026-11-09,2026-11-08,2026-11-09,1,5994
+dataset,model,cadence,latest_snapshot,latest_data_day,as_of,days_behind,max_days_behind,is_stale,rows_all_snapshots
+1Click token list,stg_oneclick__tokens,snapshot,2026-11-09,2026-11-09,2026-11-10,1,2,false,1923
+Archival RPC daily block,stg_rpc__block_day,daily,2026-11-09,2026-11-09,2026-11-10,1,3,false,731
+Bitwise NEAR ETF NAV and market price,stg_nrr_fund__prices,daily,2026-11-09,2026-11-05,2026-11-10,5,7,false,153
+Bitwise NEAR ETF fund readings,stg_nrr_fund__readings,daily,2026-11-09,2026-11-06,2026-11-10,4,7,false,6
+Bitwise NEAR ETF wallets on chain,stg_rpc__nrr_pool_daily,daily,2026-11-09,2026-11-08,2026-11-10,2,3,false,3517
+CoinMetrics,stg_coinmetrics__asset_metrics,daily,2026-11-09,2026-11-08,2026-11-10,2,3,false,12894
+Coinbase candles,stg_coinbase__candles,daily,2026-11-09,2026-11-08,2026-11-10,2,3,false,1639
+"Contract views: MPC, liquid staking, veNEAR",stg_rpc__contract_views,snapshot,2026-11-09,2026-11-09,2026-11-10,1,2,false,145
+DefiLlama DEX volume,stg_defillama__chain_dex_volume,daily,2026-11-09,2026-11-08,2026-11-10,2,3,false,119667
+DefiLlama Intents fees,stg_defillama__intents_fees,daily,2026-11-09,2026-11-08,2026-11-10,2,3,false,26624
+DefiLlama Intents volume,stg_defillama__intents_volume,daily,2026-11-09,2026-11-08,2026-11-10,2,3,false,6942
+DefiLlama chain TVL,stg_defillama__chain_tvl,daily,2026-11-09,2026-11-08,2026-11-10,2,3,false,124070
+DefiLlama chain fees,stg_defillama__chain_fees,daily,2026-11-09,2026-11-08,2026-11-10,2,3,false,203763
+DefiLlama fees by protocol,stg_defillama__chain_fee_protocols,snapshot,2026-11-09,2026-11-09,2026-11-10,1,2,false,24424
+DefiLlama prices,stg_defillama__peer_price,daily,2026-11-09,2026-11-08,2026-11-10,2,3,false,14521
+DefiLlama protocol TVL,stg_defillama__protocol_tvl,daily,2026-11-09,2026-11-08,2026-11-10,2,3,false,203859
+DefiLlama protocol list,stg_defillama__protocols,snapshot,2026-11-09,2026-11-09,2026-11-10,1,2,false,419
+DefiLlama stablecoins,stg_defillama__stablecoin_chain,daily,2026-11-09,2026-11-08,2026-11-10,2,3,false,109166
+DefiLlama stablecoins by asset,stg_defillama__stablecoin_assets,snapshot,2026-11-09,2026-11-09,2026-11-10,1,2,false,3530
+DefiLlama yield pools,stg_defillama__yield_pools,snapshot,2026-11-09,2026-11-09,2026-11-10,1,2,false,90
+"Dune dashboard Intents by asset, read by hand",fct_dune_intents_asset_daily,daily,2026-11-01,2026-10-31,2026-11-10,10,,false,2541
+FastNear token holders,stg_fastnear__ft_top_holders,snapshot,2026-11-09,2026-11-09,2026-11-10,1,2,false,6300
+FastNear wallet holdings,stg_fastnear__holdings,snapshot,2026-11-09,2026-11-09,2026-11-10,1,2,false,83142
+FastNear wallet transfers,stg_fastnear__transfers,daily,2026-11-09,2026-11-08,2026-11-10,2,3,false,12074
+Foundation lockup balances on chain,stg_rpc__lockup_foundation_balances,daily,2026-11-09,2026-11-09,2026-11-10,1,3,false,461
+GitHub commits on the default branch,stg_github__weekly_commits_list,snapshot,2026-11-09,2026-11-09,2026-11-10,1,2,false,4590
+GitHub repositories,stg_github__repos,snapshot,2026-11-09,2026-11-09,2026-11-10,1,2,false,162
+Governance forum threads,stg_gov__topics,snapshot,2026-11-09,2026-11-09,2026-11-10,1,2,false,36
+House of Stake proposals,stg_rpc__hos_proposals,snapshot,2026-11-09,2026-11-09,2026-11-10,1,2,false,270
+Intents Explorer daily tally,stg_intents_explorer__days,daily,2026-11-10,2026-11-09,2026-11-10,1,3,false,596
+Lockup contracts on chain,stg_rpc__lockup_contract_views,snapshot,2026-11-09,2026-11-09,2026-11-10,1,2,false,936
+NEAR Catalog projects,stg_nearcatalog__projects,snapshot,2026-11-09,2026-11-09,2026-11-10,1,2,false,3074
+NearBlocks Intents by asset,stg_nearblocks__intents_volume_by_asset,daily,2026-11-09,2026-11-08,2026-11-10,2,3,false,50579
+NearBlocks Intents by chain,stg_nearblocks__intents_volume_by_chain,daily,2026-11-09,2026-11-08,2026-11-10,2,3,false,13873
+NearBlocks Intents daily,stg_nearblocks__intents_daily,daily,2026-11-09,2026-11-08,2026-11-10,2,3,false,2379
+NearBlocks MPC operators,stg_nearblocks__mpc_operators,snapshot,2026-11-09,2026-11-09,2026-11-10,1,2,false,141
+NearBlocks daily accounts,stg_nearblocks__address_stats,daily,2026-11-09,2026-11-08,2026-11-10,2,3,false,491
+"NearBlocks daily blocks, gas and supply",stg_nearblocks__block_stats,daily,2026-11-09,2026-11-08,2026-11-10,2,3,false,477
+NearBlocks daily price,stg_nearblocks__price_stats,daily,2026-11-09,2026-11-08,2026-11-10,2,3,false,477
+NearBlocks daily transactions,stg_nearblocks__txn_stats,daily,2026-11-09,2026-11-08,2026-11-10,2,3,false,491
+"NearBlocks legacy daily charts, switched off on 2026-11-22",stg_nearblocks__charts_v1,daily,2026-11-09,2026-11-08,2026-11-10,2,,false,22972
+NearBlocks per-contract daily,stg_nearblocks__contract_txns,daily,2026-11-09,2026-11-08,2026-11-10,2,3,false,23217
+NearBlocks v1.signer daily,stg_nearblocks__signer_stats,daily,2026-11-09,2026-11-08,2026-11-10,2,3,false,477
+NearBlocks wallet balances,stg_nearblocks__wallet_balance,daily,2026-11-09,2026-11-08,2026-11-10,2,3,false,1590
+Neardata receiver sample,stg_neardata__receiver_sample,daily,2026-11-10,2026-11-08,2026-11-10,2,3,false,202010
+Protocol config,stg_rpc__protocol_config,snapshot,2026-11-09,2026-11-09,2026-11-10,1,2,false,10
+Registry accounts on chain,stg_rpc__accounts,snapshot,2026-11-09,2026-11-09,2026-11-10,1,2,false,492
+Rhea token prices,stg_rhea__token_prices,snapshot,2026-11-09,2026-11-09,2026-11-10,1,2,false,42273
+Validator set,stg_rpc__validators,snapshot,2026-11-10,2026-11-10,2026-11-10,0,2,false,139886
+revenue.near.org capture rates,stg_revenue_page__capture_rates,snapshot,2026-11-09,2026-11-09,2026-11-10,1,2,false,108
+revenue.near.org confidential TVL,stg_revenue_page__confidential_tvl,daily,2026-11-09,2026-11-08,2026-11-10,2,3,false,2322
+revenue.near.org fees,stg_revenue_page__fees_daily,daily,2026-11-09,2026-11-08,2026-11-10,2,3,false,4878
+revenue.near.org monthly revenue,stg_revenue_page__revenue_monthly,snapshot,2026-11-09,2026-11-09,2026-11-10,1,2,false,144
+revenue.near.org revenue and emissions,stg_revenue_page__revenue_vs_emissions,daily,2026-11-09,2026-11-08,2026-11-10,2,3,false,2772
+revenue.near.org volume,stg_revenue_page__volume_daily,daily,2026-11-09,2026-11-08,2026-11-10,2,3,false,5994

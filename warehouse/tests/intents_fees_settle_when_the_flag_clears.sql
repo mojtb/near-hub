@@ -18,6 +18,7 @@ with reads as (
     union all
     select 'defillama ' || data_type, date_day, snapshot_date, value_usd
     from {{ ref('stg_defillama__intents_fees') }}
+    where data_type in ('dailyFees', 'dailyRevenue')
 ),
 
 rereads as (

@@ -1,5 +1,6 @@
 -- NEAR and peer chains per day: DefiLlama for activity, CoinMetrics for price and market cap, DefiLlama prices where CoinMetrics
--- has no series. Empty cells mean the source has no value. Market caps are not on one definition. Each peer's uses the circulating
+-- has no series (TON, and Sui before 2023-08-17); price_basis says which. NEAR's price and market cap are fct_market_daily's.
+-- Empty cells mean the source has no value. Market caps are not on one definition. Each peer's uses the circulating
 -- supply its project reports, collected by CoinGecko: on 2026-11-05 that was 41% of total supply for Sui and 100% for Ethereum.
 -- NEAR's uses this warehouse's chain-built supply, which leaves out only lockups, so the Foundation's liquid NEAR counts as circulating.
 with peers as (select * from {{ ref('peers') }}),
@@ -50,9 +51,14 @@ keys as (
 select
     k.date_day,
     k.chain_id,
-    coalesce(cm.price_usd, llama_price.price_usd) as price_usd,
+    case when k.chain_id = 'near' then near_cap.price_usd else coalesce(cm.price_usd, llama_price.price_usd) end as price_usd,
+    case
+        when k.chain_id = 'near' then near_cap.price_basis
+        when cm.price_usd is not null then 'coinmetrics'
+        when llama_price.price_usd is not null then 'defillama'
+    end as price_basis,
     case when k.chain_id = 'near' then near_cap.market_cap_usd else cm.market_cap_usd end as market_cap_usd,
-    case when k.chain_id = 'near' then near_cap.market_cap_usd else cm.market_cap_usd end / cm.price_usd as implied_supply_tokens,
+    case when k.chain_id = 'near' then near_cap.market_cap_usd / near_cap.price_usd else cm.market_cap_usd / cm.price_usd end as implied_supply_tokens,
     case
         when k.chain_id = 'near' and near_cap.market_cap_usd is not null then 'chain: total supply minus lockups'
         when k.chain_id <> 'near' and cm.market_cap_usd is not null then 'project-reported circulating supply, through CoinGecko and CoinMetrics'

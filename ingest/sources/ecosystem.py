@@ -72,7 +72,7 @@ def commits_by_week(commits: Iterable[dict], first_week: date, weeks: int) -> Li
     """Commits and distinct authors per week, in the shape of stats/commit_activity plus an authors count.
 
     Weeks start on Sunday UTC and a commit falls in the week of its committer date, when it reached the branch.
-    Author identities are counted and dropped, as the contributors dataset does.
+    Author identities are counted and dropped.
     """
     totals: Dict[date, list] = {first_week + timedelta(days=7 * i): [0, set()] for i in range(weeks)}
     for c in commits:
@@ -131,28 +131,6 @@ def github_commits_weekly(ctx: Context) -> None:
                              params={**params, "pages": page}, rows=len(weekly),
                              note=f"assembled: {len(commits)} commits on the default branch from the commits list, counted per "
                                   "week by committer date, with authors reduced to a count per week")
-
-
-@dataset("github", "contributors")
-def github_contributors(ctx: Context) -> None:
-    """Per contributor, the weeks with commits. Logins and profiles are dropped: only counts are needed."""
-    for r in read_registry("repos"):
-        repo = r["repo"]
-        url = f"{GITHUB}/repos/{repo}/stats/contributors"
-        for attempt in range(5):
-            try:
-                reply = ctx.http.get(url, headers=_github_headers(), ok=(200, 202))
-            except HttpError as e:
-                ctx.warn(f"{repo}: {e}")
-                break
-            if reply.status == 200:
-                rows = [{"weeks": [{"w": w["w"], "c": w["c"]} for w in a.get("weeks", []) if w.get("c")]} for a in reply.json()]
-                ctx.bronze.save_json("github", "contributors", repo.replace("/", "__"), rows, url=url, rows=len(rows),
-                                     note="trimmed: author identities and empty weeks removed")
-                break
-            time.sleep(3 * (attempt + 1))
-        else:
-            ctx.warn(f"{repo}: still computing after 5 tries")
 
 
 @dataset("nearcatalog", "projects")

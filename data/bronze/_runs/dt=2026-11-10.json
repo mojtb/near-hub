@@ -1,0 +1,20 @@
+{
+ "intents_explorer/daily_tally": {
+  "detail": "2025-10-31: unreadable USD amount '544,8666'",
+  "files": 0,
+  "seconds": 404.7,
+  "status": "partial"
+ },
+ "neardata/receiver_sample_backfill": {
+  "detail": "",
+  "files": 0,
+  "seconds": 0.0,
+  "status": "ok"
+ },
+ "rpc/validators_epoch": {
+  "detail": "",
+  "files": 0,
+  "seconds": 0.0,
+  "status": "ok"
+ }
+}

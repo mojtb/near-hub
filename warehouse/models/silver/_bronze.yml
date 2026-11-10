@@ -8,7 +8,6 @@ sources:
     meta:
       external_location: "read_json_objects('data/bronze/{identifier}/dt=*/*.json.gz', filename=true, format='unstructured', maximum_object_size=67108864)"
     tables:
-      - {name: defillama__chains, identifier: defillama/chains, description: "Point-in-time TVL and token ids for every chain."}
       - {name: defillama__chain_tvl, identifier: defillama/chain_tvl, description: "Daily TVL per peer chain."}
       - {name: defillama__chain_fees, identifier: defillama/chain_fees, description: "Daily fees or revenue per peer chain, with a per-protocol summary."}
       - {name: defillama__chain_dex_volume, identifier: defillama/chain_dex_volume, description: "Daily DEX volume per peer chain, with a per-protocol summary."}
@@ -65,11 +64,9 @@ sources:
       - {name: coinmetrics__asset_metrics, identifier: coinmetrics/asset_metrics, description: "Community price, market cap and spot volume per peer asset."}
       - {name: rhea__top_pools, identifier: rhea/top_pools, description: "Rhea's pools with what each holds. Concentrated-liquidity (DCL) pools are not listed."}
       - {name: rhea__token_prices, identifier: rhea/token_prices, description: "What Rhea lists as each token's USD price, with the decimals and symbol it uses."}
-      - {name: metapool__metrics_parsed, identifier: metapool/metrics_parsed, description: "Meta Pool's Prometheus metrics, parsed from the saved text."}
       - {name: github__repos, identifier: github/repos, description: "Stars, forks and last push per tracked repository."}
       - {name: github__commit_activity, identifier: github/commit_activity, description: "Weekly commits for 52 weeks per tracked repository."}
       - {name: github__commits_weekly, identifier: github/commits_weekly, description: "Weekly commits and author counts on the default branch, assembled from the commits list, for every tracked repository."}
-      - {name: github__contributors, identifier: github/contributors, description: "Weekly commits per contributor per tracked repository."}
       - {name: nearcatalog__projects, identifier: nearcatalog/projects, description: "NEAR Catalog project directory."}
       - {name: gov__topics, identifier: gov/topics, description: "Tracked governance threads."}
       - {name: gov__search, identifier: gov/search, description: "Governance forum search results."}

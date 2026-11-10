@@ -22,7 +22,6 @@ select
     a.account_exists,
     a.has_contract,
     a.balance_near,
-    a.staked_near,
     a.storage_bytes,
     t.cumulative_txns,
     a.snapshot_date as checked_on

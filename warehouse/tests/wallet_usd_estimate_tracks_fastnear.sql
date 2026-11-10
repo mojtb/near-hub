@@ -5,7 +5,7 @@ with pairs as (
     select abs(t.amount_usd / (t.amount_token * m.price_usd) - 1) as gap
     from {{ ref('fct_wallet_transfers') }} t
     join {{ ref('fct_market_daily') }} m using (date_day)
-    where t.asset_id = 'native:near' and t.amount_usd is not null and t.amount_token <> 0 and m.price_usd is not null
+    where t.asset_id = 'native:near' and t.usd_basis = 'transfer_time' and t.amount_token <> 0 and m.price_usd is not null
 )
 
 select count(*) as pairs, quantile_cont(gap, 0.5) as median_gap

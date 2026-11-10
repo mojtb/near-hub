@@ -311,10 +311,10 @@
   "status": "ok"
  },
  "nrr_fund/figures": {
-  "detail": "ValueError: NRR page: an expected field is missing or malformed: TypeError(\"type NoneType doesn't define __round__ method\")",
-  "files": 0,
-  "seconds": 0.2,
-  "status": "failed"
+  "detail": "",
+  "files": 1,
+  "seconds": 1.6,
+  "status": "ok"
  },
  "oneclick/tokens": {
   "detail": "",

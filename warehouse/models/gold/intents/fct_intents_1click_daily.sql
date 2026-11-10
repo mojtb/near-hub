@@ -1,7 +1,10 @@
 -- 1Click per UTC day, from the Intents Explorer API. 1Click is one route into NEAR Intents, so the volume here is
 -- part of the total in fct_intents_daily. Empty until INTENTS_EXPLORER_JWT is set and a snapshot is in the build.
--- Its share is taken of revenue.near.org's all-routes volume, the one total with the same scope on every day:
--- DefiLlama's followed NearBlocks' public-only count from 2026-04-01 to 08-31 (docs/DATA_AUDIT_2026-11-05.md, finding 3).
+-- Its share is taken of fct_intents_daily.volume_usd, the all-route total, which has the same scope on every day.
+-- History arrives out of order: recent days in full, then one day a week back to the start, then the days between,
+-- newest first. So the table holds an unbroken run of recent days and, before it, single days a week apart.
+-- is_in_daily_run marks the run: it starts on the day after the newest gap (macro oneclick_daily_run_start). A day with
+-- no 1Click swap at all leaves no tally and would end the run too; there has been none since the daily run began.
 with channels as (
     select
         date_day,
@@ -23,9 +26,11 @@ select
     c.volume_usd,
     c.amount_out_usd,
     c.app_fees_usd,
-    d.senders,
+    -- The Explorer's rows carry no sender before 2026, and a day with finished swaps cannot have had none.
+    nullif(d.senders, 0) as senders,
     d.recipients,
-    c.volume_usd / nullif(i.volume_usd_revenue_page, 0) as share_of_all_intents_volume
+    c.volume_usd / nullif(i.volume_usd, 0) as share_of_all_intents_volume,
+    coalesce(d.date_day >= {{ oneclick_daily_run_start() }}, false) as is_in_daily_run
 from {{ ref('stg_intents_explorer__days') }} d
 join channels c using (date_day)
 left join {{ ref('fct_intents_daily') }} i using (date_day)

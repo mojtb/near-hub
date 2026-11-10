@@ -227,6 +227,7 @@ intents_explorer,daily_tally,2026-11-06,50,2393322,539232,https://explorer.near-
 intents_explorer,daily_tally,2026-11-07,19,2430572,579843,https://explorer.near-intents.org/api/v0/transactions,2026-11-07T07:28:58+00:00,2026-11-07T08:25:27+00:00,assembled: counted from this UTC day's rows; no row or wallet address is kept
 intents_explorer,daily_tally,2026-11-08,26,2835920,579067,https://explorer.near-intents.org/api/v0/transactions,2026-11-08T07:37:52+00:00,2026-11-08T08:34:17+00:00,assembled: counted from this UTC day's rows; no row or wallet address is kept
 intents_explorer,daily_tally,2026-11-09,30,3128655,568272,https://explorer.near-intents.org/api/v0/transactions,2026-11-09T08:15:36+00:00,2026-11-09T09:11:18+00:00,assembled: counted from this UTC day's rows; no row or wallet address is kept
+intents_explorer,daily_tally,2026-11-10,378,20317949,4031906,https://explorer.near-intents.org/api/v0/transactions,2026-11-09T22:22:03+00:00,2026-11-10T07:45:48+00:00,assembled: counted from this UTC day's rows; no row or wallet address is kept
 metapool,metrics,2026-11-01,1,6465,,https://validators.narwallets.com/metrics,2026-11-01T20:28:45+00:00,2026-11-01T20:28:45+00:00,""
 metapool,metrics,2026-11-02,1,6488,,https://validators.narwallets.com/metrics,2026-11-02T07:46:37+00:00,2026-11-02T07:46:37+00:00,""
 metapool,metrics,2026-11-03,1,6487,,https://validators.narwallets.com/metrics,2026-11-03T08:00:18+00:00,2026-11-03T08:00:18+00:00,""
@@ -494,11 +495,13 @@ neardata,receiver_sample,2026-11-06,21,533763,3596,https://mainnet.neardata.xyz/
 neardata,receiver_sample,2026-11-07,21,531070,3588,https://mainnet.neardata.xyz/v0/block,2026-11-07T08:59:35+00:00,2026-11-07T09:40:59+00:00,aggregated from 96 evenly spaced blocks; raw blocks discarded
 neardata,receiver_sample,2026-11-08,21,570343,3845,https://mainnet.neardata.xyz/v0/block,2026-11-08T09:04:03+00:00,2026-11-08T09:45:21+00:00,aggregated from 96 evenly spaced blocks; raw blocks discarded
 neardata,receiver_sample,2026-11-09,21,605796,4099,https://mainnet.neardata.xyz/v0/block,2026-11-09T09:41:52+00:00,2026-11-09T10:23:07+00:00,aggregated from 96 evenly spaced blocks; raw blocks discarded
+neardata,receiver_sample,2026-11-10,202,24888107,172373,https://mainnet.neardata.xyz/v0/block,2026-11-09T22:16:20+00:00,2026-11-10T05:33:16+00:00,aggregated from 24 evenly spaced blocks; raw blocks discarded
 nrr_fund,figures,2026-11-02,1,11436,77,https://nrretf.com/,2026-11-02T13:53:18+00:00,2026-11-02T13:53:18+00:00,assembled: figures read from the page's embedded data; the page itself is not kept
 nrr_fund,figures,2026-11-03,1,11503,77,https://nrretf.com/,2026-11-03T09:13:16+00:00,2026-11-03T09:13:16+00:00,assembled: figures read from the page's embedded data; the page itself is not kept
 nrr_fund,figures,2026-11-04,1,11571,77,https://nrretf.com/,2026-11-04T08:48:26+00:00,2026-11-04T08:48:26+00:00,assembled: figures read from the page's embedded data; the page itself is not kept
 nrr_fund,figures,2026-11-05,1,11638,77,https://nrretf.com/,2026-11-05T09:13:14+00:00,2026-11-05T09:13:14+00:00,assembled: figures read from the page's embedded data; the page itself is not kept
 nrr_fund,figures,2026-11-06,1,11708,77,https://nrretf.com/,2026-11-06T09:25:30+00:00,2026-11-06T09:25:30+00:00,assembled: figures read from the page's embedded data; the page itself is not kept
+nrr_fund,figures,2026-11-09,1,11742,77,https://nrretf.com/,2026-11-09T10:52:02+00:00,2026-11-09T10:52:02+00:00,assembled: figures read from the page's embedded data; the page itself is not kept
 oneclick,tokens,2026-11-01,1,53346,,https://1click.chaindefuser.com/v0/tokens,2026-11-01T20:23:03+00:00,2026-11-01T20:23:03+00:00,""
 oneclick,tokens,2026-11-02,1,53377,,https://1click.chaindefuser.com/v0/tokens,2026-11-02T07:59:17+00:00,2026-11-02T07:59:17+00:00,""
 oneclick,tokens,2026-11-03,1,53381,,https://1click.chaindefuser.com/v0/tokens,2026-11-03T08:03:36+00:00,2026-11-03T08:03:36+00:00,""
@@ -647,3 +650,4 @@ rpc,validators_epoch,2026-11-06,28,4124520,11826,https://archival-rpc.mainnet.fa
 rpc,validators_epoch,2026-11-07,18,2495973,7162,https://archival-rpc.mainnet.fastnear.com,2026-11-07T08:38:27+00:00,2026-11-07T08:39:21+00:00,trimmed: per-shard arrays and public keys dropped
 rpc,validators_epoch,2026-11-08,20,2642539,7578,https://archival-rpc.mainnet.fastnear.com,2026-11-08T08:48:01+00:00,2026-11-08T08:48:48+00:00,trimmed: per-shard arrays and public keys dropped
 rpc,validators_epoch,2026-11-09,28,3630643,10403,https://archival-rpc.mainnet.fastnear.com,2026-11-09T09:25:52+00:00,2026-11-09T09:26:50+00:00,trimmed: per-shard arrays and public keys dropped
+rpc,validators_epoch,2026-11-10,117,11989565,34081,https://archival-rpc.mainnet.fastnear.com,2026-11-09T22:12:39+00:00,2026-11-09T22:21:36+00:00,trimmed: per-shard arrays and public keys dropped

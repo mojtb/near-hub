@@ -14,7 +14,8 @@ select
     d.blockchain as destination_blockchain,
     p.swaps,
     p.amount_in_usd,
-    p.amount_out_usd
+    p.amount_out_usd,
+    coalesce(p.date_day >= {{ oneclick_daily_run_start() }}, false) as is_in_daily_run
 from {{ ref('stg_intents_explorer__pairs') }} p
 left join tokens o on o.asset_id = p.origin_asset
 left join tokens d on d.asset_id = p.destination_asset

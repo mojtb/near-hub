@@ -20,6 +20,12 @@
     "description": "Monday of the week, UTC."
    },
    {
+    "name": "week_start_sunday",
+    "type": "DATE",
+    "unit": "date",
+    "description": "Sunday on or before the day, UTC: the week as GitHub cuts it. Join fct_dev_activity_weekly.week_start to this column, not to week_start, which is a Monday and never matches."
+   },
+   {
     "name": "month_start",
     "type": "DATE",
     "unit": "date",
@@ -141,12 +147,6 @@
     "description": "Native balance."
    },
    {
-    "name": "staked_near",
-    "type": "DOUBLE",
-    "unit": "NEAR",
-    "description": "Locked for staking."
-   },
-   {
     "name": "storage_bytes",
     "type": "BIGINT",
     "unit": "bytes",
@@ -172,7 +172,7 @@
  {
   "area": "Calendar and registry",
   "table": "dim_token",
-  "description": "Registry tokens with decimals and a live price from 1Click where listed.",
+  "description": "Registry tokens with their decimals and, where 1Click lists them, a CoinGecko id. Prices are in fct_token_prices.",
   "grain": "token_id",
   "sources": "registry/tokens.csv, 1Click",
   "path": "data/gold/dim_token.parquet",
@@ -226,22 +226,10 @@
     "description": "Token decimals from registry/tokens.csv, each read from the contract's ft_metadata; 1Click's figure is the fallback and a data test holds the two to each other."
    },
    {
-    "name": "price_usd",
-    "type": "DOUBLE",
-    "unit": "USD",
-    "description": "Price."
-   },
-   {
     "name": "coingecko_id",
     "type": "VARCHAR",
     "unit": "id",
     "description": "CoinGecko identifier."
-   },
-   {
-    "name": "priced_on",
-    "type": "DATE",
-    "unit": "date",
-    "description": "Date the price was read."
    }
   ],
   "rows": 12,
@@ -293,9 +281,9 @@
     "description": "happened, or voting while the vote is open."
    }
   ],
-  "rows": 22,
+  "rows": 23,
   "first": "2024-12-10",
-  "last": "2026-11-04"
+  "last": "2026-11-06"
  },
  {
   "area": "Calendar and registry",
@@ -489,9 +477,9 @@
  {
   "area": "Chain usage, supply and parameters",
   "table": "fct_chain_daily",
-  "description": "Chain usage per UTC day. NearBlocks v1 and v3 keep separate columns where their definitions differ. Levels of txns, receipts, v3 accounts, contracts, new accounts and meta columns cannot be compared across 2026-04-02: see docs/USAGE_BREAK_2026-04-02.md.",
+  "description": "Chain usage per UTC day, one column per measure. Most counts come from NearBlocks /v3, which returns the last 365 days of each read, and from /v1/charts for older days: the two agree day for day wherever both exist, dq_reconciliation compares them, and /v1 is switched off on 2026-11-22. Where /v1 and /v3 count different things both are kept, under names that say what each counts: active_signers and active_accounts_with_relayed, new_contracts_v1 and new_contracts_v3. Levels of txns, receipts, active accounts, contracts, new accounts and meta columns cannot be compared across 2026-04-02: see docs/USAGE_BREAK_2026-04-02.md.",
   "grain": "date_day",
-  "sources": "NearBlocks /v1/charts, /v3/txn-stats, /v3/address-stats",
+  "sources": "NearBlocks /v3/txn-stats, /v3/address-stats and /v3/block-stats, and /v1/charts for days before their window",
   "path": "data/gold/fct_chain_daily.parquet",
   "columns": [
    {
@@ -504,19 +492,7 @@
     "name": "txns",
     "type": "BIGINT",
     "unit": "count",
-    "description": "Transactions: v3 where available, else v1."
-   },
-   {
-    "name": "txns_v1",
-    "type": "BIGINT",
-    "unit": "count",
-    "description": "Transactions per NearBlocks /v1/charts."
-   },
-   {
-    "name": "txns_v3",
-    "type": "BIGINT",
-    "unit": "count",
-    "description": "Transactions per NearBlocks /v3/txn-stats."
+    "description": "Transactions: /v3/txn-stats, else /v1/charts for older days. The two agree on every day both hold."
    },
    {
     "name": "meta_txns",
@@ -528,7 +504,7 @@
     "name": "meta_txn_share",
     "type": "DOUBLE",
     "unit": "fraction",
-    "description": "meta_txns divided by txns_v3."
+    "description": "meta_txns divided by txns."
    },
    {
     "name": "receipts",
@@ -540,7 +516,7 @@
     "name": "blocks",
     "type": "BIGINT",
     "unit": "count",
-    "description": "Blocks."
+    "description": "Blocks: /v3/block-stats, else /v1/charts."
    },
    {
     "name": "chunks",
@@ -558,55 +534,55 @@
     "name": "gas_price_yocto",
     "type": "DOUBLE",
     "unit": "yoctoNEAR per gas",
-    "description": "Gas price per NearBlocks. Last 365 days of reads only."
+    "description": "Gas price per NearBlocks /v3/block-stats. Last 365 days of reads only. It has sat at the protocol's minimum all year; dim_block_day holds the price in one block a day."
    },
    {
-    "name": "active_accounts_v1",
+    "name": "active_signers",
     "type": "BIGINT",
     "unit": "count",
-    "description": "Active accounts per /v1/charts. NearBlocks does not document it, but it matches Nansen's published distinct signers, so it leaves out users whose transactions a relayer signs."
+    "description": "Active accounts per /v1/charts. NearBlocks does not document it, but it matches Nansen's published distinct signers, so it leaves out users whose transactions a relayer signs. Ends on 2026-11-22, when /v1 is switched off."
    },
    {
-    "name": "active_accounts_v3",
+    "name": "active_accounts_with_relayed",
     "type": "BIGINT",
     "unit": "count",
-    "description": "Active accounts per /v3/address-stats. NearBlocks does not document it, but it stays within 2% of active_accounts_v1 plus meta_accounts. About 1.8x v1 in the latest 30 days, and 9x to 18x in monthly averages before 2026-04-02."
+    "description": "Active accounts per /v3/address-stats. NearBlocks does not document it, but it stays within 2% of active_signers plus meta_accounts, so it also counts users whose transactions a relayer signs. About 2x active_signers in the latest 30 days, and 9x to 18x in monthly averages before 2026-04-02."
    },
    {
-    "name": "active_contracts_v1",
+    "name": "active_contracts",
     "type": "BIGINT",
     "unit": "count",
-    "description": "Active contracts per /v1/charts."
-   },
-   {
-    "name": "active_contracts_v3",
-    "type": "BIGINT",
-    "unit": "count",
-    "description": "Active contracts per /v3/address-stats."
+    "description": "Active contracts: /v3/address-stats, else /v1/charts. The two agree except on 2026-04-15 and by one contract on three days."
    },
    {
     "name": "new_accounts",
     "type": "BIGINT",
     "unit": "count",
-    "description": "Accounts created."
+    "description": "Accounts created, per /v1/charts. Ends on 2026-11-22."
    },
    {
     "name": "deleted_accounts",
     "type": "BIGINT",
     "unit": "count",
-    "description": "Accounts deleted."
+    "description": "Accounts deleted, per /v1/charts. Ends on 2026-11-22."
    },
    {
-    "name": "new_contracts",
+    "name": "new_contracts_v1",
     "type": "BIGINT",
     "unit": "count",
-    "description": "Contracts deployed."
+    "description": "Contracts deployed, per /v1/charts. NearBlocks documents neither its own count nor new_contracts_v3, and the two differ by 25% at the median, so they are kept apart. Ends on 2026-11-22."
+   },
+   {
+    "name": "new_contracts_v3",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "New contracts per /v3/address-stats; see new_contracts_v1."
    },
    {
     "name": "unique_contracts",
     "type": "BIGINT",
     "unit": "count",
-    "description": "Distinct contract code hashes deployed, per /v1/charts."
+    "description": "Distinct contract code hashes deployed, per /v1/charts. Ends on 2026-11-22."
    },
    {
     "name": "meta_accounts",
@@ -621,52 +597,28 @@
     "description": "Relayers submitting meta-transactions."
    },
    {
-    "name": "multichain_txns",
-    "type": "BIGINT",
-    "unit": "count",
-    "description": "Multichain transactions per /v1/charts. Reads 0 on every day as of 2026-11; use fct_chain_signatures_daily for Chain Signatures activity."
-   },
-   {
     "name": "gas_used",
     "type": "DOUBLE",
     "unit": "gas units",
-    "description": "Gas used."
+    "description": "Gas used: /v3/block-stats, else /v1/charts."
    },
    {
     "name": "gas_fee_near",
     "type": "DOUBLE",
     "unit": "NEAR",
-    "description": "Gas fees per /v1/charts."
+    "description": "Gas fees: /v3/block-stats, else /v1/charts. The two agree to the unit on every day both hold."
    },
    {
-    "name": "txn_fee_near_v1",
+    "name": "txn_fee_near",
     "type": "DOUBLE",
     "unit": "NEAR",
-    "description": "Transaction fees per /v1/charts."
-   },
-   {
-    "name": "txn_fee_near_v3",
-    "type": "DOUBLE",
-    "unit": "NEAR",
-    "description": "Transaction fees per /v3/txn-stats."
-   },
-   {
-    "name": "txn_fee_usd",
-    "type": "DOUBLE",
-    "unit": "USD",
-    "description": "Transaction fees per /v1/charts."
+    "description": "Transaction fees: /v3/txn-stats, else /v1/charts. The two agree except on 2026-04-15. Not the same as gas_fee_near, which runs about 5% higher at the median."
    },
    {
     "name": "txn_volume_near",
     "type": "DOUBLE",
     "unit": "NEAR",
-    "description": "NEAR moved by transactions."
-   },
-   {
-    "name": "txn_volume_usd",
-    "type": "DOUBLE",
-    "unit": "USD",
-    "description": "Value moved by transactions."
+    "description": "NEAR moved by transactions: /v3/txn-stats, else /v1/charts."
    }
   ],
   "rows": 2302,
@@ -676,9 +628,9 @@
  {
   "area": "Chain usage, supply and parameters",
   "table": "fct_supply_daily",
-  "description": "Supply and implied issuance per UTC day. Epochs end at uneven times, so one day's minted_near is lumpy; use averages of 30 days or more.",
+  "description": "Supply and implied issuance per UTC day. Epochs end at uneven times, so one day's minted_near is lumpy; use averages of 30 days or more. Circulating supply is in fct_circulating_supply_daily, and gas fees are in fct_chain_daily.",
   "grain": "date_day",
-  "sources": "NearBlocks /v1/charts, archival RPC, protocol config",
+  "sources": "NearBlocks /v3/block-stats and /v1/charts, FastNear transfers of treasury.near, protocol config",
   "path": "data/gold/fct_supply_daily.parquet",
   "columns": [
    {
@@ -691,37 +643,7 @@
     "name": "total_supply_near",
     "type": "DOUBLE",
     "unit": "NEAR",
-    "description": "Total supply at day end per NearBlocks."
-   },
-   {
-    "name": "circulating_supply_near",
-    "type": "DOUBLE",
-    "unit": "NEAR",
-    "description": "Every token not subject to a lockup at the day's close, built from the chain: see fct_circulating_supply_daily. Empty before transfers were enabled on 2020-10-13."
-   },
-   {
-    "name": "circulating_supply_near_nearblocks",
-    "type": "DOUBLE",
-    "unit": "NEAR",
-    "description": "NearBlocks' /v1/charts figure, kept as a test of the column above. Stuck at 1,249,836,992 since 2025-08-27, when NearBlocks stopped computing it, and too high from 2024-08-12 to 2024-12-28, when its job was failing."
-   },
-   {
-    "name": "onchain_supply_end_of_day_near",
-    "type": "DOUBLE",
-    "unit": "NEAR",
-    "description": "Supply in the first block of the next day, read from the archival node. Empty where no daily block exists."
-   },
-   {
-    "name": "protocol_version",
-    "type": "INTEGER",
-    "unit": "integer",
-    "description": "latest_protocol_version in the block header: the version the block's producer supports, which can lead the version in force by days. 87 was in the header by the first block of 2026-11-04 and took effect at 11:46:29 UTC that day, with block 223012337. Date a change from registry/protocol_upgrades.csv or fct_protocol_config."
-   },
-   {
-    "name": "gas_fee_near",
-    "type": "DOUBLE",
-    "unit": "NEAR",
-    "description": "Gas fees per /v1/charts."
+    "description": "Total supply at day end per NearBlocks: /v3/block-stats, else /v1/charts for older days. It equals the chain's own supply in the first block of the next day on every day the archival node was read, which a data test holds."
    },
    {
     "name": "supply_change_near",
@@ -739,7 +661,7 @@
     "name": "burn_near",
     "type": "DOUBLE",
     "unit": "NEAR",
-    "description": "Gas fees times one minus contract_gas_reward_rate. The rebate came only out of gas burnt executing function calls, so before protocol version 87 the real burn was more than 70% of gas and this is a lower bound. From 11:46:29 UTC on 2026-11-04 all gas burns; that day itself is the time-weighted mix."
+    "description": "Gas fees (fct_chain_daily.gas_fee_near) times one minus contract_gas_reward_rate. The rebate came only out of gas burnt executing function calls, so before protocol version 87 the real burn was more than 70% of gas and this is a lower bound; the upper bound is the whole fee, fct_chain_daily.gas_fee_near. The burn can be read straight off the chain only before issuance began on 2020-10-20, when every fall in supply was gas burned: over those 79 days supply fell by 84.8% of gas fees, 124.4 NEAR against this column's 102.7, and the lower bound held on every one of them, which a data test keeps. That share belongs to 2020's mix of transactions and is not applied to later years. From 11:46:29 UTC on 2026-11-04 all gas burns; that day itself is the time-weighted mix."
    },
    {
     "name": "treasury_reward_near",
@@ -751,7 +673,7 @@
     "name": "minted_near",
     "type": "DOUBLE",
     "unit": "NEAR",
-    "description": "supply_change_near plus burn_near: issuance implied by the chain."
+    "description": "supply_change_near plus burn_near: issuance implied by the chain. It inherits burn_near's lower bound, so before 2026-11-04 the real figure is higher by up to 30% of that day's gas fee, which is small against issuance: 3.36M NEAR of modelled burn against 314.5M minted through 2026-11-08."
    },
    {
     "name": "minted_annualized_rate",
@@ -769,7 +691,7 @@
   "table": "fct_circulating_supply_daily",
   "description": "NEAR's circulating supply per UTC day, built from the chain, from the day transfers were enabled. NEAR defines it as every token not subject to a lockup at that moment. This uses NEAR Explorer's formula: total supply, minus what every lockup contract still locks, minus the balances of lockup.near and contributors.near. Tested against NearBlocks' own lockup job while that ran, NEAR's published schedule, and the contracts' own answers. It does not take out the NEAR Foundation's liquid holding or the protocol treasury, and it counts staked tokens as circulating. See docs/CIRCULATING_SUPPLY.md.",
   "grain": "date_day",
-  "sources": "Archival RPC lockup contract state, FastNear transfers of lockup.near and contributors.near, NearBlocks total supply",
+  "sources": "Archival RPC lockup contract state, FastNear transfers of lockup.near and contributors.near, total supply from fct_supply_daily",
   "path": "data/gold/fct_circulating_supply_daily.parquet",
   "columns": [
    {
@@ -777,12 +699,6 @@
     "type": "DATE",
     "unit": "date",
     "description": "UTC calendar day, read at its close. Starts on 2020-10-13."
-   },
-   {
-    "name": "total_supply_near",
-    "type": "DOUBLE",
-    "unit": "NEAR",
-    "description": "Total supply at day end per NearBlocks, the same column as in fct_supply_daily, which a data test holds to the chain."
    },
    {
     "name": "lockup_locked_near",
@@ -800,13 +716,13 @@
     "name": "circulating_supply_near",
     "type": "DOUBLE",
     "unit": "NEAR",
-    "description": "total_supply_near minus lockup_locked_near minus foundation_locked_near."
+    "description": "Total supply from fct_supply_daily, minus lockup_locked_near, minus foundation_locked_near."
    },
    {
     "name": "circulating_share_of_total",
     "type": "DOUBLE",
     "unit": "fraction",
-    "description": "circulating_supply_near divided by total_supply_near."
+    "description": "circulating_supply_near divided by total supply."
    },
    {
     "name": "lockups_existing",
@@ -958,7 +874,7 @@
     "name": "txns",
     "type": "BIGINT",
     "unit": "count",
-    "description": "Transactions: v3 where available, else v1."
+    "description": "Transactions involving the contract that day, per NearBlocks' account statistics. For v1.signer it equals fct_chain_signatures_daily.txns, which dq_reconciliation checks."
    },
    {
     "name": "unique_callers",
@@ -980,7 +896,7 @@
  {
   "area": "Chain usage, supply and parameters",
   "table": "fct_receiver_sample_daily",
-  "description": "Activity per receiver, estimated from evenly spaced sample blocks. These are estimates, and a day's sample density is in blocks_sampled.",
+  "description": "Activity per receiver, estimated from evenly spaced sample blocks. These are estimates, and a day's sample density is in blocks_sampled. Measured against the chain's own count (fct_chain_daily.txns) at the 2026-11-09 pin: with 24 blocks a day, through 2026-10-29, a day's estimated transactions summed over receivers were 3% low in total and off by 10% at the median, 23% at the 90th percentile, and between 0.68 and 2.04 times the real count; with 96 blocks, from 2026-10-30, 1% low in total and off by 5% at the median and 10% at the 90th percentile. So read a 24-block day as rough, and prefer shares over a week or more. A data test holds the estimates to the chain's count.",
   "grain": "date_day, account_id",
   "sources": "Neardata",
   "path": "data/gold/fct_receiver_sample_daily.parquet",
@@ -1070,16 +986,16 @@
     "description": "Block height span of the day."
    }
   ],
-  "rows": 29637,
-  "first": "2026-05-31",
+  "rows": 202010,
+  "first": "2025-11-10",
   "last": "2026-11-08"
  },
  {
   "area": "NEAR Intents and revenue",
   "table": "fct_intents_daily",
-  "description": "NEAR Intents per UTC day, one column per source. revenue.near.org includes confidential Intents; NearBlocks counts public Intents only. DefiLlama reads the same NEAR-uploaded data as revenue.near.org, but its volume follows NearBlocks' public-only figure from 2026-04-01 to 2026-08-31 and the all-routes figure from 2026-09-01, so it changes meaning at that date. See dq_reconciliation. The fee and revenue columns of the newest days can still change; see is_fee_revenue_provisional.",
+  "description": "NEAR Intents per UTC day, one column per measure. All-route volume and gross fees are revenue.near.org's, which counts confidential routes too; on the few days the page lacks, DefiLlama fills in, and volume_basis and fees_basis say which. Public volume, swaps, accounts, tokens and chains are NearBlocks', which sees public Intents only, so volume_usd minus public_volume_usd is confidential volume. From 2026-11-03 almost all volume settles confidentially, so the public columns describe a small part of Intents. Captured revenue is DefiLlama's. DefiLlama's own volume and fees are not columns here: they count public routes only from 2026-04-01 (volume to 08-31, fees to 09-13), so dq_reconciliation compares them with the page and NearBlocks instead. The fee and revenue columns of the newest days can still change; see is_fee_revenue_provisional.",
   "grain": "date_day",
-  "sources": "DefiLlama, NearBlocks, revenue.near.org",
+  "sources": "revenue.near.org, NearBlocks, DefiLlama",
   "path": "data/gold/fct_intents_daily.parquet",
   "columns": [
    {
@@ -1089,100 +1005,70 @@
     "description": "UTC calendar day."
    },
    {
-    "name": "volume_usd_defillama",
+    "name": "volume_usd",
     "type": "DOUBLE",
     "unit": "USD",
-    "description": "Volume per DefiLlama. Matches NearBlocks' public-only figure from 2026-04-01 to 2026-08-31 and revenue.near.org's all-routes figure from 2026-09-01; before April 2026 the three sources agree. Do not read a trend across 2026-09-01 from this column."
+    "description": "All-route Intents volume, confidential routes included, per revenue.near.org. On the 29 days the page lacks, DefiLlama's figure: 22 days of December 2024, and 7 days between 2025-03-08 and 05-14 worth $12.85M that the page does not count at all."
    },
    {
-    "name": "volume_usd_nearblocks",
+    "name": "volume_basis",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "Where volume_usd comes from: revenue_page or defillama."
+   },
+   {
+    "name": "public_volume_usd",
     "type": "DOUBLE",
     "unit": "USD",
-    "description": "Volume per NearBlocks; public Intents only."
+    "description": "Public Intents volume per NearBlocks. Starts on 2025-10-29, the oldest day its 365-day window held at the first read. From 2026-11-03 almost all Intents volume settles confidentially, so this fell from about 60% of volume_usd in late October to between 0.4% and 18%; NEAR's own dashboard on Dune shows the same fall. The other public counts fell with it. It comes from another source than volume_usd, NearBlocks' reading of the chain against NEAR's own tally, so while nearly everything was public the two differed by noise: through 2026-04-20 it read above volume_usd on 88 days, by more than 2% on 4 of them and by 7.7% at most (2026-04-18). So volume_usd minus public_volume_usd is not a clean confidential series on such days; floor it at zero. A data test holds it within 10% above volume_usd."
    },
    {
-    "name": "volume_usd_revenue_page",
+    "name": "public_volume_cumulative_usd",
     "type": "DOUBLE",
     "unit": "USD",
-    "description": "Volume per revenue.near.org; includes confidential Intents."
+    "description": "All-time public Intents volume per NearBlocks, including the history before its 365-day window."
    },
    {
-    "name": "cumulative_volume_usd_nearblocks",
-    "type": "DOUBLE",
-    "unit": "USD",
-    "description": "All-time volume per NearBlocks."
-   },
-   {
-    "name": "cumulative_volume_usd_revenue_page",
-    "type": "DOUBLE",
-    "unit": "USD",
-    "description": "All-time volume per revenue.near.org."
-   },
-   {
-    "name": "swaps_nearblocks",
+    "name": "public_swaps",
     "type": "BIGINT",
     "unit": "count",
-    "description": "Swaps per NearBlocks."
+    "description": "Public Intents swaps per NearBlocks."
    },
    {
-    "name": "accounts_nearblocks",
+    "name": "public_accounts",
     "type": "BIGINT",
     "unit": "count",
-    "description": "Distinct swapping accounts per NearBlocks."
+    "description": "Distinct accounts swapping through public Intents, per NearBlocks."
    },
    {
-    "name": "tokens_nearblocks",
+    "name": "public_tokens",
     "type": "BIGINT",
     "unit": "count",
-    "description": "Distinct tokens swapped per NearBlocks."
+    "description": "Distinct tokens swapped through public Intents, per NearBlocks."
    },
    {
-    "name": "chains_nearblocks",
+    "name": "public_chains",
     "type": "BIGINT",
     "unit": "count",
-    "description": "Distinct blockchains active per NearBlocks."
+    "description": "Distinct blockchains active in public Intents, per NearBlocks."
    },
    {
-    "name": "fees_usd_defillama",
+    "name": "fees_usd",
     "type": "DOUBLE",
     "unit": "USD",
-    "description": "Gross fees per DefiLlama."
+    "description": "All-route gross fees per revenue.near.org. On the 5 days of May 2025 the page lacks, DefiLlama's figure, $8 together."
    },
    {
-    "name": "fees_usd_revenue_page",
+    "name": "fees_basis",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "Where fees_usd comes from: revenue_page or defillama."
+   },
+   {
+    "name": "revenue_usd",
     "type": "DOUBLE",
     "unit": "USD",
-    "description": "Gross fees per revenue.near.org."
-   },
-   {
-    "name": "fees_near_revenue_page",
-    "type": "DOUBLE",
-    "unit": "NEAR",
-    "description": "Gross fees in NEAR per revenue.near.org."
-   },
-   {
-    "name": "revenue_usd_defillama",
-    "type": "DOUBLE",
-    "unit": "USD",
-    "description": "Captured revenue per DefiLlama: NEAR and wNEAR swept into the revenue wallets. Sweeps are periodic, so one day can exceed that day's fees."
-   },
-   {
-    "name": "holders_revenue_usd_defillama",
-    "type": "DOUBLE",
-    "unit": "USD",
-    "description": "Captured revenue from 2026-02-23, which DefiLlama treats as used for buybacks."
-   },
-   {
-    "name": "treasury_revenue_usd_defillama",
-    "type": "DOUBLE",
-    "unit": "USD",
-    "description": "Captured revenue before 2026-02-23, held by the treasury."
-   },
-   {
-    "name": "supply_side_revenue_usd_defillama",
-    "type": "DOUBLE",
-    "unit": "USD",
-    "description": "Gross fees minus captured revenue: kept by solvers and distribution channels. Negative on days when a periodic sweep into the revenue wallets exceeds that day's fees, so sum it over weeks, not days. Also negative on a provisional day whose fees have not fully arrived; see is_fee_revenue_provisional."
+    "description": "Captured revenue per DefiLlama: NEAR and wNEAR swept into the revenue wallets, at the day's closing price. Sweeps are periodic, so one day can exceed that day's fees. From 2026-02-23, the first day of buybacks (dim_date.is_fee_switch_active), it is the revenue used for buybacks; before, it was held by the treasury. fees_usd minus revenue_usd is what solvers and distribution channels kept; sum that over weeks, because sweeps make single days negative."
    },
    {
     "name": "confidential_tvl_usd",
@@ -1204,7 +1090,7 @@
  {
   "area": "NEAR Intents and revenue",
   "table": "fct_intents_chain_daily",
-  "description": "Public Intents volume per blockchain per day.",
+  "description": "Public Intents volume per blockchain per day. From 2026-11-03 public Intents carry only a few percent of all volume, because most swaps settle confidentially.",
   "grain": "date_day, blockchain",
   "sources": "NearBlocks /v3/intents/volume-stats/blockchains",
   "path": "data/gold/fct_intents_chain_daily.parquet",
@@ -1241,7 +1127,7 @@
  {
   "area": "NEAR Intents and revenue",
   "table": "fct_intents_asset_daily",
-  "description": "Public Intents volume per asset per day.",
+  "description": "Public Intents volume per asset per day. From 2026-11-03 public Intents carry only a few percent of all volume, because most swaps settle confidentially.",
   "grain": "date_day, token_id",
   "sources": "NearBlocks /v3/intents/volume-stats/assets",
   "path": "data/gold/fct_intents_asset_daily.parquet",
@@ -1437,9 +1323,9 @@
  {
   "area": "NEAR Intents and revenue",
   "table": "fct_dune_dashboard_results",
-  "description": "Derived from NEAR's Intents dashboard on Dune: every row of every widget read by hand, as the widget returned it, so nothing waits for a typed table. NEAR uploads the data behind the dashboard, so it is self-reported.",
+  "description": "Every row of every Dune widget or query read so far, as returned, so nothing waits for a typed table. Hand readings of NEAR's public Intents dashboard have read_via hand. Query results through Dune's official API have read_via api, once a DUNE_API_KEY with API access has run. NEAR uploads the data behind the dashboard, so it is self-reported.",
   "grain": "snapshot_date, reading_id, row_index",
-  "sources": "NEAR Intents dashboard on Dune by @near, read by hand",
+  "sources": "NEAR Intents dashboard on Dune by @near, read by hand; Dune API",
   "path": "data/gold/fct_dune_dashboard_results.parquet",
   "columns": [
    {
@@ -1452,7 +1338,7 @@
     "name": "reading_id",
     "type": "VARCHAR",
     "unit": "text",
-    "description": "The widget: query id, dashboard filter values and a hash of the columns asked for."
+    "description": "The widget: query id, dashboard filter values and a hash of the columns asked for. For a query read through the API, <query id>__api."
    },
    {
     "name": "query_id",
@@ -1476,7 +1362,7 @@
     "name": "selection",
     "type": "VARCHAR",
     "unit": "text",
-    "description": "Dashboard filter values in force, such as blockchain-ALL__symbol-ALL."
+    "description": "Dashboard filter values in force, such as blockchain-ALL__symbol-ALL. Empty for a query read through the API."
    },
    {
     "name": "generated_at",
@@ -1494,7 +1380,7 @@
     "name": "row_index",
     "type": "BIGINT",
     "unit": "integer",
-    "description": "Position of the row in the response, from 1."
+    "description": "Position of the row in the result, from 1."
    },
    {
     "name": "row_json",
@@ -1503,10 +1389,16 @@
     "description": "The row as JSON, with the query's own column names."
    },
    {
+    "name": "read_via",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "hand for a reading of the dashboard page, api for a query read through Dune's API."
+   },
+   {
     "name": "derived_from",
     "type": "VARCHAR",
     "unit": "text",
-    "description": "Credit to the dashboard and its creator."
+    "description": "Credit to the dashboard and its creator, or to the query's creator for an API read."
    }
   ],
   "rows": 2541,
@@ -1516,7 +1408,7 @@
  {
   "area": "NEAR Intents and revenue",
   "table": "fct_intents_1click_daily",
-  "description": "1Click per UTC day, from the Intents Explorer API. 1Click is one route into NEAR Intents, so its volume is part of the total in fct_intents_daily. Tallied per day, with no row or wallet address stored. History arrives out of order, so check which days are present before summing. Empty until INTENTS_EXPLORER_JWT is set and a snapshot is in the build.",
+  "description": "1Click per UTC day, from the Intents Explorer API. 1Click is one route into NEAR Intents, so its volume is part of the total in fct_intents_daily. Tallied per day, with no row or wallet address stored. History arrives out of order, so the table holds an unbroken run of recent days and, before it, one sampled day a week: sum or average only rows where is_in_daily_run is true. Empty until INTENTS_EXPLORER_JWT is set and a snapshot is in the build.",
   "grain": "date_day",
   "sources": "Intents Explorer API",
   "path": "data/gold/fct_intents_1click_daily.parquet",
@@ -1567,7 +1459,7 @@
     "name": "senders",
     "type": "BIGINT",
     "unit": "count",
-    "description": "Distinct sending wallets on finished swaps. Only the count is stored."
+    "description": "Distinct sending wallets on finished swaps. Only the count is stored. Empty before 2026, where the Explorer's rows carry no sender."
    },
    {
     "name": "recipients",
@@ -1579,17 +1471,23 @@
     "name": "share_of_all_intents_volume",
     "type": "DOUBLE",
     "unit": "fraction",
-    "description": "volume_usd divided by revenue.near.org's volume for all of Intents that day, which counts every route, confidential included, on the same basis every day. Not DefiLlama's: from 2026-04-01 to 08-31 that followed NearBlocks' public-only count, so a share of it read too high on those days."
+    "description": "volume_usd divided by fct_intents_daily.volume_usd: all of Intents that day, across every route, confidential included."
+   },
+   {
+    "name": "is_in_daily_run",
+    "type": "BOOLEAN",
+    "unit": "boolean",
+    "description": "True from the day after the newest missing day, so every day from there to the newest is present: from 2026-06-16 at the 2026-11-09 pin. Earlier rows are single days a week apart, tallied first so the whole range shows while the backfill fills the days between, newest first. Sum or average only where this is true, and read an earlier row as that one day, not as its week. The other fct_intents_1click tables carry the same flag."
    }
   ],
-  "rows": 206,
-  "first": "2025-03-30",
-  "last": "2026-11-08"
+  "rows": 582,
+  "first": "2025-03-27",
+  "last": "2026-11-09"
  },
  {
   "area": "NEAR Intents and revenue",
   "table": "fct_intents_1click_channel_daily",
-  "description": "1Click volume and app fees per UTC day, referral channel and status, from the Intents Explorer API. Empty until a snapshot with INTENTS_EXPLORER_JWT is in the build.",
+  "description": "1Click swaps per UTC day, referral channel and status, from the Intents Explorer API, with volume and app fees for finished swaps. A swap that was refunded, failed or is still processing keeps its count and has no USD value: the Explorer's figure for it is the amount asked for, which nothing checks, and one refunded swap on 2026-07-28 reads $29.99 trillion. Silver (stg_intents_explorer__channels) keeps those figures as tallied. Empty until a snapshot with INTENTS_EXPLORER_JWT is in the build.",
   "grain": "date_day, referral, status",
   "sources": "Intents Explorer API",
   "path": "data/gold/fct_intents_1click_channel_daily.parquet",
@@ -1610,7 +1508,7 @@
     "name": "status",
     "type": "VARCHAR",
     "unit": "text",
-    "description": "Swap status per the Explorer API."
+    "description": "Swap status per the Explorer API: SUCCESS, REFUNDED, FAILED or PROCESSING."
    },
    {
     "name": "swaps",
@@ -1622,24 +1520,30 @@
     "name": "amount_in_usd",
     "type": "DOUBLE",
     "unit": "USD",
-    "description": "Value paid in."
+    "description": "Value paid in. Empty unless status is SUCCESS."
    },
    {
     "name": "amount_out_usd",
     "type": "DOUBLE",
     "unit": "USD",
-    "description": "Value paid out."
+    "description": "Value paid out. Empty unless status is SUCCESS."
    },
    {
     "name": "app_fee_usd",
     "type": "DOUBLE",
     "unit": "USD",
-    "description": "App fees: appFees read as basis points of the value paid in."
+    "description": "App fees: appFees read as basis points of the value paid in. Empty unless status is SUCCESS."
+   },
+   {
+    "name": "is_in_daily_run",
+    "type": "BOOLEAN",
+    "unit": "boolean",
+    "description": "True where the day belongs to the unbroken run of recent days, false for a day sampled alone, one a week: see fct_intents_1click_daily.is_in_daily_run. Sum or average only where this is true."
    }
   ],
-  "rows": 18563,
-  "first": "2025-03-30",
-  "last": "2026-11-08"
+  "rows": 33875,
+  "first": "2025-03-27",
+  "last": "2026-11-09"
  },
  {
   "area": "NEAR Intents and revenue",
@@ -1708,16 +1612,22 @@
     "type": "DOUBLE",
     "unit": "USD",
     "description": "Value paid out."
+   },
+   {
+    "name": "is_in_daily_run",
+    "type": "BOOLEAN",
+    "unit": "boolean",
+    "description": "True where the day belongs to the unbroken run of recent days, false for a day sampled alone, one a week: see fct_intents_1click_daily.is_in_daily_run. Sum or average only where this is true."
    }
   ],
-  "rows": 86694,
-  "first": "2025-03-30",
-  "last": "2026-11-08"
+  "rows": 179626,
+  "first": "2025-03-27",
+  "last": "2026-11-09"
  },
  {
   "area": "NEAR Intents and revenue",
   "table": "fct_intents_1click_route_daily",
-  "description": "Finished 1Click swaps per UTC day, by how funds came in and went out, from the Intents Explorer API.",
+  "description": "Finished 1Click swaps per UTC day, by how funds came in and went out, from the Intents Explorer API. These are the user's legs, not where the swap settled: from 2026-11-03 most 1Click volume settles confidentially, since it is more than all public Intents volume, while its legs still read ORIGIN_CHAIN and DESTINATION_CHAIN.",
   "grain": "date_day, deposit_type, recipient_type",
   "sources": "Intents Explorer API",
   "path": "data/gold/fct_intents_1click_route_daily.parquet",
@@ -1751,11 +1661,17 @@
     "type": "DOUBLE",
     "unit": "USD",
     "description": "Value paid in."
+   },
+   {
+    "name": "is_in_daily_run",
+    "type": "BOOLEAN",
+    "unit": "boolean",
+    "description": "True where the day belongs to the unbroken run of recent days, false for a day sampled alone, one a week: see fct_intents_1click_daily.is_in_daily_run. Sum or average only where this is true."
    }
   ],
-  "rows": 778,
-  "first": "2025-03-30",
-  "last": "2026-11-08"
+  "rows": 2032,
+  "first": "2025-03-27",
+  "last": "2026-11-09"
  },
  {
   "area": "NEAR Intents and revenue",
@@ -1788,11 +1704,17 @@
     "type": "DOUBLE",
     "unit": "USD",
     "description": "Value paid in."
+   },
+   {
+    "name": "is_in_daily_run",
+    "type": "BOOLEAN",
+    "unit": "boolean",
+    "description": "True where the day belongs to the unbroken run of recent days, false for a day sampled alone, one a week: see fct_intents_1click_daily.is_in_daily_run. Sum or average only where this is true."
    }
   ],
-  "rows": 1004,
-  "first": "2025-03-30",
-  "last": "2026-11-08"
+  "rows": 2676,
+  "first": "2025-03-27",
+  "last": "2026-11-09"
  },
  {
   "area": "NEAR Intents and revenue",
@@ -1825,11 +1747,17 @@
     "type": "DOUBLE",
     "unit": "USD",
     "description": "Fees: appFees read as basis points of the value paid in."
+   },
+   {
+    "name": "is_in_daily_run",
+    "type": "BOOLEAN",
+    "unit": "boolean",
+    "description": "True where the day belongs to the unbroken run of recent days, false for a day sampled alone, one a week: see fct_intents_1click_daily.is_in_daily_run. Sum or average only where this is true."
    }
   ],
-  "rows": 608,
-  "first": "2025-05-25",
-  "last": "2026-11-08"
+  "rows": 1300,
+  "first": "2025-05-06",
+  "last": "2026-11-09"
  },
  {
   "area": "NEAR Intents and revenue",
@@ -1871,7 +1799,7 @@
  {
   "area": "NEAR Intents and revenue",
   "table": "fct_revenue_page_emissions",
-  "description": "NEAR's own year-to-date revenue and emissions. Kept apart from fct_supply_daily so the two can be compared.",
+  "description": "NEAR's own year-to-date revenue and emissions. Kept apart from fct_supply_daily so the two can be compared. The page's percentages are these NEAR amounts over reference_supply_near, so they are not repeated here.",
   "grain": "date_day",
   "sources": "revenue.near.org",
   "path": "data/gold/fct_revenue_page_emissions.parquet",
@@ -1898,25 +1826,7 @@
     "name": "reference_supply_near",
     "type": "DOUBLE",
     "unit": "NEAR",
-    "description": "Supply the page uses as its denominator."
-   },
-   {
-    "name": "gross_issuance_pct",
-    "type": "DOUBLE",
-    "unit": "percent",
-    "description": "Year-to-date emissions as a percentage of reference supply."
-   },
-   {
-    "name": "net_issuance_pct",
-    "type": "DOUBLE",
-    "unit": "percent",
-    "description": "Gross issuance minus the revenue offset."
-   },
-   {
-    "name": "offset_pct",
-    "type": "DOUBLE",
-    "unit": "percent",
-    "description": "Year-to-date revenue as a percentage of reference supply."
+    "description": "Supply the page divides by: total supply at the end of the day before the read, one figure for every day of a read. So each read moves every past percentage slightly, by about 0.0001 points a night."
    }
   ],
   "rows": 312,
@@ -1926,7 +1836,7 @@
  {
   "area": "NEAR Intents and revenue",
   "table": "fct_revenue_page_monthly",
-  "description": "NEAR's own monthly revenue series. The newest month may be incomplete.",
+  "description": "NEAR's own monthly revenue series. The newest month may be incomplete. The page's running totals equal the sums of these months, so they are not repeated here.",
   "grain": "month_start",
   "sources": "revenue.near.org",
   "path": "data/gold/fct_revenue_page_monthly.parquet",
@@ -1948,18 +1858,6 @@
     "type": "DOUBLE",
     "unit": "NEAR",
     "description": "Revenue that month in NEAR per revenue.near.org."
-   },
-   {
-    "name": "cumulative_revenue_usd",
-    "type": "DOUBLE",
-    "unit": "USD",
-    "description": "Revenue since the series began in 2025-08."
-   },
-   {
-    "name": "cumulative_revenue_near",
-    "type": "DOUBLE",
-    "unit": "NEAR",
-    "description": "Revenue since the series began in 2025-08, in NEAR."
    }
   ],
   "rows": 16,
@@ -2074,19 +1972,13 @@
     "name": "amount_usd",
     "type": "DOUBLE",
     "unit": "USD",
-    "description": "Signed value at transfer time, per FastNear, which gives it for some transfers only."
-   },
-   {
-    "name": "amount_usd_estimated",
-    "type": "DOUBLE",
-    "unit": "USD",
-    "description": "amount_usd where FastNear gave one; otherwise, for native NEAR and wNEAR, amount_token times the day's closing price from fct_market_daily. Other tokens stay empty. On transfers FastNear did value, the close-price figure was within 1.9% of it on the median transfer and within 7.7% on nine in ten."
+    "description": "Signed value: FastNear's at transfer time where it gives one, which it does for some transfers only; otherwise, for native NEAR and wNEAR, amount_token times the day's closing price from fct_market_daily. Other tokens stay empty. usd_basis says which. Where FastNear gave a value, the close-price figure was within 1.9% of it on the median transfer and within 7.7% on nine in ten."
    },
    {
     "name": "usd_basis",
     "type": "VARCHAR",
     "unit": "text",
-    "description": "transfer_time where amount_usd is FastNear's, daily_close where amount_usd_estimated is the close-price figure, empty where there is neither."
+    "description": "transfer_time where amount_usd is FastNear's, daily_close where it is the amount at the day's closing price, empty where there is neither."
    },
    {
     "name": "transaction_id",
@@ -2195,13 +2087,7 @@
     "name": "amount_usd",
     "type": "DOUBLE",
     "unit": "USD",
-    "description": "Signed value at transfer time, per FastNear, summed over the transfers it valued only."
-   },
-   {
-    "name": "amount_usd_estimated",
-    "type": "DOUBLE",
-    "unit": "USD",
-    "description": "Signed value summed over every transfer, taking FastNear's figure where there is one and the day's closing price for the rest of the NEAR and wNEAR transfers; see fct_wallet_transfers.amount_usd_estimated."
+    "description": "Signed value summed over the transfers: FastNear's figure where there is one, else the day's closing price for NEAR and wNEAR; see fct_wallet_transfers.usd_basis. Other tokens without FastNear's figure add nothing."
    }
   ],
   "rows": 3248,
@@ -2250,13 +2136,13 @@
     "name": "usd_in",
     "type": "DOUBLE",
     "unit": "USD",
-    "description": "Value received by the wallet, at transfer time."
+    "description": "Value received by the wallet: FastNear's at transfer time where it gives one, else the day's close for NEAR and wNEAR."
    },
    {
     "name": "usd_out",
     "type": "DOUBLE",
     "unit": "USD",
-    "description": "Value sent by the wallet, at transfer time, as a positive number."
+    "description": "Value sent by the wallet, valued as usd_in, as a positive number."
    },
    {
     "name": "first_seen",
@@ -2311,7 +2197,7 @@
     "name": "received_usd",
     "type": "DOUBLE",
     "unit": "USD",
-    "description": "Value received at transfer time, per FastNear. Empty on two days (6 NEAR each, the wallets' first receipts in September and October 2025) that FastNear did not value."
+    "description": "Value received: FastNear's at transfer time where it gives one, else the day's closing price; see fct_wallet_transfers.usd_basis."
    }
   ],
   "rows": 505,
@@ -2321,9 +2207,9 @@
  {
   "area": "Wallets",
   "table": "fct_wallet_balance_daily",
-  "description": "Native NEAR balance per crawled wallet per day: the last running balance reported that day, carried forward over days without transfers.",
+  "description": "Native NEAR balance per crawled wallet per day: the last running balance FastNear reports that day, carried forward over days without transfers. dq_reconciliation compares it with NearBlocks' own balance series.",
   "grain": "date_day, account_id",
-  "sources": "FastNear Transfers API, NearBlocks",
+  "sources": "FastNear Transfers API",
   "path": "data/gold/fct_wallet_balance_daily.parquet",
   "columns": [
    {
@@ -2349,12 +2235,6 @@
     "type": "BOOLEAN",
     "unit": "boolean",
     "description": "False means the balance was carried forward from an earlier day."
-   },
-   {
-    "name": "balance_near_nearblocks",
-    "type": "DOUBLE",
-    "unit": "NEAR",
-    "description": "Same balance per NearBlocks, as a check."
    }
   ],
   "rows": 4970,
@@ -2364,9 +2244,9 @@
  {
   "area": "Wallets",
   "table": "fct_wallet_holdings",
-  "description": "Point in time: tokens and native NEAR per tracked account, per snapshot. This cannot be backfilled, so history starts with the first snapshot. Symbol and decimals come from registry/tokens.csv where a token is listed, then from its contract's ft_metadata, which the nightly job reads for up to 2,000 tokens a night, then from the price list that prices the token (metadata_source says which). A list counts whole tokens with its own decimals, so its price and its decimals belong together, and the lists matched the contract on every token read so far; the test token_decimals_lists_match_contracts fails if that stops. A contract that has answered is final, even with an error, so no list fills in behind it. A token with none of the three keeps empty symbol, amount_token and decimals: nothing is guessed. Earlier snapshots convert too, because the latest answer for a token applies to all of them. value_usd multiplies amount_token by the price read in the same snapshot, joined on token_id from fct_token_prices, and value_status says why a row has none. Sum value_usd, not amount_token times price_usd: those rows include prices that would read $46.5B for one meme token at v2.ref-finance.near.",
+  "description": "Point in time: tokens and native NEAR per tracked account, per snapshot. This cannot be backfilled, so history starts with the first snapshot. Symbol and decimals come from registry/tokens.csv where a token is listed, then from its contract's ft_metadata, which the nightly job reads for up to 2,000 tokens a night, then from the price list that prices the token (metadata_source says which). A list counts whole tokens with its own decimals, so its price and its decimals belong together, and the lists matched the contract on every token read so far; the test token_decimals_lists_match_contracts fails if that stops. A contract that has answered is final, even with an error, so no list fills in behind it. A token with none of the three keeps empty symbol, amount_token and decimals: nothing is guessed. Earlier snapshots convert too, because the latest answer for a token applies to all of them. value_usd multiplies amount_token by the price read in the same snapshot, joined on token_id from fct_token_prices, which holds the price itself, and value_status says why a row has none. Sum value_usd, never amount_token times a list price: those prices include one that would read $46.5B for one meme token at v2.ref-finance.near. Native NEAR is the RPC view_account balance read the same night where there is one, because FastNear's account state for treasury.near read 47.76 NEAR on every snapshot while the account held about 1.59M.",
   "grain": "snapshot_date, account_id, token_id",
-  "sources": "FastNear /v1/account/{id}/full, registry/tokens.csv, 1Click, Rhea, RPC ft_metadata",
+  "sources": "FastNear /v1/account/{id}/full, RPC view_account, registry/tokens.csv, 1Click, Rhea, RPC ft_metadata",
   "path": "data/gold/fct_wallet_holdings.parquet",
   "columns": [
    {
@@ -2424,34 +2304,10 @@
     "description": "Block of the last balance change."
    },
    {
-    "name": "price_usd",
-    "type": "DOUBLE",
-    "unit": "USD per token",
-    "description": "The token's price from fct_token_prices, read in the same snapshot and matched on token_id. It stays here on rows that get no value, so a thin price can be seen. Never multiply it by amount_token yourself without checking value_status."
-   },
-   {
-    "name": "price_source",
-    "type": "VARCHAR",
-    "unit": "text",
-    "description": "Which list price_usd came from: oneclick or rhea. Native NEAR shows the source of wrap.near's price."
-   },
-   {
-    "name": "price_date",
-    "type": "DATE",
-    "unit": "date",
-    "description": "When price_usd was last set, as far as its list shows: 1Click's priceUpdatedAt, or for Rhea the first read showing this exact price. Earlier than snapshot_date means a price that has stopped changing."
-   },
-   {
-    "name": "price_depth_usd",
-    "type": "DOUBLE",
-    "unit": "USD",
-    "description": "Assets with a vetted price opposite this token in Rhea's pools, from fct_token_prices.depth_usd. Empty only where the token has no price."
-   },
-   {
     "name": "value_usd",
     "type": "DOUBLE",
     "unit": "USD",
-    "description": "amount_token times price_usd, where value_status is valued, and otherwise empty. Unvetted tokens are capped by depth, so this column is safe to sum. Rests on the contract's own decimals where metadata_source is ft_metadata, and on the list's where it is price_list."
+    "description": "amount_token times the snapshot's price for the token in fct_token_prices, where value_status is valued, and otherwise empty. Unvetted tokens are capped by depth, so this column is safe to sum. Rests on the contract's own decimals where metadata_source is ft_metadata, and on the list's where it is price_list."
    },
    {
     "name": "value_status",
@@ -2540,7 +2396,7 @@
  {
   "area": "Security and staking",
   "table": "fct_validator_epoch",
-  "description": "Validator set per epoch, for the epoch in force at the first block of each UTC day plus the current epoch read each night. NEAR runs about three epochs a day, so this is a daily sample of epochs, not every epoch. The archival node answers from 2026-04-19 and returns UNKNOWN_EPOCH for earlier epochs, so there is no history before then. An epoch read after it ended has final production counts; a nightly read of the current epoch is partial.",
+  "description": "Validator set per epoch, for the epoch in force at the first block of each UTC day plus the current epoch read each night. NEAR runs about three epochs a day, so this is a daily sample of epochs, not every epoch. Past epochs are backfilled newest first from the archival node, which returns UNKNOWN_EPOCH for some of them. Those days are not asked again and stay empty, so check which days are present before reading a trend. An epoch read after it ended has final production counts; a nightly read of the current epoch is partial.",
   "grain": "epoch_height, validator_account_id",
   "sources": "RPC validators",
   "path": "data/gold/fct_validator_epoch.parquet",
@@ -2582,16 +2438,10 @@
     "description": "Rank by stake, largest first."
    },
    {
-    "name": "is_slashed",
-    "type": "BOOLEAN",
-    "unit": "boolean",
-    "description": "Whether the validator was slashed."
-   },
-   {
     "name": "blocks_produced",
     "type": "BIGINT",
     "unit": "count",
-    "description": "Blocks produced."
+    "description": "Blocks produced. Like the five counts after it, final only where is_epoch_complete is true; for an epoch read in progress it stops where the read happened."
    },
    {
     "name": "blocks_expected",
@@ -2628,16 +2478,22 @@
     "type": "VARCHAR",
     "unit": "text",
     "description": "nightly for a mid-epoch read, archival for an epoch read after it ended."
+   },
+   {
+    "name": "is_epoch_complete",
+    "type": "BOOLEAN",
+    "unit": "boolean",
+    "description": "True when the epoch had ended at the read, so its production counts are final: the validators' expected blocks add up to the protocol's epoch length (43,200), since every block has one expected producer. False for an epoch the nightly read caught in progress, which at the 2026-11-09 pin had run between 1,297 and 41,236 blocks. The stake columns do not depend on it: stakes are fixed when an epoch starts. The backfill reads each such epoch again once it has ended."
    }
   ],
-  "rows": 105429,
+  "rows": 136648,
   "first": null,
   "last": null
  },
  {
   "area": "Security and staking",
   "table": "fct_validator_summary",
-  "description": "Decentralization per epoch: validator count, stake concentration and Nakamoto coefficients. One epoch per day, the one in force at the day's first block, plus the current epoch read each night: see fct_validator_epoch. History starts on 2026-04-19.",
+  "description": "Decentralization per epoch: validator count, stake concentration and Nakamoto coefficients. One epoch per day, the one in force at the day's first block, plus the current epoch read each night: see fct_validator_epoch. History is backfilled newest first and has gaps on the days whose epoch the archival node refused.",
   "grain": "epoch_height",
   "sources": "fct_validator_epoch, dim_block_day",
   "path": "data/gold/fct_validator_summary.parquet",
@@ -2658,7 +2514,7 @@
     "name": "validators",
     "type": "BIGINT",
     "unit": "count",
-    "description": "Validators in the epoch."
+    "description": "Validators in the epoch. It moves by a dozen or more from one epoch to the next, because pools that are offline are kicked out and return on their standing stake: epochs 4944, 4947, 4948 and 4950 read 335, 352, 339 and 352 on the chain itself (checked 2026-11-10). Stake-weighted measures are steadier."
    },
    {
     "name": "total_stake_near",
@@ -2697,25 +2553,31 @@
     "description": "Fewest validators holding over two thirds of stake."
    },
    {
+    "name": "blocks_counted",
+    "type": "HUGEINT",
+    "unit": "blocks",
+    "description": "Blocks of the epoch the read covers: the validators' expected blocks added up. 43,200, the epoch length, or a few more for an epoch read after it ended; fewer for one read in progress."
+   },
+   {
+    "name": "is_epoch_complete",
+    "type": "BOOLEAN",
+    "unit": "boolean",
+    "description": "True when the epoch had ended at the read: see fct_validator_epoch.is_epoch_complete. Every measure in this table holds either way, because stakes are fixed when an epoch starts."
+   },
+   {
     "name": "approx_date_day",
     "type": "DATE",
     "unit": "date",
-    "description": "Date of the epoch's start, from the nearest daily block. Empty if none is within a day."
-   },
-   {
-    "name": "total_supply_near",
-    "type": "DOUBLE",
-    "unit": "NEAR",
-    "description": "Total supply from the nearest daily block."
+    "description": "Date of the epoch's start, from the nearest daily block. Empty if none is within a day. Not a key: an epoch lasts about seven hours, so one day can hold two rows, and does wherever both the nightly read and the backfill caught an epoch that started that day. To chart by day, take one row per day or average them."
    },
    {
     "name": "staking_ratio",
     "type": "DOUBLE",
     "unit": "fraction",
-    "description": "total_stake_near divided by total supply."
+    "description": "total_stake_near divided by total supply in the nearest earlier daily block (dim_block_day)."
    }
   ],
-  "rows": 262,
+  "rows": 371,
   "first": null,
   "last": null
  },
@@ -2737,7 +2599,7 @@
     "name": "txns",
     "type": "BIGINT",
     "unit": "count",
-    "description": "Transactions to the signer contract."
+    "description": "Transactions to the signer contract. fct_contract_daily has the same count for v1.signer from NearBlocks' account statistics, which dq_reconciliation checks."
    },
    {
     "name": "signers",
@@ -2833,7 +2695,7 @@
  {
   "area": "Security and staking",
   "table": "fct_mpc_operators",
-  "description": "MPC operators as NearBlocks reports them, per snapshot, with the TEE status it shows. Read fct_mpc_participants for what the contract itself says.",
+  "description": "MPC operators as NearBlocks reports them, per snapshot: the list and each node's address. The operator list and the threshold are the contract's, in fct_mpc_participants and fct_mpc_state: a data test holds NearBlocks' list to the contract's, and dq_reconciliation its threshold. NearBlocks also serves a validator mark and three TEE fields, which have held no value on any read (false, none and empty) and say nothing either way about whether a node runs in a TEE, so they stay in silver; a data test says when one starts to carry a value.",
   "grain": "snapshot_date, operator_account_id",
   "sources": "NearBlocks /v3/multichain/mpcs",
   "path": "data/gold/fct_mpc_operators.parquet",
@@ -2849,36 +2711,6 @@
     "type": "VARCHAR",
     "unit": "account id",
     "description": "MPC operator account."
-   },
-   {
-    "name": "threshold",
-    "type": "INTEGER",
-    "unit": "count",
-    "description": "Signers required."
-   },
-   {
-    "name": "is_validator",
-    "type": "BOOLEAN",
-    "unit": "boolean",
-    "description": "Whether NearBlocks marks the operator as a validator."
-   },
-   {
-    "name": "tee_status",
-    "type": "VARCHAR",
-    "unit": "text",
-    "description": "TEE status as NearBlocks shows it. A blank or none value means NearBlocks has no attestation for it, which does not prove the node runs outside a TEE."
-   },
-   {
-    "name": "tee_expiry",
-    "type": "VARCHAR",
-    "unit": "text",
-    "description": "TEE attestation expiry, if shown."
-   },
-   {
-    "name": "tee_image_hash",
-    "type": "VARCHAR",
-    "unit": "hash",
-    "description": "TEE image hash, if shown."
    },
    {
     "name": "node_url",
@@ -2930,10 +2762,10 @@
     "description": "Tokens outstanding."
    },
    {
-    "name": "staked_near",
+    "name": "delegated_near",
     "type": "DOUBLE",
     "unit": "NEAR",
-    "description": "NEAR staked by the contract. Empty where the contract has no such view."
+    "description": "NEAR the contract has staked with validators, read from the contract. For rNEAR until its get_total_staked_balance is read, from the first night after 2026-11-10, this is token_supply times price_near, which is the same figure because a contract sets its price as staked NEAR divided by supply: a data test holds the two within 0.01% wherever both exist."
    }
   ],
   "rows": 27,
@@ -3196,19 +3028,7 @@
     "name": "apy_pct",
     "type": "DOUBLE",
     "unit": "percent",
-    "description": "Total APY as DefiLlama reports it."
-   },
-   {
-    "name": "apy_base_pct",
-    "type": "DOUBLE",
-    "unit": "percent",
-    "description": "Base APY."
-   },
-   {
-    "name": "apy_reward_pct",
-    "type": "DOUBLE",
-    "unit": "percent",
-    "description": "Reward APY."
+    "description": "Total APY as DefiLlama reports it. DefiLlama splits it into base and reward; no NEAR pool has had a reward APY, so the base has equalled this on every row and the split stays in silver. A data test says when a reward appears."
    }
   ],
   "rows": 90,
@@ -3218,9 +3038,9 @@
  {
   "area": "Market and peers",
   "table": "fct_market_daily",
-  "description": "NEAR price and market cap per day, aligned to the close of the UTC day. price_usd prefers CoinMetrics; each source keeps its own column. market_cap_usd is price times circulating supply built from the chain, which is total supply minus what lockups still lock. See docs/CIRCULATING_SUPPLY.md.",
+  "description": "NEAR price and market cap per UTC day, one column per measure, aligned to the close of the UTC day. price_usd takes the first source with a value: CoinMetrics, Coinbase, DefiLlama, then NearBlocks. price_basis names it, and dq_reconciliation compares the four. market_cap_usd is price times the circulating supply built from the chain in fct_circulating_supply_daily, which is total supply minus what lockups still lock. See docs/CIRCULATING_SUPPLY.md. CoinMetrics' own market cap is compared in dq_reconciliation: its supply is NearBlocks' legacy endpoint through CoinGecko, which froze in August 2025 and has been total supply since 2025-10-25.",
   "grain": "date_day",
-  "sources": "CoinMetrics, Coinbase, DefiLlama, NearBlocks, lockup contracts read on chain",
+  "sources": "CoinMetrics, Coinbase, DefiLlama, NearBlocks, fct_circulating_supply_daily, fct_supply_daily",
   "path": "data/gold/fct_market_daily.parquet",
   "columns": [
    {
@@ -3233,97 +3053,31 @@
     "name": "price_usd",
     "type": "DOUBLE",
     "unit": "USD",
-    "description": "NEAR close: CoinMetrics, else DefiLlama, else NearBlocks."
+    "description": "NEAR close of the UTC day, from the first of CoinMetrics, Coinbase, DefiLlama and NearBlocks that has one; see price_basis. DefiLlama and NearBlocks stamp a day at 00:00 UTC, so their values are moved back a day to the close."
+   },
+   {
+    "name": "price_basis",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "Which source price_usd comes from: coinmetrics, coinbase, defillama or nearblocks."
    },
    {
     "name": "market_cap_usd",
     "type": "DOUBLE",
     "unit": "USD",
-    "description": "price_usd times circulating_supply_near: every token not subject to a lockup, including what the NEAR Foundation holds outside lockups. Empty before transfers were enabled on 2020-10-13. Do not read this next to a peer's as the same measure: see market_cap_basis in fct_peer_daily."
+    "description": "price_usd times fct_circulating_supply_daily.circulating_supply_near: every token not subject to a lockup, including what the NEAR Foundation holds outside lockups. Empty before transfers were enabled on 2020-10-13. Do not read this next to a peer's as the same measure: see market_cap_basis in fct_peer_daily."
    },
    {
     "name": "fully_diluted_value_usd",
     "type": "DOUBLE",
     "unit": "USD",
-    "description": "price_usd times total supply. Since 2025-10-23 it is what other services publish as NEAR's market cap, and it runs about 0.2% above market_cap_usd."
-   },
-   {
-    "name": "market_cap_usd_coinmetrics",
-    "type": "DOUBLE",
-    "unit": "USD",
-    "description": "CoinMetrics' CapMrktEstUSD, kept for comparison. Its supply is NearBlocks' legacy endpoint through CoinGecko, so it froze with NearBlocks in August 2025 and has been total supply since 2025-10-25."
-   },
-   {
-    "name": "price_usd_coinmetrics",
-    "type": "DOUBLE",
-    "unit": "USD",
-    "description": "CoinMetrics reference rate at the day's close."
-   },
-   {
-    "name": "price_usd_coinbase_close",
-    "type": "DOUBLE",
-    "unit": "USD",
-    "description": "Coinbase NEAR-USD close."
-   },
-   {
-    "name": "price_usd_defillama",
-    "type": "DOUBLE",
-    "unit": "USD",
-    "description": "DefiLlama price, moved back one day from its 00:00 stamp to align with the close."
-   },
-   {
-    "name": "price_usd_nearblocks",
-    "type": "DOUBLE",
-    "unit": "USD",
-    "description": "NearBlocks price, moved back one day from its 00:00 stamp to align with the close."
-   },
-   {
-    "name": "open_usd",
-    "type": "DOUBLE",
-    "unit": "USD",
-    "description": "Coinbase open."
-   },
-   {
-    "name": "high_usd",
-    "type": "DOUBLE",
-    "unit": "USD",
-    "description": "Coinbase high."
-   },
-   {
-    "name": "low_usd",
-    "type": "DOUBLE",
-    "unit": "USD",
-    "description": "Coinbase low."
-   },
-   {
-    "name": "coinbase_volume_near",
-    "type": "DOUBLE",
-    "unit": "NEAR",
-    "description": "Coinbase traded volume."
+    "description": "price_usd times total supply from fct_supply_daily. Since 2025-10-23 it is what other services publish as NEAR's market cap, and it runs about 0.2% above market_cap_usd."
    },
    {
     "name": "reported_spot_volume_usd",
     "type": "DOUBLE",
     "unit": "USD",
-    "description": "Reported spot volume per CoinMetrics."
-   },
-   {
-    "name": "circulating_supply_near",
-    "type": "DOUBLE",
-    "unit": "NEAR",
-    "description": "Every token not subject to a lockup at the day's close, built from the chain: see fct_circulating_supply_daily. Empty before transfers were enabled on 2020-10-13."
-   },
-   {
-    "name": "circulating_share_of_total",
-    "type": "DOUBLE",
-    "unit": "fraction",
-    "description": "circulating_supply_near divided by total supply."
-   },
-   {
-    "name": "circulating_supply_near_nearblocks",
-    "type": "DOUBLE",
-    "unit": "NEAR",
-    "description": "NearBlocks' /v1/charts figure, kept as a test of the column above. Stuck at 1,249,836,992 since 2025-08-27, when NearBlocks stopped computing it, and too high from 2024-08-12 to 2024-12-28, when its job was failing."
+    "description": "Spot trading volume across exchanges as reported to CoinMetrics."
    }
   ],
   "rows": 2302,
@@ -3433,7 +3187,13 @@
     "name": "price_usd",
     "type": "DOUBLE",
     "unit": "USD",
-    "description": "Close: CoinMetrics, else DefiLlama."
+    "description": "Close of the UTC day: CoinMetrics, else DefiLlama, which is the only source for TON and for Sui before 2023-08-17. NEAR's is fct_market_daily's."
+   },
+   {
+    "name": "price_basis",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "Which source price_usd comes from: coinmetrics or defillama, or for NEAR whichever fct_market_daily used."
    },
    {
     "name": "market_cap_usd",
@@ -3445,7 +3205,7 @@
     "name": "implied_supply_tokens",
     "type": "DOUBLE",
     "unit": "native tokens",
-    "description": "market_cap_usd divided by the CoinMetrics price: the supply behind the cap. On 2026-11-05, as a share of total supply read from each chain: Sui 41% of 10B, Aptos 73%, Solana 93%, Avalanche 93%, Ethereum 100%, NEAR 99.8%."
+    "description": "market_cap_usd divided by price_usd: the supply behind the cap. On 2026-11-05, as a share of total supply read from each chain: Sui 41% of 10B, Aptos 73%, Solana 93%, Avalanche 93%, Ethereum 100%, NEAR 99.8%."
    },
    {
     "name": "market_cap_basis",
@@ -3490,7 +3250,7 @@
     "description": "True while this day's fees_usd and revenue_usd can still change, by the rule on fct_intents_daily: until they have been read 3 nights after the day ended, so the newest two days of a nightly build. NEAR's fees are mostly Intents fees and settle with them: they read $33,285 for 2026-10-31 and $146,822 two nights later. Every chain gets the same rule, so filtering on this column cuts them all at the same day. The other chains' first reads also run low, by up to about 6% for fees on Ethereum, Solana and Sui, but they have no fixed settling time, so False does not mean settled for them. A data test holds the number for NEAR only."
    }
   ],
-  "rows": 15109,
+  "rows": 15153,
   "first": "2017-09-27",
   "last": "2026-11-08"
  },
@@ -3647,9 +3407,9 @@
     "description": "How this row in the history file was reached."
    }
   ],
-  "rows": 29,
+  "rows": 30,
   "first": "2026-09-28",
-  "last": "2026-11-05"
+  "last": "2026-11-06"
  },
  {
   "area": "Market and peers",
@@ -3757,16 +3517,16 @@
  {
   "area": "Developers and governance",
   "table": "fct_dev_activity_weekly",
-  "description": "Commits and active authors per tracked repository per week. A fixed repository list, not a whole-ecosystem count; GitHub's author list covers each repository's top 100. Two measures sit side by side. commits and active_authors are GitHub's own statistics: they count more than the default branch holds (about a quarter more for near/nearcore, which keeps release branches), and they come back as a year of zeros with no contributors for a repository with over 10,000 commits (anza-xyz/agave), so both are empty for a repository whose year of readings is all zero although GitHub says it was pushed to in that year. commits_default_branch and authors_default_branch are counted from the commits list with one method for every repository, so compare repositories with those.",
+  "description": "Commits and active authors per tracked repository per week, counted from GitHub's commits list on each repository's default branch, by committer date, with one method for every repository. A fixed repository list, not a whole-ecosystem count. GitHub's own weekly statistic is not used: it counts beyond the default branch (about a third more for near/nearcore, which keeps release branches, and less for some repositories), and it returns a year of zeros for a repository with over 10,000 commits (anza-xyz/agave). Silver keeps it, and dq_reconciliation compares it for near/nearcore.",
   "grain": "week_start, repo",
-  "sources": "GitHub statistics API, GitHub commits list",
+  "sources": "GitHub commits list",
   "path": "data/gold/fct_dev_activity_weekly.parquet",
   "columns": [
    {
     "name": "week_start",
     "type": "DATE",
     "unit": "date",
-    "description": "Sunday that starts the week, UTC, which is how GitHub cuts its weeks."
+    "description": "Sunday that starts the week, UTC, which is how GitHub cuts its weeks. On the date spine this is dim_date.week_start_sunday; dim_date.week_start is a Monday."
    },
    {
     "name": "repo",
@@ -3785,18 +3545,6 @@
     "type": "VARCHAR",
     "unit": "text",
     "description": "Kind of repository."
-   },
-   {
-    "name": "commits",
-    "type": "BIGINT",
-    "unit": "count",
-    "description": "Commits that week per GitHub's statistics endpoint, which counts beyond the default branch. Empty where GitHub served a year of zeros for a repository it reports as pushed to; see the table description."
-   },
-   {
-    "name": "active_authors",
-    "type": "BIGINT",
-    "unit": "count",
-    "description": "Authors with at least one commit that week, among GitHub's top 100 for the repository, per GitHub's statistics. Empty where commits is."
    },
    {
     "name": "commits_default_branch",
@@ -3995,7 +3743,7 @@
  {
   "area": "Developers and governance",
   "table": "fct_governance_proposals",
-  "description": "House of Stake proposals read directly from vote.dao, as of the newest snapshot. A status of Voting means the numbers are still moving. Test and spam proposals are kept; filter them on status or title.",
+  "description": "House of Stake proposals read directly from vote.dao, as of the newest snapshot. A status of Voting means the numbers are still moving. Proposals made to try the contract out, and jokes, are kept and marked with is_test: 11 of the 30 at the 2026-11-09 pin.",
   "grain": "proposal_id",
   "sources": "RPC vote.dao get_proposals",
   "path": "data/gold/fct_governance_proposals.parquet",
@@ -4113,6 +3861,12 @@
     "type": "DATE",
     "unit": "date",
     "description": "Date of the reading."
+   },
+   {
+    "name": "is_test",
+    "type": "BOOLEAN",
+    "unit": "boolean",
+    "description": "True for a proposal made to try the contract out or as a joke, not a real one: its title says test, or it has a link that is not a forum thread on gov.near.org (https://gov.near.org/t/...). A real proposal either links to its thread or has no link. One test proposal went to a vote and was defeated; a data test fails if a flagged proposal ever passes."
    }
   ],
   "rows": 30,
@@ -4153,9 +3907,9 @@
  {
   "area": "Data quality",
   "table": "dq_reconciliation",
-  "description": "Every place two sources should agree, side by side. A gap beyond tolerance must have a written explanation, or make verify fails.",
+  "description": "Every place two sources should agree, side by side. Gold keeps one column per measure, so the sources a gold table chooses between are compared here, read from silver. A gap beyond tolerance must have a written explanation, or make verify fails.",
   "grain": "check_id, subject",
-  "sources": "gold tables",
+  "sources": "gold and silver tables",
   "path": "data/gold/dq_reconciliation.parquet",
   "columns": [
    {
@@ -4231,14 +3985,14 @@
     "description": "Why the gap exists, from registry/reconciliation_notes.csv."
    }
   ],
-  "rows": 70,
+  "rows": 78,
   "first": null,
   "last": null
  },
  {
   "area": "Data quality",
   "table": "dq_freshness",
-  "description": "How current each daily dataset is, relative to the newest snapshot the build can see.",
+  "description": "How current each dataset is, relative to the newest snapshot the build can see, and whether that is too old. Covers the daily series and the datasets read as a snapshot each night. A dataset that falls further behind than its limit is stale, and the data test no_dataset_is_stale then fails, so a source that stops arriving is noticed.",
   "grain": "model",
   "sources": "silver tables",
   "path": "data/gold/dq_freshness.parquet",
@@ -4256,6 +4010,12 @@
     "description": "Silver model name."
    },
    {
+    "name": "cadence",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "daily for a series with one value per day, snapshot for a dataset that holds only what was read each night."
+   },
+   {
     "name": "latest_snapshot",
     "type": "DATE",
     "unit": "date",
@@ -4265,7 +4025,7 @@
     "name": "latest_data_day",
     "type": "DATE",
     "unit": "date",
-    "description": "Newest day of data."
+    "description": "Newest day of data. For a snapshot dataset, the day of its newest read."
    },
    {
     "name": "as_of",
@@ -4277,7 +4037,19 @@
     "name": "days_behind",
     "type": "BIGINT",
     "unit": "days",
-    "description": "Days between latest_data_day and as_of."
+    "description": "Days between latest_data_day and as_of. A daily series normally reads 1, because the newest full day is yesterday."
+   },
+   {
+    "name": "max_days_behind",
+    "type": "INTEGER",
+    "unit": "days",
+    "description": "The most days this dataset may fall behind before it counts as stale: 3 for a daily series and 2 for a snapshot, which leaves room for one missed night, and 7 for the Bitwise fund, which trades on weekdays and fills its chart a day late. Empty where no limit applies: a reading taken by hand, and NearBlocks' legacy charts, which are switched off on 2026-11-22."
+   },
+   {
+    "name": "is_stale",
+    "type": "BOOLEAN",
+    "unit": "boolean",
+    "description": "True when days_behind is over max_days_behind. Always false where there is no limit."
    },
    {
     "name": "rows_all_snapshots",
@@ -4286,7 +4058,7 @@
     "description": "Rows across all snapshots."
    }
   ],
-  "rows": 24,
+  "rows": 55,
   "first": null,
   "last": null
  },
@@ -4402,9 +4174,9 @@
     "description": "Time taken."
    }
   ],
-  "rows": 600,
+  "rows": 603,
   "first": "2026-11-01",
-  "last": "2026-11-09"
+  "last": "2026-11-10"
  },
  {
   "area": "Data quality",
@@ -4475,8 +4247,8 @@
     "description": "Any change made before saving, such as trimming."
    }
   ],
-  "rows": 648,
+  "rows": 652,
   "first": "2026-10-28",
-  "last": "2026-11-09"
+  "last": "2026-11-10"
  }
 ]
