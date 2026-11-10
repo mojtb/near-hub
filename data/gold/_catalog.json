@@ -50,9 +50,9 @@
     "description": "True from 2026-02-23, the first day of Intents buybacks per DefiLlama's adapter."
    }
   ],
-  "rows": 2302,
+  "rows": 2303,
   "first": "2020-07-21",
-  "last": "2026-11-08"
+  "last": "2026-11-09"
  },
  {
   "area": "Calendar and registry",
@@ -342,9 +342,9 @@
     "description": "latest_protocol_version in the block header: the version the block's producer supports, which can lead the version in force by days. 87 was in the header by the first block of 2026-11-04 and took effect at 11:46:29 UTC that day, with block 223012337. Date a change from registry/protocol_upgrades.csv or fct_protocol_config."
    }
   ],
-  "rows": 731,
+  "rows": 732,
   "first": "2020-08-01",
-  "last": "2026-11-09"
+  "last": "2026-11-10"
  },
  {
   "area": "Calendar and registry",
@@ -621,9 +621,9 @@
     "description": "NEAR moved by transactions: /v3/txn-stats, else /v1/charts."
    }
   ],
-  "rows": 2302,
+  "rows": 2303,
   "first": "2020-07-21",
-  "last": "2026-11-08"
+  "last": "2026-11-09"
  },
  {
   "area": "Chain usage, supply and parameters",
@@ -682,9 +682,9 @@
     "description": "minted_near times 365, divided by total supply. Noisy for a single day."
    }
   ],
-  "rows": 2302,
+  "rows": 2303,
   "first": "2020-07-21",
-  "last": "2026-11-08"
+  "last": "2026-11-09"
  },
  {
   "area": "Chain usage, supply and parameters",
@@ -743,9 +743,9 @@
     "description": "Held by lockups that exist today and whose owner has still not turned transfers on, so none of it has ever left its contract. It counts as circulating in circulating_supply_near, as in NEAR Explorer; a stricter reading subtracts it. Understated in the past, because a lockup that turned transfers on later is not in it for any day."
    }
   ],
-  "rows": 2218,
+  "rows": 2219,
   "first": "2020-10-13",
-  "last": "2026-11-08"
+  "last": "2026-11-09"
  },
  {
   "area": "Chain usage, supply and parameters",
@@ -834,9 +834,9 @@
     "description": "Account that receives the protocol reward share."
    }
   ],
-  "rows": 10,
+  "rows": 11,
   "first": "2026-10-28",
-  "last": "2026-11-09"
+  "last": "2026-11-10"
  },
  {
   "area": "Chain usage, supply and parameters",
@@ -889,9 +889,9 @@
     "description": "Distinct accounts the contract sent to."
    }
   ],
-  "rows": 18523,
+  "rows": 18567,
   "first": "2023-12-01",
-  "last": "2026-11-08"
+  "last": "2026-11-09"
  },
  {
   "area": "Chain usage, supply and parameters",
@@ -986,9 +986,9 @@
     "description": "Block height span of the day."
    }
   ],
-  "rows": 202010,
+  "rows": 202696,
   "first": "2025-11-10",
-  "last": "2026-11-08"
+  "last": "2026-11-09"
  },
  {
   "area": "NEAR Intents and revenue",
@@ -1083,9 +1083,9 @@
     "description": "True while this day's fee and revenue columns can still change, which is until they have been read 3 nights after the day ended: the newest two days of a nightly build. revenue.near.org and DefiLlama publish a day before its data has fully arrived, then rewrite it. The page read $9,319 for 2026-11-03 and $164,920 a night later, and DefiLlama follows a night after the page. Leave these days out of trends and totals. Volume columns are not affected. The number comes from few reads (2026-10-28 to 2026-11-05), and a data test fails if a figure moves in the day's first week after the flag clears. False does not mean final for good: a later rewrite of history would show in dq_revisions."
    }
   ],
-  "rows": 699,
+  "rows": 700,
   "first": "2024-12-10",
-  "last": "2026-11-08"
+  "last": "2026-11-09"
  },
  {
   "area": "NEAR Intents and revenue",
@@ -1120,9 +1120,9 @@
     "description": "Swaps."
    }
   ],
-  "rows": 10670,
+  "rows": 10694,
   "first": "2025-10-29",
-  "last": "2026-11-08"
+  "last": "2026-11-09"
  },
  {
   "area": "NEAR Intents and revenue",
@@ -1175,9 +1175,9 @@
     "description": "Swaps."
    }
   ],
-  "rows": 39789,
+  "rows": 39865,
   "first": "2025-11-02",
-  "last": "2026-11-08"
+  "last": "2026-11-09"
  },
  {
   "area": "NEAR Intents and revenue",
@@ -1792,9 +1792,9 @@
     "description": "Share of gross fees captured as net revenue."
    }
   ],
-  "rows": 108,
+  "rows": 120,
   "first": "2026-11-01",
-  "last": "2026-11-09"
+  "last": "2026-11-10"
  },
  {
   "area": "NEAR Intents and revenue",
@@ -1829,9 +1829,9 @@
     "description": "Supply the page divides by: total supply at the end of the day before the read, one figure for every day of a read. So each read moves every past percentage slightly, by about 0.0001 points a night."
    }
   ],
-  "rows": 312,
+  "rows": 313,
   "first": "2026-01-01",
-  "last": "2026-11-08"
+  "last": "2026-11-09"
  },
  {
   "area": "NEAR Intents and revenue",
@@ -2023,9 +2023,9 @@
     "description": "Account that sent the receipt."
    }
   ],
-  "rows": 12074,
+  "rows": 12114,
   "first": "2020-07-22",
-  "last": "2026-11-08"
+  "last": "2026-11-09"
  },
  {
   "area": "Wallets",
@@ -2090,9 +2090,9 @@
     "description": "Signed value summed over the transfers: FastNear's figure where there is one, else the day's closing price for NEAR and wNEAR; see fct_wallet_transfers.usd_basis. Other tokens without FastNear's figure add nothing."
    }
   ],
-  "rows": 3248,
+  "rows": 3251,
   "first": "2020-07-22",
-  "last": "2026-11-08"
+  "last": "2026-11-09"
  },
  {
   "area": "Wallets",
@@ -2200,9 +2200,9 @@
     "description": "Value received: FastNear's at transfer time where it gives one, else the day's closing price; see fct_wallet_transfers.usd_basis."
    }
   ],
-  "rows": 505,
+  "rows": 507,
   "first": "2025-09-22",
-  "last": "2026-11-08"
+  "last": "2026-11-09"
  },
  {
   "area": "Wallets",
@@ -2237,9 +2237,9 @@
     "description": "False means the balance was carried forward from an earlier day."
    }
   ],
-  "rows": 4970,
+  "rows": 4976,
   "first": "2020-07-22",
-  "last": "2026-11-08"
+  "last": "2026-11-09"
  },
  {
   "area": "Wallets",
@@ -2316,9 +2316,9 @@
     "description": "Why the row has a value or not, checked in this order. no_price: no list has a positive price in this snapshot. no_decimals: decimals are unknown, which the metadata backlog clears. decimals_disagree: the list counts whole tokens with other decimals than the holding, so the price would be off by powers of ten. sources_disagree: 1Click and Rhea are more than price_disagreement_pct (20) apart, and nothing here says which is right. thin_price: an unvetted token whose position would be worth more than price_depth_multiple (3) times price_depth_usd. valued: value_usd is filled."
    }
   ],
-  "rows": 76757,
+  "rows": 85362,
   "first": "2026-10-28",
-  "last": "2026-11-09"
+  "last": "2026-11-10"
  },
  {
   "area": "Wallets",
@@ -2389,9 +2389,9 @@
     "description": "Share of the balance held by the top 100. Not a share of total supply."
    }
   ],
-  "rows": 6300,
+  "rows": 7000,
   "first": "2026-11-01",
-  "last": "2026-11-09"
+  "last": "2026-11-10"
  },
  {
   "area": "Security and staking",
@@ -2486,7 +2486,7 @@
     "description": "True when the epoch had ended at the read, so its production counts are final: the validators' expected blocks add up to the protocol's epoch length (43,200), since every block has one expected producer. False for an epoch the nightly read caught in progress, which at the 2026-11-09 pin had run between 1,297 and 41,236 blocks. The stake columns do not depend on it: stakes are fixed when an epoch starts. The backfill reads each such epoch again once it has ended."
    }
   ],
-  "rows": 136648,
+  "rows": 137350,
   "first": null,
   "last": null
  },
@@ -2577,7 +2577,7 @@
     "description": "total_stake_near divided by total supply in the nearest earlier daily block (dim_block_day)."
    }
   ],
-  "rows": 371,
+  "rows": 373,
   "first": null,
   "last": null
  },
@@ -2614,9 +2614,9 @@
     "description": "Gas burnt by the signer contract."
    }
   ],
-  "rows": 373,
+  "rows": 374,
   "first": "2025-11-01",
-  "last": "2026-11-08"
+  "last": "2026-11-09"
  },
  {
   "area": "Security and staking",
@@ -2657,9 +2657,9 @@
     "description": "MPC key generation epoch."
    }
   ],
-  "rows": 10,
+  "rows": 11,
   "first": "2026-10-28",
-  "last": "2026-11-09"
+  "last": "2026-11-10"
  },
  {
   "area": "Security and staking",
@@ -2688,9 +2688,9 @@
     "description": "Operator's id in the contract."
    }
   ],
-  "rows": 157,
+  "rows": 173,
   "first": "2026-10-28",
-  "last": "2026-11-09"
+  "last": "2026-11-10"
  },
  {
   "area": "Security and staking",
@@ -2719,9 +2719,9 @@
     "description": "Operator's public node address."
    }
   ],
-  "rows": 141,
+  "rows": 157,
   "first": "2026-11-01",
-  "last": "2026-11-09"
+  "last": "2026-11-10"
  },
  {
   "area": "Security and staking",
@@ -2768,9 +2768,9 @@
     "description": "NEAR the contract has staked with validators, read from the contract. For rNEAR until its get_total_staked_balance is read, from the first night after 2026-11-10, this is token_supply times price_near, which is the same figure because a contract sets its price as staked NEAR divided by supply: a data test holds the two within 0.01% wherever both exist."
    }
   ],
-  "rows": 27,
+  "rows": 30,
   "first": "2026-11-01",
-  "last": "2026-11-09"
+  "last": "2026-11-10"
  },
  {
   "area": "Capital and DeFi",
@@ -2817,9 +2817,9 @@
     "description": "Total value locked."
    }
   ],
-  "rows": 16841,
+  "rows": 16857,
   "first": "2021-08-20",
-  "last": "2026-11-08"
+  "last": "2026-11-09"
  },
  {
   "area": "Capital and DeFi",
@@ -2860,9 +2860,9 @@
     "description": "USD value of every asset on NEAR in the exchange's labelled wallets, at DefiLlama's prices."
    }
   ],
-  "rows": 5910,
+  "rows": 5919,
   "first": "2022-11-14",
-  "last": "2026-11-08"
+  "last": "2026-11-09"
  },
  {
   "area": "Capital and DeFi",
@@ -2933,9 +2933,9 @@
     "description": "All time."
    }
   ],
-  "rows": 266,
+  "rows": 294,
   "first": "2026-10-28",
-  "last": "2026-11-09"
+  "last": "2026-11-10"
  },
  {
   "area": "Capital and DeFi",
@@ -2982,9 +2982,9 @@
     "description": "Circulating supply on the chain, in pegged units."
    }
   ],
-  "rows": 3530,
+  "rows": 3932,
   "first": "2026-11-01",
-  "last": "2026-11-09"
+  "last": "2026-11-10"
  },
  {
   "area": "Capital and DeFi",
@@ -3031,9 +3031,9 @@
     "description": "Total APY as DefiLlama reports it. DefiLlama splits it into base and reward; no NEAR pool has had a reward APY, so the base has equalled this on every row and the split stays in silver. A data test says when a reward appears."
    }
   ],
-  "rows": 90,
+  "rows": 100,
   "first": "2026-11-01",
-  "last": "2026-11-09"
+  "last": "2026-11-10"
  },
  {
   "area": "Market and peers",
@@ -3080,9 +3080,9 @@
     "description": "Spot trading volume across exchanges as reported to CoinMetrics."
    }
   ],
-  "rows": 2302,
+  "rows": 2303,
   "first": "2020-07-21",
-  "last": "2026-11-08"
+  "last": "2026-11-09"
  },
  {
   "area": "Market and peers",
@@ -3159,9 +3159,9 @@
     "description": "True if 1Click has a positive price for the token or registry/tokens.csv lists it. Only these prices count toward depth_usd, and only these tokens can be valued beyond their depth."
    }
   ],
-  "rows": 43338,
+  "rows": 48252,
   "first": "2026-11-01",
-  "last": "2026-11-09"
+  "last": "2026-11-10"
  },
  {
   "area": "Market and peers",
@@ -3250,9 +3250,9 @@
     "description": "True while this day's fees_usd and revenue_usd can still change, by the rule on fct_intents_daily: until they have been read 3 nights after the day ended, so the newest two days of a nightly build. NEAR's fees are mostly Intents fees and settle with them: they read $33,285 for 2026-10-31 and $146,822 two nights later. Every chain gets the same rule, so filtering on this column cuts them all at the same day. The other chains' first reads also run low, by up to about 6% for fees on Ethereum, Solana and Sui, but they have no fixed settling time, so False does not mean settled for them. A data test holds the number for NEAR only."
    }
   ],
-  "rows": 15153,
+  "rows": 15160,
   "first": "2017-09-27",
-  "last": "2026-11-08"
+  "last": "2026-11-09"
  },
  {
   "area": "Market and peers",
@@ -3407,9 +3407,9 @@
     "description": "How this row in the history file was reached."
    }
   ],
-  "rows": 30,
+  "rows": 31,
   "first": "2026-09-28",
-  "last": "2026-11-06"
+  "last": "2026-11-09"
  },
  {
   "area": "Market and peers",
@@ -3510,9 +3510,9 @@
     "description": "Snapshot the day was read in. Past blocks do not change, so a later read gives the same balances."
    }
   ],
-  "rows": 42,
+  "rows": 43,
   "first": "2026-09-28",
-  "last": "2026-11-08"
+  "last": "2026-11-09"
  },
  {
   "area": "Developers and governance",
@@ -3626,9 +3626,9 @@
     "description": "Creation date."
    }
   ],
-  "rows": 162,
+  "rows": 180,
   "first": "2026-11-01",
-  "last": "2026-11-09"
+  "last": "2026-11-10"
  },
  {
   "area": "Developers and governance",
@@ -3669,9 +3669,9 @@
     "description": "Catalog tags, as JSON."
    }
   ],
-  "rows": 3074,
+  "rows": 3418,
   "first": "2026-11-01",
-  "last": "2026-11-09"
+  "last": "2026-11-10"
  },
  {
   "area": "Developers and governance",
@@ -3736,9 +3736,9 @@
     "description": "Whether the thread is closed."
    }
   ],
-  "rows": 36,
+  "rows": 40,
   "first": "2026-11-01",
-  "last": "2026-11-09"
+  "last": "2026-11-10"
  },
  {
   "area": "Developers and governance",
@@ -3900,9 +3900,9 @@
     "description": "Accounts holding veNEAR."
    }
   ],
-  "rows": 9,
+  "rows": 10,
   "first": "2026-11-01",
-  "last": "2026-11-09"
+  "last": "2026-11-10"
  },
  {
   "area": "Data quality",
@@ -4125,9 +4125,9 @@
     "description": "Change from first to last, as a percentage."
    }
   ],
-  "rows": 6359,
+  "rows": 6148,
   "first": "2021-05-21",
-  "last": "2026-11-07"
+  "last": "2026-11-08"
  },
  {
   "area": "Data quality",
@@ -4174,7 +4174,7 @@
     "description": "Time taken."
    }
   ],
-  "rows": 603,
+  "rows": 666,
   "first": "2026-11-01",
   "last": "2026-11-10"
  },
@@ -4247,7 +4247,7 @@
     "description": "Any change made before saving, such as trimming."
    }
   ],
-  "rows": 652,
+  "rows": 716,
   "first": "2026-10-28",
   "last": "2026-11-10"
  }
