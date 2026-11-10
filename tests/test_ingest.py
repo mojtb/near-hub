@@ -1004,6 +1004,107 @@ def test_validators_epoch_reads_a_nightly_epoch_again_once_a_newer_one_is_seen(t
     assert len(http.session.calls) == 2  # the whole epoch is on file, so nothing is asked again
 
 
+def _view_reply(value):
+    return FakeResponse(200, json.dumps({"result": {"block_height": 1, "result": list(json.dumps(value).encode())}}).encode())
+
+
+def _view_error(cause):
+    return FakeResponse(200, json.dumps({"error": {"name": "HANDLER_ERROR", "cause": {"name": cause}}}).encode())
+
+
+def test_view_history_calls_are_all_nightly_views():
+    from ingest.sources import rpc
+
+    assert all(call in rpc.VIEW_CALLS for call in rpc.VIEW_HISTORY_CALLS)
+
+
+def test_contract_views_history_replays_each_day_newest_first_and_keeps_the_chains_own_refusals(tmp_path, monkeypatch):
+    days = {"2026-11-08": 800, "2026-11-09": 900}
+    replies = [_view_reply("1.5"), _view_error("UNKNOWN_ACCOUNT"),   # 2026-11-09
+               _view_reply("1.4"), _view_error("UNKNOWN_ACCOUNT")]   # 2026-11-08
+    rpc, ctx, http = _validators_context(tmp_path, monkeypatch, replies)
+    path = tmp_path / "bronze/rpc/block_day/dt=2026-11-10/all.json.gz"
+    path.parent.mkdir(parents=True)
+    path.write_bytes(gzip.compress(json.dumps([{"day": d, "height": h, "epoch_id": "E"} for d, h in days.items()]).encode()))
+    monkeypatch.setattr(rpc, "VIEW_HISTORY_CALLS", [("old.near", "ft_price", {}), ("new.near", "ft_price", {})])
+    rpc.contract_views_history(ctx)
+    asked = [(c[2]["json"]["params"]["block_id"], c[2]["json"]["params"]["account_id"]) for c in http.session.calls]
+    assert asked == [(900, "old.near"), (900, "new.near"), (800, "old.near"), (800, "new.near")]
+    saved = json.loads(gzip.decompress((tmp_path / "bronze/rpc/contract_views_history/dt=2026-11-10/2026-11-08.json.gz").read_bytes()))
+    assert saved["day"] == "2026-11-08" and saved["block_height"] == 800
+    assert saved["views"] == [{"contract": "old.near", "method": "ft_price", "args": {}, "result": "1.4"},
+                              {"contract": "new.near", "method": "ft_price", "args": {}, "result": None, "error": "UNKNOWN_ACCOUNT"}]
+    rpc.contract_views_history(ctx)
+    assert len(http.session.calls) == 4  # both days are on file
+
+
+def test_contract_views_history_stops_asking_about_a_contract_absent_on_two_newer_days(tmp_path, monkeypatch):
+    rpc, ctx, http = _validators_context(tmp_path, monkeypatch, [_view_reply("1.3")])
+    path = tmp_path / "bronze/rpc/block_day/dt=2026-11-10/all.json.gz"
+    path.parent.mkdir(parents=True)
+    path.write_bytes(gzip.compress(json.dumps([{"day": d, "height": h, "epoch_id": "E"} for d, h in
+                                               {"2026-11-07": 700, "2026-11-08": 800, "2026-11-09": 900}.items()]).encode()))
+    for day in ("2026-11-08", "2026-11-09"):
+        ctx.bronze.save_json("rpc", "contract_views_history", day, {"day": day, "block_height": 1, "views": [
+            {"contract": "old.near", "method": "ft_price", "args": {}, "result": "1.4"},
+            {"contract": "new.near", "method": "ft_price", "args": {}, "result": None, "error": "UNKNOWN_ACCOUNT"}]}, url="u")
+    monkeypatch.setattr(rpc, "VIEW_HISTORY_CALLS", [("old.near", "ft_price", {}), ("new.near", "ft_price", {})])
+    rpc.contract_views_history(ctx)
+    assert [c[2]["json"]["params"]["account_id"] for c in http.session.calls] == ["old.near"]
+    saved = json.loads(gzip.decompress((tmp_path / "bronze/rpc/contract_views_history/dt=2026-11-10/2026-11-07.json.gz").read_bytes()))
+    assert [v["contract"] for v in saved["views"]] == ["old.near"]
+
+
+def test_contract_views_history_leaves_a_day_unsaved_when_a_node_cannot_answer(tmp_path, monkeypatch):
+    rpc, ctx, http = _validators_context(tmp_path, monkeypatch, [_view_error("UNKNOWN_BLOCK"), _view_reply("1.5")])
+    path = tmp_path / "bronze/rpc/block_day/dt=2026-11-10/all.json.gz"
+    path.parent.mkdir(parents=True)
+    path.write_bytes(gzip.compress(json.dumps([{"day": "2026-11-09", "height": 900, "epoch_id": "E"}]).encode()))
+    monkeypatch.setattr(rpc, "VIEW_HISTORY_CALLS", [("old.near", "ft_price", {})])
+    rpc.contract_views_history(ctx)
+    assert not (tmp_path / "bronze/rpc/contract_views_history").exists() and "UNKNOWN_BLOCK" in ctx.warnings[0]
+    rpc.contract_views_history(ctx)  # a later run reads the day
+    assert (tmp_path / "bronze/rpc/contract_views_history/dt=2026-11-10/2026-11-09.json.gz").exists()
+
+
+def _refusal():
+    return FakeResponse(200, json.dumps({"error": {"name": "HANDLER_ERROR", "cause": {"name": "UNKNOWN_EPOCH"}}}).encode())
+
+
+def test_validators_epoch_asks_a_refused_epoch_again_on_a_fresh_connection(tmp_path, monkeypatch):
+    replies = [_refusal(), _epoch_reply(30, 43200)]
+    rpc, ctx, http = _validators_context(tmp_path, monkeypatch, replies, block_days={"2026-11-09": "E30"})
+    rpc.validators_epoch(ctx)
+    assert ctx.load_state("rpc__validators_epoch")["refused"] == {"E30": 1}
+    assert not (tmp_path / "bronze/rpc/validators_epoch").exists()
+    rpc.validators_epoch(ctx)  # another node holds it
+    state = ctx.load_state("rpc__validators_epoch")
+    assert state["done"] == ["E30"] and state["refused"] == {}
+    assert (tmp_path / "bronze/rpc/validators_epoch/dt=2026-11-10/epoch_30.json.gz").exists()
+    assert [call[2]["headers"]["Connection"] for call in http.session.calls] == ["close", "close"]
+
+
+def test_validators_epoch_stops_asking_after_the_limit_and_takes_over_the_old_refusals(tmp_path, monkeypatch):
+    rpc, ctx, http = _validators_context(tmp_path, monkeypatch, [_refusal()], block_days={"2026-11-09": "E40", "2026-11-08": "E41"})
+    monkeypatch.setattr(rpc, "VALIDATOR_ASKS_PER_EPOCH", 2)
+    ctx.save_state("rpc__validators_epoch", {"done": ["E41"], "unavailable": ["E40"]})  # as an earlier version saved it
+    rpc.validators_epoch(ctx)
+    state = ctx.load_state("rpc__validators_epoch")
+    assert state["refused"] == {"E40": 2} and "unavailable" not in state
+    rpc.validators_epoch(ctx)
+    assert len(http.session.calls) == 1  # refused twice, the limit here, so it is left alone
+
+
+def test_validators_epoch_counts_an_epoch_on_file_as_read_whatever_the_state_says(tmp_path, monkeypatch):
+    rpc, ctx, http = _validators_context(tmp_path, monkeypatch, [], block_days={"2026-11-09": "E50"})
+    path = tmp_path / "bronze/rpc/validators_epoch/dt=2026-11-05/epoch_50.json.gz"
+    path.parent.mkdir(parents=True)
+    path.write_bytes(gzip.compress(json.dumps({"epoch_id": "E50", "epoch_height": 50, "validators": []}).encode()))
+    ctx.save_state("rpc__validators_epoch", {"done": [], "unavailable": ["E50"]})
+    rpc.validators_epoch(ctx)
+    assert http.session.calls == []
+
+
 def test_validators_epoch_keeps_nothing_from_an_epoch_still_in_progress(tmp_path, monkeypatch):
     replies = [_epoch_reply(20, 1297), _epoch_reply(20, 43200)]
     rpc, ctx, http = _validators_context(tmp_path, monkeypatch, replies, block_days={"2026-11-10": "E20"})

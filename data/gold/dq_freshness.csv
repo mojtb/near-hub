@@ -6,6 +6,7 @@ Bitwise NEAR ETF fund readings,stg_nrr_fund__readings,daily,2026-11-10,2026-11-0
 Bitwise NEAR ETF wallets on chain,stg_rpc__nrr_pool_daily,daily,2026-11-10,2026-11-09,2026-11-10,1,3,false,3719
 CoinMetrics,stg_coinmetrics__asset_metrics,daily,2026-11-10,2026-11-09,2026-11-10,1,3,false,14628
 Coinbase candles,stg_coinbase__candles,daily,2026-11-10,2026-11-09,2026-11-10,1,3,false,1653
+"Contract views replayed by day: liquid staking, veNEAR, MPC",stg_rpc__contract_views_history,daily,2026-11-10,2026-11-10,2026-11-10,0,3,false,5746
 "Contract views: MPC, liquid staking, veNEAR",stg_rpc__contract_views,snapshot,2026-11-10,2026-11-10,2026-11-10,0,2,false,162
 DefiLlama DEX volume,stg_defillama__chain_dex_volume,daily,2026-11-10,2026-11-09,2026-11-10,1,3,false,132788
 DefiLlama Intents fees,stg_defillama__intents_fees,daily,2026-11-10,2026-11-09,2026-11-10,1,3,false,27722
@@ -48,7 +49,7 @@ Neardata receiver sample,stg_neardata__receiver_sample,daily,2026-11-10,2026-11-
 Protocol config,stg_rpc__protocol_config,snapshot,2026-11-10,2026-11-10,2026-11-10,0,2,false,11
 Registry accounts on chain,stg_rpc__accounts,snapshot,2026-11-10,2026-11-10,2026-11-10,0,2,false,556
 Rhea token prices,stg_rhea__token_prices,snapshot,2026-11-10,2026-11-10,2026-11-10,0,2,false,47067
-Validator set,stg_rpc__validators,snapshot,2026-11-10,2026-11-10,2026-11-10,0,2,false,140927
+Validator set,stg_rpc__validators,snapshot,2026-11-10,2026-11-10,2026-11-10,0,2,false,239665
 revenue.near.org capture rates,stg_revenue_page__capture_rates,snapshot,2026-11-10,2026-11-10,2026-11-10,0,2,false,120
 revenue.near.org confidential TVL,stg_revenue_page__confidential_tvl,daily,2026-11-10,2026-11-09,2026-11-10,1,3,false,2585
 revenue.near.org fees,stg_revenue_page__fees_daily,daily,2026-11-10,2026-11-09,2026-11-10,1,3,false,5425

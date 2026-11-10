@@ -15,6 +15,7 @@
     ('stg_nearblocks__signer_stats', 'NearBlocks v1.signer daily', 3),
     ('fct_dune_intents_asset_daily', 'Dune dashboard Intents by asset, read by hand', none),
     ('stg_intents_explorer__days', 'Intents Explorer daily tally', 3),
+    ('stg_rpc__contract_views_history', 'Contract views replayed by day: liquid staking, veNEAR, MPC', 3),
     ('stg_nearblocks__contract_txns', 'NearBlocks per-contract daily', 3),
     ('stg_nearblocks__wallet_balance', 'NearBlocks wallet balances', 3),
     ('stg_defillama__intents_volume', 'DefiLlama Intents volume', 3),

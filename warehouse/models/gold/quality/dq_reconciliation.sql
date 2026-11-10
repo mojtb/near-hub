@@ -265,11 +265,15 @@ signer_30d as (
     where s.date_day > (select max(date_day) from {{ ref('fct_chain_signatures_daily') }}) - 30
 ),
 
+-- Both sides are the nightly snapshot's reads, minutes apart. fct_mpc_state prefers the read at the day's first block,
+-- hours earlier, so on a day the threshold changed it could differ from NearBlocks without either being wrong.
 mpc_threshold as (
-    select s.snapshot_date, s.threshold as contract_threshold, max(o.threshold) as nearblocks_threshold
-    from {{ ref('fct_mpc_state') }} s
+    select s.snapshot_date, cast(s.result->'Running'->'parameters'->>'threshold' as integer) as contract_threshold,
+        max(o.threshold) as nearblocks_threshold
+    from {{ ref('stg_rpc__contract_views') }} s
     join {{ ref('stg_nearblocks__mpc_operators') }} o using (snapshot_date)
-    group by s.snapshot_date, s.threshold
+    where s.contract = 'v1.signer' and s.method = 'state'
+    group by all
     order by s.snapshot_date desc limit 1
 ),
 

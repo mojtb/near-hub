@@ -41,22 +41,22 @@
  },
  "dq_freshness": {
   "columns": 10,
-  "hash": "b30c9ca99ceabff2adf5d9085216c51f",
-  "rows": 56
+  "hash": "3f1b6ea3b43dff0886dc27eea7ed2e29",
+  "rows": 57
  },
  "dq_ingest_runs": {
   "columns": 6,
-  "hash": "8844bfca80c113750609ae6613bf5b56",
-  "rows": 670
+  "hash": "4b0e90482ea50597ced7c1c9214d0333",
+  "rows": 671
  },
  "dq_provenance": {
   "columns": 10,
-  "hash": "211a8b2a8e026d41813c566c60d90c15",
-  "rows": 720
+  "hash": "65d26716b0cafa9474b891b57c19eebc",
+  "rows": 721
  },
  "dq_reconciliation": {
   "columns": 12,
-  "hash": "3f6d75310b6d2469375df4e9004d9b91",
+  "hash": "8fa33074b05063d4baf10c0244093192",
   "rows": 79
  },
  "dq_revisions": {
@@ -210,9 +210,9 @@
   "rows": 24
  },
  "fct_lst_snapshot": {
-  "columns": 6,
-  "hash": "f95068dd00b73fb6d542b4407bd5761f",
-  "rows": 30
+  "columns": 7,
+  "hash": "a8a15ab357d4a4ab7441a92f75231751",
+  "rows": 1896
  },
  "fct_market_daily": {
   "columns": 6,
@@ -225,18 +225,18 @@
   "rows": 157
  },
  "fct_mpc_participants": {
-  "columns": 3,
-  "hash": "07f79e6c7c28df391b7930a96df6f820",
-  "rows": 173
+  "columns": 4,
+  "hash": "294f450a2e07783df75395544024554d",
+  "rows": 6652
  },
  "fct_mpc_state": {
-  "columns": 5,
-  "hash": "6ba279eaa8209cf04d74ec0bf4186a3c",
-  "rows": 11
+  "columns": 6,
+  "hash": "fabbf62bd0c38cbb4dec61c924ee9b1c",
+  "rows": 683
  },
  "fct_net_dilution_daily": {
   "columns": 14,
-  "hash": "2561b2a8b84d17b46dd8d338bd550acc",
+  "hash": "8c2cba8fda6164d37505526c330392cc",
   "rows": 2274
  },
  "fct_peer_daily": {
@@ -321,13 +321,13 @@
  },
  "fct_validator_epoch": {
   "columns": 14,
-  "hash": "56f523920467bef73aae7b9a5ba4dc06",
-  "rows": 137350
+  "hash": "f1c7a3423141bf76a50f0b718307a817",
+  "rows": 236088
  },
  "fct_validator_summary": {
   "columns": 13,
-  "hash": "df915cdce82e39baee8bc4de957c980f",
-  "rows": 373
+  "hash": "f6eba4173e4a4472f9fdbdeb059b89c2",
+  "rows": 689
  },
  "fct_valuation_multiples_daily": {
   "columns": 6,
@@ -335,9 +335,9 @@
   "rows": 43543
  },
  "fct_venear_snapshot": {
-  "columns": 3,
-  "hash": "e232602c14795a70f24112a096077078",
-  "rows": 10
+  "columns": 4,
+  "hash": "2cde6ee705fc99de3771f6ab6d1014a8",
+  "rows": 396
  },
  "fct_wallet_balance_daily": {
   "columns": 4,

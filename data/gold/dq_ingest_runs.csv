@@ -660,6 +660,7 @@ snapshot_date,dataset,status,detail,files,seconds
 2026-11-10,rpc/accounts,ok,"",0,20.0
 2026-11-10,rpc/block_day,ok,"",1,5.0
 2026-11-10,rpc/contract_views,ok,"",17,2.5
+2026-11-10,rpc/contract_views_history,ok,"",12,1.5
 2026-11-10,rpc/ft_metadata,ok,"",1,7.3
 2026-11-10,rpc/gas_price,ok,"",1,0.1
 2026-11-10,rpc/hos_proposals,ok,"",1,0.6
@@ -668,4 +669,4 @@ snapshot_date,dataset,status,detail,files,seconds
 2026-11-10,rpc/protocol_config,ok,"",1,0.1
 2026-11-10,rpc/status,ok,"",1,0.1
 2026-11-10,rpc/validators_current,ok,"",1,0.2
-2026-11-10,rpc/validators_epoch,ok,"",2,4.2
+2026-11-10,rpc/validators_epoch,ok,"",1,1.8

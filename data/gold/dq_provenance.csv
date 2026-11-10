@@ -635,6 +635,7 @@ rpc,contract_views,2026-11-07,16,21546,,https://free.rpc.fastnear.com,2026-11-07
 rpc,contract_views,2026-11-08,16,21595,,https://free.rpc.fastnear.com,2026-11-08T08:47:43+00:00,2026-11-08T08:47:45+00:00,result bytes decoded to JSON
 rpc,contract_views,2026-11-09,16,44556,,https://free.rpc.fastnear.com,2026-11-09T09:25:30+00:00,2026-11-09T09:25:32+00:00,result bytes decoded to JSON
 rpc,contract_views,2026-11-10,17,21845,,https://free.rpc.fastnear.com,2026-11-10T08:11:00+00:00,2026-11-10T08:11:02+00:00,result bytes decoded to JSON
+rpc,contract_views_history,2026-11-10,732,3683202,5746,https://archival-rpc.mainnet.fastnear.com,2026-11-10T09:16:39+00:00,2026-11-10T11:46:52+00:00,assembled: contract views replayed at the first block of this UTC day; result bytes decoded to JSON
 rpc,ft_metadata,2026-11-06,1,276517,2000,https://free.rpc.fastnear.com,2026-11-06T09:22:59+00:00,2026-11-06T09:22:59+00:00,"assembled: one ft_metadata view per token, read once; icon and reference dropped, spec, name and symbol cut to printable characters and 32, 128 and 64 characters"
 rpc,ft_metadata,2026-11-07,1,268906,2000,https://free.rpc.fastnear.com,2026-11-07T08:48:37+00:00,2026-11-07T08:48:37+00:00,"assembled: one ft_metadata view per token, read once; icon and reference dropped, spec, name and symbol cut to printable characters and 32, 128 and 64 characters"
 rpc,ft_metadata,2026-11-08,1,270662,2000,https://free.rpc.fastnear.com,2026-11-08T08:54:02+00:00,2026-11-08T08:54:02+00:00,"assembled: one ft_metadata view per token, read once; icon and reference dropped, spec, name and symbol cut to printable characters and 32, 128 and 64 characters"
@@ -718,4 +719,4 @@ rpc,validators_epoch,2026-11-06,28,4124520,11826,https://archival-rpc.mainnet.fa
 rpc,validators_epoch,2026-11-07,18,2495973,7162,https://archival-rpc.mainnet.fastnear.com,2026-11-07T08:38:27+00:00,2026-11-07T08:39:21+00:00,trimmed: per-shard arrays and public keys dropped
 rpc,validators_epoch,2026-11-08,20,2642539,7578,https://archival-rpc.mainnet.fastnear.com,2026-11-08T08:48:01+00:00,2026-11-08T08:48:48+00:00,trimmed: per-shard arrays and public keys dropped
 rpc,validators_epoch,2026-11-09,28,3630643,10403,https://archival-rpc.mainnet.fastnear.com,2026-11-09T09:25:52+00:00,2026-11-09T09:26:50+00:00,trimmed: per-shard arrays and public keys dropped
-rpc,validators_epoch,2026-11-10,119,12231343,34771,https://archival-rpc.mainnet.fastnear.com,2026-11-09T22:12:39+00:00,2026-11-10T08:11:21+00:00,trimmed: per-shard arrays and public keys dropped
+rpc,validators_epoch,2026-11-10,435,46885051,133509,https://archival-rpc.mainnet.fastnear.com,2026-11-09T22:12:39+00:00,2026-11-10T09:39:52+00:00,trimmed: per-shard arrays and public keys dropped

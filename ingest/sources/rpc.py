@@ -32,6 +32,7 @@ NS_PER_S = 10**9
 BLOCK_DAYS_PER_RUN = 400  # keyless archival calls are slow, so a long backfill spreads over several runs
 RECENT_DAYS = 14
 VALIDATOR_EPOCHS_PER_RUN = 40
+VALIDATOR_ASKS_PER_EPOCH = 24  # the archival host's nodes do not all hold the same epochs, so one refusal settles nothing
 EPOCH_LENGTH_BLOCKS = 43200  # the protocol config's epoch_length; an epoch read with fewer blocks counted is still in progress
 FT_METADATA_CALLS_PER_RUN = 2000  # about 5 minutes at the keyed pace, and about 8,000 tokens take 4 nights
 FT_METADATA_MINUTES_PER_RUN = 40  # a node that rate-limits every call must not stretch the night past the job's timeout
@@ -62,6 +63,24 @@ VIEW_CALLS: List[Tuple[str, str, Dict[str, Any]]] = [
     ("wrap.near", "ft_total_supply", {}),
 ]
 
+# The views replayed at the first block of each past day, so that liquid staking, veNEAR and the Chain Signatures contract
+# have a history and not only the nights a snapshot ran. Each is also in VIEW_CALLS.
+VIEW_HISTORY_CALLS: List[Tuple[str, str, Dict[str, Any]]] = [
+    ("linear-protocol.near", "ft_price", {}),
+    ("linear-protocol.near", "ft_total_supply", {}),
+    ("linear-protocol.near", "get_total_staked_balance", {}),
+    ("meta-pool.near", "get_contract_state", {}),
+    ("lst.rhealab.near", "ft_price", {}),
+    ("lst.rhealab.near", "ft_total_supply", {}),
+    ("lst.rhealab.near", "get_total_staked_balance", {}),
+    ("venear.dao", "ft_total_supply", {}),
+    ("venear.dao", "get_num_accounts", {}),
+    ("v1.signer", "state", {}),
+]
+VIEW_HISTORY_DAYS_PER_RUN = 60  # about 15 minutes of archival calls at the keyless pace
+VIEW_ABSENT = ("UNKNOWN_ACCOUNT", "NO_CONTRACT_CODE")  # the chain's own answer that a contract was not there yet
+VIEW_FAILED = "CONTRACT_EXECUTION_ERROR"  # the call ran and failed, as it would on any node
+
 VALIDATOR_KEEP = ("account_id", "stake", "is_slashed", "num_produced_blocks", "num_expected_blocks",
                   "num_produced_chunks", "num_expected_chunks", "num_produced_endorsements", "num_expected_endorsements")
 
@@ -75,9 +94,16 @@ def _headers() -> Optional[Dict[str, str]]:
     return {"Authorization": f"Bearer {key}"} if key else None
 
 
-def _result(ctx: Context, url: str, method: str, params: Any) -> Optional[Any]:
-    """Call and return `result`. An RPC-level error, which can arrive as HTTP 200 or 422, returns None."""
-    payload = ctx.http.post(url, body(method, params), ok=(200, 422), headers=_headers()).json()
+def _result(ctx: Context, url: str, method: str, params: Any, fresh_connection: bool = False) -> Optional[Any]:
+    """Call and return `result`. An RPC-level error, which can arrive as HTTP 200 or 422, returns None.
+
+    A kept-alive connection stays with one of the host's nodes. `fresh_connection` closes it after the call, so the
+    next call can reach another node.
+    """
+    headers = dict(_headers() or {})
+    if fresh_connection:
+        headers["Connection"] = "close"
+    payload = ctx.http.post(url, body(method, params), ok=(200, 422), headers=headers or None).json()
     return payload.get("result")
 
 
@@ -281,6 +307,68 @@ def _flush_block_days(ctx: Context, rows: List[Dict[str, Any]], known: Dict[str,
     return key
 
 
+def _view_at(ctx: Context, contract: str, method: str, args: Dict[str, Any], height: int) -> Dict[str, Any]:
+    """One contract view at a past block: its decoded result, or the chain's own reason there is none.
+
+    A contract that did not exist yet, or a call that ran and failed, is an answer and is kept as `error`. Anything
+    else (a node without that block, a timeout) raises, so the day is not saved and is read again on a later run.
+    """
+    reply = ctx.http.post(ARCHIVAL, body("query", _view_params(contract, method, args, height)), ok=(200, 422), headers=_headers()).json()
+    read = {"contract": contract, "method": method, "args": args}
+    result = reply.get("result") or {}
+    if "result" in result:
+        return {**read, "result": json.loads(bytes(result["result"]).decode() or "null")}
+    if result.get("error"):
+        return {**read, "result": None, "error": VIEW_FAILED, "detail": str(result["error"])[:200]}
+    cause = ((reply.get("error") or {}).get("cause") or {}).get("name")
+    if cause in VIEW_ABSENT or cause == VIEW_FAILED:
+        return {**read, "result": None, "error": cause}
+    raise RuntimeError(f"{contract}.{method} at block {height}: {cause or 'no result and no cause'}")
+
+
+@dataset(SOURCE, "contract_views_history", profile="backfill")
+def contract_views_history(ctx: Context) -> None:
+    """VIEW_HISTORY_CALLS at the first block of each day that rpc/block_day knows, newest first, a batch per run.
+
+    One file per day. Bronze is the record of which days are done, so a run on another machine is not repeated.
+    A contract found absent on two newer days is not asked about on older ones.
+    """
+    heights: Dict[str, int] = {}
+    for path in sorted(BRONZE.glob("rpc/block_day/dt=*/*.json.gz")):
+        for row in json.loads(gzip.decompress(path.read_bytes())):
+            heights[row["day"]] = row["height"]
+    if not heights:
+        raise Skip("run rpc/block_day first")
+    absent: Dict[str, List[str]] = {}
+    done = set()
+    for path in BRONZE.glob("rpc/contract_views_history/dt=*/*.json.gz"):
+        doc = json.loads(gzip.decompress(path.read_bytes()))
+        done.add(doc["day"])
+        for contract in {v["contract"] for v in doc["views"] if v.get("error") in VIEW_ABSENT}:
+            absent.setdefault(contract, []).append(doc["day"])
+    failures = 0
+    for day in [d for d in sorted(heights, reverse=True) if d not in done][:VIEW_HISTORY_DAYS_PER_RUN]:
+        gone = {contract for contract, days in absent.items() if sum(1 for d in days if d > day) >= 2}
+        try:
+            views = [_view_at(ctx, contract, method, args, heights[day])
+                     for contract, method, args in VIEW_HISTORY_CALLS if contract not in gone]
+        except HttpError as e:
+            ctx.warn(f"{day}: {e}")
+            break
+        except RuntimeError as e:
+            ctx.warn(f"{day}: {e}")
+            failures += 1
+            if failures >= 5:
+                break
+            continue
+        for contract in {v["contract"] for v in views if v.get("error") in VIEW_ABSENT}:
+            absent.setdefault(contract, []).append(day)
+        ctx.bronze.save_json(SOURCE, "contract_views_history", day, {"day": day, "block_height": heights[day], "views": views},
+                             url=ARCHIVAL, method="POST", params={"block_id": heights[day], "views": len(views)}, rows=len(views),
+                             note="assembled: contract views replayed at the first block of this UTC day; result bytes decoded to JSON")
+        ctx.bronze.flush()
+
+
 def _epoch_is_finished(result: Dict[str, Any]) -> bool:
     """Every block has one expected producer, so a finished epoch's expected blocks add up to its length."""
     return sum(v.get("num_expected_blocks") or 0 for v in result.get("current_validators", [])) >= EPOCH_LENGTH_BLOCKS
@@ -312,26 +400,44 @@ def _nightly_epochs_to_read_again(ctx: Context, skip: set) -> List[Tuple[str, st
     return found
 
 
+def _epochs_on_file() -> set:
+    """The ids of the epochs already read whole. Bronze is the record: a run elsewhere may have added files this
+    checkout's saved state knows nothing about."""
+    return {json.loads(gzip.decompress(path.read_bytes())).get("epoch_id")
+            for path in BRONZE.glob("rpc/validators_epoch/dt=*/epoch_*.json.gz")}
+
+
 @dataset(SOURCE, "validators_epoch", profile="backfill")
 def validators_epoch(ctx: Context) -> None:
-    """Validator set per finished epoch, newest first, a batch per run. Older epochs may be unavailable from the node.
+    """Validator set per finished epoch, newest first, a batch per run.
 
     Two kinds of epoch are read: the one running at 00:00 UTC of each day, and the one each nightly read caught in
     progress. An epoch that has not ended yet is left for a later run and nothing is saved, so every file here holds
     final counts.
+
+    The archival host answers from several nodes, and they do not hold the same epochs. A kept-alive connection stays
+    with one node, which is how 316 of 688 epochs came to be refused. Asked again on 2026-11-10, each time on a fresh
+    connection, all 316 answered: 291 within 8 asks, the last within 16. So a refused epoch is asked again on later
+    runs until it answers or has been refused VALIDATOR_ASKS_PER_EPOCH times.
     """
-    state = ctx.load_state("rpc__validators_epoch", {"done": [], "unavailable": []})
+    state = ctx.load_state("rpc__validators_epoch", {"done": [], "refused": {}})
+    refused: Dict[str, int] = state.setdefault("refused", {})
+    for epoch_id in state.pop("unavailable", []):  # an earlier version gave up after one refusal
+        refused.setdefault(epoch_id, 1)
     epochs: Dict[str, str] = {}
     for path in sorted(BRONZE.glob("rpc/block_day/dt=*/*.json.gz")):
         for row in json.loads(gzip.decompress(path.read_bytes())):
             epochs.setdefault(row["epoch_id"], row["day"])
-    skip = set(state["done"]) | set(state["unavailable"])
-    todo = [(e, d) for e, d in sorted(epochs.items(), key=lambda kv: kv[1], reverse=True) if e not in skip and d >= "2025-01-01"]
+    done = set(state["done"]) | _epochs_on_file()
+    skip = done | {e for e, asks in refused.items() if asks >= VALIDATOR_ASKS_PER_EPOCH}
+    wanted = [(e, d) for e, d in sorted(epochs.items(), key=lambda kv: kv[1], reverse=True) if e not in skip and d >= "2025-01-01"]
+    todo = [(e, d) for e, d in wanted if e not in refused]
+    again = sorted(((e, d) for e, d in wanted if e in refused), key=lambda ed: refused[ed[0]])  # fewest asks first, then newest
     nightly = [(e, d) for e, d in _nightly_epochs_to_read_again(ctx, skip) if e not in epochs]
-    for epoch_id, day in (nightly + todo)[:VALIDATOR_EPOCHS_PER_RUN]:
-        result = _result(ctx, ARCHIVAL, "validators", {"epoch_id": epoch_id})
+    for epoch_id, day in (nightly + todo + again)[:VALIDATOR_EPOCHS_PER_RUN]:
+        result = _result(ctx, ARCHIVAL, "validators", {"epoch_id": epoch_id}, fresh_connection=True)
         if result is None:
-            state["unavailable"].append(epoch_id)
+            refused[epoch_id] = refused.get(epoch_id, 0) + 1
             ctx.save_state("rpc__validators_epoch", state)
             continue
         if not _epoch_is_finished(result):
@@ -341,7 +447,9 @@ def validators_epoch(ctx: Context) -> None:
                              params={"body": body("validators", {"epoch_id": epoch_id})},
                              rows=len(result.get("current_validators", [])),
                              note="trimmed: per-shard arrays and public keys dropped")
+        ctx.bronze.flush()
         state["done"].append(epoch_id)
+        refused.pop(epoch_id, None)
         ctx.save_state("rpc__validators_epoch", state)
 
 

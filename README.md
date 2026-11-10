@@ -28,7 +28,7 @@ These lines are generated from the warehouse, and `make verify` fails if they st
 
 <!-- expected:start -->
 - Data through: **2026-11-09**, the last full UTC day before the pinned snapshot of 2026-11-10; `dq_freshness` lists any source that ends earlier
-- Gold tables and columns: **74** and **675**
+- Gold tables and columns: **74** and **679**
 - Reconciliation: **69** comparisons agree, **10** differ, each with a written explanation
 - Issuance over the last 30 days, from supply change plus burn: **2.50%** a year, against **2.50%** in the protocol config
 - Circulating supply, built from NEAR's lockup contracts: **1,309.18M** NEAR, **99.84%** of total supply; on 2025-08-26, the last day NearBlocks computed its own, **1,249.72M** against **1,249.65M**

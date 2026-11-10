@@ -53,6 +53,7 @@ sources:
       - {name: rpc__validators_current, identifier: rpc/validators_current, description: "Current validator set, trimmed."}
       - {name: rpc__validators_epoch, identifier: rpc/validators_epoch, description: "Validator set per past epoch, trimmed."}
       - {name: rpc__contract_views, identifier: rpc/contract_views, description: "Decoded contract view results, one file per contract and method."}
+      - {name: rpc__contract_views_history, identifier: rpc/contract_views_history, description: "The liquid staking, veNEAR and v1.signer views of rpc/contract_views, replayed at the first block of each UTC day from the archival node. One file per day."}
       - {name: rpc__accounts, identifier: rpc/accounts, description: "view_account for each registry account."}
       - {name: rpc__hos_proposals, identifier: rpc/hos_proposals, description: "Every House of Stake proposal from the voting contract."}
       - {name: rpc__block_day, identifier: rpc/block_day, description: "Header fields of one block per UTC day."}

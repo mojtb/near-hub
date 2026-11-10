@@ -2396,7 +2396,7 @@
  {
   "area": "Security and staking",
   "table": "fct_validator_epoch",
-  "description": "Validator set per epoch, for the epoch in force at the first block of each UTC day plus the current epoch read each night. NEAR runs about three epochs a day, so this is a daily sample of epochs, not every epoch. Past epochs are backfilled newest first from the archival node, which returns UNKNOWN_EPOCH for some of them. Those days are not asked again and stay empty, so check which days are present before reading a trend. An epoch read after it ended has final production counts; a nightly read of the current epoch is partial.",
+  "description": "Validator set per epoch, for the epoch in force at the first block of each UTC day plus the current epoch read each night. NEAR runs about three epochs a day, so this is a daily sample of epochs, not every epoch. Past epochs are backfilled newest first from the archival node. Its nodes do not all hold the same epochs, so an epoch one of them refuses is asked again on later runs; at the 2026-11-10 pin every day from 2025-01-01 has its epoch. An epoch read after it ended has final production counts; a nightly read of the current epoch is partial.",
   "grain": "epoch_height, validator_account_id",
   "sources": "RPC validators",
   "path": "data/gold/fct_validator_epoch.parquet",
@@ -2483,17 +2483,17 @@
     "name": "is_epoch_complete",
     "type": "BOOLEAN",
     "unit": "boolean",
-    "description": "True when the epoch had ended at the read, so its production counts are final: the validators' expected blocks add up to the protocol's epoch length (43,200), since every block has one expected producer. False for an epoch the nightly read caught in progress. The backfill reads each such epoch again once it has ended, so only the newest epoch stays false: at the 2026-11-10 pin 372 of 373 epochs were complete, and the one in progress had run 12,907 blocks. The stake columns do not depend on it: stakes are fixed when an epoch starts."
+    "description": "True when the epoch had ended at the read, so its production counts are final: the validators' expected blocks add up to the protocol's epoch length (43,200), since every block has one expected producer. False for an epoch the nightly read caught in progress. The backfill reads each such epoch again once it has ended, so only the newest epoch stays false: at the 2026-11-10 pin 688 of 689 epochs were complete, and the one in progress had run 12,907 blocks. The stake columns do not depend on it: stakes are fixed when an epoch starts."
    }
   ],
-  "rows": 137350,
+  "rows": 236088,
   "first": null,
   "last": null
  },
  {
   "area": "Security and staking",
   "table": "fct_validator_summary",
-  "description": "Decentralization per epoch: validator count, stake concentration and Nakamoto coefficients. One epoch per day, the one in force at the day's first block, plus the current epoch read each night: see fct_validator_epoch. History is backfilled newest first and has gaps on the days whose epoch the archival node refused.",
+  "description": "Decentralization per epoch: validator count, stake concentration and Nakamoto coefficients. One epoch per day, the one in force at the day's first block, plus the current epoch read each night: see fct_validator_epoch. History is backfilled newest first; at the 2026-11-10 pin every day from 2025-01-01 has its epoch.",
   "grain": "epoch_height",
   "sources": "fct_validator_epoch, dim_block_day",
   "path": "data/gold/fct_validator_summary.parquet",
@@ -2577,7 +2577,7 @@
     "description": "total_stake_near divided by total supply in the nearest earlier daily block (dim_block_day)."
    }
   ],
-  "rows": 373,
+  "rows": 689,
   "first": null,
   "last": null
  },
@@ -2621,20 +2621,20 @@
  {
   "area": "Security and staking",
   "table": "fct_mpc_state",
-  "description": "Chain Signatures contract state per snapshot, read directly from v1.signer.",
+  "description": "Chain Signatures contract state per day, read directly from v1.signer. Daily from 2025-01-01, read at the first block of each UTC day from the archival node, and one day a month before that, back to the contract's first month. A day on which the contract was not in its Running state has no row.",
   "grain": "snapshot_date",
-  "sources": "RPC v1.signer state",
+  "sources": "RPC v1.signer state, at past blocks and nightly",
   "path": "data/gold/fct_mpc_state.parquet",
   "columns": [
    {
     "name": "snapshot_date",
     "type": "DATE",
     "unit": "date",
-    "description": "Date the source was read."
+    "description": "The UTC date of the block the values were read at. With read_from = archival that is the day's first block, so the row shows the state as the day began, which is the close of the day before. With read_from = nightly it is the tip when that date's snapshot ran, some hours into the day."
    },
    {
     "name": "participants",
-    "type": "UBIGINT",
+    "type": "HUGEINT",
     "unit": "count",
     "description": "MPC participants."
    },
@@ -2646,34 +2646,40 @@
    },
    {
     "name": "signature_domains",
-    "type": "UBIGINT",
+    "type": "HUGEINT",
     "unit": "count",
-    "description": "Signature schemes supported."
+    "description": "Signature schemes supported: the contract's list of domains. Its first version had no such list and held a single key, which counts as 1."
    },
    {
     "name": "keyset_epoch",
     "type": "BIGINT",
     "unit": "integer",
     "description": "MPC key generation epoch."
+   },
+   {
+    "name": "read_from",
+    "type": "VARCHAR",
+    "unit": "label",
+    "description": "archival: replayed from the archival node at the first block of the UTC day. nightly: read at the tip when the snapshot of that date ran, used only for a date the replay has not read. All of a contract's figures on a date come from the same read."
    }
   ],
-  "rows": 11,
-  "first": "2026-10-28",
+  "rows": 683,
+  "first": "2024-09-01",
   "last": "2026-11-10"
  },
  {
   "area": "Security and staking",
   "table": "fct_mpc_participants",
-  "description": "MPC operators per snapshot, read directly from v1.signer.",
+  "description": "MPC operators per day, read directly from v1.signer. Daily from 2025-01-01, read at the first block of each UTC day from the archival node, and one day a month before that, back to the contract's first month. A day on which the contract was not in its Running state has no rows.",
   "grain": "snapshot_date, operator_account_id",
-  "sources": "RPC v1.signer state",
+  "sources": "RPC v1.signer state, at past blocks and nightly",
   "path": "data/gold/fct_mpc_participants.parquet",
   "columns": [
    {
     "name": "snapshot_date",
     "type": "DATE",
     "unit": "date",
-    "description": "Date the source was read."
+    "description": "The UTC date of the block the values were read at. With read_from = archival that is the day's first block, so the row shows the state as the day began, which is the close of the day before. With read_from = nightly it is the tip when that date's snapshot ran, some hours into the day."
    },
    {
     "name": "operator_account_id",
@@ -2686,10 +2692,16 @@
     "type": "INTEGER",
     "unit": "integer",
     "description": "Operator's id in the contract."
+   },
+   {
+    "name": "read_from",
+    "type": "VARCHAR",
+    "unit": "label",
+    "description": "archival: replayed from the archival node at the first block of the UTC day. nightly: read at the tip when the snapshot of that date ran, used only for a date the replay has not read. All of a contract's figures on a date come from the same read."
    }
   ],
-  "rows": 173,
-  "first": "2026-10-28",
+  "rows": 6652,
+  "first": "2024-09-01",
   "last": "2026-11-10"
  },
  {
@@ -2726,16 +2738,16 @@
  {
   "area": "Security and staking",
   "table": "fct_lst_snapshot",
-  "description": "Liquid staking per snapshot, read directly from each contract.",
+  "description": "Liquid staking per day, read directly from each contract (LiNEAR, stNEAR, rNEAR). Daily from 2025-01-01, read at the first block of each UTC day from the archival node, and one day a month before that, back to each contract's first month. A token has no row before its contract existed.",
   "grain": "snapshot_date, token",
-  "sources": "RPC contract views",
+  "sources": "RPC contract views, at past blocks and nightly",
   "path": "data/gold/fct_lst_snapshot.parquet",
   "columns": [
    {
     "name": "snapshot_date",
     "type": "DATE",
     "unit": "date",
-    "description": "Date the source was read."
+    "description": "The UTC date of the block the values were read at. With read_from = archival that is the day's first block, so the row shows the state as the day began, which is the close of the day before. With read_from = nightly it is the tip when that date's snapshot ran, some hours into the day."
    },
    {
     "name": "token",
@@ -2765,11 +2777,17 @@
     "name": "delegated_near",
     "type": "DOUBLE",
     "unit": "NEAR",
-    "description": "NEAR the contract has staked with validators, read from the contract. For rNEAR until its get_total_staked_balance is read, from the first night after 2026-11-10, this is token_supply times price_near, which is the same figure because a contract sets its price as staked NEAR divided by supply: a data test holds the two within 0.01% wherever both exist."
+    "description": "NEAR the contract has staked with validators, read from the contract. Where a read holds no get_total_staked_balance for rNEAR, this is token_supply times price_near, which is the same figure because a contract sets its price as staked NEAR divided by supply: a data test holds the two within 0.01% wherever both exist."
+   },
+   {
+    "name": "read_from",
+    "type": "VARCHAR",
+    "unit": "label",
+    "description": "archival: replayed from the archival node at the first block of the UTC day. nightly: read at the tip when the snapshot of that date ran, used only for a date the replay has not read. All of a contract's figures on a date come from the same read."
    }
   ],
-  "rows": 30,
-  "first": "2026-11-01",
+  "rows": 1896,
+  "first": "2021-09-01",
   "last": "2026-11-10"
  },
  {
@@ -3882,16 +3900,16 @@
  {
   "area": "Developers and governance",
   "table": "fct_venear_snapshot",
-  "description": "House of Stake participation per snapshot, read directly from venear.dao.",
+  "description": "House of Stake participation per day, read directly from venear.dao, at the first block of each UTC day from the archival node. The table starts on the first day the contract existed.",
   "grain": "snapshot_date",
-  "sources": "RPC venear.dao",
+  "sources": "RPC venear.dao, at past blocks and nightly",
   "path": "data/gold/fct_venear_snapshot.parquet",
   "columns": [
    {
     "name": "snapshot_date",
     "type": "DATE",
     "unit": "date",
-    "description": "Date the source was read."
+    "description": "The UTC date of the block the values were read at. With read_from = archival that is the day's first block, so the row shows the state as the day began, which is the close of the day before. With read_from = nightly it is the tip when that date's snapshot ran, some hours into the day."
    },
    {
     "name": "total_venear",
@@ -3904,10 +3922,16 @@
     "type": "BIGINT",
     "unit": "count",
     "description": "Accounts holding veNEAR."
+   },
+   {
+    "name": "read_from",
+    "type": "VARCHAR",
+    "unit": "label",
+    "description": "archival: replayed from the archival node at the first block of the UTC day. nightly: read at the tip when the snapshot of that date ran, used only for a date the replay has not read. All of a contract's figures on a date come from the same read."
    }
   ],
-  "rows": 10,
-  "first": "2026-11-01",
+  "rows": 396,
+  "first": "2025-10-11",
   "last": "2026-11-10"
  },
  {
@@ -4818,7 +4842,7 @@
     "description": "Rows across all snapshots."
    }
   ],
-  "rows": 56,
+  "rows": 57,
   "first": null,
   "last": null
  },
@@ -4934,7 +4958,7 @@
     "description": "Time taken."
    }
   ],
-  "rows": 670,
+  "rows": 671,
   "first": "2026-11-01",
   "last": "2026-11-10"
  },
@@ -5007,7 +5031,7 @@
     "description": "Any change made before saving, such as trimming."
    }
   ],
-  "rows": 720,
+  "rows": 721,
   "first": "2026-10-28",
   "last": "2026-11-10"
  }

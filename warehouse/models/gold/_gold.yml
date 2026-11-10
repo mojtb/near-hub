@@ -528,19 +528,20 @@ models:
       - {name: fee_usd, description: "Fees: appFees read as basis points of the value paid in.", meta: {unit: "USD"}}
       - {name: is_in_daily_run, description: "True where the day belongs to the unbroken run of recent days, false for a day sampled alone, one a week: see fct_intents_1click_daily.is_in_daily_run. Sum or average only where this is true.", meta: {unit: "boolean"}, data_tests: [not_null]}
   - name: fct_lst_snapshot
-    description: "Liquid staking per snapshot, read directly from each contract."
+    description: "Liquid staking per day, read directly from each contract (LiNEAR, stNEAR, rNEAR). Daily from 2025-01-01, read at the first block of each UTC day from the archival node, and one day a month before that, back to each contract's first month. A token has no row before its contract existed."
     config:
-      meta: {grain: "snapshot_date, token", sources: "RPC contract views"}
+      meta: {grain: "snapshot_date, token", sources: "RPC contract views, at past blocks and nightly"}
     data_tests:
       - unique_grain: {arguments: {columns: ["snapshot_date", "token"]}}
       - min_rows: {arguments: {n: 3}}
     columns:
-      - {name: snapshot_date, description: "Date the source was read.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: snapshot_date, description: "The UTC date of the block the values were read at. With read_from = archival that is the day's first block, so the row shows the state as the day began, which is the close of the day before. With read_from = nightly it is the tip when that date's snapshot ran, some hours into the day.", meta: {unit: "date"}, data_tests: [not_null]}
       - {name: token, description: "Liquid staking token.", meta: {unit: "text"}, data_tests: [not_null]}
       - {name: contract, description: "Token contract.", meta: {unit: "account id"}}
       - {name: price_near, description: "NEAR redeemable per token.", meta: {unit: "NEAR per token"}}
       - {name: token_supply, description: "Tokens outstanding.", meta: {unit: "token units"}}
-      - {name: delegated_near, description: "NEAR the contract has staked with validators, read from the contract. For rNEAR until its get_total_staked_balance is read, from the first night after 2026-11-10, this is token_supply times price_near, which is the same figure because a contract sets its price as staked NEAR divided by supply: a data test holds the two within 0.01% wherever both exist.", meta: {unit: "NEAR"}}
+      - {name: delegated_near, description: "NEAR the contract has staked with validators, read from the contract. Where a read holds no get_total_staked_balance for rNEAR, this is token_supply times price_near, which is the same figure because a contract sets its price as staked NEAR divided by supply: a data test holds the two within 0.01% wherever both exist.", meta: {unit: "NEAR"}}
+      - {name: read_from, description: "archival: replayed from the archival node at the first block of the UTC day. nightly: read at the tip when the snapshot of that date ran, used only for a date the replay has not read. All of a contract's figures on a date come from the same read.", meta: {unit: "label"}, data_tests: [not_null, {accepted_values: {arguments: {values: ["archival", "nightly"]}}}]}
   - name: fct_market_daily
     description: "NEAR price and market cap per UTC day, one column per measure, aligned to the close of the UTC day. price_usd takes the first source with a value: CoinMetrics, Coinbase, DefiLlama, then NearBlocks. price_basis names it, and dq_reconciliation compares the four. market_cap_usd is price times the circulating supply built from the chain in fct_circulating_supply_daily, which is total supply minus what lockups still lock. See docs/CIRCULATING_SUPPLY.md. CoinMetrics' own market cap is compared in dq_reconciliation: its supply is NearBlocks' legacy endpoint through CoinGecko, which froze in August 2025 and has been total supply since 2025-10-25."
     config:
@@ -576,29 +577,31 @@ models:
       - {name: depth_usd, description: "Assets with a vetted price opposite this token, summed over Rhea's pools at this read. This is the real money behind a pool price: in a constant-product pool, selling any amount cannot take out more than the other side. It does not use Rhea's own tvl field, which reads $1.37B for one pool of two unknown tokens. It leaves out concentrated-liquidity (DCL) pools, which Rhea's pool list does not include, so a token traded only there reads 0.", meta: {unit: "USD"}, data_tests: [not_null, {in_range: {arguments: {low: 0, high: 1000000000}}}]}
       - {name: is_vetted, description: "True if 1Click has a positive price for the token or registry/tokens.csv lists it. Only these prices count toward depth_usd, and only these tokens can be valued beyond their depth.", meta: {unit: "boolean"}, data_tests: [not_null]}
   - name: fct_mpc_participants
-    description: "MPC operators per snapshot, read directly from v1.signer."
+    description: "MPC operators per day, read directly from v1.signer. Daily from 2025-01-01, read at the first block of each UTC day from the archival node, and one day a month before that, back to the contract's first month. A day on which the contract was not in its Running state has no rows."
     config:
-      meta: {grain: "snapshot_date, operator_account_id", sources: "RPC v1.signer state"}
+      meta: {grain: "snapshot_date, operator_account_id", sources: "RPC v1.signer state, at past blocks and nightly"}
     data_tests:
       - unique_grain: {arguments: {columns: ["snapshot_date", "operator_account_id"]}}
       - min_rows: {arguments: {n: 10}}
     columns:
-      - {name: snapshot_date, description: "Date the source was read.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: snapshot_date, description: "The UTC date of the block the values were read at. With read_from = archival that is the day's first block, so the row shows the state as the day began, which is the close of the day before. With read_from = nightly it is the tip when that date's snapshot ran, some hours into the day.", meta: {unit: "date"}, data_tests: [not_null]}
       - {name: operator_account_id, description: "MPC operator account.", meta: {unit: "account id"}, data_tests: [not_null]}
       - {name: participant_id, description: "Operator's id in the contract.", meta: {unit: "integer"}}
+      - {name: read_from, description: "archival: replayed from the archival node at the first block of the UTC day. nightly: read at the tip when the snapshot of that date ran, used only for a date the replay has not read. All of a contract's figures on a date come from the same read.", meta: {unit: "label"}, data_tests: [not_null, {accepted_values: {arguments: {values: ["archival", "nightly"]}}}]}
   - name: fct_mpc_state
-    description: "Chain Signatures contract state per snapshot, read directly from v1.signer."
+    description: "Chain Signatures contract state per day, read directly from v1.signer. Daily from 2025-01-01, read at the first block of each UTC day from the archival node, and one day a month before that, back to the contract's first month. A day on which the contract was not in its Running state has no row."
     config:
-      meta: {grain: "snapshot_date", sources: "RPC v1.signer state"}
+      meta: {grain: "snapshot_date", sources: "RPC v1.signer state, at past blocks and nightly"}
     data_tests:
       - unique_grain: {arguments: {columns: ["snapshot_date"]}}
       - min_rows: {arguments: {n: 1}}
     columns:
-      - {name: snapshot_date, description: "Date the source was read.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: snapshot_date, description: "The UTC date of the block the values were read at. With read_from = archival that is the day's first block, so the row shows the state as the day began, which is the close of the day before. With read_from = nightly it is the tip when that date's snapshot ran, some hours into the day.", meta: {unit: "date"}, data_tests: [not_null]}
       - {name: participants, description: "MPC participants.", meta: {unit: "count"}}
       - {name: threshold, description: "Signers required.", meta: {unit: "count"}}
-      - {name: signature_domains, description: "Signature schemes supported.", meta: {unit: "count"}}
+      - {name: signature_domains, description: "Signature schemes supported: the contract's list of domains. Its first version had no such list and held a single key, which counts as 1.", meta: {unit: "count"}}
       - {name: keyset_epoch, description: "MPC key generation epoch.", meta: {unit: "integer"}}
+      - {name: read_from, description: "archival: replayed from the archival node at the first block of the UTC day. nightly: read at the tip when the snapshot of that date ran, used only for a date the replay has not read. All of a contract's figures on a date come from the same read.", meta: {unit: "label"}, data_tests: [not_null, {accepted_values: {arguments: {values: ["archival", "nightly"]}}}]}
   - name: fct_peer_daily
     description: "NEAR and peer chains per day. Activity columns use one source and definition for every chain; market_cap_usd does not, so read market_cap_basis before comparing caps. fees_usd and revenue_usd cover the applications on a chain, and gas_fees_usd the chain's own transaction fees. An empty cell means the source has no value for that day. The fees and revenue of the newest days can still change; see is_fee_revenue_provisional."
     config:
@@ -826,7 +829,7 @@ models:
       - {name: amount_token, description: "Signed amount in whole tokens.", meta: {unit: "token units"}}
       - {name: share_of_top_100, description: "Share of the balance held by the top 100. Not a share of total supply.", meta: {unit: "fraction"}}
   - name: fct_validator_epoch
-    description: "Validator set per epoch, for the epoch in force at the first block of each UTC day plus the current epoch read each night. NEAR runs about three epochs a day, so this is a daily sample of epochs, not every epoch. Past epochs are backfilled newest first from the archival node, which returns UNKNOWN_EPOCH for some of them. Those days are not asked again and stay empty, so check which days are present before reading a trend. An epoch read after it ended has final production counts; a nightly read of the current epoch is partial."
+    description: "Validator set per epoch, for the epoch in force at the first block of each UTC day plus the current epoch read each night. NEAR runs about three epochs a day, so this is a daily sample of epochs, not every epoch. Past epochs are backfilled newest first from the archival node. Its nodes do not all hold the same epochs, so an epoch one of them refuses is asked again on later runs; at the 2026-11-10 pin every day from 2025-01-01 has its epoch. An epoch read after it ended has final production counts; a nightly read of the current epoch is partial."
     config:
       meta: {grain: "epoch_height, validator_account_id", sources: "RPC validators"}
     data_tests:
@@ -846,9 +849,9 @@ models:
       - {name: endorsements_produced, description: "Chunk endorsements produced.", meta: {unit: "count"}}
       - {name: endorsements_expected, description: "Chunk endorsements expected.", meta: {unit: "count"}}
       - {name: read_from, description: "nightly for a mid-epoch read, archival for an epoch read after it ended.", meta: {unit: "text"}}
-      - {name: is_epoch_complete, description: "True when the epoch had ended at the read, so its production counts are final: the validators' expected blocks add up to the protocol's epoch length (43,200), since every block has one expected producer. False for an epoch the nightly read caught in progress. The backfill reads each such epoch again once it has ended, so only the newest epoch stays false: at the 2026-11-10 pin 372 of 373 epochs were complete, and the one in progress had run 12,907 blocks. The stake columns do not depend on it: stakes are fixed when an epoch starts.", meta: {unit: "boolean"}, data_tests: [not_null]}
+      - {name: is_epoch_complete, description: "True when the epoch had ended at the read, so its production counts are final: the validators' expected blocks add up to the protocol's epoch length (43,200), since every block has one expected producer. False for an epoch the nightly read caught in progress. The backfill reads each such epoch again once it has ended, so only the newest epoch stays false: at the 2026-11-10 pin 688 of 689 epochs were complete, and the one in progress had run 12,907 blocks. The stake columns do not depend on it: stakes are fixed when an epoch starts.", meta: {unit: "boolean"}, data_tests: [not_null]}
   - name: fct_validator_summary
-    description: "Decentralization per epoch: validator count, stake concentration and Nakamoto coefficients. One epoch per day, the one in force at the day's first block, plus the current epoch read each night: see fct_validator_epoch. History is backfilled newest first and has gaps on the days whose epoch the archival node refused."
+    description: "Decentralization per epoch: validator count, stake concentration and Nakamoto coefficients. One epoch per day, the one in force at the day's first block, plus the current epoch read each night: see fct_validator_epoch. History is backfilled newest first; at the 2026-11-10 pin every day from 2025-01-01 has its epoch."
     config:
       meta: {grain: "epoch_height", sources: "fct_validator_epoch, dim_block_day"}
     data_tests:
@@ -1014,15 +1017,16 @@ models:
       - {name: read_on, description: "Date of the reading.", meta: {unit: "date"}}
       - {name: is_test, description: "True for a proposal made to try the contract out or as a joke, not a real one: its title says test, or it has a link that is not a forum thread on gov.near.org (https://gov.near.org/t/...). A real proposal either links to its thread or has no link. One test proposal went to a vote and was defeated; a data test fails if a flagged proposal ever passes.", meta: {unit: "boolean"}, data_tests: [not_null]}
   - name: fct_venear_snapshot
-    description: "House of Stake participation per snapshot, read directly from venear.dao."
+    description: "House of Stake participation per day, read directly from venear.dao, at the first block of each UTC day from the archival node. The table starts on the first day the contract existed."
     config:
-      meta: {grain: "snapshot_date", sources: "RPC venear.dao"}
+      meta: {grain: "snapshot_date", sources: "RPC venear.dao, at past blocks and nightly"}
     data_tests:
       - unique_grain: {arguments: {columns: ["snapshot_date"]}}
     columns:
-      - {name: snapshot_date, description: "Date the source was read.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: snapshot_date, description: "The UTC date of the block the values were read at. With read_from = archival that is the day's first block, so the row shows the state as the day began, which is the close of the day before. With read_from = nightly it is the tip when that date's snapshot ran, some hours into the day.", meta: {unit: "date"}, data_tests: [not_null]}
       - {name: total_venear, description: "veNEAR outstanding.", meta: {unit: "veNEAR"}}
       - {name: accounts, description: "Accounts holding veNEAR.", meta: {unit: "count"}}
+      - {name: read_from, description: "archival: replayed from the archival node at the first block of the UTC day. nightly: read at the tip when the snapshot of that date ran, used only for a date the replay has not read. All of a contract's figures on a date come from the same read.", meta: {unit: "label"}, data_tests: [not_null, {accepted_values: {arguments: {values: ["archival", "nightly"]}}}]}
   - name: dim_source
     description: "Every data source with its access, limits and terms."
     config:

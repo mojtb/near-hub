@@ -364,6 +364,12 @@
   "seconds": 2.5,
   "status": "ok"
  },
+ "rpc/contract_views_history": {
+  "detail": "",
+  "files": 12,
+  "seconds": 1.5,
+  "status": "ok"
+ },
  "rpc/ft_metadata": {
   "detail": "",
   "files": 1,
@@ -414,8 +420,8 @@
  },
  "rpc/validators_epoch": {
   "detail": "",
-  "files": 2,
-  "seconds": 4.2,
+  "files": 1,
+  "seconds": 1.8,
   "status": "ok"
  }
 }
