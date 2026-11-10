@@ -28,6 +28,9 @@ AREAS = [
     ("Capital and DeFi", ["fct_protocol_tvl_daily", "fct_exchange_balance_daily", "fct_protocol_fees_snapshot", "fct_stablecoin_assets", "fct_yield_pools"]),
     ("Market and peers", ["fct_market_daily", "fct_token_prices", "fct_peer_daily", "fct_etf_nrr_daily", "fct_etf_nrr_chain_daily"]),
     ("Developers and governance", ["fct_dev_activity_weekly", "fct_repo_snapshot", "fct_catalog_projects", "fct_governance_threads", "fct_governance_proposals", "fct_venear_snapshot"]),
+    ("Thesis models", ["fct_thesis_scorecard", "dim_claim", "fct_net_dilution_daily", "fct_deflation_scenarios",
+                       "fct_intents_unit_economics_monthly", "fct_intents_channel_economics_monthly", "fct_intents_concentration_monthly",
+                       "fct_valuation_multiples_daily", "fct_usage_quality_daily", "fct_etf_absorption_daily"]),
     ("Data quality", ["dq_reconciliation", "dq_freshness", "dq_revisions", "dq_ingest_runs", "dq_provenance"]),
 ]
 DATE_COLUMNS = ("date_day", "snapshot_date", "week_start", "month_start", "event_date")

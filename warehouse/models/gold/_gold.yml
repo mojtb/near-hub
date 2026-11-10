@@ -1086,6 +1086,191 @@ models:
       - {name: usd_out, description: "Value sent by the wallet, valued as usd_in, as a positive number.", meta: {unit: "USD"}}
       - {name: first_seen, description: "First transfer between the two.", meta: {unit: "date"}}
       - {name: last_seen, description: "Latest transfer between the two.", meta: {unit: "date"}}
+  - name: fct_net_dilution_daily
+    description: "How much a holder is diluted, how a staker is paid and how much of issuance comes back, over the 30 days ending on each day. Issuance arrives per epoch and revenue is swept in lumps, so one day says little: every figure is a 30-day sum or a rate built from one, and rates are annualized by 365/30. The NEAR received by the revenue wallets is held there, not burned."
+    config:
+      meta: {grain: "date_day", sources: "fct_supply_daily, fct_revenue_inflows_daily, fct_validator_summary, fct_market_daily"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["date_day"]}}
+      - no_missing_days: {arguments: {day_column: date_day}}
+      - min_rows: {arguments: {n: 2000}}
+    columns:
+      - {name: date_day, description: "Last day of the 30-day window, a UTC calendar day.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: minted_30d_near, description: "NEAR issued over the window: the sum of fct_supply_daily.minted_near.", meta: {unit: "NEAR"}}
+      - {name: burn_30d_near, description: "NEAR burned as gas over the window: the sum of fct_supply_daily.burn_near, which is a lower bound on days before protocol version 87; see is_burn_lower_bound.", meta: {unit: "NEAR"}}
+      - {name: revenue_inflow_30d_near, description: "NEAR and wNEAR received by the three revenue wallets over the window, from fct_revenue_inflows_daily. Since the fee switch of 2026-02-23 this is NEAR bought with Intents fees. The wallets hold it; it is not burned, so it leaves the market but not the supply.", meta: {unit: "NEAR"}}
+      - {name: net_issuance_30d_near, description: "minted_30d_near minus burn_30d_near minus revenue_inflow_30d_near: what the window added to the NEAR outside the revenue wallets.", meta: {unit: "NEAR"}}
+      - {name: offset_share, description: "burn_30d_near plus revenue_inflow_30d_near, over minted_30d_near: the share of issuance that came back. Empty before issuance began on 2020-10-20.", meta: {unit: "fraction"}}
+      - {name: gross_inflation_rate, description: "minted_30d_near times 365/30, over the window's mean total supply.", meta: {unit: "fraction per year"}}
+      - {name: net_inflation_rate, description: "net_issuance_30d_near times 365/30, over the window's mean total supply. Above zero means supply outside the revenue wallets is still growing.", meta: {unit: "fraction per year"}}
+      - {name: nominal_staking_yield_rate, description: "Issuance paid to validators and their delegators over the window (minted less the treasury's share), times 365/30, over the window's mean stake. Before pool commission, which the warehouse does not hold. Empty where fewer than five days of the window have a validator reading; the readings are sampled epochs, sparse before 2025-10.", meta: {unit: "fraction per year"}}
+      - {name: real_staking_yield_rate, description: "nominal_staking_yield_rate minus gross_inflation_rate: what staking pays beyond the dilution every holder bears.", meta: {unit: "fraction per year"}}
+      - {name: staked_share, description: "The window's mean stake over its mean total supply, from the same sampled epochs as the yield.", meta: {unit: "fraction"}}
+      - {name: minted_30d_usd, description: "The window's issuance at each day's closing price. Empty where a day of the window has no price.", meta: {unit: "USD"}}
+      - {name: revenue_inflow_30d_usd, description: "The window's revenue inflows in USD: the sum of fct_revenue_inflows_daily.received_usd.", meta: {unit: "USD"}}
+      - {name: is_burn_lower_bound, description: "True while the window holds a day before protocol version 87 (2026-11-04), when part of each gas fee was rebated to contracts and burn_near is a lower bound. From 2026-12-04 every window is exact.", meta: {unit: "boolean"}, data_tests: [not_null]}
+  - name: fct_deflation_scenarios
+    description: "The Intents volume at which NEAR's supply would stop growing, under today's issuance and under the end state of HSP-029, at several shares of fees kept. All inputs are measured over the 30 days ending on as_of_date. Revenue is in dollars and issuance in NEAR, so break-even volume rises in step with price_usd and falls in step with fee_rate; a reader can rescale a row to another price or fee rate. The fee rate and the capture rate are held fixed, though both depend on which flows grow."
+    config:
+      meta: {grain: "scenario_id, capture_case", sources: "fct_net_dilution_daily, fct_intents_daily, fct_market_daily, registry/issuance_scenarios.csv"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["scenario_id", "capture_case"]}}
+      - min_rows: {arguments: {n: 8}}
+    columns:
+      - {name: as_of_date, description: "The newest day whose Intents fees are settled; every input is the 30 days ending here, and price_usd is this day's close.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: scenario_id, description: "Issuance scenario from registry/issuance_scenarios.csv: current is what the chain minted over the window; hsp029_end_state is 1.6% of supply a year, which has passed its vote but is not in force.", meta: {unit: "id"}, data_tests: [not_null]}
+      - {name: capture_case, description: "Which capture rate the row assumes: measured, or at_50_pct, at_70_pct, at_100_pct.", meta: {unit: "label"}, data_tests: [not_null, {accepted_values: {arguments: {values: ["measured", "at_50_pct", "at_70_pct", "at_100_pct"]}}}]}
+      - {name: issuance_near_per_day, description: "NEAR issued per day in the scenario.", meta: {unit: "NEAR"}}
+      - {name: burn_near_per_day, description: "NEAR burned as gas per day over the window, held fixed across scenarios.", meta: {unit: "NEAR"}}
+      - {name: price_usd, description: "NEAR's close on as_of_date, from fct_market_daily.", meta: {unit: "USD per token"}}
+      - {name: fee_rate, description: "Intents fees over Intents volume across the window.", meta: {unit: "fraction"}}
+      - {name: capture_rate, description: "Share of Intents fees that reaches the revenue wallets: the window's revenue over fees for the measured case, else the case's rate.", meta: {unit: "fraction"}}
+      - {name: volume_usd_per_day, description: "Mean daily all-route Intents volume over the window.", meta: {unit: "USD"}}
+      - {name: breakeven_volume_usd_per_day, description: "Daily Intents volume at which the NEAR bought with captured fees equals issuance less burn: (issuance_near_per_day - burn_near_per_day) x price_usd / (fee_rate x capture_rate).", meta: {unit: "USD"}, data_tests: [not_null]}
+      - {name: breakeven_volume_multiple, description: "breakeven_volume_usd_per_day over volume_usd_per_day: how many times today's volume it would take.", meta: {unit: "multiple"}, data_tests: [not_null]}
+      - {name: net_inflation_rate_at_current_volume, description: "What net inflation would be in the scenario at today's volume: issuance less burn less the NEAR that volume_usd_per_day x fee_rate x capture_rate buys, times 365, over mean supply.", meta: {unit: "fraction per year"}}
+  - name: fct_intents_unit_economics_monthly
+    description: "NEAR's Intents revenue per month, split into what makes it: volume, the fee rate charged on it, and the share of fees NEAR keeps. revenue_usd = volume_usd x fee_rate x capture_rate, so a month's change splits exactly into three log effects. Volume and fees are NEAR's own all-route series and revenue is what reached the wallets, which are swept in lumps, so a month is the shortest span on which capture means anything. Days whose fees can still change are left out, so the newest month is short."
+    config:
+      meta: {grain: "month_start", sources: "fct_intents_daily"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["month_start"]}}
+      - min_rows: {arguments: {n: 12}}
+    columns:
+      - {name: month_start, description: "First day of the month.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: days_counted, description: "Days of the month with settled figures.", meta: {unit: "days"}}
+      - {name: is_month_complete, description: "True when every day of the month is counted. The newest month is not.", meta: {unit: "boolean"}, data_tests: [not_null]}
+      - {name: volume_usd, description: "All-route Intents volume over the counted days.", meta: {unit: "USD"}}
+      - {name: fees_usd, description: "Intents fees over the counted days. Fee data begins in May 2025.", meta: {unit: "USD"}}
+      - {name: revenue_usd, description: "Revenue that reached NEAR's wallets over the counted days.", meta: {unit: "USD"}}
+      - {name: fee_rate, description: "fees_usd over volume_usd, on the days that have fees.", meta: {unit: "fraction"}, data_tests: [{in_range: {arguments: {low: 0, high: 0.05}}}]}
+      - {name: capture_rate, description: "revenue_usd over fees_usd: the share of fees NEAR keeps. The rest stays with distribution partners, solvers and front ends.", meta: {unit: "fraction"}}
+      - {name: net_take_rate, description: "revenue_usd over volume_usd: what NEAR keeps per dollar swapped.", meta: {unit: "fraction"}}
+      - {name: confidential_volume_share, description: "One minus public volume over all-route volume, on the days that have a public figure, with public volume capped at all-route volume day by day because the two come from different sources. Empty before public volume is held.", meta: {unit: "fraction"}}
+      - {name: revenue_log_change, description: "Change in the natural log of revenue per day from the month before. It equals the sum of the three effects. Empty unless both months are complete, have fees on every day and at least $1,000 of revenue; the wallets' first months held test transfers.", meta: {unit: "log points"}}
+      - {name: volume_log_effect, description: "The part of revenue_log_change from volume per day.", meta: {unit: "log points"}}
+      - {name: fee_rate_log_effect, description: "The part of revenue_log_change from the fee rate.", meta: {unit: "log points"}}
+      - {name: capture_log_effect, description: "The part of revenue_log_change from the capture rate.", meta: {unit: "log points"}}
+  - name: fct_intents_channel_economics_monthly
+    description: "What each 1Click distribution channel brought in per month: finished volume, the app fees charged on it, and the fee rate that implies. It shows who prices NEAR's fee base. 1Click is one part of NEAR Intents (27% to 45% of volume in 2026) and only its unbroken daily run is used. App fees are what a channel adds for itself or passes on; they are not NEAR's revenue."
+    config:
+      meta: {grain: "month_start, referral", sources: "fct_intents_1click_channel_daily"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["month_start", "referral"]}}
+      - min_rows: {arguments: {n: 500}}
+    columns:
+      - {name: month_start, description: "First day of the month.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: referral, description: "The channel, as the integrator names itself to 1Click. (none) is every swap sent without a name, a bucket and not one channel.", meta: {unit: "text"}, data_tests: [not_null]}
+      - {name: is_month_complete, description: "True when the daily run covers every day of the month.", meta: {unit: "boolean"}, data_tests: [not_null]}
+      - {name: finished_swaps, description: "Swaps that finished.", meta: {unit: "count"}}
+      - {name: refunded_swaps, description: "Swaps that were refunded.", meta: {unit: "count"}}
+      - {name: refunded_share, description: "refunded_swaps over finished plus refunded swaps.", meta: {unit: "fraction"}}
+      - {name: volume_usd, description: "USD paid in on finished swaps.", meta: {unit: "USD"}}
+      - {name: app_fee_usd, description: "App fees on finished swaps.", meta: {unit: "USD"}}
+      - {name: app_fee_rate, description: "app_fee_usd over volume_usd. 0.0082 is 82 basis points.", meta: {unit: "fraction"}}
+      - {name: share_of_volume, description: "The channel's share of the month's finished 1Click volume.", meta: {unit: "fraction"}, data_tests: [{in_range: {arguments: {low: 0, high: 1}}}]}
+      - {name: share_of_fees, description: "The channel's share of the month's 1Click app fees.", meta: {unit: "fraction"}}
+      - {name: fee_rank, description: "Rank within the month by app fees, 1 the largest.", meta: {unit: "integer"}}
+  - name: fct_intents_concentration_monthly
+    description: "How concentrated NEAR Intents is, per month, along four cuts: 1Click channels by volume and by fees, and public volume by blockchain and by asset. covered_share_of_volume says how much of all-route volume a cut can see: 1Click is a minority of volume, and the public cuts fell below a fifth once settlement went confidential on 2026-11-03."
+    config:
+      meta: {grain: "month_start, dimension", sources: "fct_intents_1click_channel_daily, fct_intents_chain_daily, fct_intents_asset_daily, fct_intents_daily"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["month_start", "dimension"]}}
+    columns:
+      - {name: month_start, description: "First day of the month.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: dimension, description: "The cut: channel_volume and channel_fees (1Click, finished swaps of the daily run), chain_volume and asset_volume (public Intents per NearBlocks).", meta: {unit: "label"}, data_tests: [not_null, {accepted_values: {arguments: {values: ["channel_volume", "channel_fees", "chain_volume", "asset_volume"]}}}]}
+      - {name: is_month_complete, description: "True when the cut's source has every day of the month.", meta: {unit: "boolean"}, data_tests: [not_null]}
+      - {name: members, description: "Channels, blockchains or assets with a positive amount in the month. For channels, (none) counts as one.", meta: {unit: "count"}}
+      - {name: total_usd, description: "The month's amount across all members: volume, or app fees for channel_fees.", meta: {unit: "USD"}}
+      - {name: hhi, description: "Herfindahl index: the sum of squared shares. 1 is a single member; 1 over the number of members is an even split.", meta: {unit: "index 0 to 1"}, data_tests: [{in_range: {arguments: {low: 0, high: 1}}}]}
+      - {name: top_1_share, description: "Share of the largest member.", meta: {unit: "fraction"}, data_tests: [{in_range: {arguments: {low: 0, high: 1}}}]}
+      - {name: top_3_share, description: "Share of the three largest members.", meta: {unit: "fraction"}}
+      - {name: top_10_share, description: "Share of the ten largest members.", meta: {unit: "fraction"}}
+      - {name: top_member, description: "The largest member.", meta: {unit: "text"}}
+      - {name: covered_share_of_volume, description: "total_usd over the month's all-route Intents volume, for the three volume cuts: how much of Intents the cut sees. Empty for channel_fees.", meta: {unit: "fraction"}}
+  - name: fct_valuation_multiples_daily
+    description: "Market cap over a year of income, for NEAR and six peers, on five ideas of income, one row each because the choice of basis moves NEAR's rank more than anything else. gas_fees is what users paid the chain itself; app_fees what they paid applications on it; all_fees the two together; app_revenue the part of app fees the applications or their tokens keep, which does not go to the chain's own token; holder_revenue, for NEAR only, is gas burned plus NEAR received by the revenue wallets. A year of income is the trailing 30 days times 365/30. Market caps are not on one definition across chains: read fct_peer_daily.market_cap_basis before comparing."
+    config:
+      meta: {grain: "date_day, chain_id, basis", sources: "fct_peer_daily, fct_supply_daily, fct_market_daily, fct_revenue_inflows_daily"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["date_day", "chain_id", "basis"]}}
+      - min_rows: {arguments: {n: 20000}}
+    columns:
+      - {name: date_day, description: "Last day of the 30-day window, a UTC calendar day.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: chain_id, description: "Chain identifier from registry/peers.csv.", meta: {unit: "id"}, data_tests: [not_null]}
+      - {name: basis, description: "Which income the multiple uses: gas_fees, app_fees, all_fees, app_revenue or holder_revenue.", meta: {unit: "label"}, data_tests: [not_null, {accepted_values: {arguments: {values: ["gas_fees", "app_fees", "all_fees", "app_revenue", "holder_revenue"]}}}]}
+      - {name: basis_30d_usd, description: "The basis summed over the 30 days ending on date_day. A window with a missing day has no row.", meta: {unit: "USD"}}
+      - {name: multiple, description: "fct_peer_daily.market_cap_usd on date_day over basis_30d_usd times 365/30.", meta: {unit: "multiple"}, data_tests: [not_null]}
+      - {name: is_provisional, description: "fct_peer_daily.is_fee_revenue_provisional for the day: true on the newest two days, whose fees and revenue can still change.", meta: {unit: "boolean"}, data_tests: [not_null]}
+  - name: fct_usage_quality_daily
+    description: "Transactions with the known batch streams taken out, so usage can be read across the break of 2026-04-02 (docs/USAGE_BREAK_2026-04-02.md), and with the Sweat relayer taken out as well, since Sweat Wallet ends on 2026-12-30. The streams are counted from NearBlocks' per-account statistics, which reach back 365 active days from their first read, so the table starts where the Kai-Ching accounts' statistics do and the Sweat columns start later. A transaction that touches two of the stream accounts is counted in both, so the series without them is a floor."
+    config:
+      meta: {grain: "date_day", sources: "fct_chain_daily, fct_contract_daily, fct_receiver_sample_daily, fct_market_daily"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["date_day"]}}
+      - no_missing_days: {arguments: {day_column: date_day}}
+      - min_rows: {arguments: {n: 500}}
+    columns:
+      - {name: date_day, description: "UTC calendar day.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: batch_stream_txns, description: "Transactions involving hotwallet.kaiching, users.kaiching or sweat-migration.near: the fixed daily batch that stopped on 2026-04-01 and the three-week key migration that ended on 2026-04-02.", meta: {unit: "count"}}
+      - {name: sweat_relayer_txns, description: "Transactions involving sweat-relayer.near. Empty before 2025-11-01, where its statistics begin.", meta: {unit: "count"}}
+      - {name: txns_ex_batch_streams, description: "fct_chain_daily.txns minus batch_stream_txns.", meta: {unit: "count"}, data_tests: [{in_range: {arguments: {low: 0, high: 100000000}}}]}
+      - {name: txns_ex_batch_streams_and_sweat, description: "txns_ex_batch_streams minus sweat_relayer_txns: roughly what remains once Sweat Wallet has ended.", meta: {unit: "count"}}
+      - {name: sweat_share_of_txns_ex_batch_streams, description: "sweat_relayer_txns over txns_ex_batch_streams.", meta: {unit: "fraction"}}
+      - {name: txn_fee_usd, description: "fct_chain_daily.txn_fee_near at the day's closing price.", meta: {unit: "USD"}}
+      - {name: txn_fee_per_txn_near, description: "fct_chain_daily.txn_fee_near over all of the day's transactions, batch streams included.", meta: {unit: "NEAR"}}
+      - {name: sweat_gas_burn_share, description: "Share of the gas burnt in the day's sampled blocks whose receiver is labelled Sweat Economy, from fct_receiver_sample_daily. An estimate from a sample: 24 blocks a day before 2026-10-30 and 96 since, so read it over a week or more. Empty before the sample begins.", meta: {unit: "fraction"}}
+      - {name: is_before_usage_break, description: "True before 2026-04-03. Raw transaction and account counts are not comparable across that date; the columns here without the streams are.", meta: {unit: "boolean"}, data_tests: [not_null]}
+  - name: fct_etf_absorption_daily
+    description: "The Bitwise NEAR ETF's flows against what the chain issued and what the revenue wallets took in, from the fund's first day, one row per trading day. The seed baskets of 2026-09-28 are left out of the flow. A creation is NEAR delivered to the trust, which need not have been bought on the market that day, and redemptions reverse it. Only this one fund is tracked."
+    config:
+      meta: {grain: "date_day", sources: "fct_etf_nrr_daily, fct_supply_daily, fct_revenue_inflows_daily, fct_market_daily"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["date_day"]}}
+      - min_rows: {arguments: {n: 20}}
+    columns:
+      - {name: date_day, description: "Trading day.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: cumulative_flow_near, description: "Running sum of fct_etf_nrr_daily.flow_near since the fund's first day, without the seed baskets.", meta: {unit: "NEAR"}}
+      - {name: cumulative_minted_near, description: "NEAR the chain issued from the fund's first day through this day, every calendar day counted.", meta: {unit: "NEAR"}}
+      - {name: cumulative_revenue_inflow_near, description: "NEAR the revenue wallets received over the same days.", meta: {unit: "NEAR"}}
+      - {name: cumulative_flow_to_issuance_ratio, description: "cumulative_flow_near over cumulative_minted_near: how many times the chain's issuance the fund has taken in since it opened.", meta: {unit: "multiple"}}
+      - {name: flow_to_issuance_ratio, description: "The day's fund flow in NEAR over the NEAR issued that day. Issuance arrives per epoch, so read single days loosely.", meta: {unit: "multiple"}}
+      - {name: flow_share_of_spot_volume, description: "The day's fund flow in USD over NEAR's reported spot volume that day; negative on a day of net redemptions.", meta: {unit: "fraction"}}
+  - name: dim_claim
+    description: "The claims a long-term case for NEAR rests on, and the claims made against it, each with the measurement that would settle it and the bar it is held to. fct_thesis_scorecard evaluates them. The thresholds were written on 2026-11-10 with the 2026-11-09 readings in view, so they are round bars for what each claim's wording means, not predictions; why_this_threshold gives the reason for each. Where a claim was made in public, source_url points to it."
+    config:
+      meta: {grain: "claim_id", sources: "registry/claims.csv"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["claim_id"]}}
+      - min_rows: {arguments: {n: 20}}
+    columns:
+      - {name: claim_id, description: "Short name of the claim.", meta: {unit: "id"}, data_tests: [not_null]}
+      - {name: side, description: "bull if the claim supports a long-term case for NEAR, bear if it counts against one.", meta: {unit: "label"}, data_tests: [not_null, {accepted_values: {arguments: {values: ["bull", "bear"]}}}]}
+      - {name: pillar, description: "The part of the thesis the claim belongs to.", meta: {unit: "label"}}
+      - {name: claim, description: "The claim in one sentence.", meta: {unit: "text"}, data_tests: [not_null]}
+      - {name: test, description: "What is measured and from which gold table, or why the claim cannot be tested.", meta: {unit: "text"}, data_tests: [not_null]}
+      - {name: comparison, description: "How the measured value is held to the threshold: >= or <=. Empty for a claim that cannot be tested.", meta: {unit: "label"}, data_tests: [{accepted_values: {arguments: {values: [">=", "<="]}}}]}
+      - {name: threshold, description: "The bar. The claim holds when the value meets it.", meta: {unit: "see unit"}}
+      - {name: unit, description: "Unit of the value and the threshold.", meta: {unit: "text"}}
+      - {name: why_this_threshold, description: "The reason for the bar.", meta: {unit: "text"}}
+      - {name: source_url, description: "Where the claim was made in public, where one was found.", meta: {unit: "url"}}
+  - name: fct_thesis_scorecard
+    description: "Every claim in dim_claim measured against the warehouse: the value, the bar, and whether the claim holds. holds means the claim as written is true of the data, so a bear claim that holds counts against the thesis and a bull claim that fails does too. A claim the data cannot settle stays in the table as not_testable. The measurement behind each row is a select named by its claim_id in warehouse/models/gold/thesis/fct_thesis_scorecard.sql, and dim_claim.test says in words what it reads."
+    config:
+      meta: {grain: "claim_id", sources: "dim_claim and the gold tables each claim's test names"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["claim_id"]}}
+      - min_rows: {arguments: {n: 20}}
+    columns:
+      - {name: claim_id, description: "Claim from dim_claim.", meta: {unit: "id"}, data_tests: [not_null]}
+      - {name: side, description: "bull or bear, from dim_claim.", meta: {unit: "label"}, data_tests: [not_null]}
+      - {name: claim, description: "The claim in one sentence, from dim_claim.", meta: {unit: "text"}}
+      - {name: value, description: "The measured value, in dim_claim.unit. Empty for a claim that cannot be tested.", meta: {unit: "see dim_claim.unit"}}
+      - {name: comparison, description: "How the value is held to the threshold, from dim_claim.", meta: {unit: "label"}}
+      - {name: threshold, description: "The bar, from dim_claim.", meta: {unit: "see dim_claim.unit"}}
+      - {name: status, description: "holds if the value meets the bar, fails if it does not, not_testable if the claim has no test. A fourth value, not_measured, would mean a test returned nothing, and a data test fails the build if it appears.", meta: {unit: "label"}, data_tests: [not_null, {accepted_values: {arguments: {values: ["holds", "fails", "not_testable"]}}}]}
+      - {name: as_of_date, description: "The newest day, or the last day of the month, the value rests on.", meta: {unit: "date"}}
 
 # These hold the rules on made-up rows, because at a pin with few decimals most of them have no real rows to fail on.
 unit_tests:

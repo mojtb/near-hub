@@ -53,6 +53,12 @@ seeds:
         first_block_utc: timestamp
         contract_gas_reward_rate_before: double
         contract_gas_reward_rate_after: double
+    issuance_scenarios:
+      +column_types:
+        annual_issuance_rate: double
+    claims:
+      +column_types:
+        threshold: double
     etf_nrr_history:
       +column_types:
         date_day: date

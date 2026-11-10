@@ -3911,6 +3911,760 @@
   "last": "2026-11-10"
  },
  {
+  "area": "Thesis models",
+  "table": "fct_thesis_scorecard",
+  "description": "Every claim in dim_claim measured against the warehouse: the value, the bar, and whether the claim holds. holds means the claim as written is true of the data, so a bear claim that holds counts against the thesis and a bull claim that fails does too. A claim the data cannot settle stays in the table as not_testable. The measurement behind each row is a select named by its claim_id in warehouse/models/gold/thesis/fct_thesis_scorecard.sql, and dim_claim.test says in words what it reads.",
+  "grain": "claim_id",
+  "sources": "dim_claim and the gold tables each claim's test names",
+  "path": "data/gold/fct_thesis_scorecard.parquet",
+  "columns": [
+   {
+    "name": "claim_id",
+    "type": "VARCHAR",
+    "unit": "id",
+    "description": "Claim from dim_claim."
+   },
+   {
+    "name": "side",
+    "type": "VARCHAR",
+    "unit": "label",
+    "description": "bull or bear, from dim_claim."
+   },
+   {
+    "name": "claim",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "The claim in one sentence, from dim_claim."
+   },
+   {
+    "name": "value",
+    "type": "DOUBLE",
+    "unit": "see dim_claim.unit",
+    "description": "The measured value, in dim_claim.unit. Empty for a claim that cannot be tested."
+   },
+   {
+    "name": "comparison",
+    "type": "VARCHAR",
+    "unit": "label",
+    "description": "How the value is held to the threshold, from dim_claim."
+   },
+   {
+    "name": "threshold",
+    "type": "DOUBLE",
+    "unit": "see dim_claim.unit",
+    "description": "The bar, from dim_claim."
+   },
+   {
+    "name": "status",
+    "type": "VARCHAR",
+    "unit": "label",
+    "description": "holds if the value meets the bar, fails if it does not, not_testable if the claim has no test. A fourth value, not_measured, would mean a test returned nothing, and a data test fails the build if it appears."
+   },
+   {
+    "name": "as_of_date",
+    "type": "DATE",
+    "unit": "date",
+    "description": "The newest day, or the last day of the month, the value rests on."
+   }
+  ],
+  "rows": 29,
+  "first": null,
+  "last": null
+ },
+ {
+  "area": "Thesis models",
+  "table": "dim_claim",
+  "description": "The claims a long-term case for NEAR rests on, and the claims made against it, each with the measurement that would settle it and the bar it is held to. fct_thesis_scorecard evaluates them. The thresholds were written on 2026-11-10 with the 2026-11-09 readings in view, so they are round bars for what each claim's wording means, not predictions; why_this_threshold gives the reason for each. Where a claim was made in public, source_url points to it.",
+  "grain": "claim_id",
+  "sources": "registry/claims.csv",
+  "path": "data/gold/dim_claim.parquet",
+  "columns": [
+   {
+    "name": "claim_id",
+    "type": "VARCHAR",
+    "unit": "id",
+    "description": "Short name of the claim."
+   },
+   {
+    "name": "side",
+    "type": "VARCHAR",
+    "unit": "label",
+    "description": "bull if the claim supports a long-term case for NEAR, bear if it counts against one."
+   },
+   {
+    "name": "pillar",
+    "type": "VARCHAR",
+    "unit": "label",
+    "description": "The part of the thesis the claim belongs to."
+   },
+   {
+    "name": "claim",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "The claim in one sentence."
+   },
+   {
+    "name": "test",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "What is measured and from which gold table, or why the claim cannot be tested."
+   },
+   {
+    "name": "comparison",
+    "type": "VARCHAR",
+    "unit": "label",
+    "description": "How the measured value is held to the threshold: >= or <=. Empty for a claim that cannot be tested."
+   },
+   {
+    "name": "threshold",
+    "type": "DOUBLE",
+    "unit": "see unit",
+    "description": "The bar. The claim holds when the value meets it."
+   },
+   {
+    "name": "unit",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "Unit of the value and the threshold."
+   },
+   {
+    "name": "why_this_threshold",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "The reason for the bar."
+   },
+   {
+    "name": "source_url",
+    "type": "VARCHAR",
+    "unit": "url",
+    "description": "Where the claim was made in public, where one was found."
+   }
+  ],
+  "rows": 29,
+  "first": null,
+  "last": null
+ },
+ {
+  "area": "Thesis models",
+  "table": "fct_net_dilution_daily",
+  "description": "How much a holder is diluted, how a staker is paid and how much of issuance comes back, over the 30 days ending on each day. Issuance arrives per epoch and revenue is swept in lumps, so one day says little: every figure is a 30-day sum or a rate built from one, and rates are annualized by 365/30. The NEAR received by the revenue wallets is held there, not burned.",
+  "grain": "date_day",
+  "sources": "fct_supply_daily, fct_revenue_inflows_daily, fct_validator_summary, fct_market_daily",
+  "path": "data/gold/fct_net_dilution_daily.parquet",
+  "columns": [
+   {
+    "name": "date_day",
+    "type": "DATE",
+    "unit": "date",
+    "description": "Last day of the 30-day window, a UTC calendar day."
+   },
+   {
+    "name": "minted_30d_near",
+    "type": "DOUBLE",
+    "unit": "NEAR",
+    "description": "NEAR issued over the window: the sum of fct_supply_daily.minted_near."
+   },
+   {
+    "name": "burn_30d_near",
+    "type": "DOUBLE",
+    "unit": "NEAR",
+    "description": "NEAR burned as gas over the window: the sum of fct_supply_daily.burn_near, which is a lower bound on days before protocol version 87; see is_burn_lower_bound."
+   },
+   {
+    "name": "revenue_inflow_30d_near",
+    "type": "DOUBLE",
+    "unit": "NEAR",
+    "description": "NEAR and wNEAR received by the three revenue wallets over the window, from fct_revenue_inflows_daily. Since the fee switch of 2026-02-23 this is NEAR bought with Intents fees. The wallets hold it; it is not burned, so it leaves the market but not the supply."
+   },
+   {
+    "name": "net_issuance_30d_near",
+    "type": "DOUBLE",
+    "unit": "NEAR",
+    "description": "minted_30d_near minus burn_30d_near minus revenue_inflow_30d_near: what the window added to the NEAR outside the revenue wallets."
+   },
+   {
+    "name": "offset_share",
+    "type": "DOUBLE",
+    "unit": "fraction",
+    "description": "burn_30d_near plus revenue_inflow_30d_near, over minted_30d_near: the share of issuance that came back. Empty before issuance began on 2020-10-20."
+   },
+   {
+    "name": "gross_inflation_rate",
+    "type": "DOUBLE",
+    "unit": "fraction per year",
+    "description": "minted_30d_near times 365/30, over the window's mean total supply."
+   },
+   {
+    "name": "net_inflation_rate",
+    "type": "DOUBLE",
+    "unit": "fraction per year",
+    "description": "net_issuance_30d_near times 365/30, over the window's mean total supply. Above zero means supply outside the revenue wallets is still growing."
+   },
+   {
+    "name": "nominal_staking_yield_rate",
+    "type": "DOUBLE",
+    "unit": "fraction per year",
+    "description": "Issuance paid to validators and their delegators over the window (minted less the treasury's share), times 365/30, over the window's mean stake. Before pool commission, which the warehouse does not hold. Empty where fewer than five days of the window have a validator reading; the readings are sampled epochs, sparse before 2025-10."
+   },
+   {
+    "name": "real_staking_yield_rate",
+    "type": "DOUBLE",
+    "unit": "fraction per year",
+    "description": "nominal_staking_yield_rate minus gross_inflation_rate: what staking pays beyond the dilution every holder bears."
+   },
+   {
+    "name": "staked_share",
+    "type": "DOUBLE",
+    "unit": "fraction",
+    "description": "The window's mean stake over its mean total supply, from the same sampled epochs as the yield."
+   },
+   {
+    "name": "minted_30d_usd",
+    "type": "DOUBLE",
+    "unit": "USD",
+    "description": "The window's issuance at each day's closing price. Empty where a day of the window has no price."
+   },
+   {
+    "name": "revenue_inflow_30d_usd",
+    "type": "DOUBLE",
+    "unit": "USD",
+    "description": "The window's revenue inflows in USD: the sum of fct_revenue_inflows_daily.received_usd."
+   },
+   {
+    "name": "is_burn_lower_bound",
+    "type": "BOOLEAN",
+    "unit": "boolean",
+    "description": "True while the window holds a day before protocol version 87 (2026-11-04), when part of each gas fee was rebated to contracts and burn_near is a lower bound. From 2026-12-04 every window is exact."
+   }
+  ],
+  "rows": 2274,
+  "first": "2020-08-19",
+  "last": "2026-11-09"
+ },
+ {
+  "area": "Thesis models",
+  "table": "fct_deflation_scenarios",
+  "description": "The Intents volume at which NEAR's supply would stop growing, under today's issuance and under the end state of HSP-029, at several shares of fees kept. All inputs are measured over the 30 days ending on as_of_date. Revenue is in dollars and issuance in NEAR, so break-even volume rises in step with price_usd and falls in step with fee_rate; a reader can rescale a row to another price or fee rate. The fee rate and the capture rate are held fixed, though both depend on which flows grow.",
+  "grain": "scenario_id, capture_case",
+  "sources": "fct_net_dilution_daily, fct_intents_daily, fct_market_daily, registry/issuance_scenarios.csv",
+  "path": "data/gold/fct_deflation_scenarios.parquet",
+  "columns": [
+   {
+    "name": "as_of_date",
+    "type": "DATE",
+    "unit": "date",
+    "description": "The newest day whose Intents fees are settled; every input is the 30 days ending here, and price_usd is this day's close."
+   },
+   {
+    "name": "scenario_id",
+    "type": "VARCHAR",
+    "unit": "id",
+    "description": "Issuance scenario from registry/issuance_scenarios.csv: current is what the chain minted over the window; hsp029_end_state is 1.6% of supply a year, which has passed its vote but is not in force."
+   },
+   {
+    "name": "capture_case",
+    "type": "VARCHAR",
+    "unit": "label",
+    "description": "Which capture rate the row assumes: measured, or at_50_pct, at_70_pct, at_100_pct."
+   },
+   {
+    "name": "issuance_near_per_day",
+    "type": "DOUBLE",
+    "unit": "NEAR",
+    "description": "NEAR issued per day in the scenario."
+   },
+   {
+    "name": "burn_near_per_day",
+    "type": "DOUBLE",
+    "unit": "NEAR",
+    "description": "NEAR burned as gas per day over the window, held fixed across scenarios."
+   },
+   {
+    "name": "price_usd",
+    "type": "DOUBLE",
+    "unit": "USD per token",
+    "description": "NEAR's close on as_of_date, from fct_market_daily."
+   },
+   {
+    "name": "fee_rate",
+    "type": "DOUBLE",
+    "unit": "fraction",
+    "description": "Intents fees over Intents volume across the window."
+   },
+   {
+    "name": "capture_rate",
+    "type": "DOUBLE",
+    "unit": "fraction",
+    "description": "Share of Intents fees that reaches the revenue wallets: the window's revenue over fees for the measured case, else the case's rate."
+   },
+   {
+    "name": "volume_usd_per_day",
+    "type": "DOUBLE",
+    "unit": "USD",
+    "description": "Mean daily all-route Intents volume over the window."
+   },
+   {
+    "name": "breakeven_volume_usd_per_day",
+    "type": "DOUBLE",
+    "unit": "USD",
+    "description": "Daily Intents volume at which the NEAR bought with captured fees equals issuance less burn: (issuance_near_per_day - burn_near_per_day) x price_usd / (fee_rate x capture_rate)."
+   },
+   {
+    "name": "breakeven_volume_multiple",
+    "type": "DOUBLE",
+    "unit": "multiple",
+    "description": "breakeven_volume_usd_per_day over volume_usd_per_day: how many times today's volume it would take."
+   },
+   {
+    "name": "net_inflation_rate_at_current_volume",
+    "type": "DOUBLE",
+    "unit": "fraction per year",
+    "description": "What net inflation would be in the scenario at today's volume: issuance less burn less the NEAR that volume_usd_per_day x fee_rate x capture_rate buys, times 365, over mean supply."
+   }
+  ],
+  "rows": 8,
+  "first": null,
+  "last": null
+ },
+ {
+  "area": "Thesis models",
+  "table": "fct_intents_unit_economics_monthly",
+  "description": "NEAR's Intents revenue per month, split into what makes it: volume, the fee rate charged on it, and the share of fees NEAR keeps. revenue_usd = volume_usd x fee_rate x capture_rate, so a month's change splits exactly into three log effects. Volume and fees are NEAR's own all-route series and revenue is what reached the wallets, which are swept in lumps, so a month is the shortest span on which capture means anything. Days whose fees can still change are left out, so the newest month is short.",
+  "grain": "month_start",
+  "sources": "fct_intents_daily",
+  "path": "data/gold/fct_intents_unit_economics_monthly.parquet",
+  "columns": [
+   {
+    "name": "month_start",
+    "type": "DATE",
+    "unit": "date",
+    "description": "First day of the month."
+   },
+   {
+    "name": "days_counted",
+    "type": "BIGINT",
+    "unit": "days",
+    "description": "Days of the month with settled figures."
+   },
+   {
+    "name": "is_month_complete",
+    "type": "BOOLEAN",
+    "unit": "boolean",
+    "description": "True when every day of the month is counted. The newest month is not."
+   },
+   {
+    "name": "volume_usd",
+    "type": "DOUBLE",
+    "unit": "USD",
+    "description": "All-route Intents volume over the counted days."
+   },
+   {
+    "name": "fees_usd",
+    "type": "DOUBLE",
+    "unit": "USD",
+    "description": "Intents fees over the counted days. Fee data begins in May 2025."
+   },
+   {
+    "name": "revenue_usd",
+    "type": "DOUBLE",
+    "unit": "USD",
+    "description": "Revenue that reached NEAR's wallets over the counted days."
+   },
+   {
+    "name": "fee_rate",
+    "type": "DOUBLE",
+    "unit": "fraction",
+    "description": "fees_usd over volume_usd, on the days that have fees."
+   },
+   {
+    "name": "capture_rate",
+    "type": "DOUBLE",
+    "unit": "fraction",
+    "description": "revenue_usd over fees_usd: the share of fees NEAR keeps. The rest stays with distribution partners, solvers and front ends."
+   },
+   {
+    "name": "net_take_rate",
+    "type": "DOUBLE",
+    "unit": "fraction",
+    "description": "revenue_usd over volume_usd: what NEAR keeps per dollar swapped."
+   },
+   {
+    "name": "confidential_volume_share",
+    "type": "DOUBLE",
+    "unit": "fraction",
+    "description": "One minus public volume over all-route volume, on the days that have a public figure, with public volume capped at all-route volume day by day because the two come from different sources. Empty before public volume is held."
+   },
+   {
+    "name": "revenue_log_change",
+    "type": "DOUBLE",
+    "unit": "log points",
+    "description": "Change in the natural log of revenue per day from the month before. It equals the sum of the three effects. Empty unless both months are complete, have fees on every day and at least $1,000 of revenue; the wallets' first months held test transfers."
+   },
+   {
+    "name": "volume_log_effect",
+    "type": "DOUBLE",
+    "unit": "log points",
+    "description": "The part of revenue_log_change from volume per day."
+   },
+   {
+    "name": "fee_rate_log_effect",
+    "type": "DOUBLE",
+    "unit": "log points",
+    "description": "The part of revenue_log_change from the fee rate."
+   },
+   {
+    "name": "capture_log_effect",
+    "type": "DOUBLE",
+    "unit": "log points",
+    "description": "The part of revenue_log_change from the capture rate."
+   }
+  ],
+  "rows": 24,
+  "first": "2024-12-01",
+  "last": "2026-11-01"
+ },
+ {
+  "area": "Thesis models",
+  "table": "fct_intents_channel_economics_monthly",
+  "description": "What each 1Click distribution channel brought in per month: finished volume, the app fees charged on it, and the fee rate that implies. It shows who prices NEAR's fee base. 1Click is one part of NEAR Intents (27% to 45% of volume in 2026) and only its unbroken daily run is used. App fees are what a channel adds for itself or passes on; they are not NEAR's revenue.",
+  "grain": "month_start, referral",
+  "sources": "fct_intents_1click_channel_daily",
+  "path": "data/gold/fct_intents_channel_economics_monthly.parquet",
+  "columns": [
+   {
+    "name": "month_start",
+    "type": "DATE",
+    "unit": "date",
+    "description": "First day of the month."
+   },
+   {
+    "name": "referral",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "The channel, as the integrator names itself to 1Click. (none) is every swap sent without a name, a bucket and not one channel."
+   },
+   {
+    "name": "is_month_complete",
+    "type": "BOOLEAN",
+    "unit": "boolean",
+    "description": "True when the daily run covers every day of the month."
+   },
+   {
+    "name": "finished_swaps",
+    "type": "HUGEINT",
+    "unit": "count",
+    "description": "Swaps that finished."
+   },
+   {
+    "name": "refunded_swaps",
+    "type": "HUGEINT",
+    "unit": "count",
+    "description": "Swaps that were refunded."
+   },
+   {
+    "name": "refunded_share",
+    "type": "DOUBLE",
+    "unit": "fraction",
+    "description": "refunded_swaps over finished plus refunded swaps."
+   },
+   {
+    "name": "volume_usd",
+    "type": "DOUBLE",
+    "unit": "USD",
+    "description": "USD paid in on finished swaps."
+   },
+   {
+    "name": "app_fee_usd",
+    "type": "DOUBLE",
+    "unit": "USD",
+    "description": "App fees on finished swaps."
+   },
+   {
+    "name": "app_fee_rate",
+    "type": "DOUBLE",
+    "unit": "fraction",
+    "description": "app_fee_usd over volume_usd. 0.0082 is 82 basis points."
+   },
+   {
+    "name": "share_of_volume",
+    "type": "DOUBLE",
+    "unit": "fraction",
+    "description": "The channel's share of the month's finished 1Click volume."
+   },
+   {
+    "name": "share_of_fees",
+    "type": "DOUBLE",
+    "unit": "fraction",
+    "description": "The channel's share of the month's 1Click app fees."
+   },
+   {
+    "name": "fee_rank",
+    "type": "BIGINT",
+    "unit": "integer",
+    "description": "Rank within the month by app fees, 1 the largest."
+   }
+  ],
+  "rows": 2315,
+  "first": "2025-05-01",
+  "last": "2026-11-01"
+ },
+ {
+  "area": "Thesis models",
+  "table": "fct_intents_concentration_monthly",
+  "description": "How concentrated NEAR Intents is, per month, along four cuts: 1Click channels by volume and by fees, and public volume by blockchain and by asset. covered_share_of_volume says how much of all-route volume a cut can see: 1Click is a minority of volume, and the public cuts fell below a fifth once settlement went confidential on 2026-11-03.",
+  "grain": "month_start, dimension",
+  "sources": "fct_intents_1click_channel_daily, fct_intents_chain_daily, fct_intents_asset_daily, fct_intents_daily",
+  "path": "data/gold/fct_intents_concentration_monthly.parquet",
+  "columns": [
+   {
+    "name": "month_start",
+    "type": "DATE",
+    "unit": "date",
+    "description": "First day of the month."
+   },
+   {
+    "name": "dimension",
+    "type": "VARCHAR",
+    "unit": "label",
+    "description": "The cut: channel_volume and channel_fees (1Click, finished swaps of the daily run), chain_volume and asset_volume (public Intents per NearBlocks)."
+   },
+   {
+    "name": "is_month_complete",
+    "type": "BOOLEAN",
+    "unit": "boolean",
+    "description": "True when the cut's source has every day of the month."
+   },
+   {
+    "name": "members",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "Channels, blockchains or assets with a positive amount in the month. For channels, (none) counts as one."
+   },
+   {
+    "name": "total_usd",
+    "type": "DOUBLE",
+    "unit": "USD",
+    "description": "The month's amount across all members: volume, or app fees for channel_fees."
+   },
+   {
+    "name": "hhi",
+    "type": "DOUBLE",
+    "unit": "index 0 to 1",
+    "description": "Herfindahl index: the sum of squared shares. 1 is a single member; 1 over the number of members is an even split."
+   },
+   {
+    "name": "top_1_share",
+    "type": "DOUBLE",
+    "unit": "fraction",
+    "description": "Share of the largest member."
+   },
+   {
+    "name": "top_3_share",
+    "type": "DOUBLE",
+    "unit": "fraction",
+    "description": "Share of the three largest members."
+   },
+   {
+    "name": "top_10_share",
+    "type": "DOUBLE",
+    "unit": "fraction",
+    "description": "Share of the ten largest members."
+   },
+   {
+    "name": "top_member",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "The largest member."
+   },
+   {
+    "name": "covered_share_of_volume",
+    "type": "DOUBLE",
+    "unit": "fraction",
+    "description": "total_usd over the month's all-route Intents volume, for the three volume cuts: how much of Intents the cut sees. Empty for channel_fees."
+   }
+  ],
+  "rows": 65,
+  "first": "2025-05-01",
+  "last": "2026-11-01"
+ },
+ {
+  "area": "Thesis models",
+  "table": "fct_valuation_multiples_daily",
+  "description": "Market cap over a year of income, for NEAR and six peers, on five ideas of income, one row each because the choice of basis moves NEAR's rank more than anything else. gas_fees is what users paid the chain itself; app_fees what they paid applications on it; all_fees the two together; app_revenue the part of app fees the applications or their tokens keep, which does not go to the chain's own token; holder_revenue, for NEAR only, is gas burned plus NEAR received by the revenue wallets. A year of income is the trailing 30 days times 365/30. Market caps are not on one definition across chains: read fct_peer_daily.market_cap_basis before comparing.",
+  "grain": "date_day, chain_id, basis",
+  "sources": "fct_peer_daily, fct_supply_daily, fct_market_daily, fct_revenue_inflows_daily",
+  "path": "data/gold/fct_valuation_multiples_daily.parquet",
+  "columns": [
+   {
+    "name": "date_day",
+    "type": "DATE",
+    "unit": "date",
+    "description": "Last day of the 30-day window, a UTC calendar day."
+   },
+   {
+    "name": "chain_id",
+    "type": "VARCHAR",
+    "unit": "id",
+    "description": "Chain identifier from registry/peers.csv."
+   },
+   {
+    "name": "basis",
+    "type": "VARCHAR",
+    "unit": "label",
+    "description": "Which income the multiple uses: gas_fees, app_fees, all_fees, app_revenue or holder_revenue."
+   },
+   {
+    "name": "basis_30d_usd",
+    "type": "DOUBLE",
+    "unit": "USD",
+    "description": "The basis summed over the 30 days ending on date_day. A window with a missing day has no row."
+   },
+   {
+    "name": "multiple",
+    "type": "DOUBLE",
+    "unit": "multiple",
+    "description": "fct_peer_daily.market_cap_usd on date_day over basis_30d_usd times 365/30."
+   },
+   {
+    "name": "is_provisional",
+    "type": "BOOLEAN",
+    "unit": "boolean",
+    "description": "fct_peer_daily.is_fee_revenue_provisional for the day: true on the newest two days, whose fees and revenue can still change."
+   }
+  ],
+  "rows": 43543,
+  "first": "2020-01-01",
+  "last": "2026-11-09"
+ },
+ {
+  "area": "Thesis models",
+  "table": "fct_usage_quality_daily",
+  "description": "Transactions with the known batch streams taken out, so usage can be read across the break of 2026-04-02 (docs/USAGE_BREAK_2026-04-02.md), and with the Sweat relayer taken out as well, since Sweat Wallet ends on 2026-12-30. The streams are counted from NearBlocks' per-account statistics, which reach back 365 active days from their first read, so the table starts where the Kai-Ching accounts' statistics do and the Sweat columns start later. A transaction that touches two of the stream accounts is counted in both, so the series without them is a floor.",
+  "grain": "date_day",
+  "sources": "fct_chain_daily, fct_contract_daily, fct_receiver_sample_daily, fct_market_daily",
+  "path": "data/gold/fct_usage_quality_daily.parquet",
+  "columns": [
+   {
+    "name": "date_day",
+    "type": "DATE",
+    "unit": "date",
+    "description": "UTC calendar day."
+   },
+   {
+    "name": "batch_stream_txns",
+    "type": "HUGEINT",
+    "unit": "count",
+    "description": "Transactions involving hotwallet.kaiching, users.kaiching or sweat-migration.near: the fixed daily batch that stopped on 2026-04-01 and the three-week key migration that ended on 2026-04-02."
+   },
+   {
+    "name": "sweat_relayer_txns",
+    "type": "HUGEINT",
+    "unit": "count",
+    "description": "Transactions involving sweat-relayer.near. Empty before 2025-11-01, where its statistics begin."
+   },
+   {
+    "name": "txns_ex_batch_streams",
+    "type": "HUGEINT",
+    "unit": "count",
+    "description": "fct_chain_daily.txns minus batch_stream_txns."
+   },
+   {
+    "name": "txns_ex_batch_streams_and_sweat",
+    "type": "HUGEINT",
+    "unit": "count",
+    "description": "txns_ex_batch_streams minus sweat_relayer_txns: roughly what remains once Sweat Wallet has ended."
+   },
+   {
+    "name": "sweat_share_of_txns_ex_batch_streams",
+    "type": "DOUBLE",
+    "unit": "fraction",
+    "description": "sweat_relayer_txns over txns_ex_batch_streams."
+   },
+   {
+    "name": "txn_fee_usd",
+    "type": "DOUBLE",
+    "unit": "USD",
+    "description": "fct_chain_daily.txn_fee_near at the day's closing price."
+   },
+   {
+    "name": "txn_fee_per_txn_near",
+    "type": "DOUBLE",
+    "unit": "NEAR",
+    "description": "fct_chain_daily.txn_fee_near over all of the day's transactions, batch streams included."
+   },
+   {
+    "name": "sweat_gas_burn_share",
+    "type": "DOUBLE",
+    "unit": "fraction",
+    "description": "Share of the gas burnt in the day's sampled blocks whose receiver is labelled Sweat Economy, from fct_receiver_sample_daily. An estimate from a sample: 24 blocks a day before 2026-10-30 and 96 since, so read it over a week or more. Empty before the sample begins."
+   },
+   {
+    "name": "is_before_usage_break",
+    "type": "BOOLEAN",
+    "unit": "boolean",
+    "description": "True before 2026-04-03. Raw transaction and account counts are not comparable across that date; the columns here without the streams are."
+   }
+  ],
+  "rows": 579,
+  "first": "2025-04-10",
+  "last": "2026-11-09"
+ },
+ {
+  "area": "Thesis models",
+  "table": "fct_etf_absorption_daily",
+  "description": "The Bitwise NEAR ETF's flows against what the chain issued and what the revenue wallets took in, from the fund's first day, one row per trading day. The seed baskets of 2026-09-28 are left out of the flow. A creation is NEAR delivered to the trust, which need not have been bought on the market that day, and redemptions reverse it. Only this one fund is tracked.",
+  "grain": "date_day",
+  "sources": "fct_etf_nrr_daily, fct_supply_daily, fct_revenue_inflows_daily, fct_market_daily",
+  "path": "data/gold/fct_etf_absorption_daily.parquet",
+  "columns": [
+   {
+    "name": "date_day",
+    "type": "DATE",
+    "unit": "date",
+    "description": "Trading day."
+   },
+   {
+    "name": "cumulative_flow_near",
+    "type": "DOUBLE",
+    "unit": "NEAR",
+    "description": "Running sum of fct_etf_nrr_daily.flow_near since the fund's first day, without the seed baskets."
+   },
+   {
+    "name": "cumulative_minted_near",
+    "type": "DOUBLE",
+    "unit": "NEAR",
+    "description": "NEAR the chain issued from the fund's first day through this day, every calendar day counted."
+   },
+   {
+    "name": "cumulative_revenue_inflow_near",
+    "type": "DOUBLE",
+    "unit": "NEAR",
+    "description": "NEAR the revenue wallets received over the same days."
+   },
+   {
+    "name": "cumulative_flow_to_issuance_ratio",
+    "type": "DOUBLE",
+    "unit": "multiple",
+    "description": "cumulative_flow_near over cumulative_minted_near: how many times the chain's issuance the fund has taken in since it opened."
+   },
+   {
+    "name": "flow_to_issuance_ratio",
+    "type": "DOUBLE",
+    "unit": "multiple",
+    "description": "The day's fund flow in NEAR over the NEAR issued that day. Issuance arrives per epoch, so read single days loosely."
+   },
+   {
+    "name": "flow_share_of_spot_volume",
+    "type": "DOUBLE",
+    "unit": "fraction",
+    "description": "The day's fund flow in USD over NEAR's reported spot volume that day; negative on a day of net redemptions."
+   }
+  ],
+  "rows": 31,
+  "first": "2026-09-28",
+  "last": "2026-11-09"
+ },
+ {
   "area": "Data quality",
   "table": "dq_reconciliation",
   "description": "Every place two sources should agree, side by side. Gold keeps one column per measure, so the sources a gold table chooses between are compared here, read from silver. A gap beyond tolerance must have a written explanation, or make verify fails.",

@@ -36,6 +36,8 @@ flowchart LR
 
 **One column per measure.** A gold table holds each measure once. Where several sources measure the same thing, gold takes one, joining sources only where they agree day for day or naming each day's source in a `_basis` column, such as `fct_intents_daily.volume_basis` and `fct_market_daily.price_basis`. Where two sources count different things, both stay under names that say what each counts. Copies of a measure held by another gold table are not repeated: join that table.
 
+**Thesis models read gold, never a source.** The tables in `warehouse/models/gold/thesis/` are built only from other gold tables and two registry files, so each traces back to a documented column. They hold what no other table does: sums and rates over 30 days or a month, shares, multiples and scenario results. `dim_claim` lists the claims for and against NEAR with the bar each is held to, and `fct_thesis_scorecard` measures every one, keeping the claims that fail and the ones the data cannot settle.
+
 **Disagreements are output.** `gold.dq_reconciliation` compares the sources a gold table chooses between, reading them from silver, and marks whether they share an upstream. A gap beyond tolerance needs a written explanation in `registry/reconciliation_notes.csv`, or `make verify` fails.
 
 **Reproducibility is measurable.** Each gold table has a fingerprint: row count and a hash of every row, with doubles rounded to 7 significant digits. `make verify` recomputes them and compares with `data/gold/_fingerprints.json`.
