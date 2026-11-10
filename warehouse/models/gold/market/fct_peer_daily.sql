@@ -1,5 +1,8 @@
 -- NEAR and peer chains per day: DefiLlama for activity, CoinMetrics for price and market cap, DefiLlama prices where CoinMetrics
--- has no series (TON, and Sui before 2023-08-17); price_basis says which. NEAR's price and market cap are fct_market_daily's.
+-- has no series (Sui before 2023-08-17, TON before 2022-05-05); price_basis says which. TON's CoinMetrics asset id is `gram`.
+-- NEAR's price and market cap are fct_market_daily's.
+-- fees_usd and revenue_usd are what DefiLlama sums over the applications on a chain. The chain's own transaction fees are
+-- a separate series, gas_fees_usd, so neither holds the other.
 -- Empty cells mean the source has no value. Market caps are not on one definition. Each peer's uses the circulating
 -- supply its project reports, collected by CoinGecko: on 2026-11-05 that was 41% of total supply for Sui and 100% for Ethereum.
 -- NEAR's uses this warehouse's chain-built supply, which leaves out only lockups, so the Foundation's liquid NEAR counts as circulating.
@@ -17,6 +20,12 @@ fees as (
         min(f.snapshot_date) as fee_read_date
     from {{ ref('stg_defillama__chain_fees') }} f join peers p using (llama_chain) where f.is_latest
     group by all
+),
+
+-- Joined to the days the other series give, not added to them: Ethereum's gas series starts in 2015, before anything else here.
+gas as (
+    select p.chain_id, g.date_day, g.gas_fees_usd
+    from {{ ref('stg_defillama__chain_gas_fees') }} g join peers p using (llama_chain) where g.is_latest
 ),
 
 dex as (
@@ -66,6 +75,7 @@ select
     tvl.tvl_usd,
     fees.fees_usd,
     fees.revenue_usd,
+    gas.gas_fees_usd,
     dex.volume_usd as dex_volume_usd,
     stable.stablecoins_usd,
     -- Measured on NEAR, whose fees are mostly Intents fees and settle with them. Every chain gets the same rule, so a
@@ -74,6 +84,7 @@ select
 from keys k
 left join tvl using (chain_id, date_day)
 left join fees using (chain_id, date_day)
+left join gas using (chain_id, date_day)
 left join dex using (chain_id, date_day)
 left join stable using (chain_id, date_day)
 left join cm using (chain_id, date_day)

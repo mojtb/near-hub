@@ -98,6 +98,23 @@ def test_bronze_parallel_writers_keep_each_others_lines(tmp_path):
     assert len(lines) == 2
 
 
+def test_bronze_parallel_writer_does_not_put_an_old_line_over_a_newer_one(tmp_path):
+    manifest = tmp_path / "_manifest" / "dt=2026-11-01.jsonl"
+    first = BronzeWriter("2026-11-01", root=tmp_path)
+    first.save("s", "d", "again", b"old", url="u")
+    first.flush()
+    slow = BronzeWriter("2026-11-01", root=tmp_path)  # starts while the old line is the one on disk
+    fast = BronzeWriter("2026-11-01", root=tmp_path)
+    fast.save("s", "d", "again", b"new", url="u")
+    fast.flush()
+    slow.save("s", "d", "other", b"x", url="u")
+    slow.flush()
+    lines = {e["key"]: e for e in map(json.loads, manifest.read_text().splitlines())}
+    assert set(lines) == {"again", "other"}
+    assert lines["again"]["sha256"] == hashlib.sha256(b"new").hexdigest()
+    assert gzip.decompress((tmp_path / "s/d/dt=2026-11-01/again.json.gz").read_bytes()) == b"new"
+
+
 def test_safe_key_blocks_path_tricks():
     assert "/" not in safe_key("../../etc/passwd")
     assert safe_key("buybacks.multisignature.near") == "buybacks.multisignature.near"
@@ -271,6 +288,37 @@ def test_explorer_tally_keeps_totals_and_no_wallet_address():
     assert not any(secret_part in text for secret_part in ("sender-", "recipient-", "partner.near"))
 
 
+def test_explorer_tally_reads_grouped_and_decimal_comma_amounts():
+    from ingest.sources import intents
+
+    assert intents._usd("550.0350") == 550.035 and intents._usd(None) == 0 and intents._usd("") == 0 and intents._usd(12.5) == 12.5
+    assert intents._usd("18,505.12") == 18505.12 and intents._usd("1,234,567.5") == 1234567.5 and intents._usd("1,234,567") == 1234567
+    assert intents._usd("544,8666") == 544.8666 and intents._usd("22,1775") == 22.1775 and intents._usd("0,5") == 0.5
+    rows = [_swap(1, "a", amount=2000.0), _swap(2, "b", amount=500.0)]
+    rows[0]["amountInUsd"], rows[0]["amountOutUsd"] = "18,505.12", "544,8666"
+    tally = intents.tally_day(date(2026, 10, 31), rows, 1, set())
+    channel = next(c for c in tally["channels"] if c["status"] == "SUCCESS")
+    assert channel["amount_in_usd"] == pytest.approx(19005.12)
+    assert channel["amount_out_usd"] == round(544.8666 + float(rows[1]["amountOutUsd"]), 2)  # tallies are kept to the cent
+    for unreadable in ("18,505", "12,34,567", "1.234,56", "18,50.5", "abc"):
+        rows[0]["amountInUsd"] = unreadable
+        with pytest.raises(ValueError):
+            intents.tally_day(date(2026, 10, 31), rows, 1, set())
+
+
+def test_explorer_leaves_an_unreadable_day_for_later_and_walks_on(tmp_path, monkeypatch):
+    previous = DAY_START - 86400
+    bad = _swap(DAY_START + 9, "a")
+    bad["amountInUsd"] = "18,505"
+    intents, ctx, http = _explorer_context(tmp_path, monkeypatch, [[bad], [_swap(previous + 5, "b")]])
+    monkeypatch.setattr(intents, "EXPLORER_PAGES_PER_RUN", 2)
+    intents.explorer_daily_tally(ctx)
+    assert ctx.load_state("intents_explorer__daily_tally")["days"] == {"2026-10-30": 1}
+    assert len(ctx.warnings) == 1 and "2026-10-31" in ctx.warnings[0] and "'18,505'" in ctx.warnings[0]
+    saved = tmp_path / "bronze/intents_explorer/daily_tally/dt=2026-11-01"
+    assert [p.name for p in saved.iterdir()] == ["2026-10-30.json.gz"]
+
+
 def test_explorer_walks_each_day_and_stops_at_the_page_budget(tmp_path, monkeypatch):
     previous = DAY_START - 86400
     pages = [[_swap(DAY_START + 9, "a"), _swap(DAY_START + 8, "b")],
@@ -378,6 +426,25 @@ def test_nrr_page_keeps_the_figures_and_cleans_chart_values():
     assert parsed["as_of"] == "2026-10-30" and parsed["shares_outstanding"] == 3220000
     assert parsed["nav_chart"] == [{"day": "2026-09-29", "value": 26.46}, {"day": "2026-10-29", "value": 23.0}]
     assert parsed["wallets"] == [{"address": "a" * 64, "balance": 100.5, "active": True}]
+
+
+def test_nrr_page_keeps_the_current_day_extras_and_survives_without_them():
+    # Read on 2026-11-10: a 0.25% discount, 18 days at a premium and 11 at a discount in 2026, a 0.55% median spread.
+    from ingest.parsers import nrr_page
+
+    chart = {"nav": [[1790712000000, 26.46]], "marketPrice": [[1790712000000, 26.15]]}
+    page = _nrr_page(
+        premiumDiscount={"asOfDate": "2026-11-06", "volume": 92179, "premiumDiscount": -0.0025, "daysTradedAtNav": {"y2026": 0},
+                         "daysTradedAtPremium": {"q4y2026": 18, "y2026": 18}, "daysTradedAtDiscount": {"q4y2026": 9, "y2026": 11}},
+        navAndMarketPrice={"chart": chart, "thirtyDayMedianBidAskSpread": 0.0054564533, "asOfDateMedianBidAskSpread": "2026-11-06"})
+    parsed = nrr_page.parse(page)
+    assert parsed["premium_discount_rate"] == -0.0025 and parsed["bid_ask_spread_30d_median_rate"] == 0.0054564533
+    assert parsed["days_at_premium"] == {"q4y2026": 18, "y2026": 18} and parsed["days_at_discount"]["y2026"] == 11
+    assert parsed["bid_ask_spread_as_of"] == "2026-11-06" and parsed["days_at_nav"] == {"y2026": 0}
+
+    without = nrr_page.parse(_nrr_page())
+    assert without["shares_outstanding"] == 3220000
+    assert all(without[name] is None for name in nrr_page.EXTRAS)
 
 
 def test_nrr_page_leaves_out_a_chart_day_not_filled_yet():

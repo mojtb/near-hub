@@ -21,6 +21,7 @@
     ('stg_defillama__intents_fees', 'DefiLlama Intents fees', 3),
     ('stg_defillama__chain_tvl', 'DefiLlama chain TVL', 3),
     ('stg_defillama__chain_fees', 'DefiLlama chain fees', 3),
+    ('stg_defillama__chain_gas_fees', 'DefiLlama chain gas fees', 3),
     ('stg_defillama__chain_dex_volume', 'DefiLlama DEX volume', 3),
     ('stg_defillama__protocol_tvl', 'DefiLlama protocol TVL', 3),
     ('stg_defillama__stablecoin_chain', 'DefiLlama stablecoins', 3),

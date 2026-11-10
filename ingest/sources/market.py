@@ -37,12 +37,14 @@ def coinbase_candles(ctx: Context) -> None:
 def coinmetrics_asset_metrics(ctx: Context) -> None:
     """Community metrics per peer asset. Follows next_page_url until the series ends."""
     today = date.fromisoformat(ctx.snapshot)
-    first_run = not has_prior(ctx, "coinmetrics", "asset_metrics")
-    start = "2020-01-01" if first_run else (today - timedelta(days=OVERLAP_DAYS)).isoformat()
     for peer in read_registry("peers"):
         asset = peer["coinmetrics_asset"]
         if not asset:
             continue
+        # Decided per asset, so one added or renamed later still gets its whole history on its first read: TON's id
+        # changed from `ton`, which now returns nothing, to `gram`.
+        first_run = not has_prior(ctx, "coinmetrics", "asset_metrics", asset)
+        start = "2020-01-01" if first_run else (today - timedelta(days=OVERLAP_DAYS)).isoformat()
         url = f"{COINMETRICS}/timeseries/asset-metrics"
         params = {"assets": asset, "metrics": "PriceUSD,CapMrktEstUSD,volume_reported_spot_usd_1d", "frequency": "1d",
                   "start_time": start, "page_size": 10000, "paging_from": "start", "ignore_forbidden_errors": "true",

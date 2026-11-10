@@ -95,7 +95,7 @@ Nothing but the contracts themselves has tested the series since 2025-08-26, bec
 | Avalanche | 444M | 476M | 93% | Avalanche `platform.getCurrentSupply` |
 | NEAR | 1,309M | 1,311M | 99.8% | Block header |
 | Ethereum | 122M | 122M | 100% | CoinMetrics `SplyCur`, which it indexes from the chain itself |
-| TON | no community series | | | |
+| TON | not read: the asset id asked for, `ton`, returns nothing; CoinMetrics lists Toncoin as `gram` | | | |
 
 NEAR's 99.8% is not free float, and it is not the same measure as Sui's 41%. NEAR's definition takes out only lockups, while the NEAR Foundation also holds liquid NEAR: [305M on 2024-01-11](https://www.theblock.co/news/business/2024-01-11-near-foundation-staff-cut-treasury-271858), about 26% of supply then, which is the last figure found. No list of its accounts is published, so that holding cannot be read from the chain. `treasury.near` holds a further 1.6M.
 
