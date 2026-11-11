@@ -2,12 +2,12 @@ token_id,symbol,token_class,decimals,track_holders,evidence_level,source_url,not
 wrap.near,wNEAR,native_wrapped,24,1,token_list,https://1click.chaindefuser.com/v0/tokens,
 usdt.tether-token.near,USDT,stablecoin,6,1,token_list,https://1click.chaindefuser.com/v0/tokens,native Tether on NEAR
 17208628f84f5d6ad33f0da3bbbeb27ffcb398eac501a31bd6ad2011e36133a1,USDC,stablecoin,6,1,token_list,https://1click.chaindefuser.com/v0/tokens,native Circle USDC on NEAR
-dac17f958d2ee523a2206206994597c13d831ec7.factory.bridge.near,USDT.e,bridged_stablecoin,6,0,third_party_code,https://github.com/DefiLlama/DefiLlama-Adapters/blob/main/projects/helper/coreAssets.json,"bridged through Rainbow; not listed by 1Click, so decimals were read from ft_metadata on 2026-11-05"
-a0b86991c6218b36c1d19d4a2e9eb0ce3606eb48.factory.bridge.near,USDC.e,bridged_stablecoin,6,0,third_party_code,https://github.com/DefiLlama/DefiLlama-Adapters/blob/main/projects/helper/coreAssets.json,"bridged through Rainbow; not listed by 1Click, so decimals were read from ft_metadata on 2026-11-05"
+dac17f958d2ee523a2206206994597c13d831ec7.factory.bridge.near,USDT.e,bridged_stablecoin,6,1,third_party_code,https://github.com/DefiLlama/DefiLlama-Adapters/blob/main/projects/helper/coreAssets.json,"bridged through Rainbow; not listed by 1Click, so decimals were read from ft_metadata on 2026-11-05"
+a0b86991c6218b36c1d19d4a2e9eb0ce3606eb48.factory.bridge.near,USDC.e,bridged_stablecoin,6,1,third_party_code,https://github.com/DefiLlama/DefiLlama-Adapters/blob/main/projects/helper/coreAssets.json,"bridged through Rainbow; not listed by 1Click, so decimals were read from ft_metadata on 2026-11-05"
 linear-protocol.near,LiNEAR,liquid_staking,24,1,third_party_code,https://github.com/DefiLlama/DefiLlama-Adapters/blob/main/projects/helper/coreAssets.json,"not listed by 1Click, so decimals were read from ft_metadata on 2026-11-05"
 meta-pool.near,stNEAR,liquid_staking,24,1,observed,https://validators.narwallets.com/metrics,contract state matches Meta Pool's published metrics
 lst.rhealab.near,rNEAR,liquid_staking,24,1,documented,https://guide.rhea.finance/developers/contracts,"not listed by 1Click, so decimals were read from ft_metadata on 2026-11-05"
 token.rhealab.near,RHEA,protocol_token,18,1,documented,https://guide.rhea.finance/developers/contracts,
-xtoken.rhealab.near,xRHEA,protocol_token,18,0,documented,https://guide.rhea.finance/developers/contracts,"not listed by 1Click, so decimals were read from ft_metadata on 2026-11-05"
-token.sweat,SWEAT,consumer_token,18,0,token_list,https://1click.chaindefuser.com/v0/tokens,
-nbtc.bridge.near,nBTC,bridged_btc,8,0,token_list,https://1click.chaindefuser.com/v0/tokens,
+xtoken.rhealab.near,xRHEA,protocol_token,18,1,documented,https://guide.rhea.finance/developers/contracts,"not listed by 1Click, so decimals were read from ft_metadata on 2026-11-05"
+token.sweat,SWEAT,consumer_token,18,1,token_list,https://1click.chaindefuser.com/v0/tokens,holders are snapshotted because Sweat Wallet and the token as they exist end on 2026-12-30
+nbtc.bridge.near,nBTC,bridged_btc,8,1,token_list,https://1click.chaindefuser.com/v0/tokens,

@@ -33,6 +33,7 @@ class BronzeWriter:
         self.root = root
         self.manifest_path = root / "_manifest" / f"dt={snapshot}.jsonl"
         self._entries: Dict[str, dict] = {}
+        self._own: Dict[str, dict] = {}  # the lines this writer saved itself: the only ones it writes back
         self._unflushed = 0
         if self.manifest_path.exists():
             for line in self.manifest_path.read_text().splitlines():
@@ -47,7 +48,7 @@ class BronzeWriter:
         path.parent.mkdir(parents=True, exist_ok=True)
         packed = gzip.compress(raw, compresslevel=9, mtime=0)
         path.write_bytes(packed)
-        self._entries[relative] = {
+        self._own[relative] = self._entries[relative] = {
             "path": relative,
             "source": source,
             "dataset": dataset,
@@ -75,8 +76,12 @@ class BronzeWriter:
         return self.save(source, dataset, key, raw, **kw)
 
     def flush(self) -> None:
-        """Merge with what is on disk under a lock, so parallel runs on one day cannot lose lines."""
-        if not self._entries:
+        """Add this writer's own lines to what is on disk, under a lock, so parallel runs on one day lose nothing.
+
+        Only the lines this writer saved go back. The ones it read when it started may be older than what another run
+        has saved since, and writing them back would leave a newer file listed under its old hash.
+        """
+        if not self._own:
             return
         self.manifest_path.parent.mkdir(parents=True, exist_ok=True)
         with open(self.manifest_path.with_suffix(".lock"), "w") as lock:
@@ -86,7 +91,7 @@ class BronzeWriter:
                 for line in self.manifest_path.read_text().splitlines():
                     entry = json.loads(line)
                     merged[entry["path"]] = entry
-            merged.update(self._entries)
+            merged.update(self._own)
             lines = [json.dumps(merged[k], sort_keys=True) for k in sorted(merged)]
             temporary = self.manifest_path.with_suffix(".tmp")
             temporary.write_text("\n".join(lines) + "\n")

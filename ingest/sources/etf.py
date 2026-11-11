@@ -9,7 +9,7 @@ from __future__ import annotations
 from datetime import date, timedelta
 from typing import Any, Dict, List, Optional, Set
 
-from ..parsers.nrr_page import parse as parse_nrr_page
+from ..parsers.nrr_page import EXTRAS as NRR_PAGE_EXTRAS, parse as parse_nrr_page
 from ..pipeline import Context, Skip, dataset
 from .rpc import ARCHIVAL, _view
 
@@ -25,6 +25,9 @@ def nrr_figures(ctx: Context) -> None:
     """Keep the page's figures and wallet list, not the page, because Bitwise's terms limit copying site content."""
     page = ctx.http.get(NRR_PAGE, headers={"Accept": "text/html"})
     figures = parse_nrr_page(page.content.decode("utf-8", "replace"))
+    missing = [name for name in NRR_PAGE_EXTRAS if figures[name] is None]
+    if missing:
+        ctx.warn(f"the page no longer shows: {', '.join(missing)}")
     ctx.bronze.save_json("nrr_fund", "figures", "page", figures, url=NRR_PAGE, rows=len(figures["wallets"]),
                          note="assembled: figures read from the page's embedded data; the page itself is not kept")
     seen = set(ctx.load_state("nrr_fund__wallets", []))

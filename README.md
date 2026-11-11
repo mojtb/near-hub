@@ -27,12 +27,12 @@ If you prefer a container, run `docker build -t near-thesis . && docker run --rm
 These lines are generated from the warehouse, and `make verify` fails if they stop matching it.
 
 <!-- expected:start -->
-- Data through: **2026-11-09**, the last full UTC day before the pinned snapshot of 2026-11-10; `dq_freshness` lists any source that ends earlier
-- Gold tables and columns: **64** and **570**
-- Reconciliation: **68** comparisons agree, **10** differ, each with a written explanation
+- Data through: **2026-11-10**, the last full UTC day before the pinned snapshot of 2026-11-11; `dq_freshness` lists any source that ends earlier
+- Gold tables and columns: **74** and **679**
+- Reconciliation: **69** comparisons agree, **10** differ, each with a written explanation
 - Issuance over the last 30 days, from supply change plus burn: **2.50%** a year, against **2.50%** in the protocol config
-- Circulating supply, built from NEAR's lockup contracts: **1,309.18M** NEAR, **99.84%** of total supply; on 2025-08-26, the last day NearBlocks computed its own, **1,249.72M** against **1,249.65M**
-- Captured Intents revenue, all time: **$9.71M** per DefiLlama, **$9.69M** rebuilt from wallet transfers
+- Circulating supply, built from NEAR's lockup contracts: **1,309.27M** NEAR, **99.84%** of total supply; on 2025-08-26, the last day NearBlocks computed its own, **1,249.72M** against **1,249.65M**
+- Captured Intents revenue, all time: **$9.78M** per DefiLlama, **$9.75M** rebuilt from wallet transfers
 - Public Intents volume, all time through 2026-10-31, the last full day of the latest Dune reading: **$33.30B** per NearBlocks, **$32.93B** per NEAR's dashboard on Dune
 - Chain Signatures: **16** MPC participants with a threshold of **11**
 - Largest Intents fee channel, per NEAR's dashboard on Dune as read on 2026-11-01: **swapkit**, with **73%** of listed fees
@@ -51,6 +51,7 @@ These lines are generated from the warehouse, and `make verify` fails if they st
 | Market, peers | `fct_market_daily`, `fct_token_prices`, `fct_peer_daily` | CoinMetrics, Coinbase, DefiLlama, 1Click, Rhea |
 | Bitwise NEAR ETF flows | `fct_etf_nrr_daily`, `fct_etf_nrr_chain_daily` | Bitwise's page, archival RPC, SoSoValue through news reports |
 | Developers, governance | `fct_dev_activity_weekly`, `fct_repo_snapshot`, `fct_governance_proposals`, `fct_venear_snapshot`, `fct_governance_threads`, `dim_event` | GitHub, RPC, gov.near.org |
+| Thesis models | `fct_thesis_scorecard`, `dim_claim`, `fct_net_dilution_daily`, `fct_deflation_scenarios`, `fct_intents_unit_economics_monthly`, `fct_intents_channel_economics_monthly`, `fct_intents_concentration_monthly`, `fct_valuation_multiples_daily`, `fct_usage_quality_daily`, `fct_etf_absorption_daily` | The gold tables above, `registry/claims.csv`, `registry/issuance_scenarios.csv` |
 | Data quality | `dq_reconciliation`, `dq_freshness`, `dq_revisions`, `dq_ingest_runs`, `dq_provenance` | All of the above |
 
 Every table and column is described in [docs/DATA_CATALOG.md](docs/DATA_CATALOG.md). Every table is also in `data/gold/` as Parquet, so you can read it without building anything. How it fits together is in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md), and what each source can and can't tell you is in [docs/SOURCES.md](docs/SOURCES.md). [docs/CIRCULATING_SUPPLY.md](docs/CIRCULATING_SUPPLY.md) explains how circulating supply is built from the lockup contracts and what `market_cap_usd` means.

@@ -1,6 +1,6 @@
 """NearBlocks: daily chain and Intents statistics, per-contract and per-wallet history.
 
-Free tier: 6 calls per minute and 333 per day, so one nightly run takes about 15 minutes.
+Free tier: 6 calls per minute and 333 per day, so one nightly run (about 95 calls) takes about 17 minutes.
 v3 daily endpoints return at most 365 days per call, so the warehouse keeps every snapshot and
 history grows from there. Legacy /v1/charts is the only full daily history back to 2020.
 """
@@ -24,7 +24,14 @@ POINT_IN_TIME = {
     "mpc_operators": "/v3/multichain/mpcs",
     "signatures_24h": "/v3/multichain/signatures/stats",
     "signer_totals": "/v3/signer-stats/total",
+    "validators_info": "/v3/validators/info",  # seat price, last epoch's yield, total stake, validator counts
 }
+
+VALIDATORS_PER_PAGE = 100  # the endpoint's maximum
+VALIDATOR_PAGE_LIMIT = 30  # 862 pools on 2026-11-10; stops a cursor that never ends
+# Operators publish contact details, links and free text with their pool. Those stay out of bronze: the warehouse needs
+# the figures, and the pool's account id already names it.
+VALIDATOR_FIELDS_LEFT_OUT = ("name", "description", "email", "telegram", "twitter", "discord", "github", "url", "logo", "city")
 
 # For these endpoints `limit` counts days, even when one day has many rows.
 DAILY = {
@@ -72,6 +79,38 @@ for _name, _path in DAILY.items():
 def charts_v1(ctx: Context) -> None:
     fetch(ctx, SOURCE, "charts_v1", "all", f"{BASE}/v1/charts", headers=_headers(),
           note="legacy endpoint; full daily history from 2020-07-21")
+
+
+@dataset(SOURCE, "validators")
+def validators(ctx: Context) -> None:
+    """Every staking pool with its delegator count, fee, stake and country. NearBlocks shows only the current state, so
+    each night has to save it; a missed night can still be read from each pool's own views at a past block. The list is
+    saved whole or not at all, because half a list would read as pools that left."""
+    url = f"{BASE}/v3/validators"
+    rows, cursor = [], None
+    for _ in range(VALIDATOR_PAGE_LIMIT):
+        params = {"limit": VALIDATORS_PER_PAGE, **({"next": cursor} if cursor else {})}
+        page = ctx.http.get(url, params=params, headers=_headers()).json()
+        rows += [{k: v for k, v in row.items() if k not in VALIDATOR_FIELDS_LEFT_OUT} for row in page.get("data") or []]
+        cursor = (page.get("meta") or {}).get("next_page")
+        if not cursor:
+            break
+    else:
+        ctx.warn(f"stopped after {VALIDATOR_PAGE_LIMIT} pages with more to read")
+    if not rows:
+        raise ValueError("the validator list came back empty")
+    ctx.bronze.save_json(SOURCE, "validators", "all", rows, url=url, params={"limit": VALIDATORS_PER_PAGE}, rows=len(rows),
+                         note="assembled: every page of the list; trimmed: operators' contact details, links and free text are left out")
+
+
+@dataset(SOURCE, "ft_transfer_stats")
+def ft_transfer_stats(ctx: Context) -> None:
+    """Daily transfers, amount moved, and unique senders and receivers per registry token. The endpoint returns only the
+    newest 365 days and takes no date, so the history can only grow from the first night it is read."""
+    for t in read_registry("tokens"):
+        token = t["token_id"]
+        params = {"limit": window_days(ctx, SOURCE, "ft_transfer_stats", token)}
+        fetch(ctx, SOURCE, "ft_transfer_stats", token, f"{BASE}/v3/fts/{token}/stats/transfers", params=params, headers=_headers())
 
 
 @dataset(SOURCE, "contract_txns")

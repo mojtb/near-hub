@@ -14,6 +14,7 @@ lst.rhealab.near,Rhea,staking,Liquid staking contract and rNEAR token,2,1,1,0,do
 venear.dao,House of Stake,governance,veNEAR vote-escrow contract,2,0,1,0,documented,https://github.com/houseofstake/agora-near/blob/main/src/lib/contractConstants.ts,
 vote.dao,House of Stake,governance,Voting contract,2,0,1,0,documented,https://github.com/houseofstake/agora-near/blob/main/src/lib/contractConstants.ts,
 rewards.hos-dao.near,House of Stake,governance,Rewards claim contract,2,0,0,0,documented,https://github.com/houseofstake/agora-near/blob/main/src/lib/contractConstants.ts,
+hos-deposits.sputnik-dao.near,House of Stake,governance,Treasury account named in the voting contract's config,2,1,0,0,chain,https://nearblocks.io/address/vote.dao,named as treasury_account_id by vote.dao get_config (read 2026-11-10); what is paid into it has not been traced
 sputnik-dao.near,Sputnik DAO,governance,DAO factory,2,0,1,0,documented,https://github.com/near-daos/sputnik-dao-contract,
 v2.ref-finance.near,Rhea,defi,AMM exchange contract,3,1,1,0,documented,https://guide.rhea.finance/developers/contracts,
 dclv2.ref-labs.near,Rhea,defi,Concentrated liquidity contract,3,1,1,0,documented,https://guide.rhea.finance/developers/contracts,
@@ -31,11 +32,11 @@ pyth-oracle.near,Pyth,oracle,Price oracle contract,4,0,1,0,third_party_code,http
 omft.near,NEAR Intents,intents_revenue,Multichain token factory; Intents token ids end in this account,1,0,1,0,observed,https://api.nearblocks.io/v3/intents/volume-stats/assets,token ids such as eth-0x...omft.near appear in Intents volume
 sweat-relayer.near,Sweat Economy,relayer,Largest receipt receiver in the sample,4,0,1,0,name_only,https://nearblocks.io/address/sweat-relayer.near,entity inferred from the account name
 token.sweat,Sweat Economy,consumer_app,SWEAT token,4,0,1,0,token_list,https://1click.chaindefuser.com/v0/tokens,
-v2.jars.sweat,Sweat Economy,consumer_app,Top receiver in the sample,4,0,1,0,name_only,https://nearblocks.io/address/v2.jars.sweat,entity inferred from the account name
+v2.jars.sweat,Sweat Economy,consumer_app,Top receiver in the sample,4,1,1,0,name_only,https://nearblocks.io/address/v2.jars.sweat,entity inferred from the account name
 jars-oracle.sweat,Sweat Economy,oracle,Top transaction receiver in the sample,4,0,1,0,name_only,https://nearblocks.io/address/jars-oracle.sweat,entity inferred from the account name
 oracle.sweat,Sweat Economy,oracle,Top transaction receiver in the sample,4,0,1,0,name_only,https://nearblocks.io/address/oracle.sweat,entity inferred from the account name
 spin.sweat,Sweat Economy,consumer_app,Top transaction receiver in the sample,4,0,1,0,name_only,https://nearblocks.io/address/spin.sweat,entity inferred from the account name
-claim.sweat,Sweat Economy,consumer_app,Top receipt receiver in the sample,4,0,1,0,name_only,https://nearblocks.io/address/claim.sweat,entity inferred from the account name
+claim.sweat,Sweat Economy,consumer_app,Top receipt receiver in the sample,4,1,1,0,name_only,https://nearblocks.io/address/claim.sweat,entity inferred from the account name
 sweat_welcome.near,Sweat Economy,consumer_app,Top transaction receiver in the sample,4,0,1,0,name_only,https://nearblocks.io/address/sweat_welcome.near,entity inferred from the account name
 game.hot.tg,HOT,consumer_app,Largest non-Intents transaction receiver in the sample,4,0,1,0,name_only,https://nearblocks.io/address/game.hot.tg,entity inferred from the account name
 0here.tg,Unlabelled,consumer_app,Top receipt receiver in the sample,4,0,1,0,observed,https://nearblocks.io/address/0here.tg,

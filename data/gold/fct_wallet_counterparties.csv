@@ -58,14 +58,14 @@ auroraliqsupport.near,,,,22,2050514.9700000002,1921796.6333182906,2025-10-01,202
 buybacks.multisignature.near,1csfundsadmin.sputnik-dao.near,NEAR revenue wallets,intents_revenue,3,1286907.1099999999,0.0,2026-07-14,2026-09-09
 buybacks.multisignature.near,35c78973c032aeb46eec96b9a7cd9bfbc01e53a3606dee0d08fe07344eaf9539,,,1,894.63992,0.0,2026-07-09,2026-07-09
 buybacks.multisignature.near,508aa18569e5a59d63b0f4c445e02e7b5fc53b86337328e756b32745ebac50e7,,,1,0.0,23280.0,2026-07-10,2026-07-10
-buybacks.multisignature.near,52435fe912307fb3a088b8b8f3882781762fc1f0a404e8579c7fb1a964362c8d,,,2,3982.8288325000003,0.0,2026-09-02,2026-09-02
+buybacks.multisignature.near,52435fe912307fb3a088b8b8f3882781762fc1f0a404e8579c7fb1a964362c8d,,,3,5942.36079787,0.0,2026-09-02,2026-11-10
 buybacks.multisignature.near,5c33c6218d47e00ef229f60da78d0897e1ee9665312550b8afd5f9c7bc6957d2,,,2,1926.5364,0.0,2026-09-11,2026-09-11
 buybacks.multisignature.near,9c484fa5d2d069569ba063fc555c34e621ccd88fdbb0295fc79bad232621c5c1,,,1,1501.9776,0.0,2026-09-03,2026-09-03
 buybacks.multisignature.near,ccb91e1db61e8d7e1d4ae3e043001140132959a86ee35a548b6563a46284a6ea,,,1,28.572988879999997,0.0,2026-06-23,2026-06-23
 buybacks.multisignature.near,clingy.near,,,1,8484.199999999999,0.0,2026-09-13,2026-09-13
 buybacks.multisignature.near,e80633e9a433a1756f76b1872ee272748fa12e2dec27f6d2803af74c4da08b66,,,1,0.999745,0.0,2026-06-12,2026-06-12
 buybacks.multisignature.near,enleap.near,,,1,886.5,0.0,2026-08-24,2026-08-24
-buybacks.multisignature.near,intents.near,NEAR Intents,intents_revenue,3258,4817635.338674743,0.0,2026-04-23,2026-11-09
+buybacks.multisignature.near,intents.near,NEAR Intents,intents_revenue,3282,4855061.142319925,0.0,2026-04-23,2026-11-10
 buybacks.multisignature.near,kvshnir.tg,,,1,0.059492489999999995,0.0,2026-07-05,2026-07-05
 buybacks.multisignature.near,multisignature.near,Unlabelled,intents_revenue,1,7.1000000000000005,0.0,2026-03-18,2026-03-18
 buybacks.multisignature.near,nearlegion.tipbot.intear.near,,,1,9.26,0.0,2026-09-25,2026-09-25
@@ -76,7 +76,7 @@ fefundsadmin.sputnik-dao.near,aurorafinance.sputnik-dao.near,,,5,39.99492,199971
 fefundsadmin.sputnik-dao.near,aurorafinance1.near,,,31,2.6326999999999994,2.3799999999999994,2025-11-07,2026-03-27
 fefundsadmin.sputnik-dao.near,auroraliqsupport.near,Unlabelled,treasury,20,2052169.04437584,2050517.5108999996,2025-11-07,2026-03-27
 fefundsadmin.sputnik-dao.near,aurorasupport.near,,,6,199934.4443088,0.0,2026-03-25,2026-03-26
-fefundsadmin.sputnik-dao.near,intents.near,NEAR Intents,intents_revenue,2764,3949168.3179522175,0.0,2025-09-23,2026-11-09
+fefundsadmin.sputnik-dao.near,intents.near,NEAR Intents,intents_revenue,2777,3967863.526122115,0.0,2025-09-23,2026-11-10
 fefundsadmin.sputnik-dao.near,sponsor.trezu.near,,,7,0.0153372,0.0,2026-03-09,2026-03-27
 fefundsadmin.sputnik-dao.near,sputnik-dao.near,Sputnik DAO,governance,1,17.850763754119143,0.0,2025-09-22,2025-09-22
 fefundsadmin.sputnik-dao.near,system,,,1,2.5600000000000005e-24,0.0,2025-11-07,2025-11-07
@@ -178,4 +178,4 @@ treasury.near,nfeco08.near,,,1,0.0,6.86780586137758,2024-12-13,2024-12-13
 treasury.near,nfendowment02.near,,,1,34.496665941022805,0.0,2024-04-23,2024-04-23
 treasury.near,nfendowment21.near,,,1,0.0,35.179566299023456,2024-04-22,2024-04-22
 treasury.near,system,,,86,18.028312555698605,0.0,2020-10-15,2026-05-13
-treasury.near,,,,4954,130961493.0681946,0.0,2020-07-22,2026-11-09
+treasury.near,,,,4957,130989536.38280028,0.0,2020-07-22,2026-11-10

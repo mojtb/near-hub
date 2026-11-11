@@ -7,8 +7,8 @@
  },
  "coinmetrics/asset_metrics": {
   "detail": "",
-  "files": 7,
-  "seconds": 39.3,
+  "files": 1,
+  "seconds": 39.4,
   "status": "ok"
  },
  "defillama/chain_dex_volume": {
@@ -21,6 +21,12 @@
   "detail": "",
   "files": 14,
   "seconds": 11.4,
+  "status": "ok"
+ },
+ "defillama/chain_gas_fees": {
+  "detail": "",
+  "files": 7,
+  "seconds": 4.3,
   "status": "ok"
  },
  "defillama/chain_tvl": {
@@ -78,14 +84,14 @@
  },
  "fastnear/account_full": {
   "detail": "",
-  "files": 12,
-  "seconds": 2.5,
+  "files": 3,
+  "seconds": 9.4,
   "status": "ok"
  },
  "fastnear/ft_top_holders": {
   "detail": "",
-  "files": 7,
-  "seconds": 1.1,
+  "files": 5,
+  "seconds": 4.7,
   "status": "ok"
  },
  "fastnear/transfers": {
@@ -125,10 +131,10 @@
   "status": "ok"
  },
  "intents_explorer/daily_tally": {
-  "detail": "ValueError: could not convert string to float: '544,8666'",
-  "files": 0,
-  "seconds": 370.4,
-  "status": "failed"
+  "detail": "",
+  "files": 1,
+  "seconds": 403.7,
+  "status": "ok"
  },
  "nearblocks/address_stats": {
   "detail": "",
@@ -158,6 +164,12 @@
   "detail": "",
   "files": 54,
   "seconds": 451.2,
+  "status": "ok"
+ },
+ "nearblocks/ft_transfer_stats": {
+  "detail": "",
+  "files": 12,
+  "seconds": 168.9,
   "status": "ok"
  },
  "nearblocks/intents_accounts": {
@@ -268,6 +280,18 @@
   "seconds": 6.0,
   "status": "ok"
  },
+ "nearblocks/validators": {
+  "detail": "",
+  "files": 1,
+  "seconds": 53.2,
+  "status": "ok"
+ },
+ "nearblocks/validators_info": {
+  "detail": "",
+  "files": 1,
+  "seconds": 1.4,
+  "status": "ok"
+ },
  "nearblocks/wallet_balance": {
   "detail": "",
   "files": 6,
@@ -294,8 +318,8 @@
  },
  "nrr_fund/figures": {
   "detail": "",
-  "files": 1,
-  "seconds": 0.2,
+  "files": 0,
+  "seconds": 1.5,
   "status": "ok"
  },
  "oneclick/tokens": {
@@ -324,8 +348,8 @@
  },
  "rpc/accounts": {
   "detail": "",
-  "files": 1,
-  "seconds": 9.5,
+  "files": 0,
+  "seconds": 20.0,
   "status": "ok"
  },
  "rpc/block_day": {
@@ -338,6 +362,12 @@
   "detail": "",
   "files": 17,
   "seconds": 2.5,
+  "status": "ok"
+ },
+ "rpc/contract_views_history": {
+  "detail": "",
+  "files": 12,
+  "seconds": 1.5,
   "status": "ok"
  },
  "rpc/ft_metadata": {
@@ -390,8 +420,8 @@
  },
  "rpc/validators_epoch": {
   "detail": "",
-  "files": 2,
-  "seconds": 4.2,
+  "files": 1,
+  "seconds": 1.8,
   "status": "ok"
  }
 }

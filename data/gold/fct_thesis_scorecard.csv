@@ -1,0 +1,30 @@
+claim_id,side,claim,value,comparison,threshold,status,as_of_date
+a_doubling_of_volume_reaches_deflation_after_the_cut,bull,"Once HSP-029 has cut issuance to 1.6%, a doubling of Intents volume would make supply shrink",3.291252531701077,<=,2.0,fails,2026-11-08
+capture_is_rising,bull,NEAR keeps a rising share of the fees charged on Intents,0.263482896667545,>=,0.0,holds,2026-10-31
+capture_stayed_above_a_fifth,bull,NEAR kept at least a fifth of Intents fees in each of the last three complete months,0.18147117218805967,>=,0.2,fails,2026-10-31
+chain_signatures_use_is_growing,bull,Use of Chain Signatures is growing,-0.5426387754761944,>=,0.0,fails,2026-11-10
+competitors_are_as_large,bear,Other cross-chain swap protocols are as large as NEAR Intents and can take its flow,,,,not_testable,
+defi_on_near_is_thin,bear,NEAR's market cap per dollar of TVL is at least twice the median peer's,3.1356957475308773,>=,2.0,holds,2026-11-10
+etf_took_in_more_than_issuance,bull,The Bitwise ETF has taken in more NEAR than the chain issued since the fund's first day,3.95408550312983,>=,1.0,holds,2026-11-10
+fees_depend_on_one_partner,bear,One distribution partner supplies more than half of 1Click's fees,0.7148268115635646,>=,0.5,holds,2026-10-31
+foundation_float_is_an_overhang,bear,The NEAR Foundation's liquid NEAR is a large overhang on the float,,,,not_testable,
+governance_is_broad,bull,At least 100 accounts voted on the newest House of Stake proposal that is not a test,36.0,>=,100.0,fails,2026-11-11
+intents_is_the_fee_base,bull,NEAR Intents is where most application fees on NEAR are paid,0.8697134297864174,>=,0.5,holds,2026-11-11
+intents_revenue_is_growing,bull,NEAR's revenue from Intents is growing,3.336853093110223,>=,0.0,holds,2026-10-31
+issuance_is_over_five_times_offsets,bear,The chain issues more than five times what burn and revenue take back,6.164743806002091,>=,5.0,holds,2026-11-08
+most_volume_is_confidential,bull,Most Intents volume now settles confidentially,0.5158315656129973,>=,0.5,holds,2026-11-08
+near_ai_has_paying_users,bull,NEAR AI has paying users,,,,not_testable,
+near_beat_the_median_peer,bull,NEAR's price beat the median peer over 90 days,1.083441373983511,>=,0.0,holds,2026-11-10
+near_is_dearer_than_the_median_peer,bear,NEAR trades above the median peer on application fees,1.7237159064124827,>=,1.0,holds,2026-11-08
+near_keeps_under_half_of_fees,bear,NEAR keeps less than half of the fees charged on Intents,0.34289160497892107,<=,0.5,holds,2026-10-31
+offsets_are_material,bull,Gas burned and revenue received take back at least a tenth of what the chain issues,0.16221274256788812,>=,0.1,holds,2026-11-08
+revenue_is_small_beside_trading,bear,A month of NEAR's Intents revenue is under 0.1% of a month of reported spot trading in NEAR,0.00015293013655767526,<=,0.001,holds,2026-11-08
+revenue_wallets_keep_their_near,bull,The revenue wallets keep the NEAR they receive: under 5% of it has left,0.013271554649323773,<=,0.05,holds,2026-11-10
+solvers_are_few,bear,A few solvers fill most Intents volume,,,,not_testable,
+supply_is_shrinking,bull,NEAR's supply is shrinking,0.020744532632035958,<=,0.0,fails,2026-11-08
+sweat_carries_a_fifth_of_transactions,bear,"The Sweat relayer, which stops when Sweat Wallet ends on 2026-12-30, carries at least a fifth of the transactions left after the batch streams",0.2540991547238245,>=,0.2,holds,2026-11-10
+usage_is_falling,bear,Transactions without the batch streams are lower than six months ago,-0.13521129093339967,<=,0.0,holds,2026-11-10
+validator_set_is_shrinking,bear,The validator set shrank by more than 5% in 60 days,-0.18962510897994767,<=,-0.05,holds,2026-11-10
+volume_is_mostly_stablecoin_swaps,bear,Most 1Click volume is one stablecoin swapped for another,0.304976635094343,>=,0.5,fails,2026-10-31
+volume_stayed_above_2bn_a_month,bull,Intents volume was at least $2B in each of the last three complete months,3201836781.615375,>=,2000000000.0,holds,2026-10-31
+zcash_is_on_a_fifth_of_volume,bear,Zcash is on one side of at least a fifth of 1Click volume,0.2284211593888888,>=,0.2,holds,2026-10-31

@@ -265,11 +265,15 @@ signer_30d as (
     where s.date_day > (select max(date_day) from {{ ref('fct_chain_signatures_daily') }}) - 30
 ),
 
+-- Both sides are the nightly snapshot's reads, minutes apart. fct_mpc_state prefers the read at the day's first block,
+-- hours earlier, so on a day the threshold changed it could differ from NearBlocks without either being wrong.
 mpc_threshold as (
-    select s.snapshot_date, s.threshold as contract_threshold, max(o.threshold) as nearblocks_threshold
-    from {{ ref('fct_mpc_state') }} s
+    select s.snapshot_date, cast(s.result->'Running'->'parameters'->>'threshold' as integer) as contract_threshold,
+        max(o.threshold) as nearblocks_threshold
+    from {{ ref('stg_rpc__contract_views') }} s
     join {{ ref('stg_nearblocks__mpc_operators') }} o using (snapshot_date)
-    group by s.snapshot_date, s.threshold
+    where s.contract = 'v1.signer' and s.method = 'state'
+    group by all
     order by s.snapshot_date desc limit 1
 ),
 
@@ -280,6 +284,18 @@ nearcore_commits as (
     join {{ ref('stg_github__weekly_commits_list') }} l using (repo, week_start)
     where s.is_latest and l.is_latest and s.repo = 'near/nearcore'
 ),
+
+-- NEAR's transaction fees in USD from two indexers, over the latest 30 days both hold. DefiLlama's chain adapter sums
+-- them from Allium's index and prices them itself; the other side is NearBlocks' fee in NEAR at this warehouse's close.
+near_gas as (
+    select g.date_day, g.gas_fees_usd as defillama_usd, c.txn_fee_near * m.price_usd as nearblocks_usd
+    from {{ ref('stg_defillama__chain_gas_fees') }} g
+    join {{ ref('fct_chain_daily') }} c using (date_day)
+    join {{ ref('fct_market_daily') }} m using (date_day)
+    where g.is_latest and g.llama_chain = 'Near'
+),
+
+near_gas_30d as (select * from near_gas where date_day > (select max(date_day) from near_gas) - 30),
 
 checks as (
     select 'intents_volume_all_time_defillama_vs_page' as check_id, 'Intents all-time volume, USD' as metric, null as subject,
@@ -468,6 +484,11 @@ checks as (
         'NearBlocks /v1/charts', (select avg(gas_fee_near_v1) from chain_30d),
         'NearBlocks /v3/block-stats', (select avg(gas_fee_near_v3) from chain_30d),
         0.1, 'same_upstream'
+
+    union all select 'near_gas_fees_30d_defillama_vs_nearblocks', 'NEAR transaction fees over 30 days, USD', null,
+        'DefiLlama chain adapter, from Allium', (select sum(defillama_usd) from near_gas_30d),
+        'NearBlocks fee in NEAR at the day''s close', (select sum(nearblocks_usd) from near_gas_30d),
+        3.0, 'independent'
 
     union all select 'active_contracts_30d_v1_vs_v3', 'Mean daily active contracts over 30 days', null,
         'NearBlocks v1', (select avg(active_contracts_v1) from chain_30d),

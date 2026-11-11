@@ -2,9 +2,10 @@
 -- part of the total in fct_intents_daily. Empty until INTENTS_EXPLORER_JWT is set and a snapshot is in the build.
 -- Its share is taken of fct_intents_daily.volume_usd, the all-route total, which has the same scope on every day.
 -- History arrives out of order: recent days in full, then one day a week back to the start, then the days between,
--- newest first. So the table holds an unbroken run of recent days and, before it, single days a week apart.
+-- newest first. Until that walk is finished the table holds an unbroken run of recent days and, before it, scattered days.
 -- is_in_daily_run marks the run: it starts on the day after the newest gap (macro oneclick_daily_run_start). A day with
--- no 1Click swap at all leaves no tally and would end the run too; there has been none since the daily run began.
+-- no 1Click swap at all leaves no tally and ends the run too. The walk was finished on 2026-11-10, and the only gaps
+-- left are ten such days from 2025-04-05 to 2025-05-18, so the run starts on 2025-05-19.
 with channels as (
     select
         date_day,

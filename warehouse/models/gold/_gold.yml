@@ -440,7 +440,7 @@ models:
       - {name: channel_rank, description: "Rank by fees, largest first.", meta: {unit: "integer"}}
       - {name: derived_from, description: "Credit to the dashboard and its creator.", meta: {unit: "text"}, data_tests: [not_null]}
   - name: fct_intents_1click_daily
-    description: "1Click per UTC day, from the Intents Explorer API. 1Click is one route into NEAR Intents, so its volume is part of the total in fct_intents_daily. Tallied per day, with no row or wallet address stored. History arrives out of order, so the table holds an unbroken run of recent days and, before it, one sampled day a week: sum or average only rows where is_in_daily_run is true. Empty until INTENTS_EXPLORER_JWT is set and a snapshot is in the build."
+    description: "1Click per UTC day, from the Intents Explorer API. 1Click is one route into NEAR Intents, so its volume is part of the total in fct_intents_daily. Tallied per day, with no row or wallet address stored. The history is complete from the first day with a swap, 2025-03-27. A day with no swap leaves no row, and ten days in April and May 2025 had none, so is_in_daily_run is true from 2025-05-19: where a sum must not skip a day, use only rows where it is true. Empty until INTENTS_EXPLORER_JWT is set and a snapshot is in the build."
     config:
       meta: {grain: "date_day", sources: "Intents Explorer API"}
     data_tests:
@@ -456,7 +456,7 @@ models:
       - {name: senders, description: "Distinct sending wallets on finished swaps. Only the count is stored. Empty before 2026, where the Explorer's rows carry no sender.", meta: {unit: "count"}}
       - {name: recipients, description: "Distinct receiving wallets on finished swaps. Only the count is stored.", meta: {unit: "count"}}
       - {name: share_of_all_intents_volume, description: "volume_usd divided by fct_intents_daily.volume_usd: all of Intents that day, across every route, confidential included.", meta: {unit: "fraction"}}
-      - {name: is_in_daily_run, description: "True from the day after the newest missing day, so every day from there to the newest is present: from 2026-06-16 at the 2026-11-09 pin. Earlier rows are single days a week apart, tallied first so the whole range shows while the backfill fills the days between, newest first. Sum or average only where this is true, and read an earlier row as that one day, not as its week. The other fct_intents_1click tables carry the same flag.", meta: {unit: "boolean"}, data_tests: [not_null]}
+      - {name: is_in_daily_run, description: "True from the day after the newest missing day, so every day from there to the newest is present: from 2025-05-19 at the 2026-11-10 pin, by when every day back to 2024-11-01 had been walked. The ten missing days before it, from 2025-04-05 to 2025-05-18, had no 1Click swap, and such a day leaves no row; the rows before 2025-05-19 are real days as well. While a backfill is still running, a missing day is one not tallied yet. The other fct_intents_1click tables carry the same flag.", meta: {unit: "boolean"}, data_tests: [not_null]}
   - name: fct_intents_1click_channel_daily
     description: "1Click swaps per UTC day, referral channel and status, from the Intents Explorer API, with volume and app fees for finished swaps. A swap that was refunded, failed or is still processing keeps its count and has no USD value: the Explorer's figure for it is the amount asked for, which nothing checks, and one refunded swap on 2026-07-28 reads $29.99 trillion. Silver (stg_intents_explorer__channels) keeps those figures as tallied. Empty until a snapshot with INTENTS_EXPLORER_JWT is in the build."
     config:
@@ -528,19 +528,20 @@ models:
       - {name: fee_usd, description: "Fees: appFees read as basis points of the value paid in.", meta: {unit: "USD"}}
       - {name: is_in_daily_run, description: "True where the day belongs to the unbroken run of recent days, false for a day sampled alone, one a week: see fct_intents_1click_daily.is_in_daily_run. Sum or average only where this is true.", meta: {unit: "boolean"}, data_tests: [not_null]}
   - name: fct_lst_snapshot
-    description: "Liquid staking per snapshot, read directly from each contract."
+    description: "Liquid staking per day, read directly from each contract (LiNEAR, stNEAR, rNEAR). Daily from 2025-01-01, read at the first block of each UTC day from the archival node, and one day a month before that, back to each contract's first month. A token has no row before its contract existed."
     config:
-      meta: {grain: "snapshot_date, token", sources: "RPC contract views"}
+      meta: {grain: "snapshot_date, token", sources: "RPC contract views, at past blocks and nightly"}
     data_tests:
       - unique_grain: {arguments: {columns: ["snapshot_date", "token"]}}
       - min_rows: {arguments: {n: 3}}
     columns:
-      - {name: snapshot_date, description: "Date the source was read.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: snapshot_date, description: "The UTC date of the block the values were read at. With read_from = archival that is the day's first block, so the row shows the state as the day began, which is the close of the day before. With read_from = nightly it is the tip when that date's snapshot ran, some hours into the day.", meta: {unit: "date"}, data_tests: [not_null]}
       - {name: token, description: "Liquid staking token.", meta: {unit: "text"}, data_tests: [not_null]}
       - {name: contract, description: "Token contract.", meta: {unit: "account id"}}
       - {name: price_near, description: "NEAR redeemable per token.", meta: {unit: "NEAR per token"}}
       - {name: token_supply, description: "Tokens outstanding.", meta: {unit: "token units"}}
-      - {name: delegated_near, description: "NEAR the contract has staked with validators, read from the contract. For rNEAR until its get_total_staked_balance is read, from the first night after 2026-11-10, this is token_supply times price_near, which is the same figure because a contract sets its price as staked NEAR divided by supply: a data test holds the two within 0.01% wherever both exist.", meta: {unit: "NEAR"}}
+      - {name: delegated_near, description: "NEAR the contract has staked with validators, read from the contract. Where a read holds no get_total_staked_balance for rNEAR, this is token_supply times price_near, which is the same figure because a contract sets its price as staked NEAR divided by supply: a data test holds the two within 0.01% wherever both exist.", meta: {unit: "NEAR"}}
+      - {name: read_from, description: "archival: replayed from the archival node at the first block of the UTC day. nightly: read at the tip when the snapshot of that date ran, used only for a date the replay has not read. All of a contract's figures on a date come from the same read.", meta: {unit: "label"}, data_tests: [not_null, {accepted_values: {arguments: {values: ["archival", "nightly"]}}}]}
   - name: fct_market_daily
     description: "NEAR price and market cap per UTC day, one column per measure, aligned to the close of the UTC day. price_usd takes the first source with a value: CoinMetrics, Coinbase, DefiLlama, then NearBlocks. price_basis names it, and dq_reconciliation compares the four. market_cap_usd is price times the circulating supply built from the chain in fct_circulating_supply_daily, which is total supply minus what lockups still lock. See docs/CIRCULATING_SUPPLY.md. CoinMetrics' own market cap is compared in dq_reconciliation: its supply is NearBlocks' legacy endpoint through CoinGecko, which froze in August 2025 and has been total supply since 2025-10-25."
     config:
@@ -576,31 +577,33 @@ models:
       - {name: depth_usd, description: "Assets with a vetted price opposite this token, summed over Rhea's pools at this read. This is the real money behind a pool price: in a constant-product pool, selling any amount cannot take out more than the other side. It does not use Rhea's own tvl field, which reads $1.37B for one pool of two unknown tokens. It leaves out concentrated-liquidity (DCL) pools, which Rhea's pool list does not include, so a token traded only there reads 0.", meta: {unit: "USD"}, data_tests: [not_null, {in_range: {arguments: {low: 0, high: 1000000000}}}]}
       - {name: is_vetted, description: "True if 1Click has a positive price for the token or registry/tokens.csv lists it. Only these prices count toward depth_usd, and only these tokens can be valued beyond their depth.", meta: {unit: "boolean"}, data_tests: [not_null]}
   - name: fct_mpc_participants
-    description: "MPC operators per snapshot, read directly from v1.signer."
+    description: "MPC operators per day, read directly from v1.signer. Daily from 2025-01-01, read at the first block of each UTC day from the archival node, and one day a month before that, back to the contract's first month. A day on which the contract was not in its Running state has no rows."
     config:
-      meta: {grain: "snapshot_date, operator_account_id", sources: "RPC v1.signer state"}
+      meta: {grain: "snapshot_date, operator_account_id", sources: "RPC v1.signer state, at past blocks and nightly"}
     data_tests:
       - unique_grain: {arguments: {columns: ["snapshot_date", "operator_account_id"]}}
       - min_rows: {arguments: {n: 10}}
     columns:
-      - {name: snapshot_date, description: "Date the source was read.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: snapshot_date, description: "The UTC date of the block the values were read at. With read_from = archival that is the day's first block, so the row shows the state as the day began, which is the close of the day before. With read_from = nightly it is the tip when that date's snapshot ran, some hours into the day.", meta: {unit: "date"}, data_tests: [not_null]}
       - {name: operator_account_id, description: "MPC operator account.", meta: {unit: "account id"}, data_tests: [not_null]}
       - {name: participant_id, description: "Operator's id in the contract.", meta: {unit: "integer"}}
+      - {name: read_from, description: "archival: replayed from the archival node at the first block of the UTC day. nightly: read at the tip when the snapshot of that date ran, used only for a date the replay has not read. All of a contract's figures on a date come from the same read.", meta: {unit: "label"}, data_tests: [not_null, {accepted_values: {arguments: {values: ["archival", "nightly"]}}}]}
   - name: fct_mpc_state
-    description: "Chain Signatures contract state per snapshot, read directly from v1.signer."
+    description: "Chain Signatures contract state per day, read directly from v1.signer. Daily from 2025-01-01, read at the first block of each UTC day from the archival node, and one day a month before that, back to the contract's first month. A day on which the contract was not in its Running state has no row."
     config:
-      meta: {grain: "snapshot_date", sources: "RPC v1.signer state"}
+      meta: {grain: "snapshot_date", sources: "RPC v1.signer state, at past blocks and nightly"}
     data_tests:
       - unique_grain: {arguments: {columns: ["snapshot_date"]}}
       - min_rows: {arguments: {n: 1}}
     columns:
-      - {name: snapshot_date, description: "Date the source was read.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: snapshot_date, description: "The UTC date of the block the values were read at. With read_from = archival that is the day's first block, so the row shows the state as the day began, which is the close of the day before. With read_from = nightly it is the tip when that date's snapshot ran, some hours into the day.", meta: {unit: "date"}, data_tests: [not_null]}
       - {name: participants, description: "MPC participants.", meta: {unit: "count"}}
       - {name: threshold, description: "Signers required.", meta: {unit: "count"}}
-      - {name: signature_domains, description: "Signature schemes supported.", meta: {unit: "count"}}
+      - {name: signature_domains, description: "Signature schemes supported: the contract's list of domains. Its first version had no such list and held a single key, which counts as 1.", meta: {unit: "count"}}
       - {name: keyset_epoch, description: "MPC key generation epoch.", meta: {unit: "integer"}}
+      - {name: read_from, description: "archival: replayed from the archival node at the first block of the UTC day. nightly: read at the tip when the snapshot of that date ran, used only for a date the replay has not read. All of a contract's figures on a date come from the same read.", meta: {unit: "label"}, data_tests: [not_null, {accepted_values: {arguments: {values: ["archival", "nightly"]}}}]}
   - name: fct_peer_daily
-    description: "NEAR and peer chains per day. Activity columns use one source and definition for every chain; market_cap_usd does not, so read market_cap_basis before comparing caps. An empty cell means the source has no value for that day. The fees and revenue of the newest days can still change; see is_fee_revenue_provisional."
+    description: "NEAR and peer chains per day. Activity columns use one source and definition for every chain; market_cap_usd does not, so read market_cap_basis before comparing caps. fees_usd and revenue_usd cover the applications on a chain, and gas_fees_usd the chain's own transaction fees. An empty cell means the source has no value for that day. The fees and revenue of the newest days can still change; see is_fee_revenue_provisional."
     config:
       meta: {grain: "date_day, chain_id", sources: "DefiLlama, CoinMetrics"}
     data_tests:
@@ -611,14 +614,15 @@ models:
     columns:
       - {name: date_day, description: "UTC calendar day.", meta: {unit: "date"}, data_tests: [not_null]}
       - {name: chain_id, description: "Chain identifier from registry/peers.csv.", meta: {unit: "id"}, data_tests: [not_null]}
-      - {name: price_usd, description: "Close of the UTC day: CoinMetrics, else DefiLlama, which is the only source for TON and for Sui before 2023-08-17. NEAR's is fct_market_daily's.", meta: {unit: "USD"}}
+      - {name: price_usd, description: "Close of the UTC day: CoinMetrics, else DefiLlama, which is the only source for Sui before 2023-08-17 and for TON before 2022-05-05. TON's CoinMetrics series is the asset `gram` (Toncoin was renamed; the old id `ton` returns nothing), first read on 2026-11-10. NEAR's is fct_market_daily's.", meta: {unit: "USD"}}
       - {name: price_basis, description: "Which source price_usd comes from: coinmetrics or defillama, or for NEAR whichever fct_market_daily used.", meta: {unit: "text"}, data_tests: [{accepted_values: {arguments: {values: ["coinmetrics", "coinbase", "defillama", "nearblocks"]}}}]}
-      - {name: market_cap_usd, description: "Peers: CoinMetrics' estimate, price times the circulating supply the project reports. NEAR: fct_market_daily's, price times total supply minus lockups. Empty for TON, which has no community series. These are not one definition, so read market_cap_basis and implied_supply_tokens before comparing.", meta: {unit: "USD"}}
+      - {name: market_cap_usd, description: "Peers: CoinMetrics' estimate, price times the circulating supply the project reports. NEAR: fct_market_daily's, price times total supply minus lockups. TON's is CoinMetrics' asset `gram`, with a cap from 2022-11-03; it is empty in a build pinned before 2026-11-10, when every read still asked for the id `ton`, which returns nothing. These are not one definition, so read market_cap_basis and implied_supply_tokens before comparing.", meta: {unit: "USD"}}
       - {name: implied_supply_tokens, description: "market_cap_usd divided by price_usd: the supply behind the cap. On 2026-11-05, as a share of total supply read from each chain: Sui 41% of 10B, Aptos 73%, Solana 93%, Avalanche 93%, Ethereum 100%, NEAR 99.8%.", meta: {unit: "native tokens"}}
       - {name: market_cap_basis, description: "What market_cap_usd rests on. A peer's reported figure leaves out whatever its project treats as not circulating, while NEAR's leaves out only lockups, so the NEAR Foundation's liquid holding counts: 305M NEAR, about 26% of supply, at the last figure published (2024-01-11; see registry/near_supply_readings.csv).", meta: {unit: "label"}}
       - {name: tvl_usd, description: "Chain TVL per DefiLlama. DefiLlama can rewrite a chain's history on any night without notice, so no value is ever final and a TVL chart reproduces only at a pin. Its 2026-11-03 read moved 2,079 Ethereum and Solana days back to 2021, by up to 11.4%. Other reads through 2026-11-05 moved at most 8 days by more than 0.01%, and NEAR's series has not moved. See dq_revisions.", meta: {unit: "USD"}}
-      - {name: fees_usd, description: "Fees paid by users on the chain per DefiLlama. DefiLlama also rewrites older days: its 2026-11-04 and 11-05 reads moved 165 and 557 of Solana's days, back to 2025-04-09, by up to 5.6%.", meta: {unit: "USD"}}
-      - {name: revenue_usd, description: "Chain revenue per DefiLlama.", meta: {unit: "USD"}}
+      - {name: fees_usd, description: "Fees paid to the applications on the chain: DefiLlama's daily total over the protocols it lists there. The chain's own transaction fees are not in it; they are gas_fees_usd. For NEAR most of it is NEAR Intents: $194,787 of $211,521 on 2026-11-08, beside $2,472 of gas, as read on 2026-11-10. DefiLlama also rewrites older days: its 2026-11-04 and 11-05 reads moved 165 and 557 of Solana's days, back to 2025-04-09, by up to 5.6%.", meta: {unit: "USD"}}
+      - {name: revenue_usd, description: "Revenue of the applications on the chain per DefiLlama: the part of fees_usd their protocols or token holders keep. What the chain itself keeps or burns from transaction fees is not in it.", meta: {unit: "USD"}}
+      - {name: gas_fees_usd, description: "Transaction fees paid to the chain itself, from DefiLlama's own adapter for the chain. Not part of fees_usd. First fetched on 2026-11-10, so it is empty in a build pinned before that date. For NEAR it is within 0.2% of NearBlocks' transaction fees at the day's close in every year, from a different indexer (Allium); dq_reconciliation holds the two together. Each series has its own start: NEAR 2020-10-14, Solana 2021-01-17, Aptos 2022-10-18, Avalanche 2022-11-08, Sui 2024-07-01, TON 2024-09-24; Ethereum's starts before this table does.", meta: {unit: "USD"}}
       - {name: dex_volume_usd, description: "DEX volume on the chain per DefiLlama.", meta: {unit: "USD"}}
       - {name: stablecoins_usd, description: "Stablecoins on the chain per DefiLlama.", meta: {unit: "USD"}}
       - {name: is_fee_revenue_provisional, description: "True while this day's fees_usd and revenue_usd can still change, by the rule on fct_intents_daily: until they have been read 3 nights after the day ended, so the newest two days of a nightly build. NEAR's fees are mostly Intents fees and settle with them: they read $33,285 for 2026-10-31 and $146,822 two nights later. Every chain gets the same rule, so filtering on this column cuts them all at the same day. The other chains' first reads also run low, by up to about 6% for fees on Ethereum, Solana and Sui, but they have no fixed settling time, so False does not mean settled for them. A data test holds the number for NEAR only.", meta: {unit: "boolean"}, data_tests: [not_null]}
@@ -690,7 +694,7 @@ models:
       - {name: exchange_name, description: "Exchange name.", meta: {unit: "text"}}
       - {name: balance_usd, description: "USD value of every asset on NEAR in the exchange's labelled wallets, at DefiLlama's prices.", meta: {unit: "USD"}}
   - name: fct_receiver_sample_daily
-    description: "Activity per receiver, estimated from evenly spaced sample blocks. These are estimates, and a day's sample density is in blocks_sampled. Measured against the chain's own count (fct_chain_daily.txns) at the 2026-11-09 pin: with 24 blocks a day, through 2026-10-29, a day's estimated transactions summed over receivers were 3% low in total and off by 10% at the median, 23% at the 90th percentile, and between 0.68 and 2.04 times the real count; with 96 blocks, from 2026-10-30, 1% low in total and off by 5% at the median and 10% at the 90th percentile. So read a 24-block day as rough, and prefer shares over a week or more. A data test holds the estimates to the chain's count."
+    description: "Activity per receiver, estimated from evenly spaced sample blocks. These are estimates, and a day's sample density is in blocks_sampled. Measured against the chain's own count (fct_chain_daily.txns) at the 2026-11-10 pin: with 24 blocks a day, from 2025-11-10 through 2026-10-29, a day's estimated transactions summed over receivers were 2% low in total and off by 13% at the median, 42% at the 90th percentile, and between 0.46 and 2.44 times the real count, with December 2025 to March 2026 the noisiest months; with 96 blocks, from 2026-10-30, 2% low in total and off by 6% at the median and 9% at the 90th percentile. So read a 24-block day as rough, and prefer shares over a week or more. A data test holds the estimates to the chain's count."
     config:
       meta: {grain: "date_day, account_id", sources: "Neardata"}
     data_tests:
@@ -825,7 +829,7 @@ models:
       - {name: amount_token, description: "Signed amount in whole tokens.", meta: {unit: "token units"}}
       - {name: share_of_top_100, description: "Share of the balance held by the top 100. Not a share of total supply.", meta: {unit: "fraction"}}
   - name: fct_validator_epoch
-    description: "Validator set per epoch, for the epoch in force at the first block of each UTC day plus the current epoch read each night. NEAR runs about three epochs a day, so this is a daily sample of epochs, not every epoch. Past epochs are backfilled newest first from the archival node, which returns UNKNOWN_EPOCH for some of them. Those days are not asked again and stay empty, so check which days are present before reading a trend. An epoch read after it ended has final production counts; a nightly read of the current epoch is partial."
+    description: "Validator set per epoch, for the epoch in force at the first block of each UTC day plus the current epoch read each night. NEAR runs about three epochs a day, so this is a daily sample of epochs, not every epoch. Past epochs are backfilled newest first from the archival node. Its nodes do not all hold the same epochs, so an epoch one of them refuses is asked again on later runs; at the 2026-11-10 pin every day from 2025-01-01 has its epoch. An epoch read after it ended has final production counts; a nightly read of the current epoch is partial."
     config:
       meta: {grain: "epoch_height, validator_account_id", sources: "RPC validators"}
     data_tests:
@@ -845,9 +849,9 @@ models:
       - {name: endorsements_produced, description: "Chunk endorsements produced.", meta: {unit: "count"}}
       - {name: endorsements_expected, description: "Chunk endorsements expected.", meta: {unit: "count"}}
       - {name: read_from, description: "nightly for a mid-epoch read, archival for an epoch read after it ended.", meta: {unit: "text"}}
-      - {name: is_epoch_complete, description: "True when the epoch had ended at the read, so its production counts are final: the validators' expected blocks add up to the protocol's epoch length (43,200), since every block has one expected producer. False for an epoch the nightly read caught in progress, which at the 2026-11-09 pin had run between 1,297 and 41,236 blocks. The stake columns do not depend on it: stakes are fixed when an epoch starts. The backfill reads each such epoch again once it has ended.", meta: {unit: "boolean"}, data_tests: [not_null]}
+      - {name: is_epoch_complete, description: "True when the epoch had ended at the read, so its production counts are final: the validators' expected blocks add up to the protocol's epoch length (43,200), since every block has one expected producer. False for an epoch the nightly read caught in progress. The backfill reads each such epoch again once it has ended, so only the newest epoch stays false: at the 2026-11-10 pin 688 of 689 epochs were complete, and the one in progress had run 12,907 blocks. The stake columns do not depend on it: stakes are fixed when an epoch starts.", meta: {unit: "boolean"}, data_tests: [not_null]}
   - name: fct_validator_summary
-    description: "Decentralization per epoch: validator count, stake concentration and Nakamoto coefficients. One epoch per day, the one in force at the day's first block, plus the current epoch read each night: see fct_validator_epoch. History is backfilled newest first and has gaps on the days whose epoch the archival node refused."
+    description: "Decentralization per epoch: validator count, stake concentration and Nakamoto coefficients. One epoch per day, the one in force at the day's first block, plus the current epoch read each night: see fct_validator_epoch. History is backfilled newest first; at the 2026-11-10 pin every day from 2025-01-01 has its epoch."
     config:
       meta: {grain: "epoch_height", sources: "fct_validator_epoch, dim_block_day"}
     data_tests:
@@ -985,7 +989,7 @@ models:
       - {name: operator_account_id, description: "MPC operator account.", meta: {unit: "account id"}, data_tests: [not_null]}
       - {name: node_url, description: "Operator's public node address.", meta: {unit: "url"}}
   - name: fct_governance_proposals
-    description: "House of Stake proposals read directly from vote.dao, as of the newest snapshot. A status of Voting means the numbers are still moving. Proposals made to try the contract out, and jokes, are kept and marked with is_test: 11 of the 30 at the 2026-11-09 pin."
+    description: "House of Stake proposals read directly from vote.dao, as of the newest snapshot. A status of Voting means the numbers are still moving. Proposals made to try the contract out, and jokes, are kept and marked with is_test: 11 of the 30 at the 2026-11-10 pin."
     config:
       meta: {grain: "proposal_id", sources: "RPC vote.dao get_proposals"}
     data_tests:
@@ -1013,15 +1017,16 @@ models:
       - {name: read_on, description: "Date of the reading.", meta: {unit: "date"}}
       - {name: is_test, description: "True for a proposal made to try the contract out or as a joke, not a real one: its title says test, or it has a link that is not a forum thread on gov.near.org (https://gov.near.org/t/...). A real proposal either links to its thread or has no link. One test proposal went to a vote and was defeated; a data test fails if a flagged proposal ever passes.", meta: {unit: "boolean"}, data_tests: [not_null]}
   - name: fct_venear_snapshot
-    description: "House of Stake participation per snapshot, read directly from venear.dao."
+    description: "House of Stake participation per day, read directly from venear.dao, at the first block of each UTC day from the archival node. The table starts on the first day the contract existed."
     config:
-      meta: {grain: "snapshot_date", sources: "RPC venear.dao"}
+      meta: {grain: "snapshot_date", sources: "RPC venear.dao, at past blocks and nightly"}
     data_tests:
       - unique_grain: {arguments: {columns: ["snapshot_date"]}}
     columns:
-      - {name: snapshot_date, description: "Date the source was read.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: snapshot_date, description: "The UTC date of the block the values were read at. With read_from = archival that is the day's first block, so the row shows the state as the day began, which is the close of the day before. With read_from = nightly it is the tip when that date's snapshot ran, some hours into the day.", meta: {unit: "date"}, data_tests: [not_null]}
       - {name: total_venear, description: "veNEAR outstanding.", meta: {unit: "veNEAR"}}
       - {name: accounts, description: "Accounts holding veNEAR.", meta: {unit: "count"}}
+      - {name: read_from, description: "archival: replayed from the archival node at the first block of the UTC day. nightly: read at the tip when the snapshot of that date ran, used only for a date the replay has not read. All of a contract's figures on a date come from the same read.", meta: {unit: "label"}, data_tests: [not_null, {accepted_values: {arguments: {values: ["archival", "nightly"]}}}]}
   - name: dim_source
     description: "Every data source with its access, limits and terms."
     config:
@@ -1085,6 +1090,191 @@ models:
       - {name: usd_out, description: "Value sent by the wallet, valued as usd_in, as a positive number.", meta: {unit: "USD"}}
       - {name: first_seen, description: "First transfer between the two.", meta: {unit: "date"}}
       - {name: last_seen, description: "Latest transfer between the two.", meta: {unit: "date"}}
+  - name: fct_net_dilution_daily
+    description: "How much a holder is diluted, how a staker is paid and how much of issuance comes back, over the 30 days ending on each day. Issuance arrives per epoch and revenue is swept in lumps, so one day says little: every figure is a 30-day sum or a rate built from one, and rates are annualized by 365/30. The NEAR received by the revenue wallets is held there, not burned."
+    config:
+      meta: {grain: "date_day", sources: "fct_supply_daily, fct_revenue_inflows_daily, fct_validator_summary, fct_market_daily"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["date_day"]}}
+      - no_missing_days: {arguments: {day_column: date_day}}
+      - min_rows: {arguments: {n: 2000}}
+    columns:
+      - {name: date_day, description: "Last day of the 30-day window, a UTC calendar day.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: minted_30d_near, description: "NEAR issued over the window: the sum of fct_supply_daily.minted_near.", meta: {unit: "NEAR"}}
+      - {name: burn_30d_near, description: "NEAR burned as gas over the window: the sum of fct_supply_daily.burn_near, which is a lower bound on days before protocol version 87; see is_burn_lower_bound.", meta: {unit: "NEAR"}}
+      - {name: revenue_inflow_30d_near, description: "NEAR and wNEAR received by the three revenue wallets over the window, from fct_revenue_inflows_daily. Since the fee switch of 2026-02-23 this is NEAR bought with Intents fees. The wallets hold it; it is not burned, so it leaves the market but not the supply.", meta: {unit: "NEAR"}}
+      - {name: net_issuance_30d_near, description: "minted_30d_near minus burn_30d_near minus revenue_inflow_30d_near: what the window added to the NEAR outside the revenue wallets.", meta: {unit: "NEAR"}}
+      - {name: offset_share, description: "burn_30d_near plus revenue_inflow_30d_near, over minted_30d_near: the share of issuance that came back. Empty before issuance began on 2020-10-20.", meta: {unit: "fraction"}}
+      - {name: gross_inflation_rate, description: "minted_30d_near times 365/30, over the window's mean total supply.", meta: {unit: "fraction per year"}}
+      - {name: net_inflation_rate, description: "net_issuance_30d_near times 365/30, over the window's mean total supply. Above zero means supply outside the revenue wallets is still growing.", meta: {unit: "fraction per year"}}
+      - {name: nominal_staking_yield_rate, description: "Issuance paid to validators and their delegators over the window (minted less the treasury's share), times 365/30, over the window's mean stake. Before pool commission, which the warehouse does not hold. Empty where fewer than five days of the window have a validator reading; the readings are sampled epochs, sparse before 2025-10.", meta: {unit: "fraction per year"}}
+      - {name: real_staking_yield_rate, description: "nominal_staking_yield_rate minus gross_inflation_rate: what staking pays beyond the dilution every holder bears.", meta: {unit: "fraction per year"}}
+      - {name: staked_share, description: "The window's mean stake over its mean total supply, from the same sampled epochs as the yield.", meta: {unit: "fraction"}}
+      - {name: minted_30d_usd, description: "The window's issuance at each day's closing price. Empty where a day of the window has no price.", meta: {unit: "USD"}}
+      - {name: revenue_inflow_30d_usd, description: "The window's revenue inflows in USD: the sum of fct_revenue_inflows_daily.received_usd.", meta: {unit: "USD"}}
+      - {name: is_burn_lower_bound, description: "True while the window holds a day before protocol version 87 (2026-11-04), when part of each gas fee was rebated to contracts and burn_near is a lower bound. From 2026-12-04 every window is exact.", meta: {unit: "boolean"}, data_tests: [not_null]}
+  - name: fct_deflation_scenarios
+    description: "The Intents volume at which NEAR's supply would stop growing, under today's issuance and under the end state of HSP-029, at several shares of fees kept. All inputs are measured over the 30 days ending on as_of_date. Revenue is in dollars and issuance in NEAR, so break-even volume rises in step with price_usd and falls in step with fee_rate; a reader can rescale a row to another price or fee rate. The fee rate and the capture rate are held fixed, though both depend on which flows grow."
+    config:
+      meta: {grain: "scenario_id, capture_case", sources: "fct_net_dilution_daily, fct_intents_daily, fct_market_daily, registry/issuance_scenarios.csv"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["scenario_id", "capture_case"]}}
+      - min_rows: {arguments: {n: 8}}
+    columns:
+      - {name: as_of_date, description: "The newest day whose Intents fees are settled; every input is the 30 days ending here, and price_usd is this day's close.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: scenario_id, description: "Issuance scenario from registry/issuance_scenarios.csv: current is what the chain minted over the window; hsp029_end_state is 1.6% of supply a year, which has passed its vote but is not in force.", meta: {unit: "id"}, data_tests: [not_null]}
+      - {name: capture_case, description: "Which capture rate the row assumes: measured, or at_50_pct, at_70_pct, at_100_pct.", meta: {unit: "label"}, data_tests: [not_null, {accepted_values: {arguments: {values: ["measured", "at_50_pct", "at_70_pct", "at_100_pct"]}}}]}
+      - {name: issuance_near_per_day, description: "NEAR issued per day in the scenario.", meta: {unit: "NEAR"}}
+      - {name: burn_near_per_day, description: "NEAR burned as gas per day over the window, held fixed across scenarios.", meta: {unit: "NEAR"}}
+      - {name: price_usd, description: "NEAR's close on as_of_date, from fct_market_daily.", meta: {unit: "USD per token"}}
+      - {name: fee_rate, description: "Intents fees over Intents volume across the window.", meta: {unit: "fraction"}}
+      - {name: capture_rate, description: "Share of Intents fees that reaches the revenue wallets: the window's revenue over fees for the measured case, else the case's rate.", meta: {unit: "fraction"}}
+      - {name: volume_usd_per_day, description: "Mean daily all-route Intents volume over the window.", meta: {unit: "USD"}}
+      - {name: breakeven_volume_usd_per_day, description: "Daily Intents volume at which the NEAR bought with captured fees equals issuance less burn: (issuance_near_per_day - burn_near_per_day) x price_usd / (fee_rate x capture_rate).", meta: {unit: "USD"}, data_tests: [not_null]}
+      - {name: breakeven_volume_multiple, description: "breakeven_volume_usd_per_day over volume_usd_per_day: how many times today's volume it would take.", meta: {unit: "multiple"}, data_tests: [not_null]}
+      - {name: net_inflation_rate_at_current_volume, description: "What net inflation would be in the scenario at today's volume: issuance less burn less the NEAR that volume_usd_per_day x fee_rate x capture_rate buys, times 365, over mean supply.", meta: {unit: "fraction per year"}}
+  - name: fct_intents_unit_economics_monthly
+    description: "NEAR's Intents revenue per month, split into what makes it: volume, the fee rate charged on it, and the share of fees NEAR keeps. revenue_usd = volume_usd x fee_rate x capture_rate, so a month's change splits exactly into three log effects. Volume and fees are NEAR's own all-route series and revenue is what reached the wallets, which are swept in lumps, so a month is the shortest span on which capture means anything. Days whose fees can still change are left out, so the newest month is short."
+    config:
+      meta: {grain: "month_start", sources: "fct_intents_daily"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["month_start"]}}
+      - min_rows: {arguments: {n: 12}}
+    columns:
+      - {name: month_start, description: "First day of the month.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: days_counted, description: "Days of the month with settled figures.", meta: {unit: "days"}}
+      - {name: is_month_complete, description: "True when every day of the month is counted. The newest month is not.", meta: {unit: "boolean"}, data_tests: [not_null]}
+      - {name: volume_usd, description: "All-route Intents volume over the counted days.", meta: {unit: "USD"}}
+      - {name: fees_usd, description: "Intents fees over the counted days. Fee data begins in May 2025.", meta: {unit: "USD"}}
+      - {name: revenue_usd, description: "Revenue that reached NEAR's wallets over the counted days.", meta: {unit: "USD"}}
+      - {name: fee_rate, description: "fees_usd over volume_usd, on the days that have fees.", meta: {unit: "fraction"}, data_tests: [{in_range: {arguments: {low: 0, high: 0.05}}}]}
+      - {name: capture_rate, description: "revenue_usd over fees_usd: the share of fees NEAR keeps. The rest stays with distribution partners, solvers and front ends.", meta: {unit: "fraction"}}
+      - {name: net_take_rate, description: "revenue_usd over volume_usd: what NEAR keeps per dollar swapped.", meta: {unit: "fraction"}}
+      - {name: confidential_volume_share, description: "One minus public volume over all-route volume, on the days that have a public figure, with public volume capped at all-route volume day by day because the two come from different sources. Empty before public volume is held.", meta: {unit: "fraction"}}
+      - {name: revenue_log_change, description: "Change in the natural log of revenue per day from the month before. It equals the sum of the three effects. Empty unless both months are complete, have fees on every day and at least $1,000 of revenue; the wallets' first months held test transfers.", meta: {unit: "log points"}}
+      - {name: volume_log_effect, description: "The part of revenue_log_change from volume per day.", meta: {unit: "log points"}}
+      - {name: fee_rate_log_effect, description: "The part of revenue_log_change from the fee rate.", meta: {unit: "log points"}}
+      - {name: capture_log_effect, description: "The part of revenue_log_change from the capture rate.", meta: {unit: "log points"}}
+  - name: fct_intents_channel_economics_monthly
+    description: "What each 1Click distribution channel brought in per month: finished volume, the app fees charged on it, and the fee rate that implies. It shows who prices NEAR's fee base. 1Click is one part of NEAR Intents (27% to 45% of volume in 2026) and only its unbroken daily run is used. App fees are what a channel adds for itself or passes on; they are not NEAR's revenue."
+    config:
+      meta: {grain: "month_start, referral", sources: "fct_intents_1click_channel_daily"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["month_start", "referral"]}}
+      - min_rows: {arguments: {n: 500}}
+    columns:
+      - {name: month_start, description: "First day of the month.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: referral, description: "The channel, as the integrator names itself to 1Click. (none) is every swap sent without a name, a bucket and not one channel.", meta: {unit: "text"}, data_tests: [not_null]}
+      - {name: is_month_complete, description: "True when the daily run covers every day of the month.", meta: {unit: "boolean"}, data_tests: [not_null]}
+      - {name: finished_swaps, description: "Swaps that finished.", meta: {unit: "count"}}
+      - {name: refunded_swaps, description: "Swaps that were refunded.", meta: {unit: "count"}}
+      - {name: refunded_share, description: "refunded_swaps over finished plus refunded swaps.", meta: {unit: "fraction"}}
+      - {name: volume_usd, description: "USD paid in on finished swaps.", meta: {unit: "USD"}}
+      - {name: app_fee_usd, description: "App fees on finished swaps.", meta: {unit: "USD"}}
+      - {name: app_fee_rate, description: "app_fee_usd over volume_usd. 0.0082 is 82 basis points.", meta: {unit: "fraction"}}
+      - {name: share_of_volume, description: "The channel's share of the month's finished 1Click volume.", meta: {unit: "fraction"}, data_tests: [{in_range: {arguments: {low: 0, high: 1}}}]}
+      - {name: share_of_fees, description: "The channel's share of the month's 1Click app fees.", meta: {unit: "fraction"}}
+      - {name: fee_rank, description: "Rank within the month by app fees, 1 the largest.", meta: {unit: "integer"}}
+  - name: fct_intents_concentration_monthly
+    description: "How concentrated NEAR Intents is, per month, along four cuts: 1Click channels by volume and by fees, and public volume by blockchain and by asset. covered_share_of_volume says how much of all-route volume a cut can see: 1Click is a minority of volume, and the public cuts fell below a fifth once settlement went confidential on 2026-11-03."
+    config:
+      meta: {grain: "month_start, dimension", sources: "fct_intents_1click_channel_daily, fct_intents_chain_daily, fct_intents_asset_daily, fct_intents_daily"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["month_start", "dimension"]}}
+    columns:
+      - {name: month_start, description: "First day of the month.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: dimension, description: "The cut: channel_volume and channel_fees (1Click, finished swaps of the daily run), chain_volume and asset_volume (public Intents per NearBlocks).", meta: {unit: "label"}, data_tests: [not_null, {accepted_values: {arguments: {values: ["channel_volume", "channel_fees", "chain_volume", "asset_volume"]}}}]}
+      - {name: is_month_complete, description: "True when the cut's source has every day of the month.", meta: {unit: "boolean"}, data_tests: [not_null]}
+      - {name: members, description: "Channels, blockchains or assets with a positive amount in the month. For channels, (none) counts as one.", meta: {unit: "count"}}
+      - {name: total_usd, description: "The month's amount across all members: volume, or app fees for channel_fees.", meta: {unit: "USD"}}
+      - {name: hhi, description: "Herfindahl index: the sum of squared shares. 1 is a single member; 1 over the number of members is an even split.", meta: {unit: "index 0 to 1"}, data_tests: [{in_range: {arguments: {low: 0, high: 1}}}]}
+      - {name: top_1_share, description: "Share of the largest member.", meta: {unit: "fraction"}, data_tests: [{in_range: {arguments: {low: 0, high: 1}}}]}
+      - {name: top_3_share, description: "Share of the three largest members.", meta: {unit: "fraction"}}
+      - {name: top_10_share, description: "Share of the ten largest members.", meta: {unit: "fraction"}}
+      - {name: top_member, description: "The largest member.", meta: {unit: "text"}}
+      - {name: covered_share_of_volume, description: "total_usd over the month's all-route Intents volume, for the three volume cuts: how much of Intents the cut sees. Empty for channel_fees.", meta: {unit: "fraction"}}
+  - name: fct_valuation_multiples_daily
+    description: "Market cap over a year of income, for NEAR and six peers, on five ideas of income, one row each because the choice of basis moves NEAR's rank more than anything else. gas_fees is what users paid the chain itself; app_fees what they paid applications on it; all_fees the two together; app_revenue the part of app fees the applications or their tokens keep, which does not go to the chain's own token; holder_revenue, for NEAR only, is gas burned plus NEAR received by the revenue wallets. A year of income is the trailing 30 days times 365/30. Market caps are not on one definition across chains: read fct_peer_daily.market_cap_basis before comparing."
+    config:
+      meta: {grain: "date_day, chain_id, basis", sources: "fct_peer_daily, fct_supply_daily, fct_market_daily, fct_revenue_inflows_daily"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["date_day", "chain_id", "basis"]}}
+      - min_rows: {arguments: {n: 20000}}
+    columns:
+      - {name: date_day, description: "Last day of the 30-day window, a UTC calendar day.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: chain_id, description: "Chain identifier from registry/peers.csv.", meta: {unit: "id"}, data_tests: [not_null]}
+      - {name: basis, description: "Which income the multiple uses: gas_fees, app_fees, all_fees, app_revenue or holder_revenue.", meta: {unit: "label"}, data_tests: [not_null, {accepted_values: {arguments: {values: ["gas_fees", "app_fees", "all_fees", "app_revenue", "holder_revenue"]}}}]}
+      - {name: basis_30d_usd, description: "The basis summed over the 30 days ending on date_day. A window with a missing day has no row.", meta: {unit: "USD"}}
+      - {name: multiple, description: "fct_peer_daily.market_cap_usd on date_day over basis_30d_usd times 365/30.", meta: {unit: "multiple"}, data_tests: [not_null]}
+      - {name: is_provisional, description: "fct_peer_daily.is_fee_revenue_provisional for the day: true on the newest two days, whose fees and revenue can still change.", meta: {unit: "boolean"}, data_tests: [not_null]}
+  - name: fct_usage_quality_daily
+    description: "Transactions with the known batch streams taken out, so usage can be read across the break of 2026-04-02 (docs/USAGE_BREAK_2026-04-02.md), and with the Sweat relayer taken out as well, since Sweat Wallet ends on 2026-12-30. The streams are counted from NearBlocks' per-account statistics, which reach back 365 active days from their first read, so the table starts where the Kai-Ching accounts' statistics do and the Sweat columns start later. A transaction that touches two of the stream accounts is counted in both, so the series without them is a floor."
+    config:
+      meta: {grain: "date_day", sources: "fct_chain_daily, fct_contract_daily, fct_receiver_sample_daily, fct_market_daily"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["date_day"]}}
+      - no_missing_days: {arguments: {day_column: date_day}}
+      - min_rows: {arguments: {n: 500}}
+    columns:
+      - {name: date_day, description: "UTC calendar day.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: batch_stream_txns, description: "Transactions involving hotwallet.kaiching, users.kaiching or sweat-migration.near: the fixed daily batch that stopped on 2026-04-01 and the three-week key migration that ended on 2026-04-02.", meta: {unit: "count"}}
+      - {name: sweat_relayer_txns, description: "Transactions involving sweat-relayer.near. Empty before 2025-11-01, where its statistics begin.", meta: {unit: "count"}}
+      - {name: txns_ex_batch_streams, description: "fct_chain_daily.txns minus batch_stream_txns.", meta: {unit: "count"}, data_tests: [{in_range: {arguments: {low: 0, high: 100000000}}}]}
+      - {name: txns_ex_batch_streams_and_sweat, description: "txns_ex_batch_streams minus sweat_relayer_txns: roughly what remains once Sweat Wallet has ended.", meta: {unit: "count"}}
+      - {name: sweat_share_of_txns_ex_batch_streams, description: "sweat_relayer_txns over txns_ex_batch_streams.", meta: {unit: "fraction"}}
+      - {name: txn_fee_usd, description: "fct_chain_daily.txn_fee_near at the day's closing price.", meta: {unit: "USD"}}
+      - {name: txn_fee_per_txn_near, description: "fct_chain_daily.txn_fee_near over all of the day's transactions, batch streams included.", meta: {unit: "NEAR"}}
+      - {name: sweat_gas_burn_share, description: "Share of the gas burnt in the day's sampled blocks whose receiver is labelled Sweat Economy, from fct_receiver_sample_daily. An estimate from a sample: 24 blocks a day before 2026-10-30 and 96 since, so read it over a week or more. Empty before the sample begins.", meta: {unit: "fraction"}}
+      - {name: is_before_usage_break, description: "True before 2026-04-03. Raw transaction and account counts are not comparable across that date; the columns here without the streams are.", meta: {unit: "boolean"}, data_tests: [not_null]}
+  - name: fct_etf_absorption_daily
+    description: "The Bitwise NEAR ETF's flows against what the chain issued and what the revenue wallets took in, from the fund's first day, one row per trading day. The seed baskets of 2026-09-28 are left out of the flow. A creation is NEAR delivered to the trust, which need not have been bought on the market that day, and redemptions reverse it. Only this one fund is tracked."
+    config:
+      meta: {grain: "date_day", sources: "fct_etf_nrr_daily, fct_supply_daily, fct_revenue_inflows_daily, fct_market_daily"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["date_day"]}}
+      - min_rows: {arguments: {n: 20}}
+    columns:
+      - {name: date_day, description: "Trading day.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: cumulative_flow_near, description: "Running sum of fct_etf_nrr_daily.flow_near since the fund's first day, without the seed baskets.", meta: {unit: "NEAR"}}
+      - {name: cumulative_minted_near, description: "NEAR the chain issued from the fund's first day through this day, every calendar day counted.", meta: {unit: "NEAR"}}
+      - {name: cumulative_revenue_inflow_near, description: "NEAR the revenue wallets received over the same days.", meta: {unit: "NEAR"}}
+      - {name: cumulative_flow_to_issuance_ratio, description: "cumulative_flow_near over cumulative_minted_near: how many times the chain's issuance the fund has taken in since it opened.", meta: {unit: "multiple"}}
+      - {name: flow_to_issuance_ratio, description: "The day's fund flow in NEAR over the NEAR issued that day. Issuance arrives per epoch, so read single days loosely.", meta: {unit: "multiple"}}
+      - {name: flow_share_of_spot_volume, description: "The day's fund flow in USD over NEAR's reported spot volume that day; negative on a day of net redemptions.", meta: {unit: "fraction"}}
+  - name: dim_claim
+    description: "The claims a long-term case for NEAR rests on, and the claims made against it, each with the measurement that would settle it and the bar it is held to. fct_thesis_scorecard evaluates them. The thresholds were written on 2026-11-10 with the 2026-11-09 readings in view, so they are round bars for what each claim's wording means, not predictions; why_this_threshold gives the reason for each. Where a claim was made in public, source_url points to it."
+    config:
+      meta: {grain: "claim_id", sources: "registry/claims.csv"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["claim_id"]}}
+      - min_rows: {arguments: {n: 20}}
+    columns:
+      - {name: claim_id, description: "Short name of the claim.", meta: {unit: "id"}, data_tests: [not_null]}
+      - {name: side, description: "bull if the claim supports a long-term case for NEAR, bear if it counts against one.", meta: {unit: "label"}, data_tests: [not_null, {accepted_values: {arguments: {values: ["bull", "bear"]}}}]}
+      - {name: pillar, description: "The part of the thesis the claim belongs to.", meta: {unit: "label"}}
+      - {name: claim, description: "The claim in one sentence.", meta: {unit: "text"}, data_tests: [not_null]}
+      - {name: test, description: "What is measured and from which gold table, or why the claim cannot be tested.", meta: {unit: "text"}, data_tests: [not_null]}
+      - {name: comparison, description: "How the measured value is held to the threshold: >= or <=. Empty for a claim that cannot be tested.", meta: {unit: "label"}, data_tests: [{accepted_values: {arguments: {values: [">=", "<="]}}}]}
+      - {name: threshold, description: "The bar. The claim holds when the value meets it.", meta: {unit: "see unit"}}
+      - {name: unit, description: "Unit of the value and the threshold.", meta: {unit: "text"}}
+      - {name: why_this_threshold, description: "The reason for the bar.", meta: {unit: "text"}}
+      - {name: source_url, description: "Where the claim was made in public, where one was found.", meta: {unit: "url"}}
+  - name: fct_thesis_scorecard
+    description: "Every claim in dim_claim measured against the warehouse: the value, the bar, and whether the claim holds. holds means the claim as written is true of the data, so a bear claim that holds counts against the thesis and a bull claim that fails does too. A claim the data cannot settle stays in the table as not_testable. The measurement behind each row is a select named by its claim_id in warehouse/models/gold/thesis/fct_thesis_scorecard.sql, and dim_claim.test says in words what it reads."
+    config:
+      meta: {grain: "claim_id", sources: "dim_claim and the gold tables each claim's test names"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["claim_id"]}}
+      - min_rows: {arguments: {n: 20}}
+    columns:
+      - {name: claim_id, description: "Claim from dim_claim.", meta: {unit: "id"}, data_tests: [not_null]}
+      - {name: side, description: "bull or bear, from dim_claim.", meta: {unit: "label"}, data_tests: [not_null]}
+      - {name: claim, description: "The claim in one sentence, from dim_claim.", meta: {unit: "text"}}
+      - {name: value, description: "The measured value, in dim_claim.unit. Empty for a claim that cannot be tested.", meta: {unit: "see dim_claim.unit"}}
+      - {name: comparison, description: "How the value is held to the threshold, from dim_claim.", meta: {unit: "label"}}
+      - {name: threshold, description: "The bar, from dim_claim.", meta: {unit: "see dim_claim.unit"}}
+      - {name: status, description: "holds if the value meets the bar, fails if it does not, not_testable if the claim has no test. A fourth value, not_measured, would mean a test returned nothing, and a data test fails the build if it appears.", meta: {unit: "label"}, data_tests: [not_null, {accepted_values: {arguments: {values: ["holds", "fails", "not_testable"]}}}]}
+      - {name: as_of_date, description: "The newest day, or the last day of the month, the value rests on.", meta: {unit: "date"}}
 
 # These hold the rules on made-up rows, because at a pin with few decimals most of them have no real rows to fail on.
 unit_tests:

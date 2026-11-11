@@ -46,6 +46,25 @@ def chain_fees(ctx: Context) -> None:
             fetch(ctx, SOURCE, "chain_fees", f"{chain}__{data_type}", f"{API}/overview/fees/{chain}", params=params)
 
 
+@dataset(SOURCE, "chain_gas_fees")
+def chain_gas_fees(ctx: Context) -> None:
+    """Fees paid to each chain itself, from the chain's own adapter. /overview/fees/<chain> leaves them out: it sums the
+    applications on the chain (checked 2026-11-10: NEAR's 30-day total there is its protocol rows without the Near row)."""
+    for chain in _peer_chains():
+        # The chain adapter's slug is the chain's name in lower case for all seven peers, checked 2026-11-10. The same
+        # route serves protocols, so a reply that is not a chain's own adapter is refused, not saved.
+        url, params = f"{API}/summary/fees/{chain.lower()}", {"dataType": "dailyFees"}
+        try:
+            reply = ctx.http.get(url, params=params)
+        except HttpError as e:
+            ctx.warn(f"{chain}: {e}")
+            continue
+        if reply.json().get("protocolType") != "chain":
+            ctx.warn(f"{chain}: {url} is not a chain's own adapter, so it was not saved")
+            continue
+        ctx.bronze.save(SOURCE, "chain_gas_fees", chain, reply.content, url=url, params=params, status=reply.status)
+
+
 @dataset(SOURCE, "chain_dex_volume")
 def chain_dex_volume(ctx: Context) -> None:
     for chain in _peer_chains():

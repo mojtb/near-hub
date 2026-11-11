@@ -9,6 +9,7 @@ thrown away: only the daily tally is stored. At one request per 5 seconds, histo
 """
 from __future__ import annotations
 
+import re
 from collections import defaultdict
 from datetime import date, datetime, timedelta, timezone
 from typing import Any, Dict, List, Optional, Set, Tuple
@@ -30,6 +31,8 @@ EXPLORER_PAGES_PER_RUN = 600  # about an hour at one request per 5.6 s
 EXPLORER_MIN_PAIR_USD = 1000.0  # smaller asset pairs on a day are summed into one (other) row
 SIZE_BUCKETS = ((100.0, "under_100"), (1_000.0, "100_to_1k"), (10_000.0, "1k_to_10k"), (100_000.0, "10k_to_100k"), (float("inf"), "100k_and_over"))
 SECONDS_PER_DAY = 86400
+_GROUPED_NUMBER = re.compile(r"\d{1,3}(,\d{3})+\.\d+|\d{1,3}(,\d{3}){2,}")  # '18,505.12', '1,234,567'
+_DECIMAL_COMMA = re.compile(r"\d+,(\d{1,2}|\d{4,})")  # '544,8666': not three digits after the comma, so not a group
 
 
 @dataset("oneclick", "tokens")
@@ -51,6 +54,26 @@ def _explorer_headers() -> Dict[str, str]:
     return {"Authorization": f"Bearer {secret('INTENTS_EXPLORER_JWT')}"}
 
 
+def _usd(value: Any) -> float:
+    """A USD amount as the Explorer sends it. Nearly all are plain decimal strings ('550.0350'). A few are written
+    another way, and each form seen was checked against the row's token amount and that day's price:
+
+    - thousands separators with a decimal point: '18,505.12' (2025-11-24);
+    - a decimal comma: '544,8666' for 544.97 USDT, '22,1775' for 0.118 SOL (both 2025-10-31).
+
+    One comma followed by exactly three digits, as in '18,505', could be either, so it is not guessed at: that and
+    any other shape raise ValueError, and the day is left for a later run.
+    """
+    if isinstance(value, str) and "," in value:
+        if _GROUPED_NUMBER.fullmatch(value):
+            value = value.replace(",", "")
+        elif _DECIMAL_COMMA.fullmatch(value):
+            value = value.replace(",", ".")
+        else:
+            raise ValueError(f"unreadable USD amount {value!r}")
+    return float(value or 0)
+
+
 def tally_day(day: date, rows: List[dict], pages: int, known_recipients: Set[str]) -> Dict[str, Any]:
     """Count one UTC day of 1Click swaps. Only totals leave this function: no row and no wallet address.
 
@@ -65,7 +88,7 @@ def tally_day(day: date, rows: List[dict], pages: int, known_recipients: Set[str
     senders: Set[str] = set()
     recipients: Set[str] = set()
     for row in rows:
-        amount_in, amount_out = float(row.get("amountInUsd") or 0), float(row.get("amountOutUsd") or 0)
+        amount_in, amount_out = _usd(row.get("amountInUsd")), _usd(row.get("amountOutUsd"))
         succeeded = row.get("status") == "SUCCESS"
         app_fee = 0.0
         for item in row.get("appFees") or []:
@@ -175,7 +198,12 @@ def explorer_daily_tally(ctx: Context) -> None:
         rows, pages = walked
         pages_left -= pages
         if rows:
-            ctx.bronze.save_json("intents_explorer", "daily_tally", key, tally_day(day, rows, pages, known),
+            try:
+                tally = tally_day(day, rows, pages, known)
+            except ValueError as e:  # a value in a shape not seen before: leave this day for a later run and keep walking
+                ctx.warn(f"{key}: {e}")
+                continue
+            ctx.bronze.save_json("intents_explorer", "daily_tally", key, tally,
                                  url=f"{EXPLORER}/api/v0/transactions", params={"day": key, "pages": pages}, rows=len(rows),
                                  note="assembled: counted from this UTC day's rows; no row or wallet address is kept")
             ctx.bronze.flush()

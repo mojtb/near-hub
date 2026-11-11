@@ -9,7 +9,8 @@ sources:
       external_location: "read_json_objects('data/bronze/{identifier}/dt=*/*.json.gz', filename=true, format='unstructured', maximum_object_size=67108864)"
     tables:
       - {name: defillama__chain_tvl, identifier: defillama/chain_tvl, description: "Daily TVL per peer chain."}
-      - {name: defillama__chain_fees, identifier: defillama/chain_fees, description: "Daily fees or revenue per peer chain, with a per-protocol summary."}
+      - {name: defillama__chain_fees, identifier: defillama/chain_fees, description: "Daily fees or revenue of the applications on each peer chain, with a per-protocol summary. The chain's own transaction fees are not in the daily totals."}
+      - {name: defillama__chain_gas_fees, identifier: defillama/chain_gas_fees, description: "Daily transaction fees paid to each peer chain itself, from the chain's own adapter."}
       - {name: defillama__chain_dex_volume, identifier: defillama/chain_dex_volume, description: "Daily DEX volume per peer chain, with a per-protocol summary."}
       - {name: defillama__intents_volume, identifier: defillama/intents_volume, description: "Daily NEAR Intents volume from DefiLlama's dexs adapter."}
       - {name: defillama__intents_fees, identifier: defillama/intents_fees, description: "Daily NEAR Intents fees and revenue by DefiLlama data type."}
@@ -43,12 +44,16 @@ sources:
       - {name: nearblocks__charts_v1, identifier: nearblocks/charts_v1, description: "Legacy full daily history from 2020-07-21."}
       - {name: nearblocks__contract_txns, identifier: nearblocks/contract_txns, description: "Daily transactions and unique callers per registry contract."}
       - {name: nearblocks__wallet_balance, identifier: nearblocks/wallet_balance, description: "Daily balance history per crawled wallet."}
+      - {name: nearblocks__validators, identifier: nearblocks/validators, description: "Point-in-time list of every staking pool: delegator count, fee, stake, country. Operators' contact details and free text are left out. No model reads it yet."}
+      - {name: nearblocks__validators_info, identifier: nearblocks/validators_info, description: "Point-in-time validator network figures: seat price, last epoch's yield, total stake, validator counts. No model reads it yet."}
+      - {name: nearblocks__ft_transfer_stats, identifier: nearblocks/ft_transfer_stats, description: "Daily transfers, amount moved, and unique senders and receivers per registry token; the source keeps only the newest 365 days. No model reads it yet."}
       - {name: rpc__status, identifier: rpc/status, description: "Node status: height, versions."}
       - {name: rpc__protocol_config, identifier: rpc/protocol_config, description: "Protocol parameters."}
       - {name: rpc__gas_price, identifier: rpc/gas_price, description: "Latest gas price."}
       - {name: rpc__validators_current, identifier: rpc/validators_current, description: "Current validator set, trimmed."}
       - {name: rpc__validators_epoch, identifier: rpc/validators_epoch, description: "Validator set per past epoch, trimmed."}
       - {name: rpc__contract_views, identifier: rpc/contract_views, description: "Decoded contract view results, one file per contract and method."}
+      - {name: rpc__contract_views_history, identifier: rpc/contract_views_history, description: "The liquid staking, veNEAR and v1.signer views of rpc/contract_views, replayed at the first block of each UTC day from the archival node. One file per day."}
       - {name: rpc__accounts, identifier: rpc/accounts, description: "view_account for each registry account."}
       - {name: rpc__hos_proposals, identifier: rpc/hos_proposals, description: "Every House of Stake proposal from the voting contract."}
       - {name: rpc__block_day, identifier: rpc/block_day, description: "Header fields of one block per UTC day."}
