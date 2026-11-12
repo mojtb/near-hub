@@ -1298,10 +1298,14 @@ date_day,recipient,entries,fee_usd,is_in_daily_run
 2026-11-08,fefundsadmin.sputnik-dao.near,9,22.5277,true
 2026-11-08,intents.near,19,17.8113,true
 2026-11-09,(other),16715,213687.816,true
-2026-11-09,buybacks.multisignature.near,8203,10077.0907,true
+2026-11-09,buybacks.multisignature.near,8207,10079.0848,true
 2026-11-09,fefundsadmin.sputnik-dao.near,11,86.8021,true
 2026-11-09,intents.near,12,11.6625,true
-2026-11-10,(other),18279,248727.8254,true
-2026-11-10,buybacks.multisignature.near,9705,11608.2322,true
+2026-11-10,(other),18280,248729.6133,true
+2026-11-10,buybacks.multisignature.near,9707,11608.2724,true
 2026-11-10,fefundsadmin.sputnik-dao.near,11,15.6158,true
 2026-11-10,intents.near,15,13.8571,true
+2026-11-11,(other),17722,193547.3954,true
+2026-11-11,buybacks.multisignature.near,9134,10317.9996,true
+2026-11-11,fefundsadmin.sputnik-dao.near,13,139.6709,true
+2026-11-11,intents.near,18,16.6518,true
