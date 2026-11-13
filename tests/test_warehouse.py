@@ -81,6 +81,23 @@ def test_oneclick_asset_id_names_the_near_contract(con):
     ])
 
 
+def test_oneclick_symbol_drops_the_deprecated_mark(con):
+    listed = [
+        {"assetId": "nep245:v2_1.omni.hot.tg:56_2CMM", "blockchain": "bsc", "symbol": "USDT(DEPRECATED)", "decimals": 18, "price": 1},
+        {"assetId": "nep141:bnb-0x55d3.omft.near", "blockchain": "bsc", "symbol": "USDT", "decimals": 18, "price": 1},
+        {"assetId": "nep245:v2_1.omni.hot.tg:9745_1111", "blockchain": "plasma", "symbol": "XPL_(DEPRECATED)", "decimals": 18, "price": 0.05},
+        {"assetId": "nep141:wrap.near", "blockchain": "near", "symbol": "wNEAR", "decimals": 24, "price": 4.02},
+    ]
+    sql = _silver("protocols/stg_oneclick__tokens.sql", [("2026-11-11", listed)])
+    rows = con.execute(f"select symbol, listed_symbol, is_deprecated from ({sql}) order by asset_id").fetchall()
+    assert rows == [
+        ("USDT", "USDT", False),
+        ("wNEAR", "wNEAR", False),
+        ("USDT", "USDT(DEPRECATED)", True),
+        ("XPL", "XPL_(DEPRECATED)", True),
+    ]
+
+
 def test_rhea_price_keeps_the_first_read_of_that_exact_price(con):
     files = [
         ("2026-11-01", {"same.near": {"price": "0.5", "symbol": "", "decimal": 18}, "moved.near": {"price": "1.0000000000000000000000000001", "symbol": "USDC", "decimal": 6}}),
@@ -193,3 +210,31 @@ def test_defillama_price_is_dated_by_the_nearest_midnight(con):
                                                          is_latest=macros.is_latest, unix_day=macros.unix_day)
     rows = con.execute(f"select cast(date_day as varchar), price_usd from ({sql}) order by 1").fetchall()
     assert rows == [("2026-11-01", 2.0), ("2026-11-02", 2.5), ("2026-11-03", 3.0)]
+
+
+def test_defillama_token_price_takes_the_coin_from_the_reply_and_dates_it_by_the_nearest_midnight(con):
+    # The file name cannot hold a coin key's colon, so the key is read from the reply. A stamp 49 minutes after the
+    # midnight that starts 2026-09-24 closes 2026-09-23, and one seven minutes before the next midnight closes 2026-09-24.
+    # A window from before the coin's first price is an empty reply and leaves no row.
+    midnight_sep_24 = 1790208000
+    key = "ethereum:0x0f38"
+    prices = [{"timestamp": midnight_sep_24 + 2960, "price": 1.0202}, {"timestamp": midnight_sep_24 + 86400 - 500, "price": 1.0203}]
+    sql = _silver("defillama/stg_defillama__token_price.sql", [
+        ("2026-11-12", {"coins": {}}),
+        ("2026-11-12", {"coins": {key: {"symbol": "TLO", "decimals": 8, "confidence": 0.99, "prices": prices}}}),
+        ("2026-11-13", {"coins": {key: {"symbol": "TLO", "decimals": 8, "confidence": 0.99, "prices": [{"timestamp": midnight_sep_24 + 86400 - 400, "price": 1.0204}]}}}),
+    ])
+    rows = con.execute(f"select coin_key, listed_symbol, cast(date_day as varchar), cast(priced_at as varchar), price_usd, is_latest from ({sql}) order by date_day, snapshot_date").fetchall()
+    assert rows == [(key, "TLO", "2026-09-23", "2026-09-24 00:49:20", 1.0202, True),
+                    (key, "TLO", "2026-09-24", "2026-09-24 23:51:40", 1.0203, False),
+                    (key, "TLO", "2026-09-24", "2026-09-24 23:53:20", 1.0204, True)]  # a later read of a day replaces the earlier one
+
+
+def test_coinmetrics_token_price_dates_a_rate_by_the_day_it_closes(con):
+    # CoinMetrics stamps the fixed close at 00:00 UTC as a day ends with that day's own date, so no day is moved. The
+    # day a snapshot was taken on is not over yet and is left out.
+    data = [{"asset": "zec", "time": "2026-11-11T00:00:00.000000000Z", "PriceUSD": "963.407991290132"},
+            {"asset": "zec", "time": "2026-11-12T00:00:00.000000000Z", "PriceUSD": "949.690221828208"}]
+    sql = _silver("market/stg_coinmetrics__token_price.sql", [("2026-11-12", {"data": data})])
+    assert con.execute(f"select coinmetrics_asset, cast(date_day as varchar), price_usd, is_latest from ({sql})").fetchall() == [
+        ("zec", "2026-11-11", 963.407991290132, True)]

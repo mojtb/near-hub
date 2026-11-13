@@ -21,6 +21,15 @@ select
     votes_venear / nullif(eligible_venear, 0) as turnout,
     quorum_threshold,
     approval_threshold,
+    option_0_voters as voters_for,
+    option_1_voters as voters_against,
+    option_2_voters as voters_abstain,
+    snapshot_accounts,
+    reviewer_id,
+    has_actions,
+    voting_end_utc,
+    timelock_end_utc,
+    venear_growth_per_year,
     snapshot_date as read_on,
     regexp_matches(lower(title), '\btes+t\b')
         or (link is not null and link not like 'https://gov.near.org/t/%') as is_test

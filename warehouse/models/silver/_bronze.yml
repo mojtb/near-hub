@@ -13,12 +13,14 @@ sources:
       - {name: defillama__chain_gas_fees, identifier: defillama/chain_gas_fees, description: "Daily transaction fees paid to each peer chain itself, from the chain's own adapter."}
       - {name: defillama__chain_dex_volume, identifier: defillama/chain_dex_volume, description: "Daily DEX volume per peer chain, with a per-protocol summary."}
       - {name: defillama__intents_volume, identifier: defillama/intents_volume, description: "Daily NEAR Intents volume from DefiLlama's dexs adapter."}
+      - {name: defillama__swap_service_volume, identifier: defillama/swap_service_volume, description: "Daily volume of each other cross-chain swap service in registry/swap_services.csv, from DefiLlama's dexs or bridges list."}
       - {name: defillama__intents_fees, identifier: defillama/intents_fees, description: "Daily NEAR Intents fees and revenue by DefiLlama data type."}
       - {name: defillama__protocols, identifier: defillama/protocols, description: "Protocols listing NEAR, trimmed from /protocols."}
       - {name: defillama__protocol_tvl, identifier: defillama/protocol_tvl, description: "NEAR TVL history of the largest protocols, trimmed from /protocol/<slug>."}
       - {name: defillama__stablecoin_chain, identifier: defillama/stablecoin_chain, description: "Daily stablecoin supply per peer chain."}
       - {name: defillama__stablecoin_assets, identifier: defillama/stablecoin_assets, description: "Point-in-time supply per stablecoin per peer chain."}
       - {name: defillama__peer_price, identifier: defillama/peer_price, description: "Daily price per peer from DefiLlama's price API."}
+      - {name: defillama__token_price, identifier: defillama/token_price, description: "Daily price per asset in registry/token_prices.csv that DefiLlama prices, from its price API. A window before a coin's first price is an empty reply."}
       - {name: defillama__yield_pools, identifier: defillama/yield_pools, description: "Point-in-time yield pools on NEAR, trimmed from /pools."}
       - {name: nearblocks__stats, identifier: nearblocks/stats, description: "Point-in-time chain stats; its circulating_supply equals total supply by NearBlocks' choice."}
       - {name: nearblocks__stats_v1, identifier: nearblocks/stats_v1, description: "Legacy point-in-time chain stats, including a circulating supply frozen since 2025-08-27."}
@@ -33,7 +35,7 @@ sources:
       - {name: nearblocks__signer_stats, identifier: nearblocks/signer_stats, description: "Daily signer contract stats."}
       - {name: nearblocks__block_stats, identifier: nearblocks/block_stats, description: "Daily block stats."}
       - {name: nearblocks__price_stats, identifier: nearblocks/price_stats, description: "Daily price and market cap."}
-      - {name: nearblocks__tvl_stats, identifier: nearblocks/tvl_stats, description: "Daily signer TVL as NearBlocks defines it."}
+      - {name: nearblocks__tvl_stats, identifier: nearblocks/tvl_stats, description: "Daily TVL as NearBlocks reports it. NearBlocks does not document what the figure counts."}
       - {name: nearblocks__intents_volume, identifier: nearblocks/intents_volume, description: "Daily and cumulative Intents swap volume."}
       - {name: nearblocks__intents_swaps, identifier: nearblocks/intents_swaps, description: "Daily and cumulative Intents swap counts."}
       - {name: nearblocks__intents_accounts, identifier: nearblocks/intents_accounts, description: "Daily unique Intents accounts."}
@@ -54,6 +56,7 @@ sources:
       - {name: rpc__validators_epoch, identifier: rpc/validators_epoch, description: "Validator set per past epoch, trimmed."}
       - {name: rpc__contract_views, identifier: rpc/contract_views, description: "Decoded contract view results, one file per contract and method."}
       - {name: rpc__contract_views_history, identifier: rpc/contract_views_history, description: "The liquid staking, veNEAR and v1.signer views of rpc/contract_views, replayed at the first block of each UTC day from the archival node. One file per day."}
+      - {name: rpc__intents_pool_history, identifier: rpc/intents_pool_history, description: "What intents.near held of wNEAR, of each dollar token and of each token of its other main assets at past blocks, read from the token contracts through the archival node. One file per day closed and snapshot."}
       - {name: rpc__accounts, identifier: rpc/accounts, description: "view_account for each registry account."}
       - {name: rpc__hos_proposals, identifier: rpc/hos_proposals, description: "Every House of Stake proposal from the voting contract."}
       - {name: rpc__block_day, identifier: rpc/block_day, description: "Header fields of one block per UTC day."}
@@ -67,6 +70,7 @@ sources:
       - {name: oneclick__tokens, identifier: oneclick/tokens, description: "1Click supported tokens with price and decimals."}
       - {name: coinbase__candles, identifier: coinbase/candles, description: "Daily NEAR-USD OHLCV candles."}
       - {name: coinmetrics__asset_metrics, identifier: coinmetrics/asset_metrics, description: "Community price, market cap and spot volume per peer asset."}
+      - {name: coinmetrics__token_price, identifier: coinmetrics/token_price, description: "Daily reference rate (PriceUSD) per asset in registry/token_prices.csv that CoinMetrics prices."}
       - {name: rhea__top_pools, identifier: rhea/top_pools, description: "Rhea's pools with what each holds. Concentrated-liquidity (DCL) pools are not listed."}
       - {name: rhea__token_prices, identifier: rhea/token_prices, description: "What Rhea lists as each token's USD price, with the decimals and symbol it uses."}
       - {name: github__repos, identifier: github/repos, description: "Stars, forks and last push per tracked repository."}
@@ -78,7 +82,7 @@ sources:
       - {name: neardata__receiver_sample, identifier: neardata/receiver_sample, description: "Per-receiver activity counted from evenly spaced sample blocks."}
       - {name: dune__query_results, identifier: dune/query_results, description: "Latest stored results of public Dune queries, through the official API."}
       - {name: dune_public__near_intents_dashboard, identifier: dune_public/near_intents_dashboard, description: "Dated readings of the public NEAR Intents dashboard page."}
-      - {name: dune_public__query_results, identifier: dune_public/query_results, description: "Widget responses from the public NEAR Intents dashboard, read by hand and saved exactly as received."}
+      - {name: dune_public__query_results, identifier: dune_public/query_results, description: "Widget responses from the public NEAR Intents dashboard, read in a browser on request and saved exactly as received; each manifest note says who or what read them."}
       - {name: intents_explorer__daily_tally, identifier: intents_explorer/daily_tally, description: "1Click swaps counted per UTC day from the Intents Explorer API, with no row or wallet address kept."}
       - {name: nrr_fund__figures, identifier: nrr_fund/figures, description: "Figures and the wallet list from Bitwise's page for its NEAR ETF. The page itself is not kept."}
       - {name: rpc__nrr_pool_daily, identifier: rpc/nrr_pool_daily, description: "The wallets Bitwise lists for its NEAR ETF, inside their staking pool, at the first block of each UTC day. Other delegators are kept only as a total."}

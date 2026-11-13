@@ -10,7 +10,7 @@ AS_OF ?= $(shell cat data/PINNED 2>/dev/null || echo 9999-12-31)
 export AS_OF
 DBT_VARS := --vars '{as_of: "$(AS_OF)"}'
 
-.PHONY: help setup ingest backfill warehouse fingerprints verify catalog query all clean
+.PHONY: help setup ingest backfill warehouse fingerprints verify catalog site docs thesis query all clean
 
 help:  ## Show the available commands
 	@grep -E '^[a-z-]+:.*##' $(MAKEFILE_LIST) | sed -E 's/:.*## /\t/' | expand -t 12
@@ -43,10 +43,24 @@ catalog:  ## Regenerate docs/DATA_CATALOG.md, docs/RECONCILIATION.md and the REA
 	$(DBT) docs generate --quiet $(DBT_VARS)
 	$(PY) -m tools.catalog
 
+site:  ## Rebuild every number and chart on the dashboard from the warehouse, into site/ (no network, no keys)
+	$(PY) -m tools.site_data
+	$(PY) -m tools.site_catalog
+	$(PY) -m tools.site_stamp
+	@# The guide is rebuilt with the dashboard. A gold table it has no history line for stops the guide, not the dashboard.
+	-$(PY) -m tools.docsite
+	@echo "Site built as of $(AS_OF): open site/index.html"
+
+docs:  ## Rebuild the guide to every gold table and field, into site/docs/ (no network, no keys)
+	$(PY) -m tools.docsite
+
+thesis:  ## Rewrite THESIS.md from the claim scorecard in the warehouse (no network, no keys)
+	$(PY) -m tools.thesis
+
 query:  ## Run SQL against the warehouse: make query SQL="select * from gold.fct_mpc_state"
 	@$(PY) -m tools.query "$(SQL)"
 
-all: setup warehouse verify  ## The judge path: setup, build, check
+all: setup warehouse verify site thesis  ## The judge path: setup, build, check, the dashboard and the thesis
 
 clean:  ## Remove the warehouse and dbt build output (bronze stays)
 	rm -f data/warehouse.duckdb data/warehouse.duckdb.wal

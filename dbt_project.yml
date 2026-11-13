@@ -46,6 +46,21 @@ seeds:
       +column_types:
         reading_date: date
         value: double
+    peer_supply_readings:
+      +column_types:
+        reading_date: date
+        total_supply_tokens: double
+    swap_services:
+      +column_types:
+        llama_id: varchar
+        volume_365d_usd_at_selection: double
+        selected_on: date
+    token_prices:
+      +column_types:
+        share_of_pool_at_selection: double
+        pool_day_at_selection: date
+        source_asset_id: varchar
+        first_price_day: date
     protocol_upgrades:
       +column_types:
         protocol_version: integer
@@ -56,6 +71,18 @@ seeds:
     issuance_scenarios:
       +column_types:
         annual_issuance_rate: double
+    governance_decisions:
+      +column_types:
+        proposal_id: integer
+        hsp: varchar
+        short_name: varchar
+        near_committed: double
+        usd_committed: double
+        ramp_months: integer
+        grace_days: integer
+        in_force_date: date
+        in_force_protocol_version: integer
+        source_url: varchar
     claims:
       +column_types:
         threshold: double

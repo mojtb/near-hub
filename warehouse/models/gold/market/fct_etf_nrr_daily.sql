@@ -32,6 +32,8 @@ joined as (
         coalesce(case when r.near_in_trust_as_of = d.date_day then r.near_in_trust end, h.near_in_trust) as near_in_trust,
         r.staked_share,
         r.net_staking_rate,
+        r.gross_staking_rate,
+        r.listed_wallets,
         h.flow_shares as history_flow_shares,
         h.flow_basis as history_flow_basis,
         h.reported_flow_usd,
@@ -97,6 +99,8 @@ select
     reported_net_assets_usd,
     staked_share,
     net_staking_rate,
+    gross_staking_rate,
+    listed_wallets,
     source_url,
     note
 from valued

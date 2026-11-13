@@ -1,48 +1,48 @@
 protocol_id,protocol_slug,protocol_name,category,url,parent_protocol,near_tvl_usd,total_tvl_usd,is_cex,read_on
-1044,stader,Stader,Liquid Staking,https://staderlabs.com,,0.0,177757308.80875838,false,2026-11-10
-1226,oin-finance,Oin Finance,Algo-Stables,https://oin.finance,,,,false,2026-11-10
-1541,portal,Portal,Bridge,https://portalbridge.com,,4513544.056564178,1356053580.7493215,false,2026-11-10
-1546,rhea-lend,Rhea Lend,Lending,https://lending.rhea.finance/,"parent#rhea-finance",145199427.3604541,145199427.3604541,false,2026-11-10
-1547,jumbo-exchange,Jumbo Exchange,Dexs,https://jumbo.exchange/swap,,1093186.4321770936,1093186.4321770936,false,2026-11-10
-1740,linear-protocol,LiNEAR Protocol,Liquid Staking,https://linearprotocol.org,,46438836.91002877,46438836.91002877,false,2026-11-10
-1813,spin-spot,Spin Spot,Dexs,"","parent#spin",55664.19533697114,55664.19533697114,false,2026-11-10
-1967,pembrock-finance,PembRock Finance,Yield,"",,0.016518390504292248,0.016518390504292248,false,2026-11-10
-2148,roketo,Roketo,Payments,"",,5519.4866070411135,5519.4866070411135,false,2026-11-10
-2264,orderly-bridge,Orderly Bridge,Bridge,https://orderly.network,"parent#orderly-network",323597.23403665307,20808347.607840266,false,2026-11-10
-2269,binance-cex,Binance CEX,CEX,https://www.binance.com,,512658252.1686835,124012537264.9192,true,2026-11-10
-2274,kucoin,KuCoin,CEX,https://www.kucoin.com,,18808713.771611575,2514251442.9731297,true,2026-11-10
-2275,bitfinex,Bitfinex,CEX,https://www.bitfinex.com,,4415863.4081342295,14650726296.327572,true,2026-11-10
-2295,swissborg,SwissBorg,CEX,https://swissborg.com,,5905700.936859203,788726516.4214199,true,2026-11-10
-2314,gate,Gate,CEX,https://www.gate.com,,14160578.012505788,5752821184.136382,true,2026-11-10
-2352,bitget,Bitget,CEX,https://www.bitget.com,,18415654.213292576,5786632934.130412,true,2026-11-10
-2422,tonic,Tonic,Dexs,"",,32258.806146044888,32258.806146044888,false,2026-11-10
-2620,phoenix-bonds,Phoenix Bonds,Yield Aggregator,https://phoenixbonds.org/,,171430.2548718176,171430.2548718176,false,2026-11-10
-2635,lazyfi,LazyFi,Gaming,"",,55.237807625762706,55.237807625762706,false,2026-11-10
-2660,spin-perps,Spin Perps,Derivatives,"","parent#spin",9798.018018682273,9798.018018682273,false,2026-11-10
-2661,spin-dov,Spin DOV,Options Vault,"","parent#spin",25705.317520898985,25705.317520898985,false,2026-11-10
-2928,veax-clmm,Veax CLMM,Dexs,https://veax.com/,"parent#veax",8796.329524662247,8796.329524662247,false,2026-11-10
-3075,mexc,MEXC,CEX,https://www.mexc.com,,5.35302651051,4168853123.7193184,true,2026-11-10
-3221,near-bridge,NEAR Bridge,Canonical Bridge,https://near.org/,"parent#near-protocol",47562257.90702073,112071869.67765827,false,2026-11-10
-3287,trustake,TruStake,Liquid Staking,https://app.truyields.com,"parent#trufin-protocol",230014.59139377179,2643485.65614976,false,2026-11-10
-3312,here-wallet-staking,HERE Wallet staking,Liquid Staking,https://herewallet.app/stake,,846317.5491959841,846317.5491959841,false,2026-11-10
-3543,bitstamp,Bitstamp,CEX,https://www.bitstamp.net,,6416463.248922159,4401716653.070714,true,2026-11-10
-3866,rainbow-bridge,Rainbow Bridge,Bridge,https://rainbowbridge.app/transfer,,9593.081513568306,125250.23870840106,false,2026-11-10
-3896,neko,NEKO,Farm,"",,0.0,0.0,false,2026-11-10
-4122,octopus-network,Octopus Network,Restaking,https://www.omnity.network/,,0.0,0.0,false,2026-11-10
-4266,backpack,Backpack,CEX,https://backpack.exchange,,2865519.240473322,503674445.18301016,true,2026-11-10
-4579,flipster,Flipster,CEX,https://flipster.io,,1827.5772630851216,14836056.400343137,true,2026-11-10
-4800,allstake,Allstake,Restaking,https://allstake.org/,,544696.6032567291,544854.8136925922,false,2026-11-10
-4960,nearlend-dao,Nearlend DAO,Lending,"",,23.815094749726423,23.815094749726423,false,2026-11-10
-5050,deltatrade,DeltaTrade,Dexs,https://www.deltatrade.ai,,100799.7341021243,101760.76190007967,false,2026-11-10
-5185,meme-cooking,Meme Cooking,Launchpad,https://testnet.meme.cooking/board,,1895.139638573634,1895.139638573634,false,2026-11-10
-541,rhea-dex,Rhea Dex,Dexs,https://dex.rhea.finance/,"parent#rhea-finance",22573124.185042247,22573124.185042247,false,2026-11-10
-557,meta-pool-near,Meta Pool Near,Liquid Staking,https://metapool.app,"parent#meta-pool",78928452.8258835,78928470.06564255,false,2026-11-10
-5689,kaio,KAIO,RWA,https://www.kaio.xyz/,,3996446.2334452407,34657643.605459735,false,2026-11-10
-577,allbridge-classic,Allbridge Classic,Bridge,https://app.allbridge.io,"parent#allbridge",496.1685974946032,8316.791587425685,false,2026-11-10
-6225,near-intents,NEAR Intents,Bridge,https://near.com/,"parent#near-protocol",97612920.8152162,190570611.48861063,false,2026-11-10
-6570,templar-lending,Templar Lending,Lending,https://www.templarfi.org/,"parent#templar-protocol",558616.2503477618,28565677.339963507,false,2026-11-10
-6715,bitlo,Bitlo,CEX,https://www.bitlo.com/,,2.5892158621589405,11643389.048093708,true,2026-11-10
-6717,moremarkets.xyz,MoreMarkets.xyz,Yield,"",,0.0,446681.3992986663,false,2026-11-10
-6985,rhea-lst,RHEA LST,Liquid Staking,https://www.rhea.finance/,"parent#rhea-finance",67869650.39480361,67869650.39480361,false,2026-11-10
-6986,dewfinance,DewFinance,Onchain Capital Allocator,https://dew.finance/,,255815.3726213335,255815.3726213335,false,2026-11-10
-7013,gate-us,Gate US,CEX,https://www.gate.com/en-us,,589277.7307157039,53572572.839782,true,2026-11-10
+1044,stader,Stader,Liquid Staking,https://staderlabs.com,,0.0,166001193.2265367,false,2026-11-12
+1226,oin-finance,Oin Finance,Algo-Stables,https://oin.finance,,,,false,2026-11-12
+1541,portal,Portal,Bridge,https://portalbridge.com,,4475319.943946561,1314792962.942811,false,2026-11-12
+1546,rhea-lend,Rhea Lend,Lending,https://lending.rhea.finance/,"parent#rhea-finance",140810673.28155315,140810673.28155315,false,2026-11-12
+1547,jumbo-exchange,Jumbo Exchange,Dexs,https://jumbo.exchange/swap,,1068989.3385471315,1068989.3385471315,false,2026-11-12
+1740,linear-protocol,LiNEAR Protocol,Liquid Staking,https://linearprotocol.org,,44966474.93308176,44966474.93308176,false,2026-11-12
+1813,spin-spot,Spin Spot,Dexs,"","parent#spin",55016.31744028407,55016.31744028407,false,2026-11-12
+1967,pembrock-finance,PembRock Finance,Yield,"",,0.01657039287172975,0.01657039287172975,false,2026-11-12
+2148,roketo,Roketo,Payments,"",,5518.682877600974,5518.682877600974,false,2026-11-12
+2264,orderly-bridge,Orderly Bridge,Bridge,https://orderly.network,"parent#orderly-network",319780.87759460637,19209438.12935901,false,2026-11-12
+2269,binance-cex,Binance CEX,CEX,https://www.binance.com,,537472538.6933718,122903743990.9297,true,2026-11-12
+2274,kucoin,KuCoin,CEX,https://www.kucoin.com,,20197439.59926032,2457328802.712899,true,2026-11-12
+2275,bitfinex,Bitfinex,CEX,https://www.bitfinex.com,,3390244.180219645,13813916046.462925,true,2026-11-12
+2295,swissborg,SwissBorg,CEX,https://swissborg.com,,5696672.040015569,768968021.497285,true,2026-11-12
+2314,gate,Gate,CEX,https://www.gate.com,,16501794.760255584,5697251229.69969,true,2026-11-12
+2352,bitget,Bitget,CEX,https://www.bitget.com,,18565093.425589558,5841141916.053225,true,2026-11-12
+2422,tonic,Tonic,Dexs,"",,31998.475271365343,31998.475271365343,false,2026-11-12
+2620,phoenix-bonds,Phoenix Bonds,Yield Aggregator,https://phoenixbonds.org/,,167710.16805375635,167710.16805375635,false,2026-11-12
+2635,lazyfi,LazyFi,Gaming,"",,54.093379461221836,54.093379461221836,false,2026-11-12
+2660,spin-perps,Spin Perps,Derivatives,"","parent#spin",9797.57791506544,9797.57791506544,false,2026-11-12
+2661,spin-dov,Spin DOV,Options Vault,"","parent#spin",25214.54620830459,25214.54620830459,false,2026-11-12
+2928,veax-clmm,Veax CLMM,Dexs,https://veax.com/,"parent#veax",8615.27723346779,8615.27723346779,false,2026-11-12
+3075,mexc,MEXC,CEX,https://www.mexc.com,,5.158864746000001,3981375405.938946,true,2026-11-12
+3221,near-bridge,NEAR Bridge,Canonical Bridge,https://near.org/,"parent#near-protocol",46728658.927480645,111626046.80589233,false,2026-11-12
+3287,trustake,TruStake,Liquid Staking,https://app.truyields.com,"parent#trufin-protocol",222494.2756852525,2448248.1238398906,false,2026-11-12
+3312,here-wallet-staking,HERE Wallet staking,Liquid Staking,https://herewallet.app/stake,,822676.4605192798,822676.4605192798,false,2026-11-12
+3543,bitstamp,Bitstamp,CEX,https://www.bitstamp.net,,6352610.664919634,4325233570.486084,true,2026-11-12
+3866,rainbow-bridge,Rainbow Bridge,Bridge,https://rainbowbridge.app/transfer,,9430.810414606034,121868.98438275736,false,2026-11-12
+3896,neko,NEKO,Farm,"",,0.0,0.0,false,2026-11-12
+4122,octopus-network,Octopus Network,Restaking,"",,0.0,0.0,false,2026-11-12
+4266,backpack,Backpack,CEX,https://backpack.exchange,,2806664.165787139,482756348.38810873,true,2026-11-12
+4579,flipster,Flipster,CEX,https://flipster.io,,1773.2778324357084,3197039.097827157,true,2026-11-12
+4800,allstake,Allstake,Restaking,https://allstake.org/,,534483.5148318299,534637.2839625267,false,2026-11-12
+4960,nearlend-dao,Nearlend DAO,Lending,"",,23.298775891591617,23.298775891591617,false,2026-11-12
+5050,deltatrade,DeltaTrade,Dexs,https://www.deltatrade.ai,,100782.12375463302,101710.50136050684,false,2026-11-12
+5185,meme-cooking,Meme Cooking,Launchpad,https://testnet.meme.cooking/board,,1796.0640128339558,1796.0640128339558,false,2026-11-12
+541,rhea-dex,Rhea Dex,Dexs,https://dex.rhea.finance/,"parent#rhea-finance",21832187.25740989,21832187.25740989,false,2026-11-12
+557,meta-pool-near,Meta Pool Near,Liquid Staking,https://metapool.app,"parent#meta-pool",76225615.52414784,76225632.58951867,false,2026-11-12
+5689,kaio,KAIO,RWA,https://www.kaio.xyz/,,3996006.8327952903,34653833.07224186,false,2026-11-12
+577,allbridge-classic,Allbridge Classic,Bridge,https://app.allbridge.io,"parent#allbridge",284.5528000503248,7939.11668577134,false,2026-11-12
+6225,near-intents,NEAR Intents,Bridge,https://near.com/,"parent#near-protocol",88360613.02852932,181749324.59361383,false,2026-11-12
+6570,templar-lending,Templar Lending,Lending,https://www.templarfi.org/,"parent#templar-protocol",543381.3302832498,28164851.48198256,false,2026-11-12
+6715,bitlo,Bitlo,CEX,https://www.bitlo.com/,,2.4980135669526353,10624992.55213541,true,2026-11-12
+6717,moremarkets.xyz,MoreMarkets.xyz,Yield,"",,0.0,443026.82435388316,false,2026-11-12
+6985,rhea-lst,RHEA LST,Liquid Staking,https://www.rhea.finance/,"parent#rhea-finance",66399800.73056761,66399800.73056761,false,2026-11-12
+6986,dewfinance,DewFinance,Onchain Capital Allocator,https://dew.finance/,,249290.39188833509,249290.39188833509,false,2026-11-12
+7013,gate-us,Gate US,CEX,https://www.gate.com/en-us,,569368.254806823,52920263.55442783,true,2026-11-12

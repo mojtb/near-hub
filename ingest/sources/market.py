@@ -1,4 +1,4 @@
-"""Prices and market caps for NEAR and its peers. No keys needed.
+"""Prices and market caps for NEAR and its peers, and prices of the main assets in the NEAR Intents pool. No keys needed.
 
 Coinbase gives exchange candles for NEAR, and CoinMetrics community gives a reference rate and
 market cap with full history. DefiLlama's price API, in defillama.py, is the third price source.
@@ -19,6 +19,8 @@ COINBASE = "https://api.exchange.coinbase.com"
 COINMETRICS = "https://community-api.coinmetrics.io/v4"
 CANDLES_PER_CALL = 300
 COINBASE_FIRST_DAY = date(2022, 9, 1)  # NEAR-USD began trading around 2022-09; earlier calls return nothing
+# The NEAR Intents pool's balances are read from the chain at month ends from 2024-11, so token prices start here.
+TOKEN_PRICE_FIRST_DAY = date(2024, 11, 1)
 
 
 @dataset("coinbase", "candles")
@@ -50,3 +52,22 @@ def coinmetrics_asset_metrics(ctx: Context) -> None:
                   "start_time": start, "page_size": 10000, "paging_from": "start", "ignore_forbidden_errors": "true",
                   "ignore_unsupported_errors": "true"}
         fetch(ctx, "coinmetrics", "asset_metrics", asset, url, params=params)
+
+
+@dataset("coinmetrics", "token_price")
+def coinmetrics_token_price(ctx: Context) -> None:
+    """Daily reference rate of each asset in registry/token_prices.csv that CoinMetrics prices, one file per asset.
+
+    PriceUSD is CoinMetrics' fixed closing price at 00:00 UTC as the day ends, the kind of price fct_market_daily takes
+    for NEAR. Only that metric is asked for, and no error is waved through: an asset the community tier stops serving becomes
+    a warning here and a failed test in the warehouse, not an empty file."""
+    today = date.fromisoformat(ctx.snapshot)
+    for token in read_registry("token_prices"):
+        if token["price_source"] != "coinmetrics":
+            continue
+        asset = token["source_asset_id"]
+        first_run = not has_prior(ctx, "coinmetrics", "token_price", asset)
+        start = TOKEN_PRICE_FIRST_DAY if first_run else today - timedelta(days=OVERLAP_DAYS)
+        params = {"assets": asset, "metrics": "PriceUSD", "frequency": "1d", "start_time": start.isoformat(),
+                  "page_size": 10000, "paging_from": "start"}
+        fetch(ctx, "coinmetrics", "token_price", asset, f"{COINMETRICS}/timeseries/asset-metrics", params=params)

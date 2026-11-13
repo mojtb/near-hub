@@ -1,5 +1,5 @@
 -- Every row of every Dune widget or query read so far, as returned, so nothing waits for a typed table. Two routes land
--- here: hand readings of NEAR's public Intents dashboard (read_via 'hand'), and query results through Dune's official API
+-- here: readings of NEAR's public Intents dashboard in a browser (read_via 'hand'), and query results through Dune's official API
 -- (read_via 'api'), which needs a DUNE_API_KEY with API access and is empty until one has run. NEAR uploads the data
 -- behind the dashboard, so it is self-reported. Each row credits the dashboard or the query's creator.
 select

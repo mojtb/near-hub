@@ -20,6 +20,15 @@ select
     blk.gas_price_yocto,
     v1.active_accounts as active_signers,
     adr.active_accounts as active_accounts_with_relayed,
+    -- One count of the accounts that signed a transaction. An account signs its own deletion, so /v1's count rises by
+    -- one for each account deleted that day (3.4M in February 2026, 562K in October 2026), and the day's deletions are
+    -- taken out. /v1 is switched off on 2026-11-22; on a day it does not hold, /v3's active accounts less the accounts a
+    -- relayer signed for stand in. Deletion days cannot be taken out of that form.
+    coalesce(v1.active_accounts - coalesce(v1.deleted_accounts, 0), adr.active_accounts - adr.meta_accounts) as distinct_signers,
+    case
+        when v1.active_accounts is not null then 'v1_signers_less_deletions'
+        when adr.active_accounts - adr.meta_accounts is not null then 'v3_active_less_relayed'
+    end as distinct_signers_basis,
     coalesce(adr.active_contracts, v1.active_contracts) as active_contracts,
     v1.new_accounts,
     v1.deleted_accounts,

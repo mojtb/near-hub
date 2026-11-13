@@ -71,6 +71,22 @@ def test_reading_keeps_the_last_finished_response_per_widget():
     assert [w["rows"] for w in widgets.values()] == [3]
 
 
+def test_reading_never_lets_a_shorter_later_response_replace_a_fuller_one():
+    widgets, _ = collect(_har(_entry(response=_succeeded(rows=3)), _entry(response=_succeeded(rows=1, total=3))))
+    assert [w["rows"] for w in widgets.values()] == [3]
+
+
+def test_reading_keeps_every_page_of_a_table(tmp_path):
+    def page(offset):
+        return _entry(asked={**ASKED, "parameters": [], "output_columns": None, "pagination": {"limit": 2, "offset": offset}},
+                      response=_succeeded(rows=2, total=4))
+    widgets, _ = collect(_har(page(0), page(2)))
+    first, second = sorted(widgets)
+    assert first == widget_key(5175131, [], COLUMNS) and second == widget_key(5175131, [], COLUMNS, 2)
+    assert "__offset-2__cols-" in second and "offset" not in first
+    assert widgets[second]["params"]["row_offset"] == 2 and "row_offset" not in widgets[first]["params"]
+
+
 def test_reading_skips_other_requests_and_unfinished_results():
     running = {"execution_queued": None, "execution_running": {"execution_id": "E1"}, "execution_succeeded": None}
     widgets, unfinished = collect(_har(_entry(url="https://dune.com/public/other"), _entry(response=running), _entry(status=429), _entry()))

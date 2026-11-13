@@ -99,7 +99,7 @@ Nothing but the contracts themselves has tested the series since 2025-08-26, bec
 
 NEAR's 99.8% is not free float, and it is not the same measure as Sui's 41%. NEAR's definition takes out only lockups, while the NEAR Foundation also holds liquid NEAR: [305M on 2024-01-11](https://www.theblock.co/news/business/2024-01-11-near-foundation-staff-cut-treasury-271858), about 26% of supply then, which is the last figure found. No list of its accounts is published, so that holding cannot be read from the chain. `treasury.near` holds a further 1.6M.
 
-So a chart of NEAR against Sui, or any peer whose report leaves out reserves, compares different things. To put NEAR on a narrower basis, take the Foundation's holding off the supply, and say that the number is old. These readings are in `registry/near_supply_readings.csv`.
+So a chart of NEAR against Sui, or any peer whose report leaves out reserves, compares different things. To put NEAR on a narrower basis, take the Foundation's holding off the supply, and say that the number is old. These readings are in `registry/near_supply_readings.csv`. The peers' totals in the table above are in `registry/peer_supply_readings.csv` and, beside the supply each cap counted that day, in the gold table `fct_peer_supply_readings`; TON has no row until its total supply is read.
 
 ## What it does not do
 

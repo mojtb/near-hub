@@ -2,6 +2,9 @@
 -- set against, and whether the claim holds. "holds" means the claim as written is true of the data, so a bear claim
 -- that holds counts against the thesis. A claim the data cannot settle stays in the table as not_testable.
 -- Each claim's measurement is one select below, named by its claim_id; dim_claim.test says in words what it reads.
+-- No measurement is scored twice: where the old set held several claims on one number, one is kept. A claim about
+-- Intents reads three complete months together, because revenue is swept in lumps and one month can sit far from
+-- the trend.
 with settled as (
     select max(date_day) as d from {{ ref('fct_intents_daily') }} where not is_fee_revenue_provisional
 ),
@@ -12,34 +15,76 @@ months as (
     where is_month_complete
 ),
 
-dilution as (
-    select n.* from {{ ref('fct_net_dilution_daily') }} n join settled s on n.date_day = s.d
+peer_dex_monthly as (
+    select cast(date_trunc('month', date_day) as date) as month_start, sum(dex_volume_usd) as dex_volume_usd
+    from {{ ref('fct_peer_daily') }}
+    where chain_id <> 'near'
+    group by 1
 ),
 
-intents_30d as (
-    select i.* from {{ ref('fct_intents_daily') }} i, settled s where i.date_day > s.d - 30 and i.date_day <= s.d
+-- The last three complete months, and the three before them.
+quarters as (
+    select
+        m.recency <= 3 as is_newest,
+        sum(m.volume_usd) as volume_usd,
+        sum(m.fees_usd) as fees_usd,
+        sum(m.revenue_usd) as revenue_usd,
+        sum(p.dex_volume_usd) as peer_dex_volume_usd,
+        max(m.month_start) as last_month
+    from months m
+    join peer_dex_monthly p using (month_start)
+    where m.recency <= 6
+    group by 1
 ),
 
-signatures as (select * from {{ ref('fct_chain_signatures_daily') }}),
-signatures_end as (select max(date_day) as d from signatures),
-
-usage as (select * from {{ ref('fct_usage_quality_daily') }}),
-usage_end as (select max(date_day) as d from usage),
-
-peer as (select * from {{ ref('fct_peer_daily') }}),
-peer_end as (select max(date_day) as d from peer where chain_id = 'near' and price_usd is not null and tvl_usd is not null),
-
-returns_90d as (
-    select p.chain_id, p.price_usd / b.price_usd - 1 as price_change
-    from peer p
-    join peer_end e on p.date_day = e.d
-    join peer b on b.chain_id = p.chain_id and b.date_day = e.d - 90
+-- The months in which the 1Click daily run has every day.
+oneclick_months as (
+    select month_start, row_number() over (order by month_start desc) as recency
+    from (select distinct month_start from {{ ref('fct_intents_channel_economics_monthly') }} where is_month_complete)
 ),
 
-cap_to_tvl as (
-    select p.chain_id, p.market_cap_usd / p.tvl_usd as ratio
-    from peer p join peer_end e on p.date_day = e.d
-    where p.market_cap_usd is not null and p.tvl_usd > 0
+oneclick_end as (select last_day(max(month_start)) as d from oneclick_months),
+
+channels as (
+    select c.referral, c.app_fee_usd, o.recency
+    from {{ ref('fct_intents_channel_economics_monthly') }} c
+    join oneclick_months o using (month_start)
+    where o.recency <= 6
+),
+
+partner_fees as (
+    select referral, sum(app_fee_usd) as app_fee_usd from channels where recency <= 3 group by 1
+),
+
+pairs as (
+    select p.amount_in_usd, p.origin_symbol = 'ZEC' or p.destination_symbol = 'ZEC' as touches_zec
+    from {{ ref('fct_intents_1click_pair_daily') }} p
+    join oneclick_months o on cast(date_trunc('month', p.date_day) as date) = o.month_start and o.recency <= 3
+    where p.is_in_daily_run
+),
+
+-- Three 30-day readings, 30 days apart, add up to 90 days: the newest 90 and the 90 before them. A year earlier the
+-- revenue wallets had received nothing and issuance was twice as high, so against that base the claim could not fail.
+offset_90d as (
+    select
+        n.date_day > s.d - 90 as is_newest,
+        sum(n.burn_30d_near + n.revenue_inflow_30d_near) / sum(n.minted_30d_near) as offset_share
+    from {{ ref('fct_net_dilution_daily') }} n, settled s
+    where n.date_day in (s.d, s.d - 30, s.d - 60, s.d - 90, s.d - 120, s.d - 150)
+    group by 1
+),
+
+-- Application fees by chain in the last three complete months over the three before. Quarters and not a year, by the
+-- rule every claim about Intents follows: a year earlier NEAR's fees had barely started, so a yearly gain flatters it.
+fees_quarters as (
+    select
+        p.chain_id,
+        sum(p.fees_usd) filter (where p.date_day >= q.last_month - interval 2 month)
+            / sum(p.fees_usd) filter (where p.date_day < q.last_month - interval 2 month) - 1 as fee_change,
+        last_day(max(q.last_month)) as as_of_date
+    from {{ ref('fct_peer_daily') }} p, (select last_month from quarters where is_newest) q
+    where p.date_day >= q.last_month - interval 5 month and p.date_day < q.last_month + interval 1 month
+    group by 1
 ),
 
 multiples as (
@@ -49,24 +94,8 @@ multiples as (
       and m.date_day = (select max(date_day) from {{ ref('fct_valuation_multiples_daily') }} where basis = 'app_fees' and chain_id = 'near' and not is_provisional)
 ),
 
--- The last month in which the 1Click daily run has every day.
-oneclick_month as (
-    select max(month_start) as month_start from {{ ref('fct_intents_channel_economics_monthly') }} where is_month_complete
-),
-
-stablecoins as (
-    select unnest(['USDT', 'USDC', 'DAI', 'USDT0', 'USDT0(DEPRECATED)', 'USDCx', 'xDAI', 'USDG', 'USD1', 'USDf', 'FRAX', 'EURe']) as symbol
-),
-
-pairs as (
-    select
-        p.amount_in_usd,
-        p.origin_symbol = 'ZEC' or p.destination_symbol = 'ZEC' as touches_zec,
-        p.origin_symbol in (select symbol from stablecoins) and p.destination_symbol in (select symbol from stablecoins) as is_stable_to_stable
-    from {{ ref('fct_intents_1click_pair_daily') }} p
-    join oneclick_month o on cast(date_trunc('month', p.date_day) as date) = o.month_start
-    where p.is_in_daily_run
-),
+signers as (select date_day, distinct_signers from {{ ref('fct_chain_daily') }} where distinct_signers is not null),
+signers_end as (select max(date_day) as d from signers),
 
 revenue_wallets as (select distinct account_id from {{ ref('fct_revenue_inflows_daily') }}),
 
@@ -74,65 +103,65 @@ validators as (
     select * from {{ ref('fct_validator_summary') }} where is_epoch_complete and approx_date_day is not null
 ),
 
-newest_epoch as (select arg_max(validators, epoch_height) as validators, arg_max(approx_date_day, epoch_height) as d from validators),
+newest_epoch as (select arg_max(top_10_share, epoch_height) as top_10_share, arg_max(approx_date_day, epoch_height) as d from validators),
+
+-- NEAR staked through the liquid staking tokens, by read. A read shows the first block of its day.
+liquid_staking as (
+    select snapshot_date, sum(delegated_near) as near_staked from {{ ref('fct_lst_snapshot') }} group by 1
+),
+
+liquid_staking_end as (select max(snapshot_date) as d from liquid_staking),
+
+-- Dollar-pegged tokens held in NEAR Intents, as NEAR's dashboard splits the pool by asset, in the months that have every day.
+intents_dollar_months as (
+    select *, row_number() over (order by month_start desc) as recency
+    from (
+        select cast(date_trunc('month', date_day) as date) as month_start, avg(usd) as mean_usd
+        from (
+            select date_day, sum(tvl_usd) as usd
+            from {{ ref('fct_dune_intents_tvl_asset_daily') }}
+            where upper(symbol) in ('USDC', 'USDT', 'USDT0', 'USDCX', 'DAI', 'USDG', 'USAD', 'FRAX', 'USD1', 'USDE', 'PYUSD', 'USDS', 'USDF')
+            group by 1
+        )
+        group by 1
+        having count(*) = day(last_day(min(date_day)))
+    )
+),
 
 measured as (
-    select 'intents_is_the_fee_base' as claim_id,
-        sum(total_30d_usd) filter (where protocol_slug = 'near-intents') / sum(total_30d_usd) as value,
-        max(snapshot_date) as as_of_date
-    from {{ ref('fct_protocol_fees_snapshot') }}
-    where measure = 'fees' and category <> 'Chain'
-      and snapshot_date = (select max(snapshot_date) from {{ ref('fct_protocol_fees_snapshot') }})
+    select 'intents_is_gaining_share' as claim_id,
+        (a.volume_usd / a.peer_dex_volume_usd) / (b.volume_usd / b.peer_dex_volume_usd) - 1 as value,
+        last_day(a.last_month) as as_of_date
+    from quarters a join quarters b on a.is_newest and not b.is_newest
 
-    union all
-    select 'intents_revenue_is_growing',
-        (a.revenue_usd / a.days_counted) / (b.revenue_usd / b.days_counted) - 1,
-        last_day(a.month_start)
-    from months a join months b on a.recency = 1 and b.recency = 4
-
-    union all
-    select 'capture_is_rising', a.capture_rate - b.capture_rate, last_day(a.month_start)
-    from months a join months b on a.recency = 1 and b.recency = 7
-
-    union all select 'offsets_are_material', offset_share, date_day from dilution
-    union all select 'supply_is_shrinking', net_inflation_rate, date_day from dilution
-    union all select 'issuance_is_over_five_times_offsets', 1 / nullif(offset_share, 0), date_day from dilution
-
-    union all
-    select 'a_doubling_of_volume_reaches_deflation_after_the_cut', breakeven_volume_multiple, as_of_date
-    from {{ ref('fct_deflation_scenarios') }}
-    where scenario_id = 'hsp029_end_state' and capture_case = 'measured'
-
-    union all
-    select 'most_volume_is_confidential',
-        1 - sum(least(public_volume_usd, volume_usd)) / sum(volume_usd),
-        max(date_day)
-    from intents_30d
-    where public_volume_usd is not null
-
-    union all
-    select 'chain_signatures_use_is_growing',
-        avg(s.txns) filter (where s.date_day > e.d - 30) / avg(s.txns) filter (where s.date_day <= e.d - 180 and s.date_day > e.d - 210) - 1,
-        max(e.d)
-    from signatures s, signatures_end e
-
-    union all
-    select 'etf_took_in_more_than_issuance', arg_max(cumulative_flow_to_issuance_ratio, date_day), max(date_day)
-    from {{ ref('fct_etf_absorption_daily') }}
-
-    union all
-    select 'governance_is_broad', arg_max(voters, proposal_id), arg_max(read_on, proposal_id)
-    from {{ ref('fct_governance_proposals') }}
-    where not is_test
-
-    union all
-    select 'near_beat_the_median_peer',
-        max(price_change) filter (where chain_id = 'near') - median(price_change) filter (where chain_id <> 'near'),
-        (select d from peer_end)
-    from returns_90d
-
-    union all select 'capture_stayed_above_a_fifth', min(capture_rate), last_day(max(month_start)) from months where recency <= 3
     union all select 'volume_stayed_above_2bn_a_month', min(volume_usd), last_day(max(month_start)) from months where recency <= 3
+
+    union all
+    select 'capture_is_rising', a.revenue_usd / a.fees_usd - b.revenue_usd / b.fees_usd, last_day(a.last_month)
+    from quarters a join quarters b on a.is_newest and not b.is_newest
+
+    union all
+    select 'fee_base_is_widening',
+        count(*) filter (where recency <= 3) / nullif(count(*) filter (where recency > 3), 0)::double - 1,
+        (select d from oneclick_end)
+    from channels
+    where app_fee_usd >= 10000 and referral <> '(none)'
+
+    union all
+    -- NEAR's own monthly revenue series against what the Intents contract paid its revenue wallets, counted on the day
+    -- it arrived: native USDC at one dollar, NEAR at the transfer's value. DefiLlama's revenue is NEAR's own count of
+    -- the same wallets, so its match with the transfers (dq_reconciliation) confirms that count and cannot fail here.
+    select 'revenue_reaches_the_wallets',
+        1 - (select sum(case when t.asset_id = 'nep141:17208628f84f5d6ad33f0da3bbbeb27ffcb398eac501a31bd6ad2011e36133a1'
+                             then t.amount_token else t.amount_usd end)
+               from {{ ref('fct_wallet_transfers') }} t
+              where t.account_id in (select account_id from revenue_wallets) and t.direction = 'in'
+                and t.counterparty_id = 'intents.near'
+                and t.asset_id in ('native:near', 'nep141:wrap.near',
+                                   'nep141:17208628f84f5d6ad33f0da3bbbeb27ffcb398eac501a31bd6ad2011e36133a1'))
+            / sum(revenue_usd),
+        (select max(date_day) from {{ ref('fct_revenue_inflows_daily') }})
+    from {{ ref('fct_revenue_page_monthly') }}
 
     union all
     select 'revenue_wallets_keep_their_near',
@@ -144,43 +173,27 @@ measured as (
     from {{ ref('fct_revenue_inflows_daily') }}
 
     union all
-    select 'fees_depend_on_one_partner', arg_max(top_1_share, month_start), last_day(max(month_start))
-    from {{ ref('fct_intents_concentration_monthly') }}
-    where dimension = 'channel_fees' and is_month_complete
-
-    union all select 'near_keeps_under_half_of_fees', capture_rate, last_day(month_start) from months where recency = 1
+    select 'etf_took_in_more_than_issuance', arg_max(flow_to_issuance_30d_ratio, date_day), max(date_day)
+    from {{ ref('fct_etf_absorption_daily') }}
 
     union all
-    select 'zcash_is_on_a_fifth_of_volume', sum(amount_in_usd) filter (where touches_zec) / sum(amount_in_usd), (select last_day(month_start) from oneclick_month)
-    from pairs
+    select 'offsets_are_rising', a.offset_share - b.offset_share, (select d from settled)
+    from offset_90d a join offset_90d b on a.is_newest and not b.is_newest
 
     union all
-    select 'volume_is_mostly_stablecoin_swaps', sum(amount_in_usd) filter (where is_stable_to_stable) / sum(amount_in_usd), (select last_day(month_start) from oneclick_month)
-    from pairs
+    select 'unlocks_are_behind', 1 - arg_max(circulating_share_of_total, date_day), max(date_day)
+    from {{ ref('fct_circulating_supply_daily') }}
 
     union all
-    select 'defi_on_near_is_thin',
-        max(ratio) filter (where chain_id = 'near') / median(ratio) filter (where chain_id <> 'near'),
-        (select d from peer_end)
-    from cap_to_tvl
+    select 'a_doubling_of_volume_reaches_deflation_after_the_cut', breakeven_volume_multiple, as_of_date
+    from {{ ref('fct_deflation_scenarios') }}
+    where scenario_id = 'hsp029_end_state' and capture_case = 'measured'
 
     union all
-    select 'usage_is_falling',
-        avg(u.txns_ex_batch_streams) filter (where u.date_day > e.d - 30) / avg(u.txns_ex_batch_streams) filter (where u.date_day <= e.d - 180 and u.date_day > e.d - 210) - 1,
-        max(e.d)
-    from usage u, usage_end e
-
-    union all
-    select 'sweat_carries_a_fifth_of_transactions', sum(u.sweat_relayer_txns) / sum(u.txns_ex_batch_streams), max(e.d)
-    from usage u, usage_end e
-    where u.date_day > e.d - 30
-
-    union all
-    select 'validator_set_is_shrinking',
-        max(n.validators) / avg(v.validators) - 1,
-        max(n.d)
-    from validators v, newest_epoch n
-    where v.approx_date_day between n.d - 65 and n.d - 55
+    select 'near_fees_outgrew_every_peer',
+        max(fee_change) filter (where chain_id = 'near') - max(fee_change) filter (where chain_id <> 'near'),
+        max(as_of_date)
+    from fees_quarters
 
     union all
     select 'near_is_dearer_than_the_median_peer',
@@ -189,9 +202,45 @@ measured as (
     from multiples
 
     union all
-    select 'revenue_is_small_beside_trading', sum(i.revenue_usd) / sum(m.reported_spot_volume_usd), max(i.date_day)
-    from intents_30d i
-    join {{ ref('fct_market_daily') }} m using (date_day)
+    select 'fees_depend_on_one_partner', max(app_fee_usd) / sum(app_fee_usd), (select d from oneclick_end)
+    from partner_fees
+
+    union all
+    select 'zcash_is_on_a_fifth_of_volume', sum(amount_in_usd) filter (where touches_zec) / sum(amount_in_usd), (select d from oneclick_end)
+    from pairs
+
+    union all
+    -- Signers and not transactions: transactions without the batch streams were only lower with the Sweat relayer in
+    -- the count, and that relayer is due to stop, so they did not say what the claim says.
+    select 'usage_is_falling',
+        avg(u.distinct_signers) filter (where u.date_day > e.d - 30) / avg(u.distinct_signers) filter (where u.date_day <= e.d - 180 and u.date_day > e.d - 210) - 1,
+        max(e.d)
+    from signers u, signers_end e
+
+    union all
+    -- The sample prompt's hypothesis, read on weeks cut on Mondays: the largest link with volume one or two weeks ahead.
+    select 'intents_volume_leads_usage', max(correlation), max(last_week) + 6
+    from {{ ref('fct_usage_lead_correlations') }}
+    where week_shift_days = 0 and leader = 'intents_volume' and lead_weeks in (1, 2)
+
+    union all
+    -- The ten largest pools' share and not the number of pools: the pools that left in 60 days held under 1% of the
+    -- stake, and the count moves by a dozen between two epochs of one day, so it did not say who could stop the chain.
+    select 'ten_pools_hold_a_third', top_10_share, d
+    from newest_epoch
+
+    union all
+    select 'liquid_staking_is_shrinking', max(n.near_staked) / max(y.near_staked) - 1, max(e.d)
+    from liquid_staking_end e
+    join liquid_staking n on n.snapshot_date = e.d
+    join liquid_staking y on y.snapshot_date = e.d - interval 365 day
+
+    union all
+    select 'dollars_are_arriving_in_intents',
+        avg(mean_usd) filter (where recency <= 3) / avg(mean_usd) filter (where recency between 4 and 6) - 1,
+        last_day(max(month_start))
+    from intents_dollar_months
+    where recency <= 6
 )
 
 select
@@ -210,4 +259,6 @@ select
     end as status,
     m.as_of_date
 from {{ ref('dim_claim') }} c
-left join measured m using (claim_id)
+-- Each value is rounded to ten decimals: a sum over many days is not the same to its last digit on every build, and
+-- a rebuild must give the file that was committed.
+left join (select claim_id, round(value, 10) as value, as_of_date from measured) m using (claim_id)

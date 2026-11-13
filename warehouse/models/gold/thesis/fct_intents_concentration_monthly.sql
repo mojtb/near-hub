@@ -1,7 +1,9 @@
--- How concentrated NEAR Intents is, per month, along four cuts: 1Click channels by volume and by fees, and public
+-- How concentrated NEAR Intents is, per month, along four cuts: 1Click channels by volume and by fees, and all-route
 -- volume by blockchain and by asset. One row per month and cut, with the Herfindahl index and the largest members'
--- shares. covered_share_of_volume says how much of all-route volume the cut can see, which fell below a fifth for the
--- public cuts once settlement went confidential on 2026-11-03.
+-- shares. The blockchain and asset cuts read NEAR's dashboard on Dune, which splits every route, confidential ones
+-- included; NearBlocks' public split covered under a fifth of volume once settlement went confidential on 2026-11-03.
+-- The dashboard is read on request, so these two cuts stop at its last reading. covered_share_of_volume says how
+-- much of all-route volume a cut can see.
 with channel_rows as (
     select * from {{ ref('fct_intents_1click_channel_daily') }} where is_in_daily_run and status = 'SUCCESS'
 ),
@@ -15,17 +17,17 @@ members as (
     from channel_rows group by 1, 3
     union all
     select cast(date_trunc('month', date_day) as date), 'chain_volume', blockchain, sum(volume_usd), count(distinct date_day)
-    from {{ ref('fct_intents_chain_daily') }} group by 1, 3
+    from {{ ref('fct_dune_intents_chain_daily') }} group by 1, 3
     union all
-    select cast(date_trunc('month', date_day) as date), 'asset_volume', coalesce(symbol, token_id), sum(volume_usd), count(distinct date_day)
-    from {{ ref('fct_intents_asset_daily') }} group by 1, 3
+    select cast(date_trunc('month', date_day) as date), 'asset_volume', symbol, sum(volume_usd), count(distinct date_day)
+    from {{ ref('fct_dune_intents_asset_daily') }} group by 1, 3
 ),
 
 days_seen as (
     select cast(date_trunc('month', date_day) as date) as month_start, 'channel_volume' as dimension, count(distinct date_day) as days_counted from channel_rows group by 1
     union all select cast(date_trunc('month', date_day) as date), 'channel_fees', count(distinct date_day) from channel_rows group by 1
-    union all select cast(date_trunc('month', date_day) as date), 'chain_volume', count(distinct date_day) from {{ ref('fct_intents_chain_daily') }} group by 1
-    union all select cast(date_trunc('month', date_day) as date), 'asset_volume', count(distinct date_day) from {{ ref('fct_intents_asset_daily') }} group by 1
+    union all select cast(date_trunc('month', date_day) as date), 'chain_volume', count(distinct date_day) from {{ ref('fct_dune_intents_chain_daily') }} group by 1
+    union all select cast(date_trunc('month', date_day) as date), 'asset_volume', count(distinct date_day) from {{ ref('fct_dune_intents_asset_daily') }} group by 1
 ),
 
 shares as (

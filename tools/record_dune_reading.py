@@ -1,4 +1,4 @@
-"""Save widgets read by hand from NEAR's public Intents dashboard on Dune into bronze, with credit.
+"""Save widgets read in a browser from NEAR's public Intents dashboard on Dune into bronze, with credit.
 
 Results are public, but Dune's terms bar bots, scrapers and access other than through its own interface, so
 this stays a manual step: a person opens the dashboard in their own browser, lets every widget load, and saves
@@ -7,6 +7,10 @@ the Network tab as a HAR file. Never schedule this or feed it from a script.
 From the HAR this keeps each widget's response exactly as received, plus the query id, the dashboard's filter
 values and the columns asked for. Everything else stays behind, including headers, cookies and the page's
 timestamp and signature. The HAR itself stays out of the repository: .gitignore covers it.
+
+A table shows 25 rows at a time and asks for each page separately, so page through it before saving: each page
+is kept under its row offset. A tile first asks for one row and then for its value, so each widget keeps its
+fullest response, never a shorter one that came later.
 
 Usage: python -m tools.record_dune_reading <reading.har> <snapshot-date> "<how it was read>"
 """
@@ -31,14 +35,16 @@ def _values(parameter: dict) -> list:
     return parameter["values"] if "values" in parameter else [parameter.get("value")]
 
 
-def widget_key(query_id: int, parameters: List[dict], columns: List[str]) -> str:
-    """Query id, filter values, then a hash of the columns, because one query can feed several widgets."""
+def widget_key(query_id: int, parameters: List[dict], columns: List[str], offset: int = 0) -> str:
+    """Query id, filter values, a table page's row offset after the first page, then a hash of the columns,
+    because one query can feed several widgets."""
     chosen = "__".join(f"{p['key']}-{'+'.join(str(v) for v in _values(p))}" for p in sorted(parameters, key=lambda p: p["key"]))
     selection = safe_key(chosen) if chosen else ""
     if len(selection) > MAX_SELECTION:
         selection = f"{selection[:MAX_SELECTION]}-{hashlib.sha256(selection.encode()).hexdigest()[:8]}"
+    page = f"offset-{offset}" if offset else ""
     columns_hash = hashlib.sha256(",".join(columns).encode()).hexdigest()[:6]
-    return "__".join(part for part in (str(query_id), selection, f"cols-{columns_hash}") if part)
+    return "__".join(part for part in (str(query_id), selection, page, f"cols-{columns_hash}") if part)
 
 
 def _response_bytes(entry: dict) -> Optional[bytes]:
@@ -50,7 +56,8 @@ def _response_bytes(entry: dict) -> Optional[bytes]:
 
 
 def collect(har: dict) -> Tuple[Dict[str, dict], int]:
-    """The last finished response per widget, and how many calls to the endpoint gave no usable result."""
+    """The fullest finished response per widget (the later one on a tie), and how many calls to the endpoint gave
+    no usable result."""
     widgets: Dict[str, dict] = {}
     unfinished = 0
     for entry in har["log"]["entries"]:
@@ -66,16 +73,19 @@ def collect(har: dict) -> Tuple[Dict[str, dict], int]:
         asked = json.loads(body)
         parameters = asked.get("parameters") or []
         columns = asked.get("output_columns") or result["columns"]
-        widgets[widget_key(asked["query_id"], parameters, columns)] = {
-            "raw": raw,
-            "params": {"query_id": asked["query_id"],
-                       "parameters": [{"key": p["key"], "values": _values(p)} for p in parameters],
-                       "output_columns": columns,
-                       "execution_id": result["execution_id"],
-                       "generated_at": result["generated_at"]},
-            "rows": len(result["data"]),
-            "total_rows": result.get("total_row_count", len(result["data"])),
-        }
+        offset = int((asked.get("pagination") or {}).get("offset") or 0)
+        key = widget_key(asked["query_id"], parameters, columns, offset)
+        if key in widgets and widgets[key]["rows"] > len(result["data"]):
+            continue
+        params = {"query_id": asked["query_id"],
+                  "parameters": [{"key": p["key"], "values": _values(p)} for p in parameters],
+                  "output_columns": columns,
+                  "execution_id": result["execution_id"],
+                  "generated_at": result["generated_at"]}
+        if offset:
+            params["row_offset"] = offset
+        widgets[key] = {"raw": raw, "params": params, "rows": len(result["data"]),
+                        "total_rows": result.get("total_row_count", len(result["data"]))}
     return widgets, unfinished
 
 

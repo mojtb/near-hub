@@ -1116,3 +1116,416 @@ def test_validators_epoch_keeps_nothing_from_an_epoch_still_in_progress(tmp_path
     ctx.bronze.flush()
     assert (tmp_path / "bronze/rpc/validators_epoch/dt=2026-11-10/epoch_20.json.gz").exists()
     assert ctx.load_state("rpc__validators_epoch")["done"] == ["E20"]
+
+
+_SWAP_SERVICES = [
+    {"service_id": "near_intents", "llama_dimension": "", "llama_slug": "", "llama_id": "", "llama_data_type": ""},
+    {"service_id": "thorchain", "llama_dimension": "dexs", "llama_slug": "thorchain-dex", "llama_id": "412", "llama_data_type": "dailyVolume"},
+    {"service_id": "across", "llama_dimension": "bridges", "llama_slug": "across", "llama_id": "1207", "llama_data_type": "dailyOutgoingVolume"},
+]
+
+
+def _swap_services_context(tmp_path, monkeypatch, replies):
+    from ingest.sources import defillama
+
+    monkeypatch.setattr(defillama, "read_registry", lambda name: _SWAP_SERVICES)
+    http = client(replies)
+    return defillama, Context("2026-11-12", http, BronzeWriter("2026-11-12", root=tmp_path / "bronze")), http
+
+
+def _saved_swap_services(tmp_path):
+    folder = tmp_path / "bronze/defillama/swap_service_volume/dt=2026-11-12"
+    return sorted(p.name for p in folder.iterdir()) if folder.exists() else []
+
+
+def test_swap_services_ask_each_service_of_its_own_list_and_leave_near_intents_out(tmp_path, monkeypatch):
+    thorchain = b'{"defillamaId": "412", "totalDataChart": [[1794355200, 5]]}'
+    across = b'{"defillamaId": "1207", "totalDataChart": [[1794355200, 7]]}'
+    defillama, ctx, http = _swap_services_context(tmp_path, monkeypatch, [FakeResponse(200, thorchain), FakeResponse(200, across)])
+    defillama.swap_service_volume(ctx)
+    assert [(url, kw["params"]["dataType"]) for _, url, kw in http.session.calls] == [
+        ("https://api.llama.fi/summary/dexs/thorchain-dex", "dailyVolume"),
+        ("https://api.llama.fi/summary/bridges/across", "dailyOutgoingVolume")]
+    assert _saved_swap_services(tmp_path) == ["bridges__across.json.gz", "dexs__thorchain-dex.json.gz"]
+    saved = tmp_path / "bronze/defillama/swap_service_volume/dt=2026-11-12/bridges__across.json.gz"
+    assert gzip.decompress(saved.read_bytes()) == across  # the reply as it arrived
+    assert not ctx.warnings
+
+
+def test_swap_services_refuse_a_reply_that_carries_another_id(tmp_path, monkeypatch):
+    regrouped = b'{"defillamaId": "parent#thorchain", "totalDataChart": [[1794355200, 5]]}'
+    across = b'{"defillamaId": "1207", "totalDataChart": [[1794355200, 7]]}'
+    defillama, ctx, _ = _swap_services_context(tmp_path, monkeypatch, [FakeResponse(200, regrouped), FakeResponse(200, across)])
+    defillama.swap_service_volume(ctx)
+    assert _saved_swap_services(tmp_path) == ["bridges__across.json.gz"]
+    assert len(ctx.warnings) == 1 and "thorchain-dex" in ctx.warnings[0] and "412" in ctx.warnings[0]
+
+
+def test_swap_services_one_failing_service_does_not_lose_the_rest(tmp_path, monkeypatch):
+    across = b'{"defillamaId": "1207", "totalDataChart": [[1794355200, 7]]}'
+    defillama, ctx, _ = _swap_services_context(tmp_path, monkeypatch, [FakeResponse(400, b"Dexs for thorchain-dex not found"), FakeResponse(200, across)])
+    defillama.swap_service_volume(ctx)
+    assert _saved_swap_services(tmp_path) == ["bridges__across.json.gz"]
+    assert len(ctx.warnings) == 1 and "HTTP 400" in ctx.warnings[0]
+
+
+_TOKEN_PRICES = [
+    {"symbol": "ZEC", "price_source": "coinmetrics", "source_asset_id": "zec"},
+    {"symbol": "WBTC", "price_source": "defillama", "source_asset_id": "coingecko:wrapped-bitcoin"},
+    {"symbol": "TLO", "price_source": "defillama", "source_asset_id": "ethereum:0x0f38"},
+    {"symbol": "NOSRC", "price_source": "", "source_asset_id": ""},
+    {"symbol": "SOL", "price_source": "coinmetrics", "source_asset_id": "sol"},
+]
+
+
+def _token_price_context(tmp_path, monkeypatch, module, replies, snapshot="2026-11-12"):
+    monkeypatch.setattr(module, "read_registry", lambda name: _TOKEN_PRICES)
+    monkeypatch.setattr("ingest.sources._common.BRONZE", tmp_path / "bronze")  # where has_prior looks for an earlier read
+    http = client(replies)
+    return Context(snapshot, http, BronzeWriter(snapshot, root=tmp_path / "bronze")), http
+
+
+def _saved_token_prices(tmp_path, source, snapshot="2026-11-12"):
+    folder = tmp_path / f"bronze/{source}/token_price/dt={snapshot}"
+    return sorted(p.name for p in folder.iterdir()) if folder.exists() else []
+
+
+def test_coinmetrics_token_price_asks_only_its_own_assets_for_the_price_alone(tmp_path, monkeypatch):
+    from ingest.sources import market
+
+    zec = b'{"data": [{"asset": "zec", "time": "2026-11-11T00:00:00.000000000Z", "PriceUSD": "963.4"}]}'
+    ctx, http = _token_price_context(tmp_path, monkeypatch, market, [FakeResponse(200, zec), FakeResponse(400, b"Value 'sol' is not supported")])
+    market.coinmetrics_token_price(ctx)
+    asked = [(kw["params"]["assets"], kw["params"]["metrics"], kw["params"]["start_time"]) for _, _, kw in http.session.calls]
+    assert asked == [("zec", "PriceUSD", "2024-11-01"), ("sol", "PriceUSD", "2024-11-01")]  # a first read asks for the whole history
+    assert all("ignore_unsupported_errors" not in kw["params"] for _, _, kw in http.session.calls)
+    assert _saved_token_prices(tmp_path, "coinmetrics") == ["zec.json.gz"]  # one asset failing does not lose the other
+    assert gzip.decompress((tmp_path / "bronze/coinmetrics/token_price/dt=2026-11-12/zec.json.gz").read_bytes()) == zec
+    assert len(ctx.warnings) == 1 and "sol" in ctx.warnings[0] and "HTTP 400" in ctx.warnings[0]
+
+
+def test_coinmetrics_token_price_reads_only_the_overlap_once_an_asset_has_a_file(tmp_path, monkeypatch):
+    from ingest.sources import market
+
+    BronzeWriter("2026-11-12", root=tmp_path / "bronze").save("coinmetrics", "token_price", "zec", b"{}", url="u")
+    ctx, http = _token_price_context(tmp_path, monkeypatch, market, [FakeResponse(200, b'{"data": []}'), FakeResponse(200, b'{"data": []}')], snapshot="2026-11-13")
+    market.coinmetrics_token_price(ctx)
+    assert [(kw["params"]["assets"], kw["params"]["start_time"]) for _, _, kw in http.session.calls] == [("zec", "2026-10-30"), ("sol", "2024-11-01")]
+
+
+def _llama_prices(coin, symbol, *points):
+    return json.dumps({"coins": {coin: {"symbol": symbol, "confidence": 0.99, "prices": [{"timestamp": t, "price": p} for t, p in points]}}}).encode()
+
+
+def test_defillama_token_price_asks_each_coin_by_its_own_key_and_keeps_an_empty_window(tmp_path, monkeypatch):
+    from ingest.sources import defillama
+
+    wbtc = _llama_prices("coingecko:wrapped-bitcoin", "WBTC", (1794355200, 73660.0))
+    tlo = _llama_prices("ethereum:0x0f38", "TLO", (1794355200, 1.0281))
+    empty = b'{"coins":{}}'
+    ctx, http = _token_price_context(tmp_path, monkeypatch, defillama, [FakeResponse(200, wbtc)] * 3 + [FakeResponse(200, empty), FakeResponse(200, tlo), FakeResponse(200, tlo)])
+    defillama.token_price(ctx)
+    urls = [url for _, url, _ in http.session.calls]
+    assert urls == ["https://coins.llama.fi/chart/coingecko:wrapped-bitcoin"] * 3 + ["https://coins.llama.fi/chart/ethereum:0x0f38"] * 3
+    # Two windows of 450 days from 2024-11-01 reach 2026-11-12, then the recent days: all at midnight UTC, a day apart.
+    assert [(kw["params"]["start"], kw["params"]["span"], kw["params"]["period"]) for _, _, kw in http.session.calls[:3]] == [
+        (1730419200, 450, "1d"), (1769299200, 450, "1d"), (1793232000, 15, "1d")]
+    assert _saved_token_prices(tmp_path, "defillama") == [
+        "coingecko_wrapped-bitcoin__2024-11-01.json.gz", "coingecko_wrapped-bitcoin__2026-01-25.json.gz", "coingecko_wrapped-bitcoin__recent.json.gz",
+        "ethereum_0x0f38__2024-11-01.json.gz", "ethereum_0x0f38__2026-01-25.json.gz", "ethereum_0x0f38__recent.json.gz"]
+    saved = tmp_path / "bronze/defillama/token_price/dt=2026-11-12/ethereum_0x0f38__2024-11-01.json.gz"
+    assert gzip.decompress(saved.read_bytes()) == empty  # no price before the coin's first is the source's answer, kept as it arrived
+    assert not ctx.warnings
+
+
+def test_defillama_token_price_reads_only_the_recent_days_once_a_coin_has_them(tmp_path, monkeypatch):
+    from ingest.sources import defillama
+
+    BronzeWriter("2026-11-12", root=tmp_path / "bronze").save("defillama", "token_price", "coingecko:wrapped-bitcoin__recent", b"{}", url="u")
+    wbtc = _llama_prices("coingecko:wrapped-bitcoin", "WBTC", (1794441600, 73916.0))
+    tlo = _llama_prices("ethereum:0x0f38", "TLO", (1794441600, 1.0283))
+    ctx, http = _token_price_context(tmp_path, monkeypatch, defillama, [FakeResponse(200, wbtc)] + [FakeResponse(200, tlo)] * 3, snapshot="2026-11-13")
+    defillama.token_price(ctx)
+    assert [url.rsplit("/", 1)[1] for _, url, _ in http.session.calls] == ["coingecko:wrapped-bitcoin"] + ["ethereum:0x0f38"] * 3
+    assert _saved_token_prices(tmp_path, "defillama", "2026-11-13")[:1] == ["coingecko_wrapped-bitcoin__recent.json.gz"]
+
+
+def test_defillama_token_price_refuses_a_reply_for_another_key_and_survives_a_failed_window(tmp_path, monkeypatch):
+    from ingest.sources import defillama
+
+    other_case = _llama_prices("coingecko:Wrapped-Bitcoin", "WBTC", (1794355200, 1.0))  # silver would not find the coin under this key
+    tlo = _llama_prices("ethereum:0x0f38", "TLO", (1794355200, 1.0281))
+    ctx, _ = _token_price_context(tmp_path, monkeypatch, defillama, [FakeResponse(200, other_case), FakeResponse(500, b"down"), FakeResponse(200, other_case)] + [FakeResponse(200, tlo)] * 3)
+    ctx.http.request = lambda method, url, **kw: HttpClient.request(ctx.http, method, url, retries=1, **kw)
+    defillama.token_price(ctx)
+    assert _saved_token_prices(tmp_path, "defillama") == ["ethereum_0x0f38__2024-11-01.json.gz", "ethereum_0x0f38__2026-01-25.json.gz", "ethereum_0x0f38__recent.json.gz"]
+    assert len(ctx.warnings) == 3 and sum("not saved" in w and "coingecko:Wrapped-Bitcoin" in w for w in ctx.warnings) == 2 and sum("gave up" in w for w in ctx.warnings) == 1
+
+
+def _pool_context(tmp_path, monkeypatch, replies, listed=None, dashboard=None, block_days=None, snapshot="2026-11-12", priced=None):
+    """Bronze holds a 1Click token list, one block per {day: height} and, if given, a dashboard reading of [(day, symbol, usd)]."""
+    from ingest import sources  # noqa: F401
+    from ingest.sources import intents_pool
+
+    bronze = tmp_path / "bronze"
+    monkeypatch.setattr("ingest.pipeline.STATE", tmp_path / "state")
+    monkeypatch.setattr(intents_pool, "BRONZE", bronze)
+    monkeypatch.setattr(intents_pool, "POOL_PAUSE_SECONDS", 0)
+    # The price registry lists every asset of the dashboard reading, unless a test names the priced ones itself
+    prices = [{"symbol": s, "price_source": "coinmetrics"} for s in (priced if priced is not None else sorted({s for _, s, _ in dashboard or []}))]
+    monkeypatch.setattr(intents_pool, "read_registry", lambda name: prices if name == "token_prices" else [
+        {"token_id": "wrap.near", "symbol": "wNEAR", "token_class": "native_wrapped", "decimals": "24"},
+        {"token_id": "usdt.tether-token.near", "symbol": "USDT", "token_class": "stablecoin", "decimals": "6"}])
+    files = {"oneclick/tokens/dt=2026-11-12/all.json.gz": listed if listed is not None else [],
+             "rpc/block_day/dt=2026-11-12/all.json.gz": [{"day": d, "height": h} for d, h in (block_days or {}).items()]}
+    if dashboard is not None:
+        files[f"dune_public/query_results/dt=2026-11-12/{intents_pool.POOL_SHARES_QUERY}__cols-abc.json.gz"] = {
+            "execution_succeeded": {"data": [{"date_at": d, "symbol": s, "tvl_usd": usd} for d, s, usd in dashboard]}}
+    for name, doc in files.items():
+        path = bronze / name
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(gzip.compress(json.dumps(doc).encode()))
+    http = client(replies)
+    http.policies[intents_pool.ARCHIVAL.split("/")[2]] = HostPolicy()
+    return intents_pool, Context(snapshot, http, BronzeWriter(snapshot, root=bronze)), http
+
+
+def _pool_saved(tmp_path, day, snapshot="2026-11-12"):
+    return json.loads(gzip.decompress((tmp_path / f"bronze/rpc/intents_pool_history/dt={snapshot}/{day}.json.gz").read_bytes()))
+
+
+def _pool_asked(http):
+    return [(c[2]["json"]["params"]["block_id"], c[2]["json"]["params"]["account_id"]) for c in http.session.calls]
+
+
+def test_pool_history_closes_the_day_before_and_each_complete_month_back_to_the_pools_first():
+    from ingest.sources.intents_pool import closing_days
+
+    days = closing_days(date(2025, 2, 12))
+    assert days == [date(2025, 2, 11), date(2025, 1, 31), date(2024, 12, 31), date(2024, 11, 30)]  # February is not complete
+    assert closing_days(date(2025, 2, 1)) == [date(2025, 1, 31), date(2024, 12, 31), date(2024, 11, 30)]  # the day before is a month end
+
+
+def test_pool_main_assets_are_those_with_a_hundredth_of_the_dashboards_newest_day(tmp_path, monkeypatch):
+    dashboard = [("2026-11-10", "OLD", 900), ("2026-11-10", "ZEC", 100),                             # an earlier day does not count
+                 ("2026-11-11", "wNEAR", 600), ("2026-11-11", "ZEC", 300), ("2026-11-11", "WBTC", 90),
+                 ("2026-11-11", "wBTC", 9.9), ("2026-11-11", "OLD", 0.1)]                            # under 1% of 1,000
+    pool, ctx, _ = _pool_context(tmp_path, monkeypatch, [], dashboard=dashboard)
+    assert pool.dashboard_assets(ctx.snapshot) == {"wNEAR", "ZEC", "WBTC"}  # spelled as the dashboard spells them
+    assert pool.dashboard_assets("2026-11-11") == set()  # no reading the run may see
+
+
+def test_pool_reads_a_main_asset_only_when_the_price_registry_lists_it(tmp_path, monkeypatch):
+    listed = [{"assetId": "nep141:zec.omft.near", "symbol": "ZEC", "decimals": 8, "price": 983.48},
+              {"assetId": "nep141:abc.omft.near", "symbol": "ABC", "decimals": 8, "price": 2.0}]
+    dashboard = [("2026-11-11", s, usd) for s, usd in (("wNEAR", 500), ("ZEC", 300), ("ABC", 200))]
+    pool, ctx, _ = _pool_context(tmp_path, monkeypatch, [], listed=listed, dashboard=dashboard, priced=["ZEC"])
+    assert [t["listed_symbol"] for t in pool.pool_tokens(ctx.snapshot) if t["chosen_as"] == "other_asset"] == ["ZEC"]
+
+
+def test_pool_tokens_come_from_the_registry_the_list_and_the_dashboards_main_assets(tmp_path, monkeypatch):
+    listed = [
+        {"assetId": "nep141:eth-0xa.omft.near", "symbol": "USDC", "decimals": 6, "price": 0.9995},
+        {"assetId": "nep141:eth-0xa.omft.near", "symbol": "USDC", "decimals": 6, "price": 0.9995},       # listed twice: asked once
+        {"assetId": "1cs_v1:near:nep141:usdt.tether-token.near", "symbol": "USDT", "decimals": 6, "price": 1},
+        {"assetId": "nep245:v2_1.omni.hot.tg:56_abc", "symbol": "USDT(DEPRECATED)", "decimals": 18, "price": 0.9991},
+        {"assetId": "nep141:off-peg.omft.near", "symbol": "USDX", "decimals": 6, "price": 0.97},         # more than 2% from a dollar
+        {"assetId": "nep141:no-price.omft.near", "symbol": "USDX", "decimals": 6, "price": None},
+        {"assetId": "1cs_v1:hypercore:erc20:0xb8", "symbol": "USDC", "decimals": 6, "price": 0.9995},    # not a NEAR token
+        {"assetId": "nep141:zec.omft.near", "symbol": "ZEC", "decimals": 8, "price": 983.48},            # a main asset of the pool
+        {"assetId": "1cs_v1:sol:spl:A7bd", "symbol": "ZEC", "decimals": 8, "price": 983.48},             # the same asset, not on NEAR
+        {"assetId": "nep245:v2_1.omni.hot.tg:10_eth", "symbol": "ETH_(DEPRECATED)", "decimals": 18, "price": 2045},
+        {"assetId": "nep141:f.bridge.near", "symbol": "wBTC", "decimals": 8, "price": 73438},            # the dashboard's wBTC is another, smaller asset
+        {"assetId": "nep141:small.omft.near", "symbol": "DOGE", "decimals": 8, "price": 0.07},           # under 1% of the pool
+        {"assetId": "nep141:wrap.near", "symbol": "wNEAR", "decimals": 24, "price": 3.47},
+    ]
+    dashboard = [("2026-11-11", s, usd) for s, usd in (("wNEAR", 500), ("USDC", 300), ("ZEC", 100), ("ETH", 60), ("WBTC", 35), ("wBTC", 4), ("DOGE", 1))]
+    pool, ctx, _ = _pool_context(tmp_path, monkeypatch, [], listed=listed, dashboard=dashboard)
+    tokens = pool.pool_tokens(ctx.snapshot)
+    assert [(t["asset_id"], t["chosen_as"], t["listed_symbol"], t["decimals"]) for t in tokens] == [
+        ("nep141:wrap.near", "wrapped_near", "wNEAR", 24),                               # from the registry, never from a price
+        ("nep141:eth-0xa.omft.near", "dollar_token", "USDC", 6),
+        ("nep141:usdt.tether-token.near", "dollar_token", "USDT", 6),
+        ("nep245:v2_1.omni.hot.tg:56_abc", "dollar_token", "USDT(DEPRECATED)", 18),
+        ("nep141:zec.omft.near", "other_asset", "ZEC", 8),
+        ("nep245:v2_1.omni.hot.tg:10_eth", "other_asset", "ETH_(DEPRECATED)", 18),       # matched without 1Click's mark
+    ]
+    assert tokens[3]["contract"] == "v2_1.omni.hot.tg" and tokens[3]["token_id"] == "56_abc"
+    assert "listed_price" in tokens[1] and "listed_price" not in tokens[4]  # no price travels with a token that is not a dollar
+
+
+def test_pool_tokens_are_wnear_and_dollars_alone_without_a_dashboard_reading(tmp_path, monkeypatch):
+    listed = [{"assetId": "nep141:eth-0xa.omft.near", "symbol": "USDC", "decimals": 6, "price": 1.0},
+              {"assetId": "nep141:zec.omft.near", "symbol": "ZEC", "decimals": 8, "price": 983.48}]
+    pool, ctx, _ = _pool_context(tmp_path, monkeypatch, [], listed=listed)
+    assert [t["asset_id"] for t in pool.pool_tokens(ctx.snapshot)] == ["nep141:wrap.near", "nep141:eth-0xa.omft.near"]
+
+
+def test_pool_history_skips_until_there_is_a_token_list(tmp_path, monkeypatch):
+    pool, ctx, _ = _pool_context(tmp_path, monkeypatch, [], block_days={"2026-11-12": 900})
+    (tmp_path / "bronze/oneclick/tokens/dt=2026-11-12/all.json.gz").unlink()
+    with pytest.raises(Skip):
+        pool.intents_pool_history(ctx)
+
+
+def test_pool_history_reads_each_token_at_the_block_that_closes_the_day(tmp_path, monkeypatch):
+    listed = [{"assetId": "nep141:eth-0xa.omft.near", "symbol": "USDC", "decimals": 6, "price": 1.0},
+              {"assetId": "nep245:hot.tg:1_a", "symbol": "USDT", "decimals": 6, "price": 1.0},
+              {"assetId": "nep245:hot.tg:2_b", "symbol": "USDC(DEPRECATED)", "decimals": 18, "price": 1.0}]
+    replies = [_view_reply("17000000000000000000000000000000"), _view_reply("250"), _view_reply(["7", "0"])]
+    pool, ctx, http = _pool_context(tmp_path, monkeypatch, replies, listed=listed, block_days={"2026-11-12": 900})
+    monkeypatch.setattr(pool, "FIRST_MONTH_END", date(2026, 11, 30))  # no month end yet: only the day before the snapshot
+    pool.intents_pool_history(ctx)
+    asked = [json.loads(json.dumps(c[2]["json"]))["params"] for c in http.session.calls]
+    assert [(p["block_id"], p["account_id"], p["method_name"]) for p in asked] == [
+        (900, "wrap.near", "ft_balance_of"), (900, "eth-0xa.omft.near", "ft_balance_of"), (900, "hot.tg", "mt_batch_balance_of")]
+    assert json.loads(base64.b64decode(asked[0]["args_base64"])) == {"account_id": "intents.near"}
+    assert json.loads(base64.b64decode(asked[2]["args_base64"])) == {"account_id": "intents.near", "token_ids": ["1_a", "2_b"]}
+    saved = _pool_saved(tmp_path, "2026-11-11")
+    assert (saved["closes_day"], saved["block_day"], saved["block_height"], saved["account_id"]) == ("2026-11-11", "2026-11-12", 900, "intents.near")
+    assert [(b["asset_id"], b["balance"]) for b in saved["balances"]] == [
+        ("nep141:wrap.near", "17000000000000000000000000000000"),  # text, so a yocto amount keeps every digit
+        ("nep141:eth-0xa.omft.near", "250"), ("nep245:hot.tg:1_a", "7"), ("nep245:hot.tg:2_b", "0")]
+    assert saved["balances"][3]["listed_symbol"] == "USDC(DEPRECATED)" and saved["balances"][3]["decimals"] == 18
+    pool.intents_pool_history(ctx)
+    assert len(http.session.calls) == 3  # every token has its answer on file
+
+
+def test_pool_history_asks_token_by_token_where_a_contract_has_no_view_for_all(tmp_path, monkeypatch):
+    listed = [{"assetId": "nep245:hot.tg:1_a", "symbol": "USDT", "decimals": 6, "price": 1.0},
+              {"assetId": "nep245:hot.tg:2_b", "symbol": "USDC", "decimals": 6, "price": 1.0}]
+    no_method = FakeResponse(200, json.dumps({"result": {"block_height": 1, "logs": [], "error": "wasm execution failed with error: MethodResolveError(MethodNotFound)"}}).encode())
+    pool, ctx, http = _pool_context(tmp_path, monkeypatch, [_view_reply("9"), no_method, _view_reply("7"), no_method],
+                                    listed=listed, block_days={"2026-11-12": 900})
+    monkeypatch.setattr(pool, "FIRST_MONTH_END", date(2026, 11, 30))
+    pool.intents_pool_history(ctx)
+    asked = [json.loads(json.dumps(c[2]["json"]))["params"] for c in http.session.calls]
+    assert [p["method_name"] for p in asked] == ["ft_balance_of", "mt_batch_balance_of", "mt_balance_of", "mt_balance_of"]
+    assert json.loads(base64.b64decode(asked[2]["args_base64"])) == {"account_id": "intents.near", "token_id": "1_a"}
+    saved = _pool_saved(tmp_path, "2026-11-11")["balances"]
+    assert [(b["asset_id"], b["balance"], b.get("error")) for b in saved[1:]] == [
+        ("nep245:hot.tg:1_a", "7", None), ("nep245:hot.tg:2_b", None, "CONTRACT_EXECUTION_ERROR")]  # the second token's own view failed too
+
+
+def test_pool_history_names_no_person_or_project_and_sends_no_key(tmp_path, monkeypatch):
+    pool, ctx, http = _pool_context(tmp_path, monkeypatch, [_view_reply("1")], block_days={"2026-11-12": 900})
+    monkeypatch.setattr(pool, "FIRST_MONTH_END", date(2026, 11, 30))
+    monkeypatch.setenv("FASTNEAR_API_KEY", "test-value")
+    pool.intents_pool_history(ctx)
+    call = http.session.calls[0][2]
+    assert call["headers"] == {"User-Agent": "python-requests"}
+    assert "near-thesis" not in json.dumps(call["json"]) and "test-value" not in json.dumps(call)
+
+
+def test_pool_history_reads_month_ends_newest_first_and_keeps_the_chains_own_refusals(tmp_path, monkeypatch):
+    listed = [{"assetId": "nep141:new.omft.near", "symbol": "USDC", "decimals": 6, "price": 1.0}]
+    replies = [_view_reply("3"), _view_reply("40"),               # 2026-11-11
+               _view_reply("2"), _view_error("UNKNOWN_ACCOUNT"),  # 2026-10-31
+               _view_reply("1"), _view_error("UNKNOWN_ACCOUNT"),  # 2026-09-30
+               _view_reply("0")]                                  # 2026-08-31: absent on two newer days, so not asked
+    pool, ctx, http = _pool_context(tmp_path, monkeypatch, replies, listed=listed,
+                                    block_days={"2026-11-12": 900, "2026-11-01": 800, "2026-10-01": 700, "2026-09-01": 600})
+    monkeypatch.setattr(pool, "FIRST_MONTH_END", date(2026, 8, 31))
+    pool.intents_pool_history(ctx)
+    assert _pool_asked(http) == [(900, "wrap.near"), (900, "new.omft.near"), (800, "wrap.near"), (800, "new.omft.near"),
+                                 (700, "wrap.near"), (700, "new.omft.near"), (600, "wrap.near")]
+    october = _pool_saved(tmp_path, "2026-10-31")["balances"]
+    assert (october[1]["balance"], october[1]["error"]) == (None, "UNKNOWN_ACCOUNT")
+    assert [b["asset_id"] for b in _pool_saved(tmp_path, "2026-08-31")["balances"]] == ["nep141:wrap.near"]
+    pool.intents_pool_history(ctx)
+    assert len(http.session.calls) == 7  # the absent contract is not asked about again on a later run
+
+
+def test_pool_history_reads_a_token_that_joins_the_list_at_the_days_already_on_file(tmp_path, monkeypatch):
+    usdc = {"assetId": "nep141:eth-0xa.omft.near", "symbol": "USDC", "decimals": 6, "price": 1.0}
+    zec = {"assetId": "nep141:zec.omft.near", "symbol": "ZEC", "decimals": 8, "price": 983.48}
+    replies = [_view_reply("5"), _view_reply("50"), _view_reply("4"), _view_reply("40"),  # wNEAR and USDC on two days
+               _view_reply("700"), _view_reply("600"),                                    # ZEC on the same two days, a run later
+               _view_reply("6"), _view_reply("60"), _view_reply("800")]                   # a night later: one new day, all three
+    block_days = {"2026-11-12": 900, "2026-11-01": 800}
+    pool, ctx, http = _pool_context(tmp_path, monkeypatch, replies, listed=[usdc, zec], block_days=block_days, priced=["ZEC"])
+    monkeypatch.setattr(pool, "FIRST_MONTH_END", date(2026, 10, 31))
+    pool.intents_pool_history(ctx)
+    assert len(http.session.calls) == 4  # ZEC is listed, but no dashboard reading names it a main asset yet
+    reading = tmp_path / f"bronze/dune_public/query_results/dt=2026-11-12/{pool.POOL_SHARES_QUERY}__cols-abc.json.gz"
+    reading.parent.mkdir(parents=True)
+    reading.write_bytes(gzip.compress(json.dumps({"execution_succeeded": {"data": [{"date_at": "2026-11-11", "symbol": "ZEC", "tvl_usd": 1}]}}).encode()))
+    pool.intents_pool_history(ctx)
+    assert _pool_asked(http)[4:] == [(900, "zec.omft.near"), (800, "zec.omft.near")]  # only what has no answer yet
+    saved = _pool_saved(tmp_path, "2026-10-31")["balances"]  # the same snapshot's file gains the token and keeps the rest
+    assert [(b["asset_id"], b["balance"], b["chosen_as"]) for b in saved] == [
+        ("nep141:wrap.near", "4", "wrapped_near"), ("nep141:eth-0xa.omft.near", "40", "dollar_token"), ("nep141:zec.omft.near", "600", "other_asset")]
+    manifest = [json.loads(line) for line in (tmp_path / "bronze/_manifest/dt=2026-11-12.jsonl").read_text().splitlines()]
+    assert [e["rows"] for e in manifest if e["dataset"] == "intents_pool_history"] == [3, 3]  # one line per file, for the file as it now is
+    with (tmp_path / "bronze/rpc/block_day/dt=2026-11-12/later.json.gz").open("wb") as f:
+        f.write(gzip.compress(json.dumps([{"day": "2026-11-13", "height": 950}]).encode()))
+    later = Context("2026-11-13", http, BronzeWriter("2026-11-13", root=tmp_path / "bronze"))
+    pool.intents_pool_history(later)
+    assert _pool_asked(http)[6:] == [(950, "wrap.near"), (950, "eth-0xa.omft.near"), (950, "zec.omft.near")]
+    assert sorted(p.name for p in (tmp_path / "bronze/rpc/intents_pool_history/dt=2026-11-13").iterdir()) == ["2026-11-12.json.gz"]
+
+
+def test_pool_history_leaves_a_day_unsaved_when_a_node_cannot_answer(tmp_path, monkeypatch):
+    pool, ctx, http = _pool_context(tmp_path, monkeypatch, [_view_error("UNKNOWN_BLOCK"), _view_reply("5")], block_days={"2026-11-12": 900})
+    monkeypatch.setattr(pool, "FIRST_MONTH_END", date(2026, 11, 30))
+    pool.intents_pool_history(ctx)
+    assert not (tmp_path / "bronze/rpc/intents_pool_history").exists() and "UNKNOWN_BLOCK" in ctx.warnings[0]
+    pool.intents_pool_history(ctx)  # a later run reads the day
+    assert _pool_saved(tmp_path, "2026-11-11")["balances"][0]["balance"] == "5"
+
+
+def test_pool_history_refuses_a_reply_that_is_not_a_balance(tmp_path, monkeypatch):
+    pool, ctx, http = _pool_context(tmp_path, monkeypatch, [_view_reply({"balance": "5"})], block_days={"2026-11-12": 900})
+    monkeypatch.setattr(pool, "FIRST_MONTH_END", date(2026, 11, 30))
+    pool.intents_pool_history(ctx)
+    assert not (tmp_path / "bronze/rpc/intents_pool_history").exists() and "not 1 balances" in ctx.warnings[0]
+
+
+def test_pool_history_stops_when_the_endpoint_refuses(tmp_path, monkeypatch):
+    pool, ctx, http = _pool_context(tmp_path, monkeypatch, [FakeResponse(403, b"forbidden"), _view_reply("5")],
+                                    block_days={"2026-11-12": 900, "2026-11-01": 800})
+    monkeypatch.setattr(pool, "FIRST_MONTH_END", date(2026, 10, 31))
+    pool.intents_pool_history(ctx)
+    assert len(http.session.calls) == 1 and "HTTP 403" in ctx.warnings[0] and "stopped" in ctx.warnings[0]
+    assert not (tmp_path / "bronze/rpc/intents_pool_history").exists()
+
+
+def test_pool_history_waits_once_for_a_busy_endpoint_and_then_stops_for_the_run(tmp_path, monkeypatch):
+    replies = [_view_reply("5"),                                  # 2026-11-11 is read
+               FakeResponse(429), FakeResponse(429),              # 2026-10-31: refused, and refused again after the wait
+               _view_reply("4"), _view_reply("3")]                # the next run
+    pool, ctx, http = _pool_context(tmp_path, monkeypatch, replies, block_days={"2026-11-12": 900, "2026-11-01": 800, "2026-10-01": 700})
+    monkeypatch.setattr(pool, "FIRST_MONTH_END", date(2026, 9, 30))
+    pool.intents_pool_history(ctx)
+    assert len(http.session.calls) == 3 and "stopped" in ctx.warnings[0]  # September is not asked about
+    assert _pool_saved(tmp_path, "2026-11-11")["balances"][0]["balance"] == "5"
+    assert not (tmp_path / "bronze/rpc/intents_pool_history/dt=2026-11-12/2026-10-31.json.gz").exists()
+    pool.intents_pool_history(ctx)  # a later run goes on where this one stopped
+    assert [_pool_saved(tmp_path, day)["balances"][0]["balance"] for day in ("2026-10-31", "2026-09-30")] == ["4", "3"]
+
+
+def test_pool_history_reads_a_batch_of_days_a_run(tmp_path, monkeypatch):
+    block_days = {"2026-11-12": 900, "2026-11-01": 800, "2026-10-01": 700}
+    pool, ctx, http = _pool_context(tmp_path, monkeypatch, [_view_reply(str(n)) for n in (3, 2, 1)], block_days=block_days)
+    monkeypatch.setattr(pool, "FIRST_MONTH_END", date(2026, 9, 30))
+    monkeypatch.setattr(pool, "POOL_DAYS_PER_RUN", 2)
+    pool.intents_pool_history(ctx)
+    assert _pool_asked(http) == [(900, "wrap.near"), (800, "wrap.near")]
+    pool.intents_pool_history(ctx)
+    assert _pool_asked(http)[2:] == [(700, "wrap.near")]
+
+
+def test_pool_history_warns_when_the_closing_block_is_unknown(tmp_path, monkeypatch):
+    pool, ctx, http = _pool_context(tmp_path, monkeypatch, [], block_days={"2026-11-01": 800})
+    monkeypatch.setattr(pool, "FIRST_MONTH_END", date(2026, 11, 30))
+    pool.intents_pool_history(ctx)
+    assert ctx.warnings == ["2026-11-11: no block height known yet for 2026-11-12"] and http.session.calls == []
+
+
+def test_block_heights_and_the_token_list_come_before_the_pool_history():
+    from ingest import sources  # noqa: F401
+    from ingest.pipeline import select
+
+    names = [f"{d.source}/{d.name}" for d in select("all", None, None)]
+    for earlier in ("rpc/block_day", "oneclick/tokens"):
+        assert names.index(earlier) < names.index("rpc/intents_pool_history")

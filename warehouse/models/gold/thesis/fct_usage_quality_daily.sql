@@ -2,13 +2,18 @@
 -- the Sweat relayer taken out as well, since Sweat Wallet ends on 2026-12-30. The streams are counted from NearBlocks'
 -- per-account statistics, which reach back 365 active days from their first read, so each series starts where its
 -- accounts' statistics do and is empty before.
+-- The day's transactions are also split into five layers that add up to fct_chain_daily.txns: the batch streams,
+-- HOT's game contract, the Sweat relayer, the Intents contract and everything else. The split assumes that no
+-- transaction touches two of those accounts; a data test keeps the last layer from going below zero.
 with streams as (
     select
         date_day,
         sum(txns) filter (where account_id in ('hotwallet.kaiching', 'users.kaiching', 'sweat-migration.near')) as batch_stream_txns,
-        sum(txns) filter (where account_id = 'sweat-relayer.near') as sweat_relayer_txns
+        sum(txns) filter (where account_id = 'sweat-relayer.near') as sweat_relayer_txns,
+        sum(txns) filter (where account_id = 'game.hot.tg') as hot_game_txns,
+        sum(txns) filter (where account_id = 'intents.near') as intents_txns
     from {{ ref('fct_contract_daily') }}
-    where account_id in ('hotwallet.kaiching', 'users.kaiching', 'sweat-migration.near', 'sweat-relayer.near')
+    where account_id in ('hotwallet.kaiching', 'users.kaiching', 'sweat-migration.near', 'sweat-relayer.near', 'game.hot.tg', 'intents.near')
     group by 1
 ),
 
@@ -16,7 +21,9 @@ with streams as (
 coverage as (
     select
         greatest(min(date_day) filter (where account_id = 'hotwallet.kaiching'), min(date_day) filter (where account_id = 'users.kaiching')) as batch_from,
-        min(date_day) filter (where account_id = 'sweat-relayer.near') as sweat_from
+        min(date_day) filter (where account_id = 'sweat-relayer.near') as sweat_from,
+        min(date_day) filter (where account_id = 'game.hot.tg') as hot_from,
+        min(date_day) filter (where account_id = 'intents.near') as intents_from
     from {{ ref('fct_contract_daily') }}
 ),
 
@@ -35,6 +42,8 @@ days as (
         -- fct_contract_daily holds active days only, so a day without a row inside the covered span is a day with none.
         case when c.date_day >= v.batch_from then coalesce(s.batch_stream_txns, 0) end as batch_stream_txns,
         case when c.date_day >= v.sweat_from then coalesce(s.sweat_relayer_txns, 0) end as sweat_relayer_txns,
+        case when c.date_day >= v.hot_from then coalesce(s.hot_game_txns, 0) end as hot_game_txns,
+        case when c.date_day >= v.intents_from then coalesce(s.intents_txns, 0) end as intents_txns,
         sa.sweat_gas_burn_share
     from {{ ref('fct_chain_daily') }} c
     cross join coverage v
@@ -50,6 +59,9 @@ select
     sweat_relayer_txns,
     txns - batch_stream_txns as txns_ex_batch_streams,
     txns - batch_stream_txns - sweat_relayer_txns as txns_ex_batch_streams_and_sweat,
+    hot_game_txns,
+    intents_txns,
+    txns - batch_stream_txns - sweat_relayer_txns - hot_game_txns - intents_txns as other_txns,
     sweat_relayer_txns / nullif(txns - batch_stream_txns, 0) as sweat_share_of_txns_ex_batch_streams,
     txn_fee_near * price_usd as txn_fee_usd,
     txn_fee_near / nullif(txns, 0) as txn_fee_per_txn_near,

@@ -98,7 +98,7 @@ def _stats_all_zero(ctx: Context, repo: str) -> bool:
 def github_commits_weekly(ctx: Context) -> None:
     """Commits per week on the default branch, counted from the commits list: one method for every repository.
 
-    GitHub's statistic counts more than the default branch holds (about a quarter more for near/nearcore, which keeps
+    GitHub's statistic counts more than the default branch holds (about 31% more for near/nearcore, which keeps
     release branches), and serves nothing at all for a repository with over 10,000 commits. This count is the same
     measure for every repository, and it is the only one for such a repository. It costs a call per 100 commits, so
     without a token only the repositories whose statistics came back as zeros are read.

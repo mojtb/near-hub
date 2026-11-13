@@ -24,13 +24,48 @@ dune as (
     where snapshot_date = (select max(snapshot_date) from {{ ref('fct_intents_dashboard_readings') }})
 ),
 
--- A dashboard reading is taken by hand, so it stands still while the daily series move on. Its all-time tiles are
+-- A dashboard reading is taken in a browser on request, so it stands still while the daily series move on. Its all-time tiles are
 -- therefore compared with the other source on the reading's last full day, which is what the tiles covered.
 dune_day as (
     select max(snapshot_date) - 1 as d from {{ ref('fct_intents_dashboard_readings') }}
 ),
 
 dune_assets as (select * from {{ ref('fct_dune_intents_asset_daily') }}),
+dune_chains as (select * from {{ ref('fct_dune_intents_chain_daily') }}),
+
+-- The latest full month in which at least 99% of volume was public. In such a month NearBlocks, which reads the
+-- public chain, and NEAR's dashboard, which counts every route, describe nearly the same swaps, so they can be
+-- held against each other. The second month asks for 85%: it is the latest one in which bridged Bitcoin, which
+-- NearBlocks lists under near, can be checked against the dashboard's Bitcoin.
+public_months as (
+    select
+        cast(date_trunc('month', date_day) as date) as m,
+        sum(least(public_volume_usd, volume_usd)) / sum(volume_usd) as public_part
+    from intents
+    where public_volume_usd is not null and date_day in (select date_day from dune_chains)
+    group by 1
+    having count(*) = day(last_day(min(date_day)))
+),
+
+public_month as (select max(m) as m from public_months where public_part >= 0.99),
+mostly_public_month as (select max(m) as m from public_months where public_part >= 0.85),
+
+dune_chain_month as (
+    select blockchain, sum(volume_usd) as usd
+    from dune_chains, public_month
+    where cast(date_trunc('month', date_day) as date) = m
+    group by blockchain
+    order by 2 desc, 1
+    limit 6
+),
+
+nearblocks_chain_month as (
+    select blockchain, sum(volume_usd) as usd
+    from {{ ref('fct_intents_chain_daily') }}, public_month
+    where cast(date_trunc('month', date_day) as date) = m
+    group by blockchain
+),
+
 
 last_llama_day as (select max(date_day) as d from llama_volume),
 
@@ -223,6 +258,17 @@ etf_reported as (
     where reported_cumulative_usd is not null order by date_day desc limit 1
 ),
 
+etf_seed as (select date_day from {{ ref('fct_etf_nrr_daily') }} where flow_basis = 'seed_capital'),
+
+-- The NEAR price a day's NAV implies is NAV over the NEAR behind one share. Bitwise strikes NAV at a US close,
+-- so it is held to the day's whole range on Coinbase, not to a UTC close.
+etf_nav_days as (
+    select d.date_day, d.nav_usd / d.near_per_share between cb.low_usd and cb.high_usd as is_inside
+    from {{ ref('fct_etf_nrr_daily') }} d
+    join (select date_day, low_usd, high_usd from {{ ref('stg_coinbase__candles') }} where is_latest) cb using (date_day)
+    where d.flow_basis <> 'seed_capital' and d.nav_usd is not null and d.near_per_share is not null
+),
+
 prices_latest as (
     select * from {{ ref('fct_token_prices') }}
     where snapshot_date = (select max(snapshot_date) from {{ ref('fct_token_prices') }})
@@ -297,6 +343,96 @@ near_gas as (
 
 near_gas_30d as (select * from near_gas where date_day > (select max(date_day) from near_gas) - 30),
 
+-- fct_token_price_daily takes ETH and SOL from CoinMetrics, as fct_peer_daily does, so holding those two tables against
+-- each other would compare a series with itself. The other route this warehouse has for the two is DefiLlama's price
+-- of each peer chain's token, which no gold table uses where CoinMetrics has a value. Both are the close of the UTC day.
+token_price_30d as (
+    select t.symbol, avg(t.price_usd) as price_usd_table, avg(d.price_usd) as price_usd_defillama
+    from {{ ref('fct_token_price_daily') }} t
+    join {{ ref('peers') }} pe on pe.coinmetrics_asset = t.source_asset_id
+    join {{ ref('stg_defillama__peer_price') }} d on d.coin_id = pe.coingecko_id and d.date_day = t.date_day
+    where t.price_source = 'coinmetrics' and d.is_latest
+      and t.date_day > (select max(date_day) from {{ ref('fct_token_price_daily') }}) - 30
+    group by t.symbol
+),
+
+-- The Intents pool read from the chain at month ends, beside NEAR's dashboard on the same days. The chain side is
+-- intents.near's balance at the first block after the day; the dashboard's figure for a day is the pool as that day ends.
+-- Only wNEAR and the dollar tokens are compared: the table's other assets are in token units and need a price.
+pool_month_ends as (
+    select date_day, token_class, sum(amount_token) as chain_amount
+    from {{ ref('fct_intents_pool_chain_monthly') }}
+    where is_month_end and token_class in ('native_wrapped', 'stablecoin')
+    group by date_day, token_class
+),
+
+-- The dashboard gives wNEAR in dollars at a price of its own, so its figure over the chain's balance is the price it
+-- used. The two fit if that is a price NEAR traded at on the day.
+pool_wnear_days as (
+    select c.date_day, t.tvl_usd / c.chain_amount between k.low_usd and k.high_usd as is_inside
+    from pool_month_ends c
+    join {{ ref('fct_dune_intents_tvl_asset_daily') }} t on t.date_day = c.date_day and t.symbol = 'wNEAR'
+    join {{ ref('stg_coinbase__candles') }} k on k.date_day = c.date_day and k.is_latest
+    where c.token_class = 'native_wrapped' and c.chain_amount > 0
+),
+
+-- Dollar tokens are matched by symbol: the dashboard's assets with a symbol the chain reading counts as a dollar. The
+-- dashboard's series has no value for USDT0 before a day in March 2026, though the pool already held it, so the month
+-- ends before that day and from it are compared apart. In each group the month end where chain and dashboard differ
+-- most is the one shown, so a row agrees only if every month end of its group does.
+pool_dashboard_dollars as (
+    select date_day, sum(tvl_usd) as dashboard_usd
+    from {{ ref('fct_dune_intents_tvl_asset_daily') }}
+    where upper(symbol) in (select upper(symbol) from {{ ref('fct_intents_pool_chain_monthly') }} where token_class = 'stablecoin')
+    group by date_day
+),
+
+pool_dashboard_usdt0_from as (
+    select min(date_day) as d from {{ ref('fct_dune_intents_tvl_asset_daily') }} where upper(symbol) = 'USDT0' and tvl_usd > 0
+),
+
+-- The pool's other main assets, valued on chain: each asset's balances at the day's independent price beside the
+-- dashboard's dollar value of the same asset on the same day. An asset counts on a day only when every token of it
+-- has a price. The dashboard does not say at what hour it values an asset, so a day's move in price sits in the gap.
+pool_priced_assets as (
+    select c.date_day, c.dashboard_symbol as symbol, sum(c.value_usd) as chain_usd, max(d.tvl_usd) as dashboard_usd
+    from {{ ref('fct_intents_pool_chain_monthly') }} c
+    join {{ ref('fct_dune_intents_tvl_asset_daily') }} d on d.symbol = c.dashboard_symbol and d.date_day = c.date_day
+    where c.token_class = 'other'
+    group by 1, 2
+    having count(c.value_usd) = count(*) and max(d.tvl_usd) > 0
+),
+
+pool_priced_newest as (
+    select * from pool_priced_assets where date_day = (select max(date_day) from pool_priced_assets)
+),
+
+-- All the priced assets together at each month end, and the month end where chain and dashboard are furthest apart.
+pool_priced_widest_gap as (
+    select date_day, sum(chain_usd) as chain_usd, sum(dashboard_usd) as dashboard_usd
+    from pool_priced_assets
+    where date_day = last_day(date_day)
+    group by 1
+    order by abs(sum(chain_usd) / sum(dashboard_usd) - 1) desc
+    limit 1
+),
+
+pool_dollars_widest_gap as (
+    select *
+    from (
+        select c.date_day, coalesce(c.date_day >= u.d, false) as dashboard_has_usdt0, c.chain_amount as chain_usd, d.dashboard_usd,
+            row_number() over (
+                partition by coalesce(c.date_day >= u.d, false)
+                order by abs(c.chain_amount - d.dashboard_usd) / greatest(c.chain_amount, d.dashboard_usd) desc, c.date_day desc
+            ) as widest
+        from pool_month_ends c
+        join pool_dashboard_dollars d using (date_day)
+        cross join pool_dashboard_usdt0_from u
+        where c.token_class = 'stablecoin'
+    )
+    where widest = 1
+),
+
 checks as (
     select 'intents_volume_all_time_defillama_vs_page' as check_id, 'Intents all-time volume, USD' as metric, null as subject,
         'DefiLlama, sum of daily' as source_a, (select sum(volume_usd) from llama_volume) as value_a,
@@ -349,9 +485,9 @@ checks as (
         'Dune public page, total', (select value_usd from dune where metric = 'total_generated_fees' and scope = 'all'),
         5.0, 'same_upstream'
 
-    union all select 'intents_volume_dune_assets_vs_defillama', 'Intents volume over the days read per asset, USD', null,
-        'Dune public page, sum of assets', (select sum(volume_usd) from dune_assets),
-        'DefiLlama, same days', (select sum(volume_usd) from llama_volume where date_day in (select date_day from dune_assets)),
+    union all select 'intents_volume_dune_assets_vs_defillama', 'Intents volume per asset over the 30 days to the latest Dune reading''s last day, USD', null,
+        'Dune public page, sum of assets', (select sum(volume_usd) from dune_assets where date_day > (select max(date_day) from dune_assets) - 30),
+        'DefiLlama, same days', (select sum(volume_usd) from llama_volume where date_day in (select date_day from dune_assets where date_day > (select max(date_day) from dune_assets) - 30)),
         1.0, 'same_upstream'
 
     union all select 'intents_volume_30d_dune_assets_vs_tile', 'Intents trailing 30-day volume, USD', null,
@@ -359,12 +495,69 @@ checks as (
         'Dune public page, all scopes', (select value_usd from dune where metric = 'volume_30d' and scope = 'all'),
         1.0, 'same_upstream'
 
-    union all select 'intents_revenue_all_time_defillama_vs_wallets', 'Intents captured revenue, USD', null,
-        'DefiLlama, sum of daily', (select sum(revenue_usd) from intents),
-        'Wallet transfers, same method', (select sum(received_usd) from inflows),
-        3.0, 'independent'
+    union all select 'intents_volume_dune_assets_vs_page', 'Intents volume on every day read per asset, USD', null,
+        'Dune public page, sum of assets', (select sum(volume_usd) from dune_assets),
+        'revenue.near.org, same days', (select sum(volume_usd) from page_volume where date_day in (select date_day from dune_assets)),
+        1.0, 'same_upstream'
 
-    union all select 'intents_revenue_all_time_defillama_vs_page_monthly', 'Intents captured revenue, USD', null,
+    union all select 'intents_volume_dune_chains_vs_page', 'Intents volume on every day read per blockchain, USD', null,
+        'Dune public page, sum of blockchains', (select sum(volume_usd) from dune_chains),
+        'revenue.near.org, same days', (select sum(volume_usd) from page_volume where date_day in (select date_day from dune_chains)),
+        1.0, 'same_upstream'
+
+    union all select 'intents_swaps_public_month_nearblocks_vs_dune', 'Swaps in the latest month that was at least 99% public', null,
+        'NearBlocks, public swaps', (select sum(public_swaps) from intents, public_month where cast(date_trunc('month', date_day) as date) = m),
+        'Dune public page, all routes', (select sum(swaps) from {{ ref('fct_dune_intents_swaps_daily') }}, public_month where cast(date_trunc('month', date_day) as date) = m),
+        2.0, 'independent'
+
+    union all select 'intents_chain_volume_public_month_nearblocks_vs_dune', 'Intents volume per blockchain in the latest month that was at least 99% public, USD', d.blockchain,
+        'NearBlocks, public routes', n.usd,
+        'Dune public page, all routes', d.usd,
+        2.0, 'independent'
+    from dune_chain_month d left join nearblocks_chain_month n using (blockchain)
+
+    union all select 'intents_bitcoin_volume_nearblocks_vs_dune', 'Bitcoin volume in the latest month that was at least 85% public, USD', null,
+        'NearBlocks, public routes, with Bitcoin bridged to NEAR counted as Bitcoin', (select sum(volume_usd) from {{ ref('fct_intents_chain_daily') }}, mostly_public_month where blockchain = 'btc' and cast(date_trunc('month', date_day) as date) = m),
+        'Dune public page, all routes', (select sum(volume_usd) from dune_chains, mostly_public_month where blockchain = 'btc' and cast(date_trunc('month', date_day) as date) = m),
+        15.0, 'independent'
+
+    union all select 'intents_wnear_dune_tvl_vs_holdings', 'wNEAR held in NEAR Intents on the latest Dune reading''s last day, NEAR', null,
+        'Dune public page, wNEAR TVL over the day''s price', (select t.tvl_usd / p.price_usd from {{ ref('fct_dune_intents_tvl_asset_daily') }} t join {{ ref('fct_market_daily') }} p using (date_day), dune_day where t.symbol = 'wNEAR' and t.date_day = d),
+        'intents.near''s wNEAR balance on chain, read that day', (select max(amount_token) from {{ ref('fct_wallet_holdings') }}, dune_day where account_id = 'intents.near' and symbol = 'wNEAR' and snapshot_date = d),
+        5.0, 'independent'
+
+    union all select 'intents_pool_wnear_month_ends_dune_vs_coinbase_range', 'Month ends where the dashboard''s wNEAR value over intents.near''s wNEAR balance on chain is a NEAR price inside Coinbase''s range for that day', null,
+        'Month ends inside Coinbase''s low and high', (select count(*) filter (where is_inside) from pool_wnear_days),
+        'Month ends compared', (select nullif(count(*), 0) from pool_wnear_days),
+        0.0, 'independent'
+
+    union all select 'intents_pool_dollars_month_ends_chain_vs_dune', 'Dollar tokens held in NEAR Intents at the month end where chain and dashboard differ most, USD',
+        case when dashboard_has_usdt0 then 'month ends since the dashboard has carried USDT0' else 'month ends before the dashboard carried USDT0' end,
+        'intents.near''s balances on chain at one dollar each, at the first block after ' || cast(date_day as varchar), chain_usd,
+        'Dune public page, TVL of the assets with those symbols on that day', dashboard_usd,
+        3.0, 'independent'
+    from pool_dollars_widest_gap
+
+    union all select 'intents_pool_asset_newest_day_chain_vs_dune', 'Value of one main asset held in NEAR Intents on the newest day read from the chain, USD', symbol,
+        'intents.near''s balances on chain at the first block after ' || cast(date_day as varchar) || ', at the asset''s price for that day', chain_usd,
+        'Dune public page, TVL of the asset on that day', dashboard_usd,
+        5.0, 'independent'
+    from pool_priced_newest
+
+    union all select 'intents_pool_priced_assets_month_ends_chain_vs_dune', 'The priced main assets held in NEAR Intents, together, at the month end where chain and dashboard differ most, USD', null,
+        'intents.near''s balances on chain at the first block after ' || cast(date_day as varchar) || ', at each asset''s price for that day', chain_usd,
+        'Dune public page, TVL of the same assets on that day', dashboard_usd,
+        5.0, 'independent'
+    from pool_priced_widest_gap
+
+    union all select 'intents_revenue_all_time_defillama_vs_wallets', 'Intents revenue received by the wallets, USD', null,
+        'DefiLlama, sum of daily', (select sum(revenue_usd) from intents),
+        -- Both sides add up what the same three wallets received and value it at the day's close, so this confirms the
+        -- count of receipts and says nothing about NEAR's own revenue series: marked as not independent.
+        'Wallet transfers, the same wallets and method', (select sum(received_usd) from inflows),
+        3.0, 'same_upstream'
+
+    union all select 'intents_revenue_all_time_defillama_vs_page_monthly', 'Intents revenue received by the wallets, USD', null,
         'DefiLlama, sum of daily', (select sum(revenue_usd) from intents),
         'revenue.near.org, monthly series summed', (select sum(revenue_usd) from {{ ref('fct_revenue_page_monthly') }}),
         5.0, 'same_upstream'
@@ -383,6 +576,14 @@ checks as (
     union all select 'intents_public_tvl_dune_vs_defillama', 'Public Intents TVL, USD', null,
         'Dune public page', (select value_usd from dune where metric = 'tvl' and scope = 'public'),
         'DefiLlama protocol TVL, on the reading''s last day', (select arg_max(tvl_usd, date_day) from {{ ref('fct_protocol_tvl_daily') }}, dune_day where protocol_slug = 'near-intents' and date_day <= d),
+        15.0, 'independent'
+
+    union all select 'intents_pool_dune_total_vs_chain', 'Value held in NEAR Intents, public and confidential, USD', null,
+        'Dune public page, on the reading''s last day', (select sum(tvl_usd) from {{ ref('fct_dune_intents_tvl_daily') }}, dune_day where date_day = d),
+        'intents.near on chain, the tokens the warehouse can price, on the read after that day',
+        (select sum(value_usd) from {{ ref('fct_wallet_holdings') }}, dune_day
+          where account_id = 'intents.near'
+            and snapshot_date = least(d + 1, (select max(snapshot_date) from {{ ref('fct_wallet_holdings') }}))),
         15.0, 'independent'
 
     union all select 'supply_latest_nearblocks_vs_chain', 'Total supply at day end, NEAR', null,
@@ -470,6 +671,12 @@ checks as (
         'CoinMetrics', (select avg(price_usd_coinmetrics) from market_30d where price_usd_nearblocks is not null),
         2.0, 'independent'
 
+    union all select 'token_price_30d_coinmetrics_vs_defillama', 'Mean close over 30 days of a pool asset priced in fct_token_price_daily, USD', symbol,
+        'fct_token_price_daily, from CoinMetrics', price_usd_table,
+        'DefiLlama', price_usd_defillama,
+        0.5, 'independent'
+    from token_price_30d
+
     union all select 'txns_30d_v1_vs_v3', 'Mean daily transactions over 30 days', null,
         'NearBlocks v1', (select avg(txns_v1) from chain_30d),
         'NearBlocks v3', (select avg(txns_v3) from chain_30d),
@@ -553,6 +760,18 @@ checks as (
         'SoSoValue, through news reports', (select reported_cumulative_usd from etf_reported),
         1.0, 'same_upstream'
 
+    union all select 'etf_nrr_near_delivered_chain_vs_fund', 'NEAR delivered to the Bitwise NEAR ETF since its first trading day', null,
+        'Chain, NEAR moved into the listed wallets after the seed',
+        (select sum(c.moved_near) from etf_chain c where c.date_day > (select date_day from etf_seed)),
+        'Shares created less redeemed, each at that day''s NEAR per share',
+        (select sum(flow_near) from {{ ref('fct_etf_nrr_daily') }} where flow_basis <> 'seed_capital'),
+        1.0, 'independent'
+
+    union all select 'etf_nrr_nav_vs_coinbase_range', 'Trading days the Bitwise NEAR ETF''s NAV implies a NEAR price inside Coinbase''s range for that day', null,
+        'Days inside Coinbase''s low and high', (select count(*) filter (where is_inside) from etf_nav_days),
+        'Trading days compared', (select count(*) from etf_nav_days),
+        0.0, 'independent'
+
     union all select 'token_prices_latest_rhea_vs_oneclick', 'Median token price as a multiple of 1Click''s, over tokens both lists price', null,
         'Rhea', (select median(price_usd_rhea / price_usd_oneclick) from prices_latest where token_id <> 'native:near'),
         'Parity with 1Click', 1.0,
@@ -603,6 +822,7 @@ select
         when c.value_a = c.value_b then 'agree'
         else 'differs'
     end as status,
-    n.explanation
+    n.explanation,
+    n.gap_kind
 from checks c
 left join {{ ref('reconciliation_notes') }} n using (check_id)

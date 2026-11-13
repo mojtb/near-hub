@@ -2,7 +2,7 @@
 -- A daily dataset is measured by its newest day of data, a snapshot dataset by its newest read. Each carries the most
 -- days it may fall behind; past that it is stale and the test no_dataset_is_stale fails, so a source that stops arriving
 -- turns the build red instead of going quiet. The limits leave room for one missed night. No limit means the dataset is
--- not expected to keep up: a reading taken by hand, or a source that is being switched off.
+-- not expected to keep up: a reading taken in a browser on request, or a source that is being switched off.
 {% set daily = [
     ('stg_nearblocks__charts_v1', 'NearBlocks legacy daily charts, switched off on 2026-11-22', none),
     ('stg_nearblocks__block_stats', 'NearBlocks daily blocks, gas and supply', 3),
@@ -13,9 +13,10 @@
     ('stg_nearblocks__intents_volume_by_chain', 'NearBlocks Intents by chain', 3),
     ('stg_nearblocks__intents_volume_by_asset', 'NearBlocks Intents by asset', 3),
     ('stg_nearblocks__signer_stats', 'NearBlocks v1.signer daily', 3),
-    ('fct_dune_intents_asset_daily', 'Dune dashboard Intents by asset, read by hand', none),
+    ('fct_dune_intents_asset_daily', 'Dune dashboard Intents by asset, read in a browser on request', none),
     ('stg_intents_explorer__days', 'Intents Explorer daily tally', 3),
     ('stg_rpc__contract_views_history', 'Contract views replayed by day: liquid staking, veNEAR, MPC', 3),
+    ('stg_rpc__intents_pool_history', 'Intents pool on chain: named tokens at month ends and on the newest day', 35),
     ('stg_nearblocks__contract_txns', 'NearBlocks per-contract daily', 3),
     ('stg_nearblocks__wallet_balance', 'NearBlocks wallet balances', 3),
     ('stg_defillama__intents_volume', 'DefiLlama Intents volume', 3),
@@ -24,6 +25,7 @@
     ('stg_defillama__chain_fees', 'DefiLlama chain fees', 3),
     ('stg_defillama__chain_gas_fees', 'DefiLlama chain gas fees', 3),
     ('stg_defillama__chain_dex_volume', 'DefiLlama DEX volume', 3),
+    ('stg_defillama__swap_service_volume', 'DefiLlama cross-chain swap services', 3),
     ('stg_defillama__protocol_tvl', 'DefiLlama protocol TVL', 3),
     ('stg_defillama__stablecoin_chain', 'DefiLlama stablecoins', 3),
     ('stg_revenue_page__fees_daily', 'revenue.near.org fees', 3),
@@ -33,6 +35,8 @@
     ('stg_coinbase__candles', 'Coinbase candles', 3),
     ('stg_coinmetrics__asset_metrics', 'CoinMetrics', 3),
     ('stg_defillama__peer_price', 'DefiLlama prices', 3),
+    ('stg_coinmetrics__token_price', 'CoinMetrics prices of Intents pool assets', 3),
+    ('stg_defillama__token_price', 'DefiLlama prices of Intents pool assets', 3),
     ('stg_rpc__block_day', 'Archival RPC daily block', 3),
     ('stg_rpc__lockup_foundation_balances', 'Foundation lockup balances on chain', 3),
     ('stg_fastnear__transfers', 'FastNear wallet transfers', 3),
@@ -42,6 +46,7 @@
     ('stg_rpc__nrr_pool_daily', 'Bitwise NEAR ETF wallets on chain', 3)
 ] %}
 {# The fund trades on weekdays and fills its chart a day late, so a Monday read is four days behind and a holiday adds more. #}
+{# The Intents pool is read at month ends, and each run adds the day before it: 35 days is a month end missed. #}
 {% set snapshots = [
     ('stg_rpc__validators', 'Validator set'),
     ('stg_rpc__protocol_config', 'Protocol config'),
