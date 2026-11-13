@@ -2000,6 +2000,10 @@
    "decimals": 18,
    "symbol": "ATTENTION"
   },
+  "attention-4.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "ATTENTION"
+  },
   "attention.nearlytrade.near": {
    "decimals": 18,
    "symbol": "ATTENTION"
@@ -2992,6 +2996,10 @@
    "decimals": 18,
    "symbol": "BBATMAN"
   },
+  "bbc.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "BBC"
+  },
   "bbdiarhea.nearlytrade.near": {
    "decimals": 18,
    "symbol": "BBDIARHEA"
@@ -3326,6 +3334,10 @@
   "bighot.loudw.near": {
    "decimals": 24,
    "symbol": "BIGHOT"
+  },
+  "bigillia.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "BIGILLIA"
   },
   "bigreen-2.cookinglabs.near": {
    "decimals": 18,
@@ -5598,6 +5610,10 @@
    "decimals": 18,
    "symbol": "CRED"
   },
+  "credit.nearon-stg.near": {
+   "decimals": 24,
+   "symbol": "siCREDIT"
+  },
   "creds.nearlytrade.near": {
    "decimals": 18,
    "symbol": "CREDS"
@@ -5794,6 +5810,14 @@
   "dac17f958d2ee523a2206206994597c13d831ec7.factory.bridge.near": {
    "decimals": 6,
    "symbol": "USDT.e"
+  },
+  "dacity.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "DACITY"
+  },
+  "dacity.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "DACITY"
   },
   "dacitycoin-2.nearlytrade.near": {
    "decimals": 18,
@@ -11061,6 +11085,14 @@
    "decimals": 18,
    "symbol": "HU"
   },
+  "huang.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "HUANG"
+  },
+  "huangover.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "HUANGOVER"
+  },
   "hub.nearlytrade.near": {
    "decimals": 18,
    "symbol": "HUB"
@@ -11075,6 +11107,10 @@
   "humaze.nearlytrade.near": {
    "decimals": 18,
    "symbol": "HUMAZE"
+  },
+  "hung.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "HUNG"
   },
   "hunter.v2-launchpad.justhoot.near": {
    "decimals": 18,
@@ -12116,11 +12152,19 @@
    "decimals": 24,
    "symbol": "jelly"
   },
+  "jensen-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "JENSEN"
+  },
   "jensen.nearlytrade.near": {
    "decimals": 18,
    "symbol": "JENSEN"
   },
   "jensen.nearrr-fun.near": {
+   "decimals": 18,
+   "symbol": "JENSEN"
+  },
+  "jensen.v2-launchpad.justhoot.near": {
    "decimals": 18,
    "symbol": "JENSEN"
   },
@@ -12279,6 +12323,10 @@
   "josh.nearlytrade.near": {
    "decimals": 18,
    "symbol": "JOSH"
+  },
+  "jsn.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "JSN"
   },
   "jubjub-2.nearlytrade.near": {
    "decimals": 18,
@@ -13155,6 +13203,10 @@
   "ling.nearlytrade.near": {
    "decimals": 18,
    "symbol": "LING"
+  },
+  "linkpaid.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "LINKPAID"
   },
   "liquid.nearlytrade.near": {
    "decimals": 18,
@@ -17071,6 +17123,10 @@
    "decimals": 18,
    "symbol": "NEARGOTCHI"
   },
+  "neargotchiai.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARGOTCHIAI"
+  },
   "neargr.nearlytrade.near": {
    "decimals": 18,
    "symbol": "NEARGR"
@@ -19450,6 +19506,10 @@
    "decimals": 18,
    "symbol": "NIGIRI"
   },
+  "nihao.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NIHAO"
+  },
   "nihao.nihaocat.near": {
    "decimals": 24,
    "symbol": "nihao"
@@ -21250,6 +21310,10 @@
    "decimals": 18,
    "symbol": "NZEC"
   },
+  "nzhipu.rwa.assetize.near": {
+   "decimals": 8,
+   "symbol": "nZHIPU"
+  },
   "o.tkn.near": {
    "decimals": 0,
    "symbol": "O"
@@ -22553,6 +22617,10 @@
   "pocar-ab170e.launchpad.justhoot.near": {
    "decimals": 18,
    "symbol": "POCAR"
+  },
+  "pocketgotchi.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "POCKETGOTCHI"
   },
   "pod-2.nearlytrade.near": {
    "decimals": 18,
@@ -25980,6 +26048,10 @@
   "sd.nearlytrade.near": {
    "decimals": 18,
    "symbol": "SD"
+  },
+  "sdc.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "SDC"
   },
   "sdfsd.nearlytrade.near": {
    "decimals": 18,
