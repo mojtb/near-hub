@@ -1,0 +1,1211 @@
+<script>try{var t=localStorage.getItem('nearhub.theme');if(t==='dark'||t==='light')document.documentElement.dataset.theme=t}catch(e){}</script>
+<title>NEAR Hub Docs</title>
+<link rel="icon" type="image/png" href="__HUB__/favicon.png">
+<link rel="icon" type="image/svg+xml" href="__HUB__/favicon.svg">
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600;700&display=swap">
+<style>
+/* The warehouse guide, in NEAR Hub's look: the Hub's dark header and logo, an index of every table beside it, and a
+   reading pane. Only the header and the footer are dark in both themes; the index, the top of each page and
+   everything under it follow the theme, light by day and dark by night.
+   One visual language everywhere: a solid bar is data in the warehouse, a hatched bar is history queued for
+   backfill, and bare track is history the source cannot give. The kind of history is a text label, never a colour.
+   Identifiers inside descriptions are set in mono, and a table's name there links to its page. */
+:root{
+  --night:#090e0d; --night-2:#0e1413; --night-ink:#f3f7f5; --night-mute:rgba(243,247,245,.62); --night-faint:rgba(243,247,245,.44); --night-line:rgba(243,247,245,.11); --mint:#00ec97;
+  --page:#f4f5f5; --surface:#ffffff; --index:#ffffff; --soft:#f1f3f2; --ink:#0c100f; --ink-2:#2c3331; --mute:#59625f; --faint:#646c69;
+  --line:rgba(12,16,15,.09); --line-2:rgba(12,16,15,.17); --accent:#008a60; --wash:#e8faf2; --focus:#2f5fd6; --hue:#1fb58a;
+  --have:#0b9a6b; --hatch:#8a9591; --track:#e8ecea; --marker:#59625f; --warn:#9a5512; --warn-wash:#fbf1e4;
+  --tip-bg:#0c100f; --tip-ink:#f3f7f5; --tip-mute:rgba(243,247,245,.66);
+  --shadow:0 1px 2px rgba(12,16,15,.04),0 14px 38px rgba(12,16,15,.06); --pop:0 2px 6px rgba(12,16,15,.06),0 24px 60px rgba(12,16,15,.16);
+  --sans:'Instrument Sans',ui-sans-serif,system-ui,-apple-system,'Segoe UI',sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --side:292px; --r:16px; --head-h:60px; --gutter:clamp(16px,2.6vw,40px); --top:env(safe-area-inset-top,0px);
+  --lab:244px; --spanw:50px; --kindw:104px; --gap:14px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --page:#0b0f0e; --surface:#131817; --index:#0e1413; --soft:#1b211f; --ink:#eff3f1; --ink-2:rgba(239,243,241,.86); --mute:#a4adaa; --faint:#7d8784;
+    --line:rgba(239,243,241,.09); --line-2:rgba(239,243,241,.18); --accent:#2fe0a0; --wash:#0f2a20; --focus:#7c9df2;
+    --have:#1cae7e; --hatch:#66726e; --track:#1e2624; --marker:rgba(243,247,245,.62); --warn:#e08a3c; --warn-wash:rgba(224,138,60,.1);
+    --tip-bg:#eff3f1; --tip-ink:#131817; --tip-mute:rgba(19,24,23,.62);
+    --shadow:0 1px 0 rgba(255,255,255,.03) inset; --pop:0 0 0 1px rgba(255,255,255,.05),0 24px 60px rgba(0,0,0,.55);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --page:#0b0f0e; --surface:#131817; --index:#0e1413; --soft:#1b211f; --ink:#eff3f1; --ink-2:rgba(239,243,241,.86); --mute:#a4adaa; --faint:#7d8784;
+  --line:rgba(239,243,241,.09); --line-2:rgba(239,243,241,.18); --accent:#2fe0a0; --wash:#0f2a20; --focus:#7c9df2;
+  --have:#1cae7e; --hatch:#66726e; --track:#1e2624; --marker:rgba(243,247,245,.62); --warn:#e08a3c; --warn-wash:rgba(224,138,60,.1);
+  --tip-bg:#eff3f1; --tip-ink:#131817; --tip-mute:rgba(19,24,23,.62);
+  --shadow:0 1px 0 rgba(255,255,255,.03) inset; --pop:0 0 0 1px rgba(255,255,255,.05),0 24px 60px rgba(0,0,0,.55);
+  color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:border-box}
+[hidden]{display:none!important}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--page);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px;border-radius:4px}
+code,.mono{font-family:var(--mono);font-size:.92em}
+h1,h2,h3{text-wrap:balance;margin:0}
+p{margin:0}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.rich code{color:inherit;font-size:.9em;overflow-wrap:anywhere}
+.xref{color:inherit;text-decoration:underline;text-decoration-color:var(--line-2);text-decoration-thickness:1px;text-underline-offset:3px}
+.xref:hover{text-decoration-color:var(--accent)}
+.xref:hover code{color:var(--accent)}
+.hatch{background-color:var(--track);background-image:linear-gradient(135deg,var(--hatch) 12.5%,transparent 12.5% 50%,var(--hatch) 50% 62.5%,transparent 62.5%);background-size:6px 6px}
+
+/* ---------- header: the Hub's bar ---------- */
+body::before{content:"";position:fixed;inset:0 0 auto;height:var(--top);z-index:41;background:var(--night)}
+.head{position:sticky;top:var(--top);z-index:40;display:flex;align-items:center;gap:12px;height:var(--head-h);padding-inline:max(18px,env(safe-area-inset-left,0px)) max(18px,env(safe-area-inset-right,0px));background:rgba(9,14,13,.94);backdrop-filter:saturate(1.6) blur(18px);-webkit-backdrop-filter:saturate(1.6) blur(18px);box-shadow:0 1px 0 var(--night-line);color:var(--night-ink)}
+.brand{display:flex;align-items:center;gap:10px;font-weight:600;font-size:16.5px;letter-spacing:-.02em;color:var(--night-ink);text-decoration:none;white-space:nowrap}
+.brand svg{flex:none;filter:drop-shadow(0 0 9px rgba(0,236,151,.3));transition:filter .2s}
+.brand:hover svg{filter:drop-shadow(0 0 12px rgba(0,236,151,.5))}
+.brand-q{font-weight:400;color:var(--night-mute)}
+.docs-tag{display:inline-flex;align-items:center;gap:7px;height:28px;padding:0 11px 0 9px;border-radius:99px;background:rgba(0,236,151,.1);box-shadow:inset 0 0 0 1px rgba(0,236,151,.22);font-size:13px;font-weight:500;color:var(--night-ink);text-decoration:none;white-space:nowrap}
+.docs-tag::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--mint)}
+.docs-tag:hover{background:rgba(0,236,151,.16)}
+.head-sp{flex:1}
+.head-a,.head-b,.menu{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:36px;border-radius:10px;border:0;box-shadow:inset 0 0 0 1px var(--night-line);background:rgba(243,247,245,.045);color:var(--night-ink);font:inherit;font-size:13.5px;font-weight:500;text-decoration:none;white-space:nowrap;cursor:pointer;transition:background .15s,box-shadow .15s}
+.head-a{padding:0 14px 0 11px}
+.head-a svg{color:var(--night-mute)}
+.head-b{width:36px;padding:0;color:var(--night-mute)}
+.head-a:hover,.head-b:hover,.menu:hover{background:rgba(243,247,245,.09);box-shadow:inset 0 0 0 1px rgba(243,247,245,.2);color:var(--night-ink)}
+.menu{display:none;padding:0 12px}
+
+/* ---------- shell: the index beside the reading pane ---------- */
+/* The index follows the theme, light by day and dark by night; only the header and the band that opens a page stay dark */
+.app{display:grid;grid-template-columns:var(--side) minmax(0,1fr);align-items:start;min-height:calc(100vh - var(--head-h))}
+.index{position:sticky;top:calc(var(--head-h) + var(--top));height:calc(100vh - var(--head-h) - var(--top));display:flex;flex-direction:column;min-width:0;background:var(--index);color:var(--ink);box-shadow:inset -1px 0 0 var(--line)}
+.index-top{display:flex;flex-direction:column;gap:8px;padding:16px 14px 12px;border-bottom:1px solid var(--line)}
+.search{position:relative}
+.search svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--faint);pointer-events:none}
+.search input{width:100%;font:inherit;font-size:14px;color:var(--ink);background:var(--soft);border:1px solid var(--line);border-radius:10px;padding:8px 34px 8px 34px;min-height:38px}
+.search input::placeholder{color:var(--faint)}
+.search input:hover{border-color:var(--line-2)}
+.search input:focus{outline:none;border-color:var(--accent);background:var(--surface)}
+.search kbd{position:absolute;right:9px;top:50%;transform:translateY(-50%);min-width:20px;padding:0 5px;border-radius:5px;border:1px solid var(--line-2);font-family:var(--mono);font-size:11px;line-height:17px;text-align:center;color:var(--faint);pointer-events:none}
+.search input:focus+kbd,.search input:not(:placeholder-shown)+kbd{display:none}
+.kind-sel{width:100%;min-height:36px;font:inherit;font-size:13.5px;color:var(--mute);background-color:transparent;border:1px solid var(--line);border-radius:10px;padding:6px 30px 6px 11px;cursor:pointer;-webkit-appearance:none;appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--mute) 50%),linear-gradient(135deg,var(--mute) 50%,transparent 50%);background-position:calc(100% - 17px) 50%,calc(100% - 12px) 50%;background-size:5px 5px;background-repeat:no-repeat}
+.kind-sel:hover{border-color:var(--line-2);color:var(--ink)}
+.nav{position:relative;flex:1;overflow-y:auto;padding:8px 10px 28px;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:var(--line-2) transparent}
+.nav-home{display:flex;align-items:center;gap:9px;padding:8px 9px;margin:4px 0 4px;border-radius:9px;text-decoration:none;font-weight:500;font-size:14px;color:var(--ink)}
+.nav-home svg{color:var(--accent)}
+.nav-home:hover,.nav-i:hover{background:var(--soft);color:var(--ink)}
+.nav-home[aria-current="page"],.nav-i[aria-current="page"]{background:var(--wash);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--accent) 24%,transparent);color:var(--ink)}
+.nav-h{font-size:12px;font-weight:600;color:var(--faint);padding:16px 9px 5px}
+.nav-i{display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:8px;align-items:center;padding:4px 9px;border-radius:8px;text-decoration:none;font-family:var(--mono);font-size:12.5px;color:var(--ink-2)}
+.nav-i span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nav-i small{grid-column:1/-1;font-family:var(--sans);font-size:11.5px;color:var(--faint);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nav-i i.hatch{width:14px;height:7px;border-radius:2px}
+.nav-empty{padding:16px 9px;color:var(--mute);font-size:14px}
+main{min-width:0;background:var(--page)}
+main:focus{outline:none}
+.wrap{max-width:1240px;margin:0 auto;padding-left:max(var(--gutter),env(safe-area-inset-left,0px));padding-right:max(var(--gutter),env(safe-area-inset-right,0px))}
+
+/* ---------- the top of a page: on the page itself, so it is light by day and dark by night ---------- */
+.top{position:relative;background:radial-gradient(56% 150% at 100% -40%,color-mix(in srgb,var(--accent) 11%,transparent),transparent 64%),radial-gradient(40% 110% at 0% -30%,color-mix(in srgb,var(--focus) 6%,transparent),transparent 66%),var(--page)}
+.top>.wrap{padding-block:clamp(22px,3.6vh,38px) 0}
+.eyebrow,.crumbs{display:flex;flex-wrap:wrap;align-items:center;gap:6px;min-height:28px;font-size:13.5px;color:var(--mute)}
+.eyebrow::before{content:"";width:20px;height:3px;margin-right:4px;border-radius:2px;background:var(--accent)}
+.eyebrow b{font-weight:600;color:var(--ink)}
+.crumbs a{text-decoration:none;color:var(--mute)}
+.crumbs a:hover{color:var(--ink)}
+.top h1{margin-top:6px;font-size:clamp(28px,3.2vw,46px);line-height:1.06;letter-spacing:-.034em;font-weight:500;color:var(--ink)}
+.lede{max-width:44em;margin-top:10px;font-size:clamp(15.5px,1.25vw,17.5px);line-height:1.55;color:var(--mute)}
+.lede strong{color:var(--ink);font-weight:500;white-space:nowrap}
+/* The overview: a search and a first query, then what the warehouse holds at this pin */
+.hero-top{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(280px,.65fr);gap:clamp(20px,3vw,52px);align-items:end}
+.hero h1{max-width:17em}
+.hs{position:relative;max-width:660px;margin-top:clamp(16px,2.4vh,24px)}
+.hs>svg{position:absolute;left:17px;top:27px;transform:translateY(-50%);color:var(--faint);pointer-events:none}
+.hs input{width:100%;min-height:54px;padding:0 46px 0 48px;border-radius:15px;border:1px solid var(--line-2);background:var(--surface);color:var(--ink);font:inherit;font-size:16.5px;box-shadow:var(--shadow);transition:border-color .15s,box-shadow .15s}
+.hs input::placeholder{color:var(--faint)}
+.hs input:hover{border-color:color-mix(in srgb,var(--ink) 34%,transparent)}
+.hs input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 16%,transparent),var(--shadow)}
+.hs>kbd{position:absolute;right:14px;top:27px;transform:translateY(-50%);min-width:22px;padding:0 6px;border-radius:6px;border:1px solid var(--line-2);background:var(--soft);font-family:var(--mono);font-size:11.5px;line-height:19px;text-align:center;color:var(--faint);pointer-events:none}
+.hs input:focus+kbd,.hs input:not(:placeholder-shown)+kbd{display:none}
+.hs-list{position:absolute;left:0;right:0;top:calc(100% + 8px);z-index:6;display:grid;gap:1px;padding:6px;border-radius:15px;background:var(--surface);border:1px solid var(--line-2);box-shadow:var(--pop)}
+.hs-r{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:1px 14px;align-items:baseline;padding:8px 11px;border-radius:10px;text-decoration:none;color:var(--ink)}
+.hs-r:hover,.hs-r:focus-visible{background:var(--soft);outline:none}
+.hs-r:focus-visible{box-shadow:inset 0 0 0 1px var(--accent)}
+.hs-r code{font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hs-r code i{font-style:normal;color:var(--accent)}
+.hs-r em{font-style:normal;font-size:12px;color:var(--faint);white-space:nowrap}
+.hs-r span{grid-column:1/-1;font-size:13px;line-height:1.4;color:var(--mute);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hs-more,.hs-none{padding:8px 11px;font-size:13px;color:var(--mute)}
+.hs-start{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:12px;font-size:13px;color:var(--mute)}
+.hs-start>span{margin-right:4px}
+.hs-chip{font-family:var(--mono);font-size:12px;padding:3px 9px;border-radius:8px;background:var(--surface);border:1px solid var(--line);color:var(--ink-2);text-decoration:none;transition:border-color .15s,color .15s}
+.hs-chip:hover{border-color:var(--accent);color:var(--accent)}
+.hq{min-width:0;border-radius:15px;background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow);overflow:hidden}
+.hq-top{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:7px 7px 7px 16px;border-bottom:1px solid var(--line);background:var(--soft);font-size:13.5px}
+.hq-top b{font-weight:600}
+.hq pre{margin:0;padding:14px 16px 12px;font-family:var(--mono);font-size:12.5px;line-height:1.65;color:color-mix(in srgb,var(--accent) 62%,var(--ink));white-space:pre-wrap;overflow-wrap:anywhere}
+.hq p{padding:0 16px 14px;font-size:13px;line-height:1.5;color:var(--mute)}
+.hq p code{color:var(--ink)}
+/* Figures in a ruled strip: what the warehouse holds, or what a table is */
+.facts,.meta{display:flex;flex-wrap:wrap;gap:1px;margin:clamp(18px,2.8vh,28px) 0 0;border:1px solid var(--line);border-radius:var(--r);background:var(--line);box-shadow:var(--shadow);overflow:hidden}
+.facts div,.meta div{flex:1 1 150px;min-width:0;padding:12px 16px 13px;background:var(--surface)}
+.facts dt,.meta dt{font-size:12.5px;line-height:1.35;color:var(--mute)}
+.facts dd,.meta dd{margin:3px 0 0;font-size:19px;font-weight:500;letter-spacing:-.022em;line-height:1.2;font-variant-numeric:tabular-nums;color:var(--ink);overflow-wrap:anywhere}
+.facts dd small{font-size:12.5px;font-weight:400;letter-spacing:0;color:var(--mute)}
+.facts .warn dd{color:var(--warn)}
+
+/* ---------- the sheet ---------- */
+.sheet{position:relative;background:var(--page);padding-top:clamp(22px,3.4vh,34px)}
+.sec{margin-top:clamp(30px,5vh,50px)}
+.sheet>.sec:first-child{margin-top:0}
+.sec-h{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:4px 20px;margin-bottom:14px}
+.sec-h h2{font-size:clamp(23px,2.5vw,34px);line-height:1.08;letter-spacing:-.028em;font-weight:500}
+.sec-h p{color:var(--mute);font-size:14.5px;max-width:70ch}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);min-width:0}
+
+/* ---------- timeline ---------- */
+.tl-card{padding:16px clamp(14px,1.8vw,22px) 20px}
+.tl-top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 20px}
+.chips{display:flex;flex-wrap:wrap;gap:5px}
+.chip{display:inline-flex;align-items:center;gap:7px;min-height:32px;font:inherit;font-size:13.5px;color:var(--mute);background:var(--surface);border:1px solid var(--line);border-radius:99px;padding:4px 12px;cursor:pointer;transition:all .15s}
+.chip:hover{border-color:var(--line-2);color:var(--ink)}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.chip .n{font-size:12px;opacity:.68;font-variant-numeric:tabular-nums}
+.toggle{display:inline-flex;background:color-mix(in srgb,var(--hue) 5%,var(--soft));border-radius:13px;padding:4px;gap:2px}
+.toggle button{font:inherit;font-size:13.5px;font-weight:500;color:var(--mute);background:none;border:0;border-radius:9px;padding:5px 13px;min-height:30px;cursor:pointer;white-space:nowrap;transition:color .15s}
+.toggle button:hover{color:var(--ink)}
+.toggle button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:var(--shadow),0 0 0 1px var(--line)}
+.tl-sub{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px 24px;margin:14px 0 10px}
+.tl-blurb{font-size:13.5px;color:var(--mute);max-width:84ch}
+.tl-blurb b{color:var(--ink);font-weight:600}
+.keys{display:flex;flex-wrap:wrap;gap:5px 16px;font-size:12.5px;color:var(--mute)}
+.keys span{display:inline-flex;align-items:center;gap:7px;white-space:nowrap}
+.key{display:inline-block;width:20px;height:9px;border-radius:2px;flex:none}
+.key.have{background:var(--have)}
+.key.none{background:var(--track)}
+.key.pin,.key.v1{width:0;height:13px;border-radius:0;border-left:1.5px solid var(--marker)}
+.key.v1{border-left-style:dashed}
+.tl{position:relative}
+.tl-axis,.tl-row{display:grid;grid-template-columns:var(--lab) minmax(0,1fr) var(--spanw) var(--kindw);column-gap:var(--gap)}
+.tl-axis{position:sticky;top:calc(var(--head-h) + var(--top));z-index:3;background:var(--surface);padding:8px 0 7px;border-bottom:1px solid var(--ink);align-items:end}
+.tl-axis .col{font-size:12.5px;color:var(--mute)}
+.tl-axis .col.r{text-align:right}
+.axis{position:relative;height:17px}
+.tick{position:absolute;top:0;transform:translateX(-50%);font-size:11.5px;color:var(--faint);font-variant-numeric:tabular-nums;white-space:nowrap}
+.tick.major{color:var(--mute);font-weight:600}
+.tick.edge{transform:none}
+.tl-area{font-size:13px;font-weight:600;color:var(--mute);padding:18px 0 5px;scroll-margin-top:calc(var(--head-h) + var(--top) + 46px)}
+.tl-row{align-items:center;min-height:26px;border-radius:6px}
+.tl-name{min-width:0;font-family:var(--mono);font-size:12.5px;text-decoration:none;color:var(--ink-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tl-name:hover{color:var(--accent)}
+.tl-trk{position:relative;height:26px;display:flex;align-items:center;cursor:pointer}
+.hist .tl-trk{cursor:crosshair}
+.tl-ref{min-width:0;font-size:12.5px;color:var(--faint);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer}
+.tl-row:hover .tl-name{color:var(--ink)}
+.tl-row:hover .bar{box-shadow:0 0 0 1px var(--line-2)}
+.tl-span{font-size:12px;color:var(--mute);text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.tl-kind{font-size:12px;color:var(--mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tl-kind.q{color:var(--ink);font-weight:600;font-variant-numeric:tabular-nums}
+.bar{position:relative;width:100%;height:12px;border-radius:4px;overflow:hidden;background:var(--track)}
+.bar>i.hatch{position:absolute;top:0;bottom:0}
+.bar>svg{position:absolute;inset:0;display:block;width:100%;height:100%}
+.bar .have{fill:var(--have)}
+.bar .ref{fill:var(--track)}
+.bar>i.pip{position:absolute;top:0;bottom:0;width:4px;margin-left:-2px;border-radius:1px;background:var(--have)}
+.bar.pre::after{content:"";position:absolute;inset:0 auto 0 0;width:18px;background:linear-gradient(90deg,var(--surface),transparent)}
+.tl-over{position:absolute;top:0;bottom:0;left:calc(var(--lab) + var(--gap));right:calc(var(--spanw) + var(--kindw) + 2 * var(--gap));pointer-events:none;z-index:4}
+.mk{position:absolute;top:32px;bottom:0;width:0;border-left:1px solid var(--marker);opacity:.8}
+.mk.v1{border-left-style:dashed}
+.cross{position:absolute;top:0;bottom:0;width:0;border-left:1px solid var(--ink);opacity:.5}
+.cross span{position:absolute;top:5px;left:6px;font-size:11.5px;font-weight:600;background:var(--ink);color:var(--surface);padding:1px 6px;border-radius:5px;white-space:nowrap}
+.cross.flip span{left:auto;right:6px}
+.tl-foot{margin-top:14px;font-size:13px;color:var(--mute);max-width:92ch}
+
+/* ---------- history jobs ---------- */
+.queue{padding:4px clamp(16px,2vw,24px);margin-bottom:14px}
+.qrow{display:grid;grid-template-columns:minmax(170px,1fr) minmax(0,2.1fr) 128px;gap:8px 26px;padding:18px 0;align-items:start}
+.qrow+.qrow{border-top:1px solid var(--line)}
+.q-h h3{font-size:16px;font-weight:600;letter-spacing:-.01em}
+.q-h p{font-size:12.5px;color:var(--mute);margin-top:2px}
+.meter{display:flex;gap:2px;height:10px;border-radius:4px;overflow:hidden;margin-top:6px}
+.meter i{display:block;height:100%;min-width:2px}
+.meter .m-done{background:var(--have)}
+.meter .m-ref{background:var(--track)}
+.q-cap{display:flex;flex-wrap:wrap;gap:2px 14px;margin-top:7px;font-size:12.5px;color:var(--mute);font-variant-numeric:tabular-nums}
+.q-cap b{color:var(--ink);font-weight:600}
+.q-eta{text-align:right}
+.q-eta b{display:block;font-size:20px;font-weight:500;letter-spacing:-.02em;line-height:1.2;font-variant-numeric:tabular-nums}
+.q-eta span{font-size:12.5px;color:var(--mute)}
+.q-d{grid-column:2/-1;display:grid;gap:10px}
+.q-d p{font-size:13.5px;color:var(--mute);line-height:1.55;max-width:86ch}
+.tchips{display:flex;flex-wrap:wrap;gap:6px}
+.tchip{font-family:var(--mono);font-size:11.5px;text-decoration:none;color:var(--ink-2);background:var(--soft);border:1px solid var(--line);border-radius:7px;padding:2px 8px;overflow-wrap:anywhere;transition:border-color .15s,color .15s}
+a.tchip:hover{border-color:var(--accent);color:var(--accent)}
+/* Two jobs to a row, ruled between rows only: no line sits under the card's top edge */
+.done-list{position:relative;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:clamp(30px,4vw,64px);padding:4px clamp(16px,2.2vw,28px) 6px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow)}
+.done-list::before{content:"";position:absolute;top:16px;bottom:16px;left:50%;border-left:1px solid var(--line)}
+.done:nth-child(-n+2){border-top:0}
+.done{display:grid;grid-template-columns:22px minmax(0,1fr) auto;gap:3px 10px;padding:13px 0 14px;border-top:1px solid var(--line);align-items:start;align-content:start}
+.done svg{margin-top:2px}
+.done b{font-weight:600;font-size:15px;letter-spacing:-.01em}
+.done .v{font-size:13px;color:var(--mute);font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+.done p{grid-column:2/4;font-size:13.5px;line-height:1.5;color:var(--mute)}
+.ok{color:var(--have)} .byhand{color:var(--mute)}
+.note{margin-top:16px;display:flex;gap:10px;align-items:flex-start;font-size:13.5px;color:var(--ink-2);background:var(--warn-wash);border-radius:12px;padding:12px 15px}
+.note svg{flex:none;color:var(--warn);margin-top:2px}
+
+/* ---------- tooltip ---------- */
+.tip{position:fixed;z-index:60;pointer-events:none;background:var(--tip-bg);color:var(--tip-ink);border-radius:10px;padding:8px 11px;font-size:12.5px;line-height:1.4;max-width:320px;box-shadow:0 12px 34px rgba(0,0,0,.28)}
+.tip b{display:block;font-size:13.5px;font-weight:600}
+.tip .t{font-family:var(--mono);font-size:11.5px;color:var(--tip-mute)}
+.tip .l{display:block;color:var(--tip-ink)}
+.tip .l2{display:block;color:var(--tip-mute)}
+
+/* ---------- table page ---------- */
+.t-head{display:grid;gap:12px;padding-top:4px}
+.t-title{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px}
+.t-title h1{margin-top:0;font-family:var(--mono);font-size:clamp(24px,3.1vw,40px);font-weight:500;letter-spacing:-.03em;line-height:1.1;overflow-wrap:anywhere}
+.kpill{display:inline-flex;align-items:center;gap:7px;height:28px;font-size:12.5px;font-weight:500;border-radius:99px;padding:0 12px;white-space:nowrap;background:var(--surface);border:1px solid var(--line-2);color:var(--ink)}
+.kpill::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--accent)}
+.kpill i.hatch{width:14px;height:7px;border-radius:2px}
+.t-desc{max-width:48em;font-size:clamp(15.5px,1.25vw,17.5px);line-height:1.55;color:color-mix(in srgb,var(--ink) 74%,var(--page))}
+.t-desc code{color:var(--ink)}
+.meta div:nth-child(1){flex:1.3 1 190px}
+.meta div:nth-child(2),.meta div:nth-child(3){flex:0 1 124px}
+.meta div:nth-child(4){flex:2.6 1 280px}
+.meta dd.mono{font-size:14px;letter-spacing:-.01em;line-height:1.5;font-weight:400}
+.meta dd.rich{font-size:14px;font-weight:400;letter-spacing:0;line-height:1.5;color:var(--mute)}
+.meta dd.rich code{color:var(--ink)}
+/* The parts of a table's page, a click away from its top */
+.jump{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:14px;font-size:13px;color:var(--mute)}
+.jump>span{margin-right:4px}
+.jump button{font:inherit;font-size:13px;color:var(--ink-2);background:none;border:1px solid var(--line);border-radius:99px;padding:3px 11px;min-height:28px;cursor:pointer;transition:border-color .15s,color .15s,background .15s}
+.jump button:hover{border-color:var(--line-2);color:var(--ink);background:var(--surface)}
+.jump button small{margin-left:5px;font-size:12px;color:var(--faint);font-variant-numeric:tabular-nums}
+.t-more{position:relative;max-width:none;margin:0 0 4px;padding:15px 20px 16px 22px;border-radius:14px;background:color-mix(in srgb,var(--hue) 5%,var(--soft));font-size:15px;line-height:1.65;color:color-mix(in srgb,var(--ink) 82%,var(--surface));overflow:hidden}
+.t-more::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--hue)}
+.block{margin-top:clamp(26px,4.2vh,40px)}
+.sheet>.wrap>.t-more+.block{margin-top:clamp(22px,3.4vh,32px)}
+.sheet>.wrap>.block:first-child{margin-top:0}
+.block>h2{font-size:clamp(20px,2vw,26px);font-weight:500;letter-spacing:-.024em;line-height:1.15;margin-bottom:12px;display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px}
+.block>h2 small{font-size:14px;color:var(--mute);font-weight:400;letter-spacing:0}
+.hist{padding:18px clamp(16px,2vw,24px) 20px;display:grid;gap:16px}
+.hist .tl-trk{height:30px}
+.hist .bar{height:16px;border-radius:5px}
+.hist .tl-over{left:0;right:0}
+.hist .mk{top:20px}
+.hist .keys{margin-top:8px}
+.hist-why{font-size:15px;line-height:1.62;color:color-mix(in srgb,var(--ink) 82%,var(--surface));max-width:80ch}
+.hist-stats{display:flex;flex-wrap:wrap;gap:0;margin:0;border-top:1px solid var(--line)}
+.hist-stats div{padding:12px clamp(16px,2.2vw,30px) 0 0;margin-right:clamp(16px,2.2vw,30px);border-right:1px solid var(--line)}
+.hist-stats div:last-child{border-right:0;margin-right:0}
+.hist-stats dt{font-size:13px;color:var(--mute)}
+.hist-stats dd{margin:2px 0 0;font-size:18px;font-weight:500;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.hist-stats dd small{font-size:13px;font-weight:400;letter-spacing:0;color:var(--mute)}
+.hist-x{font-size:13.5px;color:var(--mute);line-height:1.55;max-width:86ch}
+.hist-x b{color:var(--ink-2);font-weight:600}
+.series{border-top:1px solid var(--line);padding-top:14px}
+.series summary{cursor:pointer;font-size:14px;font-weight:600;color:var(--ink-2)}
+.series summary small{font-weight:400;color:var(--mute);margin-left:6px}
+.s-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:2px 26px;margin-top:10px}
+.s-i{display:flex;justify-content:space-between;gap:12px;font-size:12.5px;padding:4px 0;border-bottom:1px solid var(--line);min-width:0}
+.s-i code{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--ink-2)}
+.s-i span{color:var(--mute);white-space:nowrap;font-variant-numeric:tabular-nums}
+.hist-job{display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px 16px;align-items:baseline;border-top:1px solid var(--line);padding-top:14px}
+.hist-job p{font-size:13.5px;color:var(--mute)}
+.hist-job p b{color:var(--ink);font-weight:600}
+.hist-job a{font-size:13.5px;font-weight:500;color:var(--accent);text-decoration:none;white-space:nowrap}
+.f-filter{position:relative;width:min(280px,100%);margin-left:auto;font-weight:400;letter-spacing:0}
+.f-filter svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--faint);pointer-events:none}
+.f-filter input{width:100%;min-height:36px;font:inherit;font-size:13.5px;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:6px 10px 6px 34px}
+.f-filter input::placeholder{color:var(--faint)}
+.f-filter input:hover{border-color:var(--line-2)}
+.f-filter input:focus{outline:none;border-color:var(--focus)}
+.fields{border:1px solid var(--line);border-radius:var(--r);background:var(--surface);box-shadow:var(--shadow);overflow:hidden;padding:0 clamp(14px,1.8vw,22px) 4px}
+.f-head,.f-row{display:grid;grid-template-columns:minmax(170px,1.1fr) minmax(0,2.2fr) 210px;gap:18px;padding:12px 0}
+.f-head{font-size:12.5px;color:var(--mute);border-bottom:1px solid var(--ink);padding-top:14px;padding-bottom:10px}
+.f-row{position:relative;border-top:1px solid var(--line);scroll-margin-top:calc(var(--head-h) + var(--top) + 16px)}
+.f-head+.f-row{border-top:0}
+.f-row::before{content:"";position:absolute;inset:0 calc(-1 * clamp(14px,1.8vw,22px));z-index:0;pointer-events:none;transition:background .15s}
+.f-row:hover::before{background:color-mix(in srgb,var(--soft) 70%,transparent)}
+.f-row.hit::before{background:var(--wash);box-shadow:inset 3px 0 0 var(--accent)}
+.f-row>*{position:relative;z-index:1}
+.f-none{padding:16px 0;font-size:14px;color:var(--mute)}
+.f-name{min-width:0}
+.f-name a{display:block;text-decoration:none}
+.f-name code{font-size:13px;font-weight:500;color:var(--ink);overflow-wrap:anywhere}
+.f-name a::after{content:"#";margin-left:6px;font-family:var(--mono);font-size:12px;color:var(--faint);opacity:0}
+.f-name a:hover::after,.f-name a:focus-visible::after{opacity:1}
+.f-type{display:flex;flex-wrap:wrap;gap:4px 8px;margin-top:3px;font-size:12px;color:var(--faint)}
+.f-type .u{color:var(--accent);font-weight:500}
+.f-desc{font-size:14px;line-height:1.58;color:color-mix(in srgb,var(--ink) 80%,var(--surface));min-width:0;overflow-wrap:anywhere}
+.f-cov{min-width:0;display:grid;gap:3px;align-content:start;padding-top:4px}
+.f-cov .cov{margin-bottom:3px}
+.cov{position:relative;height:6px;border-radius:3px;background:var(--track);overflow:hidden}
+.cov i{position:absolute;top:0;bottom:0;background:var(--have);min-width:2px}
+.cov i.thin{opacity:.5}
+.f-cov span{font-size:12px;color:var(--mute);font-variant-numeric:tabular-nums}
+.f-cov span.all{color:var(--faint)}
+.f-cov span.warn{color:var(--warn);font-weight:500}
+.f-cov span.badge{font-size:11px;color:var(--warn);margin-top:2px}
+.badge{display:inline-block;justify-self:start;font-size:11px;font-weight:600;color:var(--warn);background:var(--warn-wash);border-radius:6px;padding:1px 7px;white-space:nowrap}
+.scroll{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);box-shadow:var(--shadow)}
+.sample{border-collapse:collapse;font-family:var(--mono);font-size:12px;white-space:nowrap;min-width:100%}
+.sample th,.sample td{padding:8px 16px;text-align:left;border-bottom:1px solid var(--line)}
+.sample th{font-weight:500;color:var(--mute);border-bottom-color:var(--ink);padding-top:12px}
+.sample tr:last-child td{border-bottom:0}
+.sample tbody tr:hover td{background:color-mix(in srgb,var(--soft) 70%,transparent)}
+.sample td.null{color:var(--faint)}
+.sample td.num{text-align:right;font-variant-numeric:tabular-nums}
+.lin{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.lin>div{padding:16px clamp(16px,1.8vw,22px) 18px;display:grid;gap:10px;align-content:start}
+.lin h3{font-size:13.5px;font-weight:600;color:var(--mute)}
+.lin .tchip.silver{background:transparent;color:var(--mute)}
+.lin p{font-size:13.5px;color:var(--faint)}
+/* The query card, as on the Hub: a head with what it is and a copy button, then the code */
+.query{border:1px solid var(--line);border-radius:var(--r);background:var(--surface);box-shadow:var(--shadow);overflow:hidden}
+.q-top{display:flex;align-items:center;gap:10px;min-height:42px;padding:5px 6px 5px 16px;border-bottom:1px solid var(--line);background:var(--soft);font-size:13px;color:var(--mute)}
+.q-top b{font-weight:600;color:var(--ink)}
+.q-top code{padding:2px 8px;border:1px solid var(--line);border-radius:7px;background:var(--surface);font-size:11.5px;color:var(--ink-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.query pre{margin:0;padding:15px 18px 16px;overflow-x:auto;font-family:var(--mono);font-size:12.5px;line-height:1.65;color:var(--ink-2)}
+.copy{flex:none;display:inline-flex;align-items:center;gap:7px;height:30px;margin-left:auto;font:inherit;font-size:13px;font-weight:500;color:var(--mute);background:var(--surface);border:1px solid var(--line);border-radius:9px;padding:0 11px;cursor:pointer;transition:color .15s,border-color .15s}
+.copy:hover{color:var(--ink);border-color:var(--line-2)}
+.pager{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:clamp(28px,4.4vh,44px)}
+.pager a{display:grid;gap:4px;padding:15px 18px 16px;text-decoration:none;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);box-shadow:var(--shadow);min-width:0;transition:border-color .15s,transform .15s}
+.pager a:hover{border-color:color-mix(in srgb,var(--hue) 60%,transparent);transform:translateY(-1px)}
+.pager a.next{text-align:right;background:linear-gradient(270deg,color-mix(in srgb,var(--hue) 7%,var(--surface)),var(--surface) 60%)}
+.pager a:not(.next){background:linear-gradient(90deg,color-mix(in srgb,var(--hue) 7%,var(--surface)),var(--surface) 60%)}
+.pager small{font-size:12.5px;color:var(--mute)}
+.pager code{font-size:14px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* ---------- footer: the Hub's ---------- */
+footer.foot{margin-top:clamp(40px,7vh,72px);background:var(--night);color:var(--night-mute)}
+footer.foot .wrap{padding-block:30px 40px;display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:18px 40px;align-items:start;font-size:13.5px;line-height:1.55}
+.foot-b{display:grid;gap:10px;max-width:46em}
+.foot-b code{color:var(--night-ink);font-size:.88em}
+.foot-l{display:flex;flex-wrap:wrap;gap:6px 20px;justify-content:flex-end}
+.foot-l a{display:inline-flex;align-items:center;min-height:28px;color:var(--night-ink);text-decoration:none;font-weight:500}
+.foot-l a:hover{color:var(--mint)}
+
+/* ---------- narrow screens ---------- */
+@media (max-width:1180px){
+  :root{--lab:200px;--kindw:92px}
+  .qrow{grid-template-columns:minmax(0,1fr) 128px}
+  .q-m{grid-column:1/-1;grid-row:2}
+  .q-d{grid-column:1/-1}
+  .done-list{grid-template-columns:minmax(0,1fr)}
+  .done-list::before{display:none}
+  .done:nth-child(2){border-top:1px solid var(--line)}
+}
+@media (max-width:900px){
+  .app{grid-template-columns:minmax(0,1fr)}
+  .index{position:fixed;inset:0 auto 0 0;top:0;width:min(340px,88vw);height:100%;z-index:50;transform:translateX(-102%);transition:transform .22s ease;box-shadow:0 0 40px rgba(0,0,0,.4);padding-top:env(safe-area-inset-top,0px)}
+  .index.open{transform:none}
+  .scrim{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:45}
+  .menu{display:inline-flex}
+  .hero-top{grid-template-columns:minmax(0,1fr)}
+  .hs{max-width:none}
+  .head-a span{display:none}.head-a{width:36px;padding:0}
+}
+@media (max-width:720px){
+  .lin{grid-template-columns:minmax(0,1fr)}
+  .meta div:nth-child(1),.meta div:nth-child(4){flex-basis:100%}
+  .meta div:nth-child(2),.meta div:nth-child(3){flex:1 1 120px}
+  .f-head{display:none}
+  .f-row{grid-template-columns:minmax(0,1fr);gap:8px}
+  .f-filter{width:100%}
+  .pager{grid-template-columns:minmax(0,1fr)}
+  .pager a.next{text-align:left}
+  footer.foot .wrap{grid-template-columns:minmax(0,1fr)}
+  .foot-l{justify-content:flex-start}
+  .hist-stats div{border-right:0;margin-right:0}
+}
+@media (max-width:640px){
+  :root{--lab:0px;--spanw:0px;--kindw:0px;--gap:0px}
+  .tl-axis{grid-template-columns:minmax(0,1fr)}
+  .tl-axis .col{display:none}
+  .tl-row{grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"name kind" "trk trk";column-gap:10px;padding:5px 0 3px}
+  .tl-name{grid-area:name}.tl-kind{grid-area:kind;text-align:right;position:relative;z-index:5;background:var(--surface);padding-left:8px}.tl-span{display:none}.tl-trk{grid-area:trk;height:18px}.tl-ref{grid-area:trk;white-space:normal}
+  .tl-over{left:0;right:0}
+  .toggle button{padding:5px 9px}
+  .docs-tag{padding:0 9px 0 8px}
+}
+@media (max-width:380px){.brand-t{display:none}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+.sec,.block,.block>h2{scroll-margin-top:calc(var(--head-h) + var(--top) + 14px)}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs><clipPath id="lcm-t"><path d="M10 0H22C28.8 0 32 3.2 32 10V22C32 28.8 28.8 32 22 32H10C3.2 32 0 28.8 0 22V10C0 3.2 3.2 0 10 0Z"/></clipPath><linearGradient id="lcm-f" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#66fbca"/><stop offset=".42" stop-color="#00ec97"/><stop offset="1" stop-color="#00b377"/></linearGradient><radialGradient id="lcm-s" cx=".26" cy=".1" r=".8"><stop offset="0" stop-color="#fff" stop-opacity=".38"/><stop offset=".6" stop-color="#fff" stop-opacity="0"/></radialGradient><radialGradient id="lcm-p" gradientUnits="userSpaceOnUse" cx="19" cy="20" r="14"><stop offset="0" stop-color="#03241a" stop-opacity=".26"/><stop offset="1" stop-color="#03241a" stop-opacity="0"/></radialGradient><linearGradient id="lcm-r" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".75"/><stop offset=".42" stop-color="#fff" stop-opacity="0"/><stop offset=".62" stop-color="#02130d" stop-opacity="0"/><stop offset="1" stop-color="#02130d" stop-opacity=".38"/></linearGradient><linearGradient id="lcm-k" gradientUnits="userSpaceOnUse" x1="0" y1="7" x2="0" y2="25"><stop offset="0" stop-color="#0f2a20"/><stop offset="1" stop-color="#040c09"/></linearGradient><filter id="lcm-b" x="-30%" y="-30%" width="160%" height="170%"><feGaussianBlur stdDeviation=".8"/></filter></defs><symbol id="lc-mark" viewBox="0 0 32 32"><path d="M10 0H22C28.8 0 32 3.2 32 10V22C32 28.8 28.8 32 22 32H10C3.2 32 0 28.8 0 22V10C0 3.2 3.2 0 10 0Z" fill="url(#lcm-f)"/><g clip-path="url(#lcm-t)"><rect width="32" height="32" fill="url(#lcm-s)"/><path d="M0 23.4H11.2V18.6H16V13.8H20.8V9H32V32H0Z" fill="url(#lcm-p)"/><path d="M10 0H22C28.8 0 32 3.2 32 10V22C32 28.8 28.8 32 22 32H10C3.2 32 0 28.8 0 22V10C0 3.2 3.2 0 10 0Z" fill="none" stroke="url(#lcm-r)" stroke-width="1.7"/><path transform="translate(.5 1.1)" d="M5.2 22.2H10V17.4H14.8V12.6H19.6V7.8H26.8V10.2H22V15H17.2V19.8H12.4V24.6H5.2Z" fill="#02130d" stroke="#02130d" stroke-width="1" stroke-linejoin="round" opacity=".36" filter="url(#lcm-b)"/></g><path d="M5.2 22.2H10V17.4H14.8V12.6H19.6V7.8H26.8V10.2H22V15H17.2V19.8H12.4V24.6H5.2Z" fill="url(#lcm-k)" stroke="url(#lcm-k)" stroke-width="1" stroke-linejoin="round"/></symbol></svg>
+<header class="head">
+  <a class="brand" href="__HUB_HOME__" aria-label="NEAR Hub, the dashboard"><svg width="24" height="24" viewBox="0 0 32 32" aria-hidden="true"><use href="#lc-mark"/></svg><span class="brand-t"><span class="brand-q">NEAR</span> Hub</span></a>
+  <a class="docs-tag" href="#overview" aria-label="Docs, the warehouse guide">Docs</a>
+  <span class="head-sp"></span>
+  <a class="head-a" href="__HUB_HOME__" aria-label="Back to the Hub"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg><span>Back to the Hub</span></a>
+  <button class="head-b" id="themeBtn" type="button" aria-label="Night mode" aria-pressed="false"></button>
+  <button class="menu" id="menuBtn" type="button" aria-controls="index" aria-expanded="false">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M2.5 4h11M2.5 8h11M2.5 12h11" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>Tables
+  </button>
+</header>
+<div class="app">
+  <aside class="index" id="index" aria-label="Tables">
+    <div class="index-top">
+      <div class="search">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="7" cy="7" r="4.6" stroke="currentColor" stroke-width="1.5"/><path d="m10.5 10.5 3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <label class="sr" for="q">Search tables and fields</label>
+        <input id="q" type="search" placeholder="Search tables and fields" autocomplete="off" spellcheck="false"><kbd aria-hidden="true">/</kbd>
+      </div>
+      <label class="sr" for="kindSel">Filter by kind of history</label>
+      <select class="kind-sel" id="kindSel"></select>
+    </div>
+    <nav class="nav" id="nav"></nav>
+  </aside>
+  <main id="main" tabindex="-1"></main>
+</div>
+<div class="tip" id="tip" role="tooltip" hidden></div>
+
+<script id="docsite-data" type="application/json">__DOCSITE_DATA__</script>
+<script>
+(() => {
+'use strict';
+const D = JSON.parse(document.getElementById('docsite-data').textContent);
+const T = D.tables;
+const BY = Object.fromEntries(T.map(t => [t.name, t]));
+const KIND = Object.fromEntries(D.kinds.map(k => [k.id, k]));
+const JOB = Object.fromEntries(D.jobs.map(j => [j.id, j]));
+const DAY = 86400000;
+const UTC = {timeZone: 'UTC'};
+const dn = s => Math.round(Date.parse(s + 'T00:00:00Z') / DAY);
+const ds = n => new Date(n * DAY).toISOString().slice(0, 10);
+const fmt = (n, o) => new Date(n * DAY).toLocaleDateString('en-GB', {...o, ...UTC});
+const fD = s => s ? fmt(dn(s), {day: 'numeric', month: 'short', year: 'numeric'}) : '';
+const fDn = n => fD(ds(n));
+const fDs = s => s ? fmt(dn(s), {day: 'numeric', month: 'short'}) : '';
+const fM = n => fmt(n, {month: 'short', year: 'numeric'});
+const fWd = n => fmt(n, {weekday: 'short', day: 'numeric', month: 'short', year: 'numeric'});
+const NF = new Intl.NumberFormat('en-US');
+const N = v => NF.format(v);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c]));
+const slug = n => n.replace(/_/g, '-');
+const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];
+// Dates read the same everywhere: 2026-11-04 becomes 4 Nov 2026, and a bare 11-05 beside it becomes 5 Nov.
+const prose = s => esc(s).replace(/\b20\d\d-\d\d-\d\d\b/g, m => fD(m))
+  .replace(/(?<![\d-])(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])(?![\d-])/g, (m, mo, d) => `${+d} ${MON[+mo - 1]}`);
+// Repo paths, API paths, account ids and snake_case identifiers are set in mono; a gold table's name links to its page.
+const CODE = /\b(?:data|docs|registry|ingest|tools|warehouse)\/[\w.\/-]*\w|(?<![\w.])\/[a-z][\w{}-]*(?:\/[\w{}.-]*[\w}])*|\b[a-z0-9_-]+(?:\.[a-z0-9_-]+)*\.(?:near|tg|dao)\b(?!\.[a-z])|\b[A-Za-z][A-Za-z0-9]*(?:_+[A-Za-z0-9]+)+(?:\.[a-z_][a-z0-9_]*)?\b/g;
+function rich(text, self) {
+  let out = '', i = 0;
+  for (const m of String(text ?? '').matchAll(CODE)) {
+    const tok = m[0];
+    out += prose(text.slice(i, m.index));
+    // table.column links to that field, a table's name to its page; a table's own bare name stays plain.
+    const [table, column] = tok.split('.'), to = BY[table];
+    const field = to && column && to.columns.some(c => c.name === column) ? '--' + slug(column) : '';
+    out += to && (table !== self || field) && (!column || field)
+      ? `<a class="xref" href="#${slug(table)}${field}"><code>${esc(tok)}</code></a>` : `<code>${esc(tok)}</code>`;
+    i = m.index + tok.length;
+  }
+  return out + prose(String(text ?? '').slice(i));
+}
+const lead = text => { const m = /^.*?[.!?](?=\s+[A-Z]|$)/.exec(text); return m ? m[0] : text; };
+const store = {
+  get(k) { try { return localStorage.getItem('wguide.' + k); } catch (e) { return null; } },
+  set(k, v) { try { localStorage.setItem('wguide.' + k, v); } catch (e) { /* storage blocked: the page works without it */ } },
+};
+const HOME = '__HUB_HOME__', AWAY = /^https?:/.test(HOME) ? ' target="_blank" rel="noopener"' : '';
+const LOGO = '<svg width="24" height="24" viewBox="0 0 32 32" aria-hidden="true"><use href="#lc-mark"/></svg>';
+const PIN = dn(D.meta.pin), LAST = dn(D.meta.last_day), V1 = D.meta.v1_off ? dn(D.meta.v1_off) : null;
+const S = {kind: store.get('kind') || 'all', q: '', zoom: store.get('zoom') || 'all'};
+if (S.kind !== 'all' && !T.some(t => t.kind === S.kind)) S.kind = 'all';
+if (!['all', 'year', 'month'].includes(S.zoom)) S.zoom = 'all';
+const main = document.getElementById('main'), nav = document.getElementById('nav'), tip = document.getElementById('tip');
+const ICON = {
+  check: '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="6.4" stroke="currentColor" stroke-width="1.5"/><path d="m5.3 8.2 1.9 1.9 3.6-3.8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  hand: '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 13l1.2-3.6L10.6 3a1.4 1.4 0 0 1 2 0l.4.4a1.4 1.4 0 0 1 0 2L6.6 11.8 3 13Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>',
+  warn: '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 2.2 14.3 13H1.7L8 2.2Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M8 6.5v3M8 11.3v.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>',
+  copy: '<svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true"><rect x="5.2" y="5.2" width="8" height="8" rx="1.6" stroke="currentColor" stroke-width="1.5"/><path d="M10.8 3.2H4.4c-.7 0-1.2.5-1.2 1.2v6.4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>',
+  find: '<svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="7" cy="7" r="4.6" stroke="currentColor" stroke-width="1.5"/><path d="m10.5 10.5 3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>',
+};
+
+/* ---------- coverage helpers ---------- */
+function inRuns(runs, d) {
+  let lo = 0, hi = runs.length - 1;
+  while (lo <= hi) {
+    const m = (lo + hi) >> 1, a = runs[m][0], l = runs[m][1];
+    if (d < a) hi = m - 1; else if (d >= a + l) lo = m + 1; else return true;
+  }
+  return false;
+}
+function countIn(runs, a, b) {
+  let n = 0;
+  for (const [s, l] of runs) { const lo = Math.max(s, a), hi = Math.min(s + l, b); if (hi > lo) n += hi - lo; }
+  return n;
+}
+const extent = runs => runs.length ? [Math.min(...runs.map(r => r[0])), Math.max(...runs.map(r => r[0] + r[1]))] : null;
+const spanOf = t => extent(t.have.concat(t.pending, t.refused));
+// How many of a table's series (chains, wallets, protocols) have a row on day d.
+function seriesAt(t, d) {
+  for (const [a, l, n] of t.series.steps) if (d >= a && d < a + l) return n;
+  return 0;
+}
+function breadth(days) {
+  if (days >= 365) return (days / 365.25).toFixed(1) + ' yr';
+  if (days >= 60) return Math.round(days / 30.44) + ' mo';
+  return days + ' d';
+}
+const plural = (n, one, many) => `${N(n)} ${n === 1 ? one : many || one + 's'}`;
+const monthStart = n => { const d = new Date(n * DAY); return Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), 1) / DAY; };
+const addMonths = (n, k) => { const d = new Date(n * DAY); return Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + k, 1) / DAY; };
+const dated = T.filter(t => t.kind !== 'reference' && t.have.length);
+const HORIZON = Math.max(PIN, V1 ?? PIN);
+const END = addMonths(HORIZON, 1);
+const RANGES = {all: [monthStart(dn(D.meta.chain_start)), END], year: [addMonths(END, -13), END], month: [PIN - 30, HORIZON + 3]};
+
+function noneReason(t, d) {
+  const sp = spanOf(t);
+  if (d > PIN) return 'After the pinned snapshot';
+  if (d === PIN && dn(t.through) === LAST) return 'The pin day was still in progress';
+  if (d > dn(t.through)) return 'Not in the warehouse yet';
+  if (t.sparse_before && sp && d >= sp[0] && d < dn(t.sparse_before)) return 'One block a month before ' + fM(dn(t.sparse_before));
+  if (sp && d >= sp[0]) return ['snapshot', 'hand'].includes(t.kind) ? 'No reading taken' : 'No row for this day';
+  return {
+    full: 'Before the source begins',
+    backfill: 'Outside what the backfill fetches',
+    window: "Older than the source's window",
+    snapshot: 'Before the first reading',
+    hand: 'Before the first reading',
+  }[t.kind] || 'Not in the warehouse';
+}
+function dayTip(t, d) {
+  const have = inRuns(t.have, d);
+  const line = have ? 'In the warehouse' : inRuns(t.refused, d) ? 'Refused by the source, stays empty' : inRuns(t.pending, d) ? 'Queued for backfill' : noneReason(t, d);
+  const more = have && t.series ? `${seriesAt(t, d)} of ${t.series.total} ${t.series.plural}` : '';
+  return {head: fWd(d), line, more};
+}
+function monthTip(t, d) {
+  const a = monthStart(d), b = addMonths(a, 1);
+  // Days before a table's first day or after its last are not missing, so the count runs between the two.
+  const start = Math.min(b, Math.max(a, dn(t.first))), end = Math.max(start, Math.min(b, dn(t.through) + 1)), days = end - start;
+  const have = countIn(t.have, a, b), pend = countIn(t.pending, a, b), ref = countIn(t.refused, a, b);
+  const sd = n => fmt(n, {day: 'numeric', month: 'short'});
+  let line;
+  if (!have && !pend && !ref) line = noneReason(t, Math.min(Math.max(d, a), b - 1));
+  else if (t.sparse_before && a < dn(t.sparse_before)) line = 'The first block of the month, by design';
+  else if (pend || ref) line = [[have, 'in'], [pend, 'queued'], [ref, 'refused']].filter(x => x[0]).map(([n, w], i) => i ? `${n} ${w}` : `${plural(n, 'day')} ${w}`).join(', ');
+  else if (t.kind === 'snapshot') line = plural(have, 'reading') + (have < days ? `, ${plural(days - have, 'day')} without one` : '');
+  else if (have < days) line = `${have} of ${days} days in the warehouse`;
+  else {
+    const edge = [start > a ? 'from ' + sd(start) : '', end < b ? 'through ' + sd(end - 1) : ''].filter(Boolean).join(' ');
+    line = edge ? 'Every day ' + edge : 'Every day in the warehouse';
+  }
+  let more = '';
+  if (have && t.series) {
+    let lo = Infinity, hi = 0;
+    for (const [s, l, n] of t.series.steps) if (s < b && s + l > a) { lo = Math.min(lo, n); hi = Math.max(hi, n); }
+    more = `${lo === hi ? hi : lo + ' to ' + hi} of ${t.series.total} ${t.series.plural}`;
+  }
+  return {head: fM(a), line, more};
+}
+
+/* ---------- drawing ---------- */
+const pc = f => (f * 100).toFixed(3) + '%';
+// One bar: a hatched underlay across the days queued for backfill, solid marks for the days in the warehouse.
+// Where a table holds several series, the solid mark's height is the share of them present that day.
+function bar(t, r0, r1, px, opt = {}) {
+  const W = r1 - r0, H = 100;
+  const clip = (a, l) => { const x = Math.max(a, r0), e = Math.min(a + l, r1); return e > x ? [x - r0, e - x] : null; };
+  let under = '', rects = '', lo = Infinity, hi = -Infinity;
+  const q = extent(t.pending);
+  if (q) { const c = clip(q[0], q[1] - q[0]); if (c) under = `<i class="hatch" style="left:${pc(c[0] / W)};width:${pc(c[1] / W)}"></i>`; }
+  // A point sample (one block a month) is narrower than a pixel at this scale, so it is drawn as a tick wide enough to see.
+  const tick = t.sparse_before ? 1.6 * W / px : 0;
+  const add = (a, l, share) => {
+    const c = clip(a, l);
+    if (!c) return;
+    // Two pixels is the least a bar can show, so one series of many still reads as present.
+    const h = Math.round(Math.max(0.16, share) * H);
+    rects += `<rect class="have" x="${c[0]}" y="${H - h}" width="${l === 1 ? Math.max(c[1], tick) : c[1]}" height="${h}"/>`;
+    lo = Math.min(lo, c[0]); hi = Math.max(hi, c[0] + c[1]);
+  };
+  if (t.series) for (const [a, l, n] of t.series.steps) add(a, l, n / t.series.total);
+  else for (const [a, l] of t.have) add(a, l, 1);
+  // A table whose whole history is narrower than four pixels at this zoom gets a pip, so it stays visible.
+  const tiny = hi > lo && (hi - lo) / W * px < 4;
+  const pip = tiny ? `<i class="pip" style="left:${pc((lo + hi) / 2 / W)}"></i>` : '';
+  const pre = opt.pre && t.have[0][0] < r0 ? ' pre' : '';
+  return `<div class="bar${pre}">${under}<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true" focusable="false">${tiny ? '' : rects}</svg>${pip}</div>`;
+}
+function ticks(r0, r1, width) {
+  const out = [], span = r1 - r0;
+  if (span > 1100) {
+    const y0 = new Date(r0 * DAY).getUTCFullYear(), y1 = new Date(r1 * DAY).getUTCFullYear();
+    const every = width / ((y1 - y0) || 1) < 46 ? 2 : 1;
+    for (let y = y0; y <= y1; y++) {
+      const n = Date.UTC(y, 0, 1) / DAY;
+      if (n > r0 && n < r1 - 20 && y % every === 0) out.push({n, label: String(y), major: true});
+    }
+  } else if (span > 100) {
+    let n = monthStart(r0); if (n < r0) n = addMonths(n, 1);
+    const months = Math.round(span / 30.44), step = width / months < 34 ? 3 : 1;
+    for (; n < r1; n = addMonths(n, 1)) {
+      const m = new Date(n * DAY).getUTCMonth();
+      if (m % step) continue;
+      out.push({n, label: m === 0 ? String(new Date(n * DAY).getUTCFullYear()) : fmt(n, {month: 'short'}), major: m === 0});
+    }
+  } else {
+    const step = width / (span / 7) < 52 ? 14 : 7;
+    for (let n = PIN - Math.floor((PIN - r0) / step) * step; n < r1; n += step) out.push({n: n + 0.5, label: fmt(n, {day: 'numeric', month: 'short'}), major: n === PIN});
+  }
+  return out.filter(k => (k.n - r0) / span > 0.02 && (k.n - r0) / span < 0.97);
+}
+function axis(r0, r1, width) {
+  return `<div class="axis">${ticks(r0, r1, width).map(k => `<span class="tick${k.major ? ' major' : ''}" style="left:${pc((k.n - r0) / (r1 - r0))}">${esc(k.label)}</span>`).join('')}</div>`;
+}
+function markers(r0, r1) {
+  const at = (n, cls) => n >= r0 && n <= r1 ? `<div class="mk ${cls}" style="left:${pc((n - r0) / (r1 - r0))}"></div>` : '';
+  return at(PIN + 1, 'pin') + (V1 === null ? '' : at(V1, 'v1'));
+}
+function keys(t) {
+  const any = k => t ? t[k].length : T.some(x => x[k].length);
+  return `<div class="keys">
+    <span><i class="key have"></i>In the warehouse</span>
+    ${any('pending') ? '<span><i class="key hatch"></i>Queued for backfill</span>' : ''}
+    <span><i class="key none"></i>${t && t.refused.length ? 'Refused or not available' : 'Not available'}</span>
+    <span><i class="key pin"></i>Pin, ${esc(fDs(D.meta.pin))}</span>
+    ${V1 === null ? '' : `<span><i class="key v1"></i>NearBlocks /v1 off, ${esc(fDs(D.meta.v1_off))}</span>`}
+  </div>`;
+}
+
+/* ---------- tooltip and crosshair ---------- */
+function showTip(e, html) {
+  tip.innerHTML = html; tip.hidden = false;
+  const pad = 14, w = tip.offsetWidth, h = tip.offsetHeight;
+  let x = e.clientX + pad, y = e.clientY + pad;
+  if (x + w > innerWidth - 8) x = e.clientX - w - pad;
+  if (y + h > innerHeight - 8) y = e.clientY - h - pad;
+  tip.style.left = Math.max(8, x) + 'px'; tip.style.top = Math.max(8, y) + 'px';
+}
+const hideTip = () => { tip.hidden = true; };
+function wireHover(root, r0, r1, perDay) {
+  const over = root.querySelector('.tl-over');
+  let cross = null;
+  const clear = () => { hideTip(); if (cross) cross.hidden = true; };
+  root.addEventListener('pointermove', e => {
+    const name = e.target.closest('.tl-name, .tl-ref');
+    if (name && e.pointerType !== 'touch') {
+      const t = BY[name.dataset.t];
+      if (cross) cross.hidden = true;
+      showTip(e, `<span class="t">${N(t.rows)} rows · ${t.columns.length} fields</span><span class="l">${esc(lead(t.description))}</span>`);
+      return;
+    }
+    const trk = e.target.closest('.tl-trk');
+    if (!trk) { clear(); return; }
+    const box = trk.getBoundingClientRect();
+    const f = Math.min(Math.max((e.clientX - box.left) / box.width, 0), 0.99999);
+    const d = Math.floor(r0 + f * (r1 - r0));
+    const t = BY[trk.dataset.t];
+    const info = perDay ? dayTip(t, d) : monthTip(t, d);
+    showTip(e, `<span class="t">${esc(t.name)}</span><b>${esc(info.head)}</b><span class="l">${esc(info.line)}</span>${info.more ? `<span class="l2">${esc(info.more)}</span>` : ''}`);
+    if (over) {
+      if (!cross) { cross = document.createElement('div'); cross.className = 'cross'; cross.innerHTML = '<span></span>'; over.appendChild(cross); }
+      cross.hidden = false;
+      cross.style.left = (f * 100) + '%';
+      cross.classList.toggle('flip', f > 0.8);
+      cross.firstChild.textContent = perDay ? fDn(d) : fM(d);
+    }
+  });
+  root.addEventListener('pointerleave', clear);
+}
+
+/* ---------- index ---------- */
+const COUNT = {}; T.forEach(t => { COUNT[t.kind] = (COUNT[t.kind] || 0) + 1; });
+const kindSel = document.getElementById('kindSel');
+function matches(t, q) {
+  if (!q) return true;
+  if (t.name.toLowerCase().includes(q)) return true;
+  const cols = t.columns.filter(c => c.name.toLowerCase().includes(q));
+  if (cols.length) return {field: cols[0].name, more: cols.length - 1};
+  if ((t.description + ' ' + t.sources + ' ' + t.why).toLowerCase().includes(q)) return {note: 'matches the description'};
+  const said = t.columns.find(c => c.description.toLowerCase().includes(q));
+  return said ? {field: said.name, note: 'in the description of ' + said.name} : false;
+}
+function renderKindSel() {
+  kindSel.innerHTML = `<option value="all">All kinds of history · ${T.length} tables</option>` +
+    D.kinds.filter(k => COUNT[k.id]).map(k => `<option value="${k.id}">${esc(k.label)} · ${COUNT[k.id]}</option>`).join('');
+  kindSel.value = S.kind;
+}
+function renderNav() {
+  const q = S.q.trim().toLowerCase();
+  let html = `<a class="nav-home" href="#overview"><svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true"><rect x="2" y="2.5" width="12" height="2.6" rx="1" fill="currentColor"/><rect x="2" y="6.7" width="8" height="2.6" rx="1" fill="currentColor" opacity=".6"/><rect x="2" y="10.9" width="10" height="2.6" rx="1" fill="currentColor" opacity=".35"/></svg>Overview and timeline</a>`;
+  let n = 0;
+  for (const area of D.areas) {
+    const items = T.filter(t => t.area === area && (S.kind === 'all' || t.kind === S.kind)).map(t => ({t, m: matches(t, q)})).filter(x => x.m);
+    if (!items.length) continue;
+    n += items.length;
+    html += `<div class="nav-h">${esc(area)}</div>` + items.map(({t, m}) => {
+      const note = m === true ? '' : m.note || `field ${m.field}${m.more ? ` and ${m.more} more` : ''}`;
+      return `<a class="nav-i" href="#${slug(t.name)}${m.field ? '--' + slug(m.field) : ''}"><span>${esc(t.name)}</span>${t.pending_days ? `<i class="hatch" title="${N(t.pending_days)} days queued for backfill"></i>` : ''}${note ? `<small>${esc(note)}</small>` : ''}</a>`;
+    }).join('');
+  }
+  if (!n) html += `<p class="nav-empty">No table or field matches “${esc(S.q)}”${S.kind !== 'all' ? ' in ' + esc(KIND[S.kind].label.toLowerCase()) : ''}.</p>`;
+  nav.innerHTML = html;
+  markCurrent();
+}
+function markCurrent() {
+  const h = location.hash.slice(1).split('--')[0] || 'overview';
+  nav.querySelectorAll('a').forEach(a => {
+    const on = a.getAttribute('href').split('--')[0] === '#' + h || (a.classList.contains('nav-home') && ['overview', 'queue', 'timeline'].includes(h));
+    if (on) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
+  });
+}
+
+/* ---------- overview ---------- */
+// The overview opens with what a reader of the guide comes to do: find a table or a field, copy a first query,
+// and see what the warehouse holds at this pin. It sits on the page itself, so it is light by day and dark by night.
+function statsBand() {
+  const running = D.jobs.filter(j => j.status === 'running');
+  const queued = dated.filter(t => t.pending_days).length;
+  const asked = D.jobs.find(j => j.status === 'manual' && j.last);
+  // The tables other tables read the most are where most reading starts
+  const base = [...T].sort((a, b) => b.read_by.length - a.read_by.length || a.name.localeCompare(b.name)).slice(0, 6);
+  const first = base[0], order = first.date_col && first.columns.some(c => c.name === first.date_col) ? ` order by ${first.date_col} desc` : '';
+  const fact = (label, value, more, cls) => `<div${cls ? ` class="${cls}"` : ''}><dt>${label}</dt><dd>${value}${more ? ` <small>${more}</small>` : ''}</dd></div>`;
+  return `<header class="top hero"><div class="wrap">
+    <div class="hero-top">
+      <div>
+        <p class="eyebrow"><b>Warehouse guide</b><span aria-hidden="true">·</span><span>gold layer, pinned ${esc(fD(D.meta.pin))}</span></p>
+        <h1>Find a table, read its fields, see how far back it goes</h1>
+        <p class="lede">The ${N(D.meta.tables)} finished tables behind NEAR Hub and their ${N(D.meta.columns)} fields: what each one measures, where it comes from, and how much history is in.</p>
+        <div class="hs" id="hs">
+          <svg width="18" height="18" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="7" cy="7" r="4.6" stroke="currentColor" stroke-width="1.5"/><path d="m10.5 10.5 3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          <label class="sr" for="hq">Search tables and fields</label>
+          <input id="hq" type="search" placeholder="Search ${N(D.meta.tables)} tables and ${N(D.meta.columns)} fields" autocomplete="off" spellcheck="false" aria-controls="hsList" aria-expanded="false"><kbd aria-hidden="true">/</kbd>
+          <div class="hs-list" id="hsList" hidden></div>
+        </div>
+        <p class="hs-start"><span>Most built upon</span>${base.map(t => `<a class="hs-chip" href="#${slug(t.name)}" title="${plural(t.read_by.length, 'other table reads', 'other tables read')} it">${esc(t.name)}</a>`).join('')}</p>
+      </div>
+      <aside class="hq" aria-labelledby="hq-t">
+        <div class="hq-top"><b id="hq-t">Query any table</b><button type="button" class="copy" id="hqCopy">${ICON.copy}<span>Copy</span></button></div>
+        <pre id="hqSql">make query SQL="select * from gold.${esc(first.name)}${esc(order)} limit 5"</pre>
+        <p>Run it in the repo once <code>make warehouse</code> has built the tables. Every table is also a Parquet and a CSV file in <code>data/gold/</code>.</p>
+      </aside>
+    </div>
+    <dl class="facts">
+      ${fact('Tables', N(D.meta.tables), `${N(dated.length)} dated`)}
+      ${fact('Fields', N(D.meta.columns))}
+      ${fact('Data through', esc(fD(D.meta.last_day)))}
+      ${fact(running.length ? 'Still backfilling' : 'Left to backfill', queued ? plural(queued, 'table') : 'Nothing')}
+      ${asked ? fact("NEAR's Dune dashboard last read", esc(fD(asked.last))) : ''}
+      ${V1 === null ? '' : fact('NearBlocks switches /v1 off', esc(fD(D.meta.v1_off)), '', 'warn')}
+    </dl>
+  </div></header>`;
+}
+// The search at the top lists tables and fields as they match; arrows move through them and Enter opens the first.
+function wireHero() {
+  const box = document.getElementById('hs'), input = document.getElementById('hq'), list = document.getElementById('hsList');
+  if (!box) return;
+  const close = () => { list.hidden = true; list.innerHTML = ''; input.setAttribute('aria-expanded', 'false'); };
+  const paint = () => {
+    const q = input.value.trim().toLowerCase();
+    if (!q) { close(); return; }
+    const hits = T.map(t => ({t, m: matches(t, q)})).filter(x => x.m)
+      .map(x => ({...x, rank: x.t.name.toLowerCase().includes(q) ? 0 : x.m.field && !x.m.note ? 1 : 2})).sort((a, b) => a.rank - b.rank);
+    const row = ({t, m}) => {
+      const field = m !== true && m.field && !m.note ? t.columns.find(c => c.name === m.field) : null;
+      const says = field ? lead(field.description) : m !== true && m.note ? m.note : lead(t.description);
+      return `<a class="hs-r" href="#${slug(t.name)}${m !== true && m.field ? '--' + slug(m.field) : ''}"><code>${esc(t.name)}${field ? `<i>.${esc(field.name)}</i>` : ''}</code><span>${esc(says)}</span><em>${esc(t.area)}</em></a>`;
+    };
+    list.innerHTML = hits.length
+      ? hits.slice(0, 8).map(row).join('') + (hits.length > 8 ? `<p class="hs-more">${N(hits.length - 8)} more. Keep typing to narrow them.</p>` : '')
+      : `<p class="hs-none">No table or field matches “${esc(input.value.trim())}”.</p>`;
+    list.hidden = false; input.setAttribute('aria-expanded', 'true');
+  };
+  input.addEventListener('input', paint);
+  input.addEventListener('focus', paint);
+  box.addEventListener('focusout', e => { if (!box.contains(e.relatedTarget)) close(); });
+  box.addEventListener('keydown', e => {
+    const rows = [...list.querySelectorAll('.hs-r')], at = rows.indexOf(document.activeElement);
+    if (e.key === 'Escape') { input.value = ''; close(); input.focus(); }
+    else if (e.key === 'ArrowDown' && rows.length) { e.preventDefault(); rows[Math.min(at + 1, rows.length - 1)].focus(); }
+    else if (e.key === 'ArrowUp' && rows.length) { e.preventDefault(); (at <= 0 ? input : rows[at - 1]).focus(); }
+    else if (e.key === 'Enter' && document.activeElement === input && rows.length) location.hash = rows[0].getAttribute('href');
+  });
+  document.getElementById('hqCopy').addEventListener('click', e => {
+    const label = e.currentTarget.querySelector('span'), pre = document.getElementById('hqSql');
+    const done = text => { label.textContent = text; setTimeout(() => { label.textContent = 'Copy'; }, 1600); };
+    const select = () => { const r = document.createRange(); r.selectNodeContents(pre); const s = getSelection(); s.removeAllRanges(); s.addRange(r); done('Selected'); };
+    try { navigator.clipboard.writeText(pre.textContent).then(() => done('Copied'), select); } catch (err) { select(); }
+  });
+}
+function timelineSection() {
+  const zoom = (id, label) => `<button type="button" data-zoom="${id}" aria-pressed="${S.zoom === id}">${label}</button>`;
+  return `<section class="sec wrap" id="timeline" aria-labelledby="tl-h">
+    <div class="sec-h"><h2 id="tl-h">Coverage timeline</h2><p>One row per table. Hover a bar to read a month or a day; select a row to open its table.</p></div>
+    <div class="card tl-card">
+      <div class="tl-top">
+        <div class="chips" id="tlChips" role="group" aria-label="Kind of history"></div>
+        <div class="toggle" role="group" aria-label="Time range">${zoom('all', 'All history')}${zoom('year', 'Last year')}${zoom('month', 'Last 30 days')}</div>
+      </div>
+      <div class="tl-sub"><p class="tl-blurb" id="tlBlurb"></p>${keys()}</div>
+      <div id="tlBody"></div>
+    </div>
+  </section>`;
+}
+function drawTimeline() {
+  const host = document.getElementById('tlBody');
+  if (!host) return;
+  const [r0, r1] = RANGES[S.zoom];
+  const tlKeys = document.querySelector('#timeline .keys');
+  if (tlKeys) tlKeys.hidden = S.kind === 'reference';
+  const rows = T.filter(t => S.kind === 'all' || t.kind === S.kind);
+  const chip = (id, label, n) => `<button type="button" class="chip" data-kind="${id}" aria-pressed="${S.kind === id}">${esc(label)}<span class="n">${n}</span></button>`;
+  document.getElementById('tlChips').innerHTML = chip('all', 'All', T.length) + D.kinds.filter(k => COUNT[k.id]).map(k => chip(k.id, k.short, COUNT[k.id])).join('');
+  document.getElementById('tlBlurb').innerHTML = S.kind === 'all'
+    ? 'How much history a table can hold depends on its source. Pick a kind to see only those tables.'
+    : `<b>${esc(KIND[S.kind].label)}.</b> ${esc(KIND[S.kind].blurb)}`;
+  const css = getComputedStyle(document.documentElement), v = name => parseFloat(css.getPropertyValue(name)) || 0;
+  const width = Math.max(160, host.clientWidth - v('--lab') - v('--spanw') - v('--kindw') - (v('--gap') ? 3 * v('--gap') : 0));
+  let html = `<div class="tl"><div class="tl-axis" aria-hidden="true"><div class="col">Table</div>${axis(r0, r1, width)}<div class="col r">Span</div><div class="col">History</div></div>`;
+  for (const area of D.areas) {
+    const rs = rows.filter(t => t.area === area);
+    if (!rs.length) continue;
+    html += `<div class="tl-area">${esc(area)}</div>`;
+    for (const t of rs) {
+      if (!t.have.length) {  // no time axis: say what the table is where its bar would be
+        html += `<div class="tl-row"><a class="tl-name" data-t="${t.name}" href="#${slug(t.name)}">${esc(t.name)}</a>
+          <span class="tl-ref" data-t="${t.name}">${prose(lead(t.why))}</span><span class="tl-span" aria-hidden="true">–</span><span class="tl-kind">${esc(KIND[t.kind].short)}</span></div>`;
+        continue;
+      }
+      const q = t.pending_days;
+      const span = breadth(dn(t.through) - dn(t.first) + 1);
+      const label = `${KIND[t.kind].label}. From ${fD(t.first)} to ${fD(t.through)}${q ? `, with ${N(q)} days queued for backfill` : ''}${t.refused_days ? ` and ${N(t.refused_days)} refused by the source` : ''}.`;
+      html += `<div class="tl-row"><a class="tl-name" data-t="${t.name}" href="#${slug(t.name)}">${esc(t.name)}</a>
+        <div class="tl-trk" data-t="${t.name}" role="img" aria-label="${esc(label)}">${bar(t, r0, r1, width, {pre: S.zoom === 'all'})}</div>
+        <span class="tl-span">${esc(span)}</span><span class="tl-kind${q ? ' q' : ''}">${q ? N(q) + ' d queued' : esc(KIND[t.kind].short)}</span></div>`;
+    }
+  }
+  html += `<div class="tl-over">${markers(r0, r1)}</div></div>`;
+  const early = rows.filter(t => t.have.length && t.have[0][0] < r0);
+  const foot = {
+    all: `The axis starts in ${fM(r0)}, when NEAR's chain data begins.${early.length ? ' ' + early.map(t => `<code>${esc(t.name)}</code> reaches back to ${fM(t.have[0][0])}`).join(' and ') + `, so ${early.length === 1 ? 'its bar fades' : 'their bars fade'} at the left edge.` : ''}`,
+    year: `Thirteen months, to the end of ${fM(r1 - 1)}.`,
+    month: `The 30 days before the pin${V1 === null ? '' : ', and on to the day NearBlocks switches /v1 off'}. At this scale a single missing day shows as a break in the bar.`,
+  }[S.zoom];
+  const refs = rows.filter(t => !t.have.length).length, drawn = rows.length - refs;
+  html += `<p class="tl-foot">${drawn ? foot + " Where a table holds several series, such as chains, wallets or protocols, the bar's height is the share of them present." : ''}${refs ? ` ${drawn ? 'The ' + refs : 'These'} reference tables have no time axis, so a line says what each one is.` : ''}</p>`;
+  host.innerHTML = html;
+  wireHover(host.querySelector('.tl'), r0, r1, S.zoom !== 'all');
+}
+function queueRow(j) {
+  const ref = j.refused || 0, through = Math.round((j.done + ref) / j.total * 100);
+  const cap = ref
+    ? [`<b>${N(j.done)}</b> answered`, `<b>${N(ref)}</b> refused`, `<b>${N(j.remaining)}</b> queued`]
+    : [`<b>${N(j.done)}</b> ${esc(j.unit)} in`, `<b>${N(j.remaining)}</b> queued`];
+  return `<article class="qrow">
+    <div class="q-h"><h3>${esc(j.label)}</h3><p>${esc(j.source)} · ${esc(j.pace)}</p></div>
+    <div class="q-m">
+      <div class="meter" role="img" aria-label="${through}% of ${N(j.total)} ${esc(j.unit)} worked through">
+        <i class="m-done" style="flex:${j.done} 1 0"></i>${ref ? `<i class="m-ref" style="flex:${ref} 1 0"></i>` : ''}<i class="hatch" style="flex:${j.remaining} 1 0"></i>
+      </div>
+      <div class="q-cap">${cap.map(c => `<span>${c}</span>`).join('')}<span>${through}% of ${N(j.total)} worked through</span></div>
+    </div>
+    <div class="q-eta"><b>${j.nights ? '≈' + j.nights + ' nights' : '—'}</b><span>${j.eta ? 'around ' + esc(fDs(j.eta)) : ''}</span></div>
+    <div class="q-d"><p class="rich">${rich(j.detail)}</p><div class="tchips">${j.tables.map(n => `<a class="tchip" href="#${slug(n)}">${esc(n)}</a>`).join('')}</div></div>
+  </article>`;
+}
+function doneRow(j) {
+  const manual = j.status === 'manual';
+  const val = manual ? `last ${esc(fDs(j.last))}` : `${N(j.done)} of ${N(j.total)} ${esc(j.unit)}`;
+  return `<div class="done"><span class="${manual ? 'byhand' : 'ok'}">${manual ? ICON.hand : ICON.check}</span><b>${esc(j.label)}</b><span class="v">${val}</span><p class="rich">${rich(j.detail)}</p></div>`;
+}
+function queueSection() {
+  const running = D.jobs.filter(j => j.status === 'running'), rest = D.jobs.filter(j => j.status !== 'running');
+  const minutes = running.reduce((a, j) => a + (j.minutes || 0), 0);
+  return `<section class="sec wrap" id="queue" aria-labelledby="queue-h">
+    <div class="sec-h"><h2 id="queue-h">${running.length ? 'Backfill queue' : 'History jobs'}</h2><p>${running.length
+      ? `${plural(running.length, 'job')} still ${running.length === 1 ? 'fetches' : 'fetch'} older history, a batch each night. The rest are complete or read on request.`
+      : `Nothing is queued. Every job that fetches older history has caught up, so tables now grow by one day a night${rest.some(j => j.status === 'manual') ? ', and one source is read in a browser on request' : ''}.`}</p></div>
+    ${running.length ? `<div class="card queue">${running.map(queueRow).join('')}</div>` : ''}
+    <div class="done-list">${rest.map(doneRow).join('')}</div>
+    ${running.length ? `<div class="note">${ICON.warn}<span>Finish dates assume the nightly job runs every night. The last run took ${N(D.meta.nightly_minutes)} minutes, ${N(minutes)} of them on these backfills.${D.meta.queue_note ? ' ' + prose(D.meta.queue_note) : ''}</span></div>` : ''}
+  </section>`;
+}
+function renderOverview(anchor) {
+  document.title = 'NEAR Hub Docs';
+  main.innerHTML = statsBand() + '<div class="sheet">' + timelineSection() + queueSection() + footer() + '</div>';
+  wireHero();
+  drawTimeline();
+  if (anchor && document.getElementById(anchor)) document.getElementById(anchor).scrollIntoView();
+  else window.scrollTo(0, 0);
+}
+
+/* ---------- table page ---------- */
+function expectedDates(t) {
+  if (!t.first) return 0;
+  const span = dn(t.last) - dn(t.first) + 1;
+  return {daily: span, snapshot: span, weekly: Math.floor((span - 1) / 7) + 1}[t.cadence] || 0;
+}
+// "Every row" is only said when no row is null; a handful of nulls is stated as a count.
+const share = f => f < 0.01 ? '<1%' : Math.round(f * 100) + '%';
+const rowShare = c => c.nulls === 0 ? 'Every row' : c.nonnull >= 0.995 ? `All but ${plural(c.nulls, 'row')}` : `${share(c.nonnull)} of rows`;
+function coverage(t, c) {
+  const badge = c.ends ? `<span class="badge">Ends ${esc(fD(c.ends))}</span>` : '';
+  const dateCol = t.columns.find(x => x.name === t.date_col);
+  const want = expectedDates(t), gappy = dateCol && want && dateCol.days < want * 0.97;
+  if (c.name === t.date_col && gappy) {
+    return `<div class="cov"><i class="thin" style="left:0;width:100%"></i></div><span>${N(c.days)} of ${N(want)} ${t.cadence === 'weekly' ? 'weeks' : 'days'} in the span</span>`;
+  }
+  if (c.first === undefined) return c.nonnull === 0 ? `<span class="warn">Always empty</span>` : `<span${c.nulls ? '' : ' class="all"'}>${rowShare(c)}</span>`;
+  if (!c.first) return `<div class="cov"></div><span class="warn">Always empty</span>`;
+  const a = dn(t.first), b = dn(t.last) + 1, s = dn(c.first), e = dn(c.last) + 1;
+  const late = s > a + 1, early = e < b - 1;
+  const parts = [];
+  const when = t.periods && t.periods.unit === 'months' ? x => fM(dn(x)) : fD;
+  if (late && early) parts.push(`${when(c.first)} to ${when(c.last)}`);
+  else if (late) parts.push('From ' + when(c.first));
+  else if (early) parts.push('Last value ' + when(c.last));
+  // A field that starts late or stops early is judged on the rows inside its own date range, so one series
+  // that never has the value still shows; a field that spans the table is judged on every row.
+  let thin = false;
+  if (c.nulls > 0) {
+    if (late || early) {
+      const f = c.range_rows ? (t.rows - c.nulls) / c.range_rows : 1;
+      if (f < 0.995) { parts.push(`${share(f)} of rows ${late && early ? 'in between' : late ? 'since' : 'until then'}`); thin = true; }
+    } else { parts.push(rowShare(c)); thin = c.nonnull < 0.995; }
+  }
+  if (!parts.length) return `<span class="all">Every row</span>${badge}`;
+  const strip = b > a ? `<div class="cov"><i class="${thin ? 'thin' : ''}" style="left:${((s - a) / (b - a) * 100).toFixed(2)}%;width:${((e - s) / (b - a) * 100).toFixed(2)}%"></i></div>` : '';
+  return strip + parts.map(x => `<span>${esc(x)}</span>`).join('') + badge;
+}
+const runText = ([a, l]) => l === 1 ? fDn(a) : `${fDn(a)} to ${fDn(a + l - 1)}`;
+function histRange(t) {
+  const sp = spanOf(t);
+  const r0 = sp[1] - sp[0] > 900 ? monthStart(sp[0]) : Math.min(monthStart(sp[0]), sp[1] - 60);
+  return [r0, Math.max(addMonths(PIN, 1), sp[1])];
+}
+function historyBlock(t) {
+  const stat = (label, value, small) => `<div><dt>${label}</dt><dd>${value}${small ? ` <small>${small}</small>` : ''}</dd></div>`;
+  if (t.kind === 'reference' || !t.have.length) {
+    const range = !t.first ? '' : `<dl class="hist-stats">${t.first === t.last ? stat('As of', esc(fD(t.first))) : stat('Earliest date', esc(fD(t.first))) + stat('Latest date', esc(fD(t.last)))}</dl>`;
+    return `<div class="card hist"><p class="hist-why rich">${rich(t.why, t.name)}</p>${range}</div>`;
+  }
+  const k = KIND[t.kind], job = t.job && JOB[t.job], event = t.cadence === 'event';
+  // Each table is counted in what it holds: days, weeks, months, trading days, blocks or readings.
+  const unit = t.periods ? t.periods.unit : 'rows';
+  const noun = {days: 'day', weeks: 'week', months: 'month', 'trading days': 'trading day', blocks: 'block', readings: 'reading', rows: 'row'}[unit];
+  const when = unit === 'months' ? s => fM(dn(s)) : fD;
+  const stats = [stat('First ' + noun, esc(when(t.first))), stat((event ? 'Newest ' : 'Latest ') + noun, esc(when(t.last)))];
+  if (event && t.through !== t.last) stats.push(stat('Read through', esc(fD(t.through))));
+  if (t.periods) {
+    const label = {explorer: 'Days walked', validators: 'Days answered'}[t.job] || {days: 'Days in', weeks: 'Weeks in', months: 'Months in', 'trading days': 'Trading days', blocks: 'Blocks', readings: 'Readings'}[unit];
+    const monthly = t.sparse_before ? countIn(t.have, 0, dn(t.sparse_before)) : 0;
+    stats.push(stat(label, N(t.periods.n), monthly ? `${N(monthly)} monthly, ${N(t.periods.n - monthly)} daily` : ''));
+  }
+  if (t.pending_days) stats.push(stat('Queued', N(t.pending_days), 'days'));
+  if (t.refused_days) stats.push(stat('Refused', N(t.refused_days), 'days'));
+  if (t.gap_days) stats.push(stat(t.readings ? 'Nights missed' : 'Missing', N(t.gap_days), t.readings ? '' : t.gap_days === 1 ? 'day' : 'days'));
+  const gaps = t.gaps.length ? `<p class="hist-x"><b>${t.readings ? 'No reading was taken on' : t.periods && t.periods.unit === 'blocks' ? 'No block yet for' : 'No row on'}</b> ${esc(t.gaps.slice(0, 6).map(runText).join('; '))}${t.gaps.length > 6 ? `, and ${t.gaps.length - 6} more stretches` : ''}.</p>` : '';
+  const se = t.series, thru = dn(t.through);
+  const series = se ? `<details class="series"${se.list.length <= 12 ? ' open' : ''}><summary>${plural(se.total, se.noun, se.plural)}<small>and the ${unit === 'months' ? 'month' : 'day'} each one starts</small></summary>
+    <div class="s-list">${se.list.map(s => `<div class="s-i"><code>${esc(s.name)}</code><span>${dn(s.last) < thru - (unit === 'months' ? 31 : 1) ? `${esc(when(s.first))} to ${esc(when(s.last))}` : 'since ' + esc(when(s.first))}</span></div>`).join('')}</div></details>` : '';
+  const [r0, r1] = histRange(t);
+  const label = `${k.label}. From ${fD(t.first)} to ${fD(t.through)}${t.pending_days ? `, ${N(t.pending_days)} days queued for backfill` : ''}.`;
+  return `<div class="card hist">
+    <div><div class="tl" data-r0="${r0}" data-r1="${r1}">
+      <div class="axis" aria-hidden="true"></div>
+      <div class="tl-trk" data-t="${t.name}" role="img" aria-label="${esc(label)}"></div>
+      <div class="tl-over">${markers(r0, r1)}</div>
+    </div>${keys(t)}</div>
+    <p class="hist-why rich">${rich(t.why, t.name)}</p>
+    <dl class="hist-stats">${stats.join('')}</dl>
+    ${gaps}${series}
+    ${job && t.pending_days ? `<div class="hist-job"><p><b>${N(t.pending_days)} days queued.</b> ${job.nights ? `About ${job.nights} more nights at ${esc(job.pace)}, finishing around ${esc(fD(job.eta))}.` : ''}</p><a href="#queue">Backfill queue →</a></div>` : ''}
+  </div>`;
+}
+// A long description leads with what the table is; the method and caveats follow as a second paragraph.
+function describe(text, self) {
+  let lead = text, rest = '';
+  if (text.length > 340) {
+    const bits = text.split(/([.!?])\s+(?=[A-Z])/), sentences = [];
+    for (let i = 0; i < bits.length; i += 2) sentences.push(bits[i] + (bits[i + 1] || ''));
+    lead = sentences.shift();
+    while (sentences.length > 1 && (lead + ' ' + sentences[0]).length <= 250) lead += ' ' + sentences.shift();
+    rest = sentences.join(' ');
+  }
+  return [`<p class="t-desc rich">${rich(lead, self)}</p>`, rest ? `<p class="t-more rich">${rich(rest, self)}</p>` : ''];
+}
+// A unit that only repeats the column's type says nothing, so it is left out.
+const PLAIN_UNITS = new Set(['text', 'date', 'boolean', 'integer', 'timestamp', 'json']);
+const fieldUnit = c => c.unit && !PLAIN_UNITS.has(c.unit.toLowerCase()) ? `<span class="u">${esc(c.unit)}</span>` : '';
+let CUR = null;
+function drawHist() {
+  const host = main.querySelector('.hist .tl');
+  if (!host || !CUR) return;
+  const r0 = +host.dataset.r0, r1 = +host.dataset.r1, w = host.clientWidth;
+  host.querySelector('.axis').outerHTML = axis(r0, r1, w);
+  host.querySelector('.tl-trk').innerHTML = bar(CUR, r0, r1, w);
+}
+function renderTable(t, field) {
+  CUR = t;
+  document.title = t.name + ' · NEAR Hub Docs';
+  const [what, method] = describe(t.description, t.name);
+  const k = KIND[t.kind];
+  const i = T.indexOf(t), prev = T[i - 1], next = T[i + 1];
+  const numeric = /^(DOUBLE|BIGINT|INTEGER|HUGEINT|DECIMAL|FLOAT|SMALLINT|UBIGINT)/;
+  const sample = t.sample ? `<section class="block" aria-labelledby="h-rows"><h2 id="h-rows">Latest rows <small>${t.sample.rows.length} of ${N(t.rows)}</small></h2><div class="scroll"><table class="sample"><thead><tr>${t.columns.map(c => `<th scope="col">${esc(c.name)}</th>`).join('')}</tr></thead><tbody>${
+    t.sample.rows.map(r => `<tr>${r.map((v, j) => v === null ? '<td class="null">null</td>' : `<td class="${numeric.test(t.columns[j].type) ? 'num' : ''}">${esc(v)}</td>`).join('')}</tr>`).join('')}</tbody></table></div></section>` : '';
+  const chip = n => BY[n] ? `<a class="tchip" href="#${slug(n)}">${esc(n)}</a>` : `<span class="tchip silver">${esc(n)}</span>`;
+  const order = t.date_col && t.columns.some(c => c.name === t.date_col) ? ` order by ${t.date_col} desc` : '';
+  const sql = `make query SQL="select * from gold.${t.name}${order} limit 10"`;
+  const filter = t.columns.length > 12 ? `<span class="f-filter">${ICON.find}<label class="sr" for="fq">Filter fields</label><input id="fq" type="search" placeholder="Filter ${t.columns.length} fields" autocomplete="off" spellcheck="false"></span>` : '';
+  main.innerHTML = `<section class="top"><div class="wrap">
+    <nav class="crumbs" aria-label="Breadcrumb"><a href="#overview">Overview</a><span aria-hidden="true">/</span><span>${esc(t.area)}</span></nav>
+    <header class="t-head">
+      <div class="t-title"><h1>${esc(t.name)}</h1><span class="kpill">${t.pending_days ? '<i class="hatch"></i>' : ''}${esc(k.label)}</span></div>
+      ${what}
+    </header>
+    <dl class="meta">
+      <div><dt>Grain</dt><dd class="mono">${esc(t.grain)}</dd></div>
+      <div><dt>Rows</dt><dd>${N(t.rows)}</dd></div>
+      <div><dt>Fields</dt><dd>${N(t.columns.length)}</dd></div>
+      <div><dt>Sources</dt><dd class="rich">${rich(t.sources, t.name)}</dd></div>
+    </dl>
+    <nav class="jump" aria-label="On this page"><span>On this page</span><button type="button" data-jump="h-hist">History</button><button type="button" data-jump="h-fields">Fields<small>${t.columns.length}</small></button>${t.sample ? '<button type="button" data-jump="h-rows">Latest rows</button>' : ''}<button type="button" data-jump="h-lin">Lineage</button><button type="button" data-jump="h-q">Query it</button></nav>
+  </div></section>
+  <div class="sheet"><div class="wrap">
+    ${method}
+    <section class="block" aria-labelledby="h-hist"><h2 id="h-hist">History <small>${esc(k.blurb)}</small></h2>${historyBlock(t)}</section>
+    <section class="block" aria-labelledby="h-fields"><h2 id="h-fields">Fields <small>${t.columns.length}</small>${filter}</h2>
+      <div class="fields" id="fields"><div class="f-head" aria-hidden="true"><span>Field</span><span>What it holds</span><span>Coverage</span></div>
+      ${t.columns.map(c => `<div class="f-row" id="f-${esc(c.name)}" data-f="${esc((c.name + ' ' + c.description + ' ' + c.unit).toLowerCase())}"><div class="f-name"><a href="#${slug(t.name)}--${slug(c.name)}" title="Link to this field"><code>${esc(c.name)}</code></a><div class="f-type"><span>${esc(c.type.toLowerCase())}</span>${fieldUnit(c)}</div></div><div class="f-desc rich">${rich(c.description, t.name) || '<span style="color:var(--faint)">No description</span>'}</div><div class="f-cov">${coverage(t, c)}</div></div>`).join('')}
+      <p class="f-none" hidden>No field matches.</p></div></section>
+    ${sample}
+    <section class="block" aria-labelledby="h-lin"><h2 id="h-lin">Lineage</h2>
+      <div class="lin"><div class="card"><h3>Built from</h3>${t.reads.length ? `<div class="tchips">${t.reads.map(chip).join('')}</div>` : '<p>Nothing upstream in the manifest.</p>'}</div>
+      <div class="card"><h3>Read by</h3>${t.read_by.length ? `<div class="tchips">${t.read_by.map(chip).join('')}</div>` : '<p>No other gold table reads it.</p>'}</div></div>
+    </section>
+    <section class="block" aria-labelledby="h-q"><h2 id="h-q">Query it</h2>
+      <div class="query"><div class="q-top"><b>Command</b><code>${esc(t.path)}</code><button type="button" class="copy" id="copyBtn">${ICON.copy}<span>Copy</span></button></div><pre id="sql">${esc(sql)}</pre></div>
+    </section>
+    <nav class="pager" aria-label="Neighbouring tables">
+      ${prev ? `<a href="#${slug(prev.name)}"><small>← Previous table</small><code>${esc(prev.name)}</code></a>` : '<span></span>'}
+      ${next ? `<a class="next" href="#${slug(next.name)}"><small>Next table →</small><code>${esc(next.name)}</code></a>` : '<span></span>'}
+    </nav>
+  </div>${footer()}</div>`;
+  const host = main.querySelector('.hist .tl');
+  if (host) { drawHist(); wireHover(host, +host.dataset.r0, +host.dataset.r1, host.dataset.r1 - host.dataset.r0 <= 900); }
+  main.querySelectorAll('[data-jump]').forEach(b => b.addEventListener('click', () => {
+    const to = document.getElementById(b.dataset.jump);
+    if (to) to.scrollIntoView({behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start'});
+  }));
+  const fq = document.getElementById('fq');
+  if (fq) fq.addEventListener('input', () => {
+    const q = fq.value.trim().toLowerCase(), rows = [...document.querySelectorAll('#fields .f-row')];
+    rows.forEach(r => { r.hidden = !!q && !r.dataset.f.includes(q); });
+    document.querySelector('#fields .f-none').hidden = rows.some(r => !r.hidden);
+  });
+  document.getElementById('copyBtn').addEventListener('click', e => {
+    const label = e.currentTarget.querySelector('span');
+    const done = text => { label.textContent = text; setTimeout(() => { label.textContent = 'Copy'; }, 1600); };
+    const select = () => { const r = document.createRange(); r.selectNodeContents(document.getElementById('sql')); const s = getSelection(); s.removeAllRanges(); s.addRange(r); done('Selected'); };
+    try { navigator.clipboard.writeText(sql).then(() => done('Copied'), select); } catch (err) { select(); }
+  });
+  const hit = field && document.getElementById('f-' + field);
+  if (hit) { hit.classList.add('hit'); hit.scrollIntoView({block: 'center'}); } else window.scrollTo(0, 0);
+}
+function footer() {
+  return `<footer class="foot"><div class="wrap"><div class="foot-b"><a class="brand" href="${HOME}"${AWAY}>${LOGO}<span><span class="brand-q">NEAR</span> Hub</span></a><p>The warehouse guide for NEAR Hub. It is generated by <code>tools/docsite.py</code> from the warehouse pinned on ${esc(fD(D.meta.pin))}: descriptions come from <code>warehouse/models/gold/_gold.yml</code>, and coverage is measured in the built warehouse. Independent, not affiliated with the NEAR Foundation.</p></div><nav class="foot-l" aria-label="On NEAR Hub"><a href="${HOME}"${AWAY}>The Hub</a><a href="${HOME}#sources"${AWAY}>Sources</a><a href="${HOME}#s-quality"${AWAY}>Data quality</a><a href="${HOME}#library"${AWAY}>Library</a></nav></div></footer>`;
+}
+/* ---------- routing and events ---------- */
+function route() {
+  // A field's link is its table's, two hyphens, then the field: #fct-chain-daily--active-signers.
+  const [h, f] = location.hash.slice(1).split('--'), field = f && f.replace(/-/g, '_');
+  const t = BY[h.replace(/-/g, '_')];
+  hideTip();
+  // A link to another field of the table already on screen moves the highlight without redrawing the page.
+  if (t && t === CUR && field && document.getElementById('f-' + field)) {
+    main.querySelectorAll('.f-row.hit').forEach(r => r.classList.remove('hit'));
+    const hit = document.getElementById('f-' + field);
+    hit.classList.add('hit'); hit.scrollIntoView({block: 'center'});
+  } else if (t) renderTable(t, field); else { CUR = null; renderOverview(['queue', 'timeline'].includes(h) ? h : null); }
+  markCurrent();
+  // The index moves to the table being read, without moving the page
+  const here = nav.querySelector('[aria-current="page"]');
+  if (here) {
+    const top = here.offsetTop, low = top + here.offsetHeight;
+    if (top < nav.scrollTop + 8 || low > nav.scrollTop + nav.clientHeight - 8) nav.scrollTop = Math.max(0, top - nav.clientHeight / 2);
+  }
+  closeIndex();
+}
+function setKind(kind) {
+  S.kind = kind;
+  store.set('kind', S.kind);
+  kindSel.value = S.kind;
+  renderNav();
+  drawTimeline();
+}
+const index = document.getElementById('index'), menuBtn = document.getElementById('menuBtn');
+let scrim = null;
+function openIndex() {
+  index.classList.add('open'); menuBtn.setAttribute('aria-expanded', 'true');
+  scrim = document.createElement('div'); scrim.className = 'scrim'; scrim.addEventListener('click', closeIndex); document.body.appendChild(scrim);
+  document.getElementById('q').focus({preventScroll: true});
+}
+function closeIndex() {
+  index.classList.remove('open'); menuBtn.setAttribute('aria-expanded', 'false');
+  if (scrim) { scrim.remove(); scrim = null; }
+}
+menuBtn.addEventListener('click', () => index.classList.contains('open') ? closeIndex() : openIndex());
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeIndex();
+  if (e.key === '/' && !['INPUT', 'SELECT', 'TEXTAREA'].includes(document.activeElement.tagName)) { e.preventDefault(); const hero = document.getElementById('hq'); if (hero && hero.getBoundingClientRect().bottom > 80) hero.focus(); else if (innerWidth <= 900) openIndex(); else document.getElementById('q').focus(); }
+});
+document.getElementById('q').addEventListener('input', e => { S.q = e.target.value; renderNav(); });
+kindSel.addEventListener('change', () => setKind(kindSel.value));
+document.addEventListener('click', e => {
+  const k = e.target.closest('[data-kind]');
+  // A second press on the selected kind clears the filter.
+  if (k) { setKind(S.kind === k.dataset.kind ? 'all' : k.dataset.kind); return; }
+  const trk = e.target.closest('#timeline .tl-trk, #timeline .tl-ref');
+  if (trk) { location.hash = '#' + slug(trk.dataset.t); return; }
+  const z = e.target.closest('[data-zoom]');
+  if (z) {
+    S.zoom = z.dataset.zoom; store.set('zoom', S.zoom);
+    z.parentElement.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b === z)));
+    drawTimeline();
+  }
+});
+let rt = null;
+addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { drawTimeline(); drawHist(); }, 150); });
+addEventListener('hashchange', route);
+// Day and night, as on the Hub: the button shows the state the page is in
+const root = document.documentElement, themeBtn = document.getElementById('themeBtn');
+const MOON = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9Z"/></svg>';
+const SUN = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.6v2.1M12 19.3v2.1M2.6 12h2.1M19.3 12h2.1M5.4 5.4l1.5 1.5M17.1 17.1l1.5 1.5M5.4 18.6l1.5-1.5M17.1 6.9l1.5-1.5"/></svg>';
+const dark = matchMedia('(prefers-color-scheme: dark)');
+const isDark = () => root.dataset.theme ? root.dataset.theme === 'dark' : dark.matches;
+const paintTheme = () => { themeBtn.innerHTML = isDark() ? MOON : SUN; themeBtn.setAttribute('aria-pressed', String(isDark())); };
+// The choice is kept under one key that the Hub reads too, so a change on either shows on the other:
+// at once in another tab, and on return in this one.
+const THEME_KEY = 'nearhub.theme';
+const syncTheme = () => {
+  let t = null;
+  try { t = localStorage.getItem(THEME_KEY); } catch (e) { /* storage blocked: the page follows the system */ }
+  if ((t === 'dark' || t === 'light') && root.dataset.theme !== t) root.dataset.theme = t;
+  paintTheme();
+};
+themeBtn.addEventListener('click', () => {
+  root.dataset.theme = isDark() ? 'light' : 'dark';
+  try { localStorage.setItem(THEME_KEY, root.dataset.theme); } catch (e) { /* storage blocked */ }
+  paintTheme();
+});
+dark.addEventListener('change', paintTheme);
+addEventListener('storage', e => { if (e.key === THEME_KEY) syncTheme(); });
+addEventListener('pageshow', syncTheme);
+document.addEventListener('visibilitychange', () => { if (!document.hidden) syncTheme(); });
+syncTheme();
+if (AWAY) document.querySelectorAll('.head a[href^="http"]').forEach(a => { a.target = '_blank'; a.rel = 'noopener'; });
+renderKindSel(); renderNav(); route();
+})();
+</script>
