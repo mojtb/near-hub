@@ -58,7 +58,8 @@ thesis:  ## Rewrite THESIS.md from the claim scorecard in the warehouse (no netw
 	$(PY) -m tools.thesis
 
 query:  ## Run SQL against the warehouse: make query SQL="select * from gold.fct_mpc_state"
-	@$(PY) -m tools.query "$(SQL)"
+	@# SQL reaches the tool through the environment, so a query of several lines, copied from a chart, runs as it is.
+	@$(PY) -m tools.query "$$SQL"
 
 all: setup warehouse verify site thesis  ## The judge path: setup, build, check, the dashboard and the thesis
 

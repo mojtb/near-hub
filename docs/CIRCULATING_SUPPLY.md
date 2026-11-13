@@ -2,7 +2,7 @@
 
 `circulating_supply_near` is now built from the chain, in `fct_circulating_supply_daily`. On 2026-11-04 it reads **1,308.69M NEAR, 99.84% of the 1,310.83M total supply**. `market_cap_usd` in `fct_market_daily` is price times that figure: **$5.26B** that day, against a fully diluted $5.27B.
 
-The audit of 2026-11-05 (finding 2) found that nothing in the warehouse carried a live figure. This page says how the new series is built, how it was tested, why the old figures went wrong, and what it leaves out. The largest thing it leaves out is a question of basis: NEAR's figure counts the NEAR Foundation's liquid tokens as circulating, and some peers' figures clearly leave out far more. See [Against peers](#against-peers).
+The [audit of 2026-11-05](audits/DATA_AUDIT_2026-11-05.md) (finding 2) found that nothing in the warehouse carried a live figure. This page says how the new series is built, how it was tested, why the old figures went wrong, and what it leaves out. The largest thing it leaves out is a question of basis: NEAR's figure counts the NEAR Foundation's liquid tokens as circulating, and some peers' figures clearly leave out far more. See [Against peers](#against-peers).
 
 ## What it measures
 
@@ -95,7 +95,7 @@ Nothing but the contracts themselves has tested the series since 2025-08-26, bec
 | Avalanche | 444M | 476M | 93% | Avalanche `platform.getCurrentSupply` |
 | NEAR | 1,309M | 1,311M | 99.8% | Block header |
 | Ethereum | 122M | 122M | 100% | CoinMetrics `SplyCur`, which it indexes from the chain itself |
-| TON | not read: the asset id asked for, `ton`, returns nothing; CoinMetrics lists Toncoin as `gram` | | | |
+| TON | not read that day: the asset id asked for, `ton`, returned nothing. CoinMetrics lists Toncoin as `gram`, which is asked for from 2026-11-10; its total supply has not been read | | | |
 
 NEAR's 99.8% is not free float, and it is not the same measure as Sui's 41%. NEAR's definition takes out only lockups, while the NEAR Foundation also holds liquid NEAR: [305M on 2024-01-11](https://www.theblock.co/news/business/2024-01-11-near-foundation-staff-cut-treasury-271858), about 26% of supply then, which is the last figure found. No list of its accounts is published, so that holding cannot be read from the chain. `treasury.near` holds a further 1.6M.
 

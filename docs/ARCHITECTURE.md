@@ -7,7 +7,9 @@ flowchart LR
     B -->|make warehouse| C[Silver<br/>typed, every snapshot]
     C --> D[Gold<br/>facts, dimensions, quality]
     D --> E[data/gold<br/>Parquet and CSV]
-    D --> F[docs<br/>catalog, reconciliation]
+    D -->|make catalog| F[docs<br/>catalog, reconciliation]
+    D -->|make thesis| T[THESIS.md<br/>the claim scorecard, written out]
+    D -->|make site| S[site<br/>dashboard and table guide]
 ```
 
 ## Layers
@@ -19,6 +21,8 @@ flowchart LR
 | Silver | `warehouse/models/silver/`, schema `silver` | One typed model per dataset, every snapshot kept, with `is_latest` on the newest value per key | Faithful to the source. Units converted, nothing joined |
 | Gold | `warehouse/models/gold/`, schema `gold` | Shared facts and dimensions | One stated grain per table, tested. Every column documented with a unit |
 | Exports | `data/gold/` | Gold as Parquet, CSV for tables up to 5,000 rows, fingerprints, catalog | Rebuilt by `make warehouse` |
+| Thesis | `THESIS.md` | The claim scorecard written out: the case, the evidence for and against, the limits | Written by `make thesis`. No figure is typed |
+| Site | `site/` | The dashboard, its data (`site/shared/data.js`, `site/shared/catalog.js`) and the guide to every table (`site/docs/index.html`) | Data and guide rewritten by `make site` from the warehouse |
 
 ## Why these tools
 

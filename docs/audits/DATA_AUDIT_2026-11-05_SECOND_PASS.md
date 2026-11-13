@@ -1,6 +1,6 @@
 # Data audit, second pass, 2026-11-05
 
-A second look at the warehouse later on the same day as [DATA_AUDIT_2026-11-05.md](DATA_AUDIT_2026-11-05.md), after that audit's fixes and the four branches that followed it (circulating supply from the lockup contracts, token metadata and USD values for holdings, provisional fee days, one slug per protocol) had all been merged as `02dc49e`. Same two questions: does each table hold what it says, and which questions of a long-term NEAR thesis can it answer. Read it with [RECONCILIATION.md](RECONCILIATION.md), [SOURCES.md](SOURCES.md) and [CIRCULATING_SUPPLY.md](CIRCULATING_SUPPLY.md).
+A second look at the warehouse later on the same day as [DATA_AUDIT_2026-11-05.md](DATA_AUDIT_2026-11-05.md), after that audit's fixes and the four branches that followed it (circulating supply from the lockup contracts, token metadata and USD values for holdings, provisional fee days, one slug per protocol) had all been merged as `02dc49e`. Same two questions: does each table hold what it says, and which questions of a long-term NEAR thesis can it answer. Read it with [RECONCILIATION.md](../RECONCILIATION.md), [SOURCES.md](../SOURCES.md) and [CIRCULATING_SUPPLY.md](../CIRCULATING_SUPPLY.md).
 
 ## In short
 

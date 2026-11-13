@@ -4,12 +4,30 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>NEAR Hub: The Long Case, an investment case for NEAR</title>
-<script>/* The day or night choice is kept and shared with the docs. It is set here, before the page paints. */try{var t=localStorage.getItem('nearhub.theme');if(t==='dark'||t==='light')document.documentElement.dataset.theme=t}catch(e){}</script>
+<meta name="description" content="An investment case for NEAR, tested claim by claim against public data. Every claim has a stated bar, and every chart shows the query behind it.">
+<!-- What a link to this page shows when it is shared. The card is share-card.png, and it carries no figure, so it does not go stale. A share card needs full addresses. -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="NEAR Hub">
+<meta property="og:title" content="NEAR Hub: The Long Case, an investment case for NEAR">
+<meta property="og:description" content="An investment case for NEAR, tested claim by claim against public data. Every claim has a stated bar, and every chart shows the query behind it.">
+<meta property="og:url" content="https://nearhub.tech/">
+<meta property="og:image" content="https://nearhub.tech/share-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="NEAR Hub: an investment case for NEAR, tested claim by claim. The case, as five links.">
+<meta name="twitter:card" content="summary_large_image">
+<script>/* The day or night choice is kept and shared with the docs. It is set here, before the page paints. */try{var t=localStorage.getItem('nearhub.theme');if(t==='dark'||t==='light')document.documentElement.dataset.theme=t}catch(e){}
+/* Links name folders (docs/, ../), as the server serves them. Opened from a folder on disk, a folder would list its files,
+   so there a click on such a link goes to the folder's index.html. */
+if(location.protocol==='file:')addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('a[href]');if(a&&a.protocol==='file:'&&/\/$/.test(a.pathname))a.pathname+='index.html'},true);</script>
 <link rel="icon" href="favicon.png" sizes="64x64" type="image/png">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&display=swap">
+<link rel="preconnect" href="https://cdnjs.cloudflare.com">
+<!-- The font is fetched without holding up the first paint: the page shows in the system font until it arrives -->
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&display=swap"></noscript>
 <style>
 /* Layout concept: a night sky of data above a bright sheet. The dark hero states the thesis as a sentence with real numbers and shows the chart behind it. The sheet below holds every subject as a bento of live mini charts. Pages, navigation and search all generate from two lists, so new analyses need no layout work. */
 :root{
@@ -129,6 +147,26 @@ p{margin:0}
 .hbtn.alt:hover svg{transform:translateX(2px)}
 .hero :focus-visible{outline-color:var(--mint)}
 @media (prefers-reduced-motion:reduce){.hbtn,.hbtn svg{transition:none}.hbtn.pri:hover{transform:none}.hbtn:hover svg{transform:none}}
+/* While the scripts and the data arrive, the page already shows the night band every page opens with, its lines drawn
+   as quiet bars, and the header keeps the height its subject row will take. The script replaces all of it on its first
+   draw. It fills the first screen, so the footer never shows in the middle of a phone. A note follows on a slow line. */
+.head .tabs:empty{visibility:hidden;min-height:38px}
+.boot{min-height:calc(100vh - var(--head-h,60px));min-height:calc(100svh - var(--head-h,60px))}
+.boot .hero-top{align-items:start}
+.bk{display:block;height:16px;border-radius:9px;background:linear-gradient(100deg,rgba(243,247,245,.055) 40%,rgba(243,247,245,.12) 50%,rgba(243,247,245,.055) 60%) 0 0/300% 100%;animation:bk-glow 1.5s linear infinite}
+@keyframes bk-glow{from{background-position:100% 0}to{background-position:0 0}}
+.bk+.bk{margin-top:12px}
+.bk-kick{width:min(330px,80%);height:28px;border-radius:99px;margin-bottom:clamp(16px,2.6vh,26px)}
+.bk-h{width:96%;height:clamp(30px,4.1vw,60px);border-radius:12px}.bk-h.short{width:58%}
+.bk-bar{max-width:46em;height:12px;border-radius:99px;margin-top:clamp(18px,3vh,30px)!important}
+.bk-l{width:min(35em,92%)}.bk-l.short{width:min(22em,60%)}
+.bk-btns{display:flex;gap:12px;margin-top:clamp(18px,3vh,28px)!important;background:none;animation:none;height:auto}
+.bk-btns i{display:block;width:150px;max-width:44%;height:42px;border-radius:12px;background:inherit}
+.bk-btns i,.bk-panel{background:linear-gradient(100deg,rgba(243,247,245,.055) 40%,rgba(243,247,245,.12) 50%,rgba(243,247,245,.055) 60%) 0 0/300% 100%;animation:bk-glow 1.5s linear infinite}
+.bk-panel{display:block;height:clamp(260px,26vw,340px);border-radius:var(--r)}
+.boot-slow{margin-top:clamp(26px,4vh,40px);font-size:14px;color:var(--night-mute);opacity:0;animation:boot-note .4s ease 8s forwards}
+@keyframes boot-note{to{opacity:1}}
+@media (prefers-reduced-motion:reduce){.bk,.bk-btns i,.bk-panel{animation:none}}
 .hero-chart{margin-top:clamp(24px,4.2vh,46px)}
 .hc-top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px;font-size:14px;color:var(--night-mute)}
 .hc-key{display:flex;gap:4px 14px;flex-wrap:wrap}.hc-key span{display:inline-flex;align-items:center;gap:7px}.hc-key i{width:9px;height:9px;border-radius:50%;display:block}
@@ -1206,15 +1244,15 @@ table.corr{--trk:clamp(52px,9.5vw,136px);--val:52px;--gap:12px;font-size:15px}
     <button class="icon" id="theme" aria-label="Switch colour theme"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9Z"/></svg></button>
   </div>
 </div></header>
-<main id="main"></main>
-<footer class="end"><div class="wrap"><div class="end-top"><div class="end-id"><a class="end-brand" href="#overview"><svg width="24" height="24" viewBox="0 0 32 32" aria-hidden="true"><use href="#lc-mark"/></svg><span><span class="brand-q">NEAR</span> Hub</span></a><p>Home of The Long Case, an investment case for NEAR tested claim by claim against public data. Each chart shows the query behind it.</p><a class="end-data" href="#s-quality" title="How far each number can be trusted"><i aria-hidden="true"></i><span>Data through <b data-asof>4 Nov 2026</b></span></a></div><nav class="end-nav" id="endnav" aria-label="Site index"></nav></div><div class="end-base"><p class="end-ind">Independent project, not affiliated with the NEAR Foundation. The author may hold NEAR and may be paid in NEAR for this work. Not investment advice.</p><button type="button" class="end-up" id="end-up">Back to top<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5"/><path d="m6 11 6-6 6 6"/></svg></button></div></div></footer>
+<main id="main" aria-busy="true"><section class="night boot" aria-label="Loading"><div class="wrap hero"><div class="hero-top"><div><span class="bk bk-kick"></span><span class="bk bk-h"></span><span class="bk bk-h"></span><span class="bk bk-h short"></span><span class="bk bk-bar"></span><span class="bk bk-l"></span><span class="bk bk-l"></span><span class="bk bk-l short"></span><span class="bk bk-btns"><i></i><i></i></span></div><span class="bk bk-panel"></span></div><p class="boot-slow">Still loading. On a slow connection the first visit takes a while; after that the page opens quickly.</p></div></section></main>
+<footer class="end"><div class="wrap"><div class="end-top"><div class="end-id"><a class="end-brand" href="#overview"><svg width="24" height="24" viewBox="0 0 32 32" aria-hidden="true"><use href="#lc-mark"/></svg><span><span class="brand-q">NEAR</span> Hub</span></a><p>Home of The Long Case, an investment case for NEAR tested claim by claim against public data. Each chart shows the query behind it.</p><a class="end-data" href="#s-quality" title="How far each number can be trusted"><i aria-hidden="true"></i><span>Data through <b data-asof>11 Nov 2026</b></span></a></div><nav class="end-nav" id="endnav" aria-label="Site index"></nav></div><div class="end-base"><p class="end-ind">Independent project, not affiliated with the NEAR Foundation. The author may hold NEAR and may be paid in NEAR for this work. Not investment advice.</p><button type="button" class="end-up" id="end-up">Back to top<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5"/><path d="m6 11 6-6 6 6"/></svg></button></div></div></footer>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/6.0.0/echarts.min.js"></script>
+<!-- ECharts is fetched once the page has drawn: see the end of the script below -->
 <script src="shared/catalog.js?v=43f7b06c"></script>
 <script src="shared/data.js?v=45658d82"></script>
-<script src="shared/charts.js?v=bb397c3b"></script>
-<script src="shared/viz.js?v=f1a1919f"></script>
+<script src="shared/charts.js?v=9d74e7aa"></script>
+<script src="shared/viz.js?v=64c3f1d5"></script>
 <script>
 const {fmt,model,baseline,timeChart,spark,miniBars,ring,hbars}=LCC;
 const $=s=>document.querySelector(s);
@@ -4187,7 +4225,7 @@ const ICON_COPY=svg('<rect x="9" y="9" width="11" height="11" rx="2.5"/><path d=
 const sqlLines=sql=>String(sql).split('\n').map(l=>`<span class="ln">${sxHl(l).replace(/\n$/,'')||' '}</span>`).join('');
 /* A table named above a query opens its page in the docs, in a new tab so the chart keeps its place; a name the catalog
    does not hold stays plain */
-const docHref=n=>`docs/index.html#${n.replace(/^gold\./,'').replace(/_/g,'-')}`;
+const docHref=n=>`docs/#${n.replace(/^gold\./,'').replace(/_/g,'-')}`;
 const sqlTab=n=>typeof LCAT!=='undefined'&&LCAT.tables[n.slice(5)]?`<a class="qx-t" href="${docHref(n)}" target="_blank" rel="noopener" title="Open ${n} in the docs">${n}</a>`:`<span class="qx-t">${n}</span>`;
 const sqlTabs=sql=>{const t=[...new Set(String(sql).match(/\bgold\.[a-z0-9_]+/g)||[])];return t.map((n,i)=>i<3?sqlTab(n):sqlTab(n).replace('class="qx-t"','class="qx-t qx-x" hidden')).join('')+(t.length>3?`<button type="button" class="qx-t qx-m" aria-expanded="false" title="${t.slice(3).join(', ')}">and ${t.length-3} more</button>`:'')};
 /* A query that reads more than three tables names the first three; the rest open in place */
@@ -4833,7 +4871,7 @@ const V={
         <h1>NEAR created <span class="h-n h-iss">${fmt.usd(hIss)}</span> of new tokens in 30 days. <span class="h-b">Its revenue wallets received <span class="h-n h-kept">${fmt.usd(hRec)}</span>${hClosed?', more than that':''}.</span></h1>
         <div class="gapbar"><div class="gb-track" role="img" aria-label="To one scale: ${fmt.usd(hRec)} received beside ${fmt.usd(hIss)} created in the 30 days to ${dm(DN.date_day)}"><i style="width:${hBar}%"></i></div><div class="gb-key" style="--k:${hBar}%" aria-hidden="true"><span class="k">Received</span><span class="g">${hClosed?'':'the gap'}</span></div></div>
         <p class="lede">The 30 days to ${dm(DN.date_day)}: new NEAR at each day's price, beside what fees on <span class="tm" tabindex="0" data-tm="intents">NEAR Intents</span> sent to NEAR's <span class="tm" tabindex="0" data-tm="wallets">revenue wallets</span>. ${hClosed?'On these 30 days the gap is closed.':'The long case is that this gap closes.'} Below is the evidence, for and against.</p>
-        <div class="hero-cta"><button type="button" class="hbtn pri" data-go="case">Read the case${svg('<path d="M12 5v14M6 13l6 6 6-6"/>',17)}</button><a class="hbtn alt" href="docs/index.html">Browse the data${ARROW}</a></div>
+        <div class="hero-cta"><button type="button" class="hbtn pri" data-go="case">Read the case${svg('<path d="M12 5v14M6 13l6 6 6-6"/>',17)}</button><a class="hbtn alt" href="docs/">Browse the data${ARROW}</a></div>
       </div>
       <aside class="hfig" aria-labelledby="hfig-h">
         <h2 class="hfig-h" id="hfig-h">Four figures the case turns on</h2>
@@ -4957,7 +4995,7 @@ const V={
   const gs=[
    {t:'Sources behind this site',v:String(ids.length),s:`${nRead('script')} are collected every night${off?`, ${numWord(off)} on request or by hand`:''}`,parts:[['Collected every night',nRead('script'),'#2fe0a0'],['Read on request',nRead('request'),'#e8954a'],['Read by hand',nRead('hand'),'#8b9693']]},
    {t:'Comparisons between sources that agree',to:'a-ledger',v:`${R.agree} of ${R.total}`,s:`${R.independent_agree} of them between independent sources`,parts:[['Independent, agree',R.independent_agree,'#2fe0a0'],['Same upstream, agree',R.same_upstream_agree,'#8b9693'],['Differ',R.differs,'#ef7563']]}];
-  const also=`<dl><div><dt>Data through</dt><dd>${fmt.date(LC.asOf)}</dd></div></dl><a class="gz-case" href="#s-quality"><span>How they are checked</span><b class="open">${subj('quality').name}</b></a><a class="gz-case" href="docs/index.html" style="margin-left:0"><span>Data dictionary</span><b class="open">Every table and field</b></a>`;
+  const also=`<dl><div><dt>Data through</dt><dd>${fmt.date(LC.asOf)}</dd></div></dl><a class="gz-case" href="#s-quality"><span>How they are checked</span><b class="open">${subj('quality').name}</b></a><a class="gz-case" href="docs/" style="margin-left:0"><span>Data dictionary</span><b class="open">Every table and field</b></a>`;
   const row=id=>{const s=VZ.sourceInfo(id),info=LC.lineage.sources[id]||{},u=use[id]||{n:0,by:{}},r=relOf(id),f=FR_BY.find(g=>g.id===id),w=f?frWorst(f):null;
    const on=rel.filter((x,i)=>r[i]==='on').map(x=>x.full),behind=rel.filter((x,i)=>r[i]==='behind').map(x=>x.full);
    const say=`${on.length?`Credited on charts in ${dqList(on)}.`:'No chart credits it directly.'}${behind.length?` It also feeds tables behind ${dqList(behind)}.`:''}`;
@@ -5231,7 +5269,12 @@ addEventListener('storage',e=>{if(e.key==='nearhub.theme')themeSync()});
 addEventListener('pageshow',themeSync);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)themeSync()});
 matchMedia('(prefers-color-scheme:dark)').addEventListener('change',()=>{if(!root.dataset.theme){paintTheme();repaint()}});
+main.removeAttribute('aria-busy');
 route();
+/* ECharts is the largest file the page loads and only the charts need it. It is fetched once the words and figures have
+   drawn, so on a slow line it does not share the bandwidth with the data. Each chart draws once it is in view and
+   ECharts has arrived (LCC.whenDrawable). */
+document.head.append(Object.assign(document.createElement('script'),{src:'https://cdnjs.cloudflare.com/ajax/libs/echarts/6.0.0/echarts.min.js',onload:LCC.echartsArrived}));
 </script>
 </body>
 </html>

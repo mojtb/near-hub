@@ -1,6 +1,6 @@
-name: near_thesis
+name: near_hub
 version: "1.0.0"
-profile: near_thesis
+profile: near_hub
 config-version: 2
 
 flags:
@@ -13,7 +13,7 @@ test-paths: ["warehouse/tests"]
 seed-paths: ["registry"]
 
 models:
-  near_thesis:
+  near_hub:
     silver:
       +schema: silver
       +materialized: table
@@ -22,7 +22,7 @@ models:
       +materialized: table
 
 seeds:
-  near_thesis:
+  near_hub:
     +schema: registry
     entities:
       +column_types:

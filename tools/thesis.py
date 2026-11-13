@@ -288,6 +288,9 @@ md: list[str] = [
     f"through {day(settled)}. Every figure is read from a gold table, so none is typed. To change a claim or its bar, edit "
     "`registry/claims.csv`; to change the wording, edit `tools/thesis.py`._",
     "",
+    "The same scorecard, with a chart and the query behind every claim, is on the dashboard at "
+    "[nearhub.tech](https://nearhub.tech).",
+    "",
     "## The claim",
     "",
     f"Over the 30 days to {day(settled)}, NEAR minted {near(dilution['minted_30d_near'])}, which is "

@@ -2,6 +2,8 @@
 
 _Written by `make thesis` from the warehouse pinned at 2026-11-12: data through 11 Nov 2026, fees and revenue settled through 9 Nov 2026. Every figure is read from a gold table, so none is typed. To change a claim or its bar, edit `registry/claims.csv`; to change the wording, edit `tools/thesis.py`._
 
+The same scorecard, with a chart and the query behind every claim, is on the dashboard at [nearhub.tech](https://nearhub.tech).
+
 ## The claim
 
 Over the 30 days to 9 Nov 2026, NEAR minted 2.69M NEAR, which is 2.50% of supply a year. Gas burned and the NEAR its revenue wallets received came to 16.1% of that: 15.1% received and held by the wallets, 1.0% burned. **The long case is that this gap closes:** NEAR Intents keeps growing, NEAR keeps a larger share of the fees charged on it, and issuance falls to 1.6% a year.

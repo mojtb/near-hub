@@ -2,7 +2,7 @@
    bars with targets, stacked columns, rank matrix, nested log bars, calendar stripes and the ledger strip.
    Colour follows the entity everywhere, so a chain keeps its hue from chart to chart. */
 (function () {
-  const { fmt, whenVisible, theme, tooltipBase, baseOption, axisText, gradient, rgba, textWidth } = LCC;
+  const { fmt, whenDrawable, theme, tooltipBase, baseOption, axisText, gradient, rgba, textWidth } = LCC;
   const HUE = {
     ethereum: '#4f7fe8', eth: '#4f7fe8', solana: '#8a70e0', sol: '#8a70e0', near: '#00b37a', tron: '#e5604f',
     zec: '#e0a02a', btc: '#0f9a8a', avalanche: '#d97f2e', sui: '#e27fa8', aptos: '#3f9a5a', ton: '#7f8c9a', other: '#8b918f', hidden: '#8b918f',
@@ -41,7 +41,7 @@
     el.append(box);
     let ec = null;
     const then = () => { if (ec && after) after(ec, theme(el)); };
-    const cancel = whenVisible(el, () => { ec = echarts.init(box, null, { renderer: 'canvas' }); ec.setOption(build(theme(el))); then(); });
+    const cancel = whenDrawable(el, () => { ec = echarts.init(box, null, { renderer: 'canvas' }); ec.setOption(build(theme(el))); then(); });
     const ro = new ResizeObserver(() => { if (ec) { ec.resize(); then(); } });
     ro.observe(box);
     return { update() { if (ec) { ec.setOption(build(theme(el)), true); then(); } }, destroy() { cancel(); ro.disconnect(); if (ec) ec.dispose(); el.innerHTML = ''; } };

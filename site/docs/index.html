@@ -3,16 +3,32 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="The finished tables behind NEAR Hub and their fields: what each one measures, where it comes from, and how much history is in.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="NEAR Hub">
+<meta property="og:title" content="NEAR Hub Docs: a guide to every table and field">
+<meta property="og:description" content="The finished tables behind NEAR Hub and their fields: what each one measures, where it comes from, and how much history is in.">
+<meta property="og:url" content="https://nearhub.tech/docs/">
+<meta property="og:image" content="https://nearhub.tech/share-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="NEAR Hub: an investment case for NEAR, tested claim by claim. The case, as five links.">
+<meta name="twitter:card" content="summary_large_image">
 </head>
 <body>
-<script>try{var t=localStorage.getItem('nearhub.theme');if(t==='dark'||t==='light')document.documentElement.dataset.theme=t}catch(e){}</script>
+<script>try{var t=localStorage.getItem('nearhub.theme');if(t==='dark'||t==='light')document.documentElement.dataset.theme=t}catch(e){}
+/* The link home names the Hub's folder (../), as the server serves it. Opened from a folder on disk, a folder would list
+   its files, so there a click on such a link goes to the folder's index.html. */
+if(location.protocol==='file:')addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('a[href]');if(a&&a.protocol==='file:'&&/\/$/.test(a.pathname))a.pathname+='index.html'},true);</script>
 <title>NEAR Hub Docs</title>
 <link rel="icon" type="image/png" href="../favicon.png">
 <link rel="icon" type="image/svg+xml" href="../favicon.svg">
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600;700&display=swap">
+<!-- The fonts are fetched without holding up the first paint: the page shows in the system fonts until they arrive -->
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600;700&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600;700&display=swap"></noscript>
 <style>
 /* The warehouse guide, in NEAR Hub's look: the Hub's dark header and logo, an index of every table beside it, and a
    reading pane. Only the header and the footer are dark in both themes; the index, the top of each page and
@@ -446,10 +462,10 @@ footer.foot .wrap{padding-block:30px 40px;display:grid;grid-template-columns:min
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs><clipPath id="lcm-t"><path d="M10 0H22C28.8 0 32 3.2 32 10V22C32 28.8 28.8 32 22 32H10C3.2 32 0 28.8 0 22V10C0 3.2 3.2 0 10 0Z"/></clipPath><linearGradient id="lcm-f" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#66fbca"/><stop offset=".42" stop-color="#00ec97"/><stop offset="1" stop-color="#00b377"/></linearGradient><radialGradient id="lcm-s" cx=".26" cy=".1" r=".8"><stop offset="0" stop-color="#fff" stop-opacity=".38"/><stop offset=".6" stop-color="#fff" stop-opacity="0"/></radialGradient><radialGradient id="lcm-p" gradientUnits="userSpaceOnUse" cx="19" cy="20" r="14"><stop offset="0" stop-color="#03241a" stop-opacity=".26"/><stop offset="1" stop-color="#03241a" stop-opacity="0"/></radialGradient><linearGradient id="lcm-r" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".75"/><stop offset=".42" stop-color="#fff" stop-opacity="0"/><stop offset=".62" stop-color="#02130d" stop-opacity="0"/><stop offset="1" stop-color="#02130d" stop-opacity=".38"/></linearGradient><linearGradient id="lcm-k" gradientUnits="userSpaceOnUse" x1="0" y1="7" x2="0" y2="25"><stop offset="0" stop-color="#0f2a20"/><stop offset="1" stop-color="#040c09"/></linearGradient><filter id="lcm-b" x="-30%" y="-30%" width="160%" height="170%"><feGaussianBlur stdDeviation=".8"/></filter></defs><symbol id="lc-mark" viewBox="0 0 32 32"><path d="M10 0H22C28.8 0 32 3.2 32 10V22C32 28.8 28.8 32 22 32H10C3.2 32 0 28.8 0 22V10C0 3.2 3.2 0 10 0Z" fill="url(#lcm-f)"/><g clip-path="url(#lcm-t)"><rect width="32" height="32" fill="url(#lcm-s)"/><path d="M0 23.4H11.2V18.6H16V13.8H20.8V9H32V32H0Z" fill="url(#lcm-p)"/><path d="M10 0H22C28.8 0 32 3.2 32 10V22C32 28.8 28.8 32 22 32H10C3.2 32 0 28.8 0 22V10C0 3.2 3.2 0 10 0Z" fill="none" stroke="url(#lcm-r)" stroke-width="1.7"/><path transform="translate(.5 1.1)" d="M5.2 22.2H10V17.4H14.8V12.6H19.6V7.8H26.8V10.2H22V15H17.2V19.8H12.4V24.6H5.2Z" fill="#02130d" stroke="#02130d" stroke-width="1" stroke-linejoin="round" opacity=".36" filter="url(#lcm-b)"/></g><path d="M5.2 22.2H10V17.4H14.8V12.6H19.6V7.8H26.8V10.2H22V15H17.2V19.8H12.4V24.6H5.2Z" fill="url(#lcm-k)" stroke="url(#lcm-k)" stroke-width="1" stroke-linejoin="round"/></symbol></svg>
 <header class="head">
-  <a class="brand" href="../index.html" aria-label="NEAR Hub, the dashboard"><svg width="24" height="24" viewBox="0 0 32 32" aria-hidden="true"><use href="#lc-mark"/></svg><span class="brand-t"><span class="brand-q">NEAR</span> Hub</span></a>
+  <a class="brand" href="../" aria-label="NEAR Hub, the dashboard"><svg width="24" height="24" viewBox="0 0 32 32" aria-hidden="true"><use href="#lc-mark"/></svg><span class="brand-t"><span class="brand-q">NEAR</span> Hub</span></a>
   <a class="docs-tag" href="#overview" aria-label="Docs, the warehouse guide">Docs</a>
   <span class="head-sp"></span>
-  <a class="head-a" href="../index.html" aria-label="Back to the Hub"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg><span>Back to the Hub</span></a>
+  <a class="head-a" href="../" aria-label="Back to the Hub"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg><span>Back to the Hub</span></a>
   <button class="head-b" id="themeBtn" type="button" aria-label="Night mode" aria-pressed="false"></button>
   <button class="menu" id="menuBtn" type="button" aria-controls="index" aria-expanded="false">
     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M2.5 4h11M2.5 8h11M2.5 12h11" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>Tables
@@ -520,7 +536,7 @@ const store = {
   get(k) { try { return localStorage.getItem('wguide.' + k); } catch (e) { return null; } },
   set(k, v) { try { localStorage.setItem('wguide.' + k, v); } catch (e) { /* storage blocked: the page works without it */ } },
 };
-const HOME = '../index.html', AWAY = /^https?:/.test(HOME) ? ' target="_blank" rel="noopener"' : '';
+const HOME = '../', AWAY = /^https?:/.test(HOME) ? ' target="_blank" rel="noopener"' : '';
 const LOGO = '<svg width="24" height="24" viewBox="0 0 32 32" aria-hidden="true"><use href="#lc-mark"/></svg>';
 const PIN = dn(D.meta.pin), LAST = dn(D.meta.last_day), V1 = D.meta.v1_off ? dn(D.meta.v1_off) : null;
 const S = {kind: store.get('kind') || 'all', q: '', zoom: store.get('zoom') || 'all'};

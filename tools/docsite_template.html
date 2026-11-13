@@ -1,11 +1,16 @@
-<script>try{var t=localStorage.getItem('nearhub.theme');if(t==='dark'||t==='light')document.documentElement.dataset.theme=t}catch(e){}</script>
+<script>try{var t=localStorage.getItem('nearhub.theme');if(t==='dark'||t==='light')document.documentElement.dataset.theme=t}catch(e){}
+/* The link home names the Hub's folder (../), as the server serves it. Opened from a folder on disk, a folder would list
+   its files, so there a click on such a link goes to the folder's index.html. */
+if(location.protocol==='file:')addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('a[href]');if(a&&a.protocol==='file:'&&/\/$/.test(a.pathname))a.pathname+='index.html'},true);</script>
 <title>NEAR Hub Docs</title>
 <link rel="icon" type="image/png" href="__HUB__/favicon.png">
 <link rel="icon" type="image/svg+xml" href="__HUB__/favicon.svg">
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600;700&display=swap">
+<!-- The fonts are fetched without holding up the first paint: the page shows in the system fonts until they arrive -->
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600;700&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600;700&display=swap"></noscript>
 <style>
 /* The warehouse guide, in NEAR Hub's look: the Hub's dark header and logo, an index of every table beside it, and a
    reading pane. Only the header and the footer are dark in both themes; the index, the top of each page and

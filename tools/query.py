@@ -36,4 +36,6 @@ def main(sql: str) -> int:
 
 
 if __name__ == "__main__":
+    if len(sys.argv) < 2 or not sys.argv[1].strip():
+        sys.exit('Give a query: make query SQL="select * from gold.fct_mpc_state limit 5"')
     sys.exit(main(sys.argv[1]))

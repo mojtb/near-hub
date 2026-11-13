@@ -143,12 +143,12 @@ def test_runner_survives_a_failing_dataset(tmp_path, monkeypatch):
 
 def test_dotenv_ignores_comments_and_blanks(tmp_path, monkeypatch):
     env = tmp_path / ".env"
-    env.write_text("# comment\nNEAR_THESIS_TEST_A=hello   # inline comment\nNEAR_THESIS_TEST_B=\n")
-    monkeypatch.delenv("NEAR_THESIS_TEST_A", raising=False)
-    monkeypatch.delenv("NEAR_THESIS_TEST_B", raising=False)
+    env.write_text("# comment\nNEAR_HUB_TEST_A=hello   # inline comment\nNEAR_HUB_TEST_B=\n")
+    monkeypatch.delenv("NEAR_HUB_TEST_A", raising=False)
+    monkeypatch.delenv("NEAR_HUB_TEST_B", raising=False)
     load_dotenv(env)
-    assert secret("NEAR_THESIS_TEST_A") == "hello"
-    assert secret("NEAR_THESIS_TEST_B") is None
+    assert secret("NEAR_HUB_TEST_A") == "hello"
+    assert secret("NEAR_HUB_TEST_B") is None
 
 
 def _page(payload: dict) -> str:

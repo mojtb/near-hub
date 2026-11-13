@@ -31,6 +31,23 @@ STATE = ROOT / "data" / "state"
 TEMPLATE = Path(__file__).with_name("docsite_template.html")
 OUT = ROOT / "site" / "docs" / "index.html"
 HUB = ROOT / "site"  # the dashboard this guide is a companion to; the guide links back to it
+# What a link to the guide shows when it is shared. A share card needs full addresses, so the site's own is written
+# here. The card is the dashboard's, site/share-card.png.
+SITE_URL = "https://nearhub.tech"
+SHARE_TEXT = ("The finished tables behind NEAR Hub and their fields: what each one measures, where it comes from, "
+              "and how much history is in.")
+SHARE_TAGS = (f'<meta name="description" content="{SHARE_TEXT}">\n'
+              '<meta property="og:type" content="website">\n'
+              '<meta property="og:site_name" content="NEAR Hub">\n'
+              '<meta property="og:title" content="NEAR Hub Docs: a guide to every table and field">\n'
+              f'<meta property="og:description" content="{SHARE_TEXT}">\n'
+              f'<meta property="og:url" content="{SITE_URL}/docs/">\n'
+              f'<meta property="og:image" content="{SITE_URL}/share-card.png">\n'
+              '<meta property="og:image:width" content="1200">\n'
+              '<meta property="og:image:height" content="630">\n'
+              '<meta property="og:image:alt" content="NEAR Hub: an investment case for NEAR, tested claim by claim. '
+              'The case, as five links.">\n'
+              '<meta name="twitter:card" content="summary_large_image">\n')
 EPOCH = date(1970, 1, 1)
 DATE_COLUMNS = ("date_day", "snapshot_date", "week_start", "month_start", "event_date")
 RECEIVER_WINDOW_DAYS = 365  # the window ingest/sources/neardata.py backfills
@@ -166,7 +183,7 @@ NO_SAMPLE = {"fct_token_holders", "fct_wallet_counterparties", "fct_wallet_trans
 SAMPLE_ROWS = 5
 # What a table's history is counted in, by cadence. Event tables have no fixed period, so they show none.
 PERIODS = {"daily": "days", "weekly": "weeks", "monthly": "months", "trading": "trading days", "blockday": "blocks", "snapshot": "readings"}
-# The free GitHub Actions minutes a private repository gets each month (docs/audits/DATA_AUDIT_2026-11-05_second_pass.md).
+# The free GitHub Actions minutes a private repository gets each month (docs/audits/DATA_AUDIT_2026-11-05_SECOND_PASS.md).
 # The queue's caveat is worked out from this and the run reports; set it to 0 once the repository is public.
 ACTIONS_FREE_MINUTES = 2000
 CHAIN_NAMES = {"ethereum": "Ethereum", "solana": "Solana", "avalanche": "Avalanche", "near": "NEAR", "ton": "TON", "aptos": "Aptos", "sui": "Sui"}
@@ -790,11 +807,13 @@ def main() -> None:
     payload = json.dumps(data, separators=(",", ":")).replace("</", "<\\/")
     # Links to the dashboard are written relative to where the page lands, so it works from a folder and from a host
     hub = args.hub or os.path.relpath(HUB, out.parent).replace(os.sep, "/")
-    home = args.hub_home or f"{hub}/index.html"
+    # The folder, not its index.html, so the address bar shows nearhub.tech/ (a file:// copy adds index.html on click)
+    home = args.hub_home or f"{hub}/"
     fragment = TEMPLATE.read_text().replace("__HUB_HOME__", home).replace("__HUB__", hub).replace("__DOCSITE_DATA__", payload)
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text('<!doctype html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n'
-                   '<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n</head>\n<body>\n'
+                   '<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n'
+                   f'{SHARE_TAGS}</head>\n<body>\n'
                    f"{fragment}\n</body>\n</html>\n")
     if args.fragment:
         # A host that wraps the page has no folder beside it, so the links to the dashboard's icons are left out

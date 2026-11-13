@@ -1,23 +1,86 @@
-# NEAR Hub
+<p align="center">
+  <a href="https://nearhub.tech"><img src="site/favicon.svg" width="72" height="72" alt="NEAR Hub"></a>
+</p>
 
-An investment case for NEAR, tested claim by claim against public data that anyone can rebuild.
+<h1 align="center">NEAR Hub</h1>
+
+<p align="center">
+  <b>An investment case for NEAR, tested claim by claim against public data that anyone can rebuild.</b>
+</p>
+
+<p align="center">
+  <a href="https://nearhub.tech"><b>nearhub.tech</b></a> &nbsp;·&nbsp;
+  <a href="THESIS.md">The thesis</a> &nbsp;·&nbsp;
+  <a href="https://nearhub.tech/docs/">Guide to every table</a> &nbsp;·&nbsp;
+  <a href="#rebuild-it-yourself">Rebuild it yourself</a> &nbsp;·&nbsp;
+  <a href="docs/README.md">Method</a>
+</p>
+
+<p align="center">
+  <a href="https://nearhub.tech"><img src="https://img.shields.io/badge/live-nearhub.tech-00ec97?style=flat-square&labelColor=0b0f0e" alt="Live site: nearhub.tech"></a>
+  <a href="https://github.com/mojtb/near-hub/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/mojtb/near-hub/ci.yml?branch=main&style=flat-square&label=rebuild%20check&labelColor=0b0f0e" alt="Rebuild check on a clean machine"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/code-MIT-00ec97?style=flat-square&labelColor=0b0f0e" alt="Code licence: MIT"></a>
+  <a href="DATA_NOTICE.md"><img src="https://img.shields.io/badge/data-each%20source's%20own%20terms-8d9693?style=flat-square&labelColor=0b0f0e" alt="Data: each source's own terms"></a>
+</p>
+
+<p align="center">
+  <a href="https://nearhub.tech"><img src="docs/images/hub-home.png" width="640" alt="The NEAR Hub home page: a headline that sets the value of the new NEAR created in 30 days beside what NEAR's revenue wallets received, four figures the case turns on, and a chart of both amounts by week."></a>
+</p>
+
+## Where the case stands
 
 <!-- verdict:start -->
 **Where the case stands at the snapshot of 2026-11-12:** of 19 claims the data can test, **10** support the long case and **9** count against it; **4** more cannot be tested from public data. Over the 30 days to 2026-11-09, fees reaching NEAR's revenue wallets and gas burned offset **16.1%** of the new NEAR the chain created.
 <!-- verdict:end -->
 
-Three things live here, and each is built from the one before it:
+The count is not a vote, because the claims do not weigh the same. [THESIS.md](THESIS.md) says which one decides the
+case, where it stands, and what would change the author's mind. A claim that fails stays on the page.
 
-- **The warehouse.** Public on-chain, protocol, wallet and market data, collected every night, typed, joined into one
-  documented set of tables and checked against itself. Every raw response is kept, so every number traces back to what
-  a source actually said on the day it said it.
-- **[THESIS.md](THESIS.md).** The long case for NEAR, set out as five links that depend on each other, with the
-  evidence for and against each one and what would change the author's mind.
-- **The dashboard, in `site/`.** The case on one page, then a subject at a time: each question with its chart, its
-  reading and the query that produced it.
+| If you have | Start here |
+|---|---|
+| One minute | [nearhub.tech](https://nearhub.tech). The sentence at the top is the case, and the panel beside it is where it stands |
+| Five minutes | [THESIS.md](THESIS.md): the claim, the evidence for it and against it, and the limits of both |
+| Fifteen minutes | `make all`, then `10/10 checks passed`: every table rebuilt on your machine from the raw responses in this repository |
+
+## A short tour
+
+<p align="center">
+  <a href="https://nearhub.tech"><img src="docs/images/hub-tour.gif" width="640" alt="A tour of NEAR Hub: the case as five links with a result for each test, the eleven subjects, one question about NEAR Intents with its chart, reading and query, the guide to every table, and the home page."></a>
+</p>
+
+The pictures on this page show the snapshot of 12 November 2026. The site moves with the data.
+
+## What is in this repository
+
+Three things, and each is built from the one before it:
+
+| | What it is | Where |
+|---|---|---|
+| **The warehouse** | Public on-chain, protocol, wallet and market data, collected every night, typed, joined into one documented set of tables and checked against itself. Every raw response is kept, so every number traces back to what a source said on the day it said it | [`data/`](data), [`warehouse/`](warehouse), [`registry/`](registry) |
+| **The thesis** | The long case for NEAR, set out as five links that depend on each other, with the evidence for and against each one and what would change the author's mind | [THESIS.md](THESIS.md) |
+| **The dashboard** | The case on one page, then a subject at a time: each question with its chart, its reading and the query that produced it | [nearhub.tech](https://nearhub.tech), [`site/`](site) |
 
 Neither the thesis nor the dashboard holds a typed number. Both are generated from the warehouse's claim scorecard, so
 when the data moves they move with it, including the words. A claim that stops holding says so by itself.
+
+### The case, as tests that can fail
+
+The home page sets the case out as five links in the order they depend on each other: Intents keeps growing, NEAR
+receives more of the fees, the revenue reaches the token, new supply is absorbed, and it is not priced in yet. Under
+each link sit its tests. Every test has a stated bar, a measurement, the period it reads and a result, and a row opens
+the chart and the query behind it.
+
+### Every answer shows its query
+
+Eleven subjects, from NEAR Intents and revenue to supply, the Bitwise ETF, governance and security. Each is a list of
+questions, and each question has its finding as the heading, a chart, a reading in plain words, its sources, and the
+SQL that drew it. Paste that SQL into `make query` and the same rows come back from the tables you built.
+
+### A guide to every table
+
+Every finished table and field has a description, a unit, its sources and how far back its history goes. The guide is
+on the site at [nearhub.tech/docs](https://nearhub.tech/docs/), and as Markdown in
+[docs/DATA_CATALOG.md](docs/DATA_CATALOG.md).
 
 ## The problem this solves
 
@@ -29,21 +92,58 @@ built on that is hard to check and easy to fool yourself with.
 This warehouse keeps every raw response, types it, joins it into shared tables, and publishes where sources disagree
 instead of picking the convenient number.
 
-## Try it
+## How it is built
 
-You need Python 3.11 and `make`. No keys and no API calls are needed for these steps; `make setup` downloads the
-Python packages. `make all` runs steps 1, 2, 3, 6 and 7 in order.
+```mermaid
+flowchart LR
+    S["Public sources<br/>APIs, RPC,<br/>pages read by hand"] -->|ingest| B["Bronze<br/>every raw response,<br/>hashed"]
+    B -->|warehouse| V["Silver<br/>typed, every<br/>snapshot kept"]
+    R["Registry<br/>reviewed CSVs:<br/>wallets, claims, terms"] --> V
+    V --> G["Gold<br/>documented tables,<br/>source checks,<br/>claim scorecard"]
+    G -->|thesis| T["THESIS.md"]
+    G -->|site| D["Dashboard and<br/>table guide"]
+```
 
-1. Run `make setup`. See `Setup complete: N packages installed`.
-2. Run `make warehouse`. See `Warehouse built as of ...`, in under a minute. This rebuilds `data/warehouse.duckdb` and `data/gold/` from the raw responses committed in `data/bronze/`.
-3. Run `make verify`. See `10/10 checks passed`. This re-hashes every raw file, runs the data and unit tests, and confirms each gold table reproduces its committed fingerprint.
-4. Run `make query SQL="select check_id, value_a, value_b, status from gold.dq_reconciliation order by status, check_id"`. See each comparison between sources.
-5. Open [docs/RECONCILIATION.md](docs/RECONCILIATION.md). See where sources agree, where they don't, and why.
-6. Run `make site`. See `Site built as of ...`, in a few seconds. This rewrites `site/shared/data.js` and `site/shared/catalog.js` from the warehouse you built in step 2, so every number and chart on the dashboard comes from those tables. It also rewrites `site/docs/index.html`, the guide to every table and field, which the dashboard links to from its Sources page and from the table names above each chart's query (`make docs` rebuilds the guide alone). Then open `site/index.html` in a browser; it needs a network connection for its fonts and chart library.
-7. Run `make thesis`. See `wrote THESIS.md: ...`. This rewrites [THESIS.md](THESIS.md) from the same scorecard, and the file comes out unchanged unless the warehouse did.
+Each label on an arrow is a `make` command.
 
-If you prefer a container, run `docker build -t near-hub . && docker run --rm near-hub`. See the same
-`10/10 checks passed`.
+`main` is pinned to one snapshot, the date in `data/PINNED`, so it rebuilds the same tables tomorrow as it does today.
+A nightly job keeps collecting on the `data/nightly` branch. [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) has the
+layers, the rules each one follows and the reasons for the tools.
+
+## Rebuild it yourself
+
+You need Python 3.11 and `make`. No keys and no API calls are needed: everything is rebuilt from the raw responses
+committed in `data/bronze/`. Only `make setup` uses the network, to download the pinned Python packages. The clone is
+under 200 MB, because every raw response is in it.
+
+```bash
+git clone https://github.com/mojtb/near-hub.git
+cd near-hub
+make all
+```
+
+`make all` runs these five steps in order. Each can also be run alone.
+
+| Step | Command | You should see | What it shows |
+|---|---|---|---|
+| 1 | `make setup` | `Setup complete: N packages installed` | The toolchain is pinned in `requirements.lock` |
+| 2 | `make warehouse` | `Warehouse built as of ...`, in under a minute | `data/warehouse.duckdb` and `data/gold/` rebuild from the raw responses alone |
+| 3 | `make verify` | `10/10 checks passed` | Every raw file still has its recorded hash, the data tests and unit tests pass, and each gold table reproduces its committed fingerprint |
+| 4 | `make site` | `Site built as of ...`, in a few seconds | Every number and chart on the dashboard, and the guide to every table, are rewritten from the warehouse you just built |
+| 5 | `make thesis` | `wrote THESIS.md: ...` | The thesis is rewritten from the same scorecard, and comes out unchanged unless the warehouse did |
+
+Then:
+
+- **Open the dashboard you built.** Open `site/index.html` in a browser. It needs a network connection for its fonts
+  and chart library.
+- **Ask the warehouse a question.** Run
+  `make query SQL="select check_id, value_a, value_b, status from gold.dq_reconciliation order by status, check_id"`.
+  See each comparison between sources. [docs/RECONCILIATION.md](docs/RECONCILIATION.md) says where they agree, where
+  they don't, and why.
+- **Use a container instead.** Run `docker build -t near-hub . && docker run --rm near-hub`. See the same
+  `10/10 checks passed`.
+
+`make help` lists every command.
 
 ### Expected results
 
@@ -62,7 +162,15 @@ These lines are generated from the warehouse, and `make verify` fails if they st
 - Bitwise NEAR ETF shares outstanding: **2,930,000** per the fund, **3,000,000** counted on chain in whole baskets
 <!-- expected:end -->
 
-## What's inside
+## What the warehouse holds
+
+Eleven areas: chain usage and supply, NEAR Intents and revenue, the Intents pool on chain, wallets, security and
+staking, capital and DeFi, market and peers, the Bitwise NEAR ETF, developers and governance, the thesis models, and
+data quality.
+
+<details>
+<summary><b>The main tables in each area, and where they come from</b></summary>
+<br>
 
 | Area | Main tables in `gold` | Main sources |
 |---|---|---|
@@ -78,13 +186,18 @@ These lines are generated from the warehouse, and `make verify` fails if they st
 | Thesis models | `fct_thesis_scorecard`, `dim_claim`, `fct_net_dilution_daily`, `fct_deflation_scenarios`, `fct_intents_unit_economics_monthly`, `fct_intents_channel_economics_monthly`, `fct_intents_concentration_monthly`, `fct_valuation_multiples_daily`, `fct_usage_quality_daily`, `fct_usage_lead_correlations`, `fct_etf_absorption_daily` | The gold tables above, `registry/claims.csv`, `registry/issuance_scenarios.csv` |
 | Data quality | `dq_reconciliation`, `dq_freshness`, `dq_revisions`, `dq_ingest_runs`, `dq_provenance` | All of the above |
 
-Every table and column is described in [docs/DATA_CATALOG.md](docs/DATA_CATALOG.md), and the same guide is on the
-dashboard at `site/docs/index.html`. Every table is also in `data/gold/` as Parquet, so you can read it without
-building anything. How it fits together is in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md), and what each source can
-and can't tell you is in [docs/SOURCES.md](docs/SOURCES.md).
-[docs/CIRCULATING_SUPPLY.md](docs/CIRCULATING_SUPPLY.md) explains how circulating supply is built from the lockup
-contracts and what `market_cap_usd` means. [docs/README.md](docs/README.md) indexes the rest, defines the words this
-project uses in a particular way, and says how to add a source, a table, a comparison, a claim or a question.
+</details>
+
+Every table is also in `data/gold/` as Parquet, so you can read it without building anything.
+
+| To learn | Read |
+|---|---|
+| What each table and column means | [docs/DATA_CATALOG.md](docs/DATA_CATALOG.md), or the same guide at [nearhub.tech/docs](https://nearhub.tech/docs/) |
+| How a response becomes a table | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) |
+| What each source can and cannot tell you | [docs/SOURCES.md](docs/SOURCES.md) |
+| Where sources agree, where they differ, and why | [docs/RECONCILIATION.md](docs/RECONCILIATION.md) |
+| How circulating supply is built from the lockup contracts, and what `market_cap_usd` means | [docs/CIRCULATING_SUPPLY.md](docs/CIRCULATING_SUPPLY.md) |
+| The words this project uses in a particular way, and how to add a source, a table, a comparison, a claim or a question | [docs/README.md](docs/README.md) |
 
 ## Refresh the data
 
@@ -97,7 +210,25 @@ restarted.
 
 A GitHub Action takes a snapshot every night on the `data/nightly` branch and rebuilds the dashboard's data and the
 thesis with it. `main` stays on the date in `data/PINNED`, so the expected results above do not drift. Each commit on
-that branch holds that night's code and data, so the same three steps rebuild it.
+that branch holds that night's code and data, so `make setup warehouse verify` rebuilds it.
+
+## Repository map
+
+| Path | What it holds |
+|---|---|
+| [`THESIS.md`](THESIS.md) | The case, the evidence for and against, and its limits. Written by `make thesis` |
+| [`DATA_NOTICE.md`](DATA_NOTICE.md) | What is stored, where it came from, and the terms it is held under |
+| [`data/bronze/`](data/bronze) | Every raw response as it arrived, by source and day, with its SHA-256 hash in a manifest |
+| [`data/gold/`](data/gold) | The finished tables as Parquet and CSV, with their fingerprints and catalog |
+| [`data/state/`](data/state) | Where the long history jobs resume from |
+| [`data/PINNED`](data/PINNED) | The snapshot date `main` is built at |
+| [`registry/`](registry) | Reviewed CSVs: wallets, tokens, peers, events, the claims and their bars, each source's terms |
+| [`ingest/`](ingest) | One fetcher per source, run by `make ingest` |
+| [`warehouse/`](warehouse) | The dbt models: silver types each response, gold holds the tables a reader should use, and the data tests |
+| [`tools/`](tools) | The build steps: export, verify, catalog, thesis, the site's data and the table guide |
+| [`site/`](site) | The dashboard, served at [nearhub.tech](https://nearhub.tech): one page, its data, and the table guide in `site/docs/` |
+| [`docs/`](docs) | Method notes: architecture, sources, reconciliation, the catalog and dated audits |
+| [`tests/`](tests) | Unit tests for the fetchers, the tools and the warehouse |
 
 ## NEAR technologies used
 
@@ -107,7 +238,7 @@ Signatures), `intents.near` (NEAR Intents), `meta-pool.near`, `linear-protocol.n
 revenue.near.org, reads what the Intents contract held at every month end since it was deployed, and reads the Bitwise
 NEAR ETF's holdings from its staking pool, `bitwise_2.poolv1.near`. No contract is deployed and no transaction is sent.
 
-## Data
+## Data and licence
 
 What is stored, where it came from, the terms it is held under and how to ask for something to be removed are in
 [DATA_NOTICE.md](DATA_NOTICE.md). The [LICENSE](LICENSE) covers the code only; the data remains under each source's own
@@ -116,7 +247,8 @@ terms, listed in [registry/sources.csv](registry/sources.csv).
 ## Origin
 
 This began as an entry in the Investment Thesis track of NEAR HACKATHON 2026. Prizes there are paid in NEAR, so the
-author could gain exposure to the asset analysed here, and the thesis says so where it states its conclusion.
+author could gain exposure to the asset analysed here, and the thesis says so where it states its conclusion. It is an
+independent project, not affiliated with the NEAR Foundation, and nothing here is investment advice.
 
 ## Disclosures
 
@@ -124,7 +256,11 @@ author could gain exposure to the asset analysed here, and the thesis says so wh
   (2026-10-28) was imported from an earlier scaffold by the same author, `near-deflation-clock`, which is not a
   separate submission; `tools/import_legacy_snapshot.py` records how.
 - **Libraries:** dbt-core, dbt-duckdb, DuckDB, requests and pytest, pinned in `requirements.lock`. The dashboard loads
-  D3 and its fonts from a CDN.
+  D3, ECharts and its fonts from a CDN.
 - **AI assistance:** written with Claude Code.
 - **Self-reported data:** figures from NEAR's own dashboard on Dune and from revenue.near.org are NEAR's reports about
   itself. Every table built from them says so, and [DATA_NOTICE.md](DATA_NOTICE.md) says how each reading was taken.
+
+## Contact
+
+[@Mo_DeFi](https://x.com/Mo_DeFi) on X, or open an issue on this repository.

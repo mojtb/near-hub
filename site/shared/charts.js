@@ -1,5 +1,5 @@
-/* Shared helpers for The Long Case prototypes: formatters, the issuance model and the ECharts-based time chart.
-   Charts read every colour from CSS custom properties, so each design themes them with its own tokens. */
+/* Shared helpers for NEAR Hub: formatters, the issuance model and the ECharts-based time chart.
+   Charts read every colour from CSS custom properties, so the page themes them with its own tokens. */
 (function () {
   const reduce = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
   const css = (el, name) => getComputedStyle(el).getPropertyValue(name).trim();
@@ -82,6 +82,16 @@
     io.observe(el);
     const t = setTimeout(go, 2200);
     return () => { done = true; io.disconnect(); clearTimeout(t); };
+  }
+  /* index.html fetches ECharts after its first draw, so the page's words and figures draw before the library arrives.
+     A chart waits for both: its place near the viewport, and ECharts. The tag that fetches ECharts calls echartsArrived
+     when it loads, which draws the charts that were waiting; a chart that comes into view later draws at once. */
+  const ecWaiting = [];
+  const echartsArrived = () => { ecWaiting.splice(0).forEach((f) => f()); };
+  function whenDrawable(el, fn) {
+    let live = true;
+    const stop = whenVisible(el, () => { if (window.echarts) fn(); else ecWaiting.push(() => { if (live) fn(); }); });
+    return () => { live = false; stop(); };
   }
 
   /* Everything a chart needs from the design's tokens */
@@ -339,7 +349,7 @@
       if (!ec || !(o.marks || []).length) return;
       if (planMarks(o.type === 'bar' || o.type === 'stack', theme(host)).sig !== markSig) ec.setOption(build(), { replaceMerge: ['series'] });
     };
-    const cancel = whenVisible(host, mount);
+    const cancel = whenDrawable(host, mount);
     const ro = new ResizeObserver(() => { if (ec) { ec.resize(); replan(); syncBars(); } });
     ro.observe(box);
     return {
@@ -426,5 +436,5 @@
   .lcc-rank{display:grid;gap:3px}.lcc-rbar{display:grid;gap:12px;align-items:center;padding:5px 0}.lcc-rl{font-size:13.5px;overflow-wrap:anywhere;line-height:1.25;color:var(--chart-strong)}.lcc-rl.on{font-weight:650}.lcc-rt{display:flex;align-items:center;gap:9px;min-width:0}.lcc-rt i{display:block;height:14px;border-radius:0 4px 4px 0}.lcc-rt b{font-weight:600;font-size:12.5px;font-variant-numeric:tabular-nums;white-space:nowrap;color:var(--chart-strong)}`;
   document.head.append(base);
 
-  window.LCC = { fmt, model, baseline, timeChart, spark, miniBars, ring, hbars, weeklyOf, priceAt, issuanceValue, rangeFrom, reviewBar, reduce, whenVisible, theme, tooltipBase, baseOption, axisText, gradient, rgba, resolve, textWidth };
+  window.LCC = { fmt, model, baseline, timeChart, spark, miniBars, ring, hbars, weeklyOf, priceAt, issuanceValue, rangeFrom, reviewBar, reduce, whenVisible, whenDrawable, echartsArrived, theme, tooltipBase, baseOption, axisText, gradient, rgba, resolve, textWidth };
 })();

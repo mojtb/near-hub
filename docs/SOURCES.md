@@ -2,7 +2,9 @@
 
 The table of sources, limits and terms lives in [`registry/sources.csv`](../registry/sources.csv), so it can be queried like everything else. This page records what that table cannot: how each source behaves, what is known to be wrong with it, and what was tried and rejected.
 
-Sources were last tested on 2026-11-01. Each nightly run records what it fetched in `data/bronze/_manifest/` and how each dataset went in `data/bronze/_runs/`.
+Sources change, so each note says the day its behaviour was observed, and a figure or a limit described here is true of that day. Each nightly run records what it fetched in `data/bronze/_manifest/` and how each dataset went in `data/bronze/_runs/`.
+
+**On this page:** [How independent are the sources?](#how-independent-are-the-sources) · [NearBlocks](#nearblocks) · [DefiLlama](#defillama) · [revenue.near.org](#revenuenearorg) · [FastNear](#fastnear) · [CoinMetrics](#coinmetrics) · [Archival RPC](#archival-rpc) · [Token metadata](#token-metadata-rpcft_metadata) · [Token prices](#token-prices-fct_token_prices) · [Daily prices of pool assets](#daily-prices-of-pool-assets-fct_token_price_daily) · [Lockup contracts](#lockup-contracts) · [Neardata](#neardata) · [GitHub](#github) · [Liquid staking contracts](#liquid-staking-contracts) · [Intents Explorer API](#intents-explorer-api) · [Dune](#dune) · [Bitwise NEAR ETF](#bitwise-near-etf-nrr) · [Tried and rejected](#tried-and-rejected)
 
 ## How independent are the sources?
 
@@ -54,7 +56,6 @@ The strongest checks are the ones that cross families. See [RECONCILIATION.md](R
 - `/protocols` and `/protocol/<slug>` are large, so they are trimmed to NEAR before saving, and the manifest note records that. `/protocols` also lists exchange wallets on NEAR, which gold marks with `is_cex` and leaves out of TVL.
 - A protocol's `id` is what stays the same; its `slug` can change. On the 2026-11-05 read DefiLlama made Templar a parent group: the old listing, id 6570, became `templar-lending` with its whole history, and `/protocol/templar-protocol` now answers with the group, id `parent#templar-protocol`. So gold goes by `id`, and the rule is on `dim_protocol` and `fct_protocol_tvl_daily` in [DATA_CATALOG.md](DATA_CATALOG.md).
 - Ingest never asks for a retired slug, because it rebuilds its list from `/protocols` each night: the top 25 by TVL on NEAR. At the 2026-11-05 pin nine of those are exchange wallets that gold leaves out, so `fct_protocol_tvl_daily` holds 16 of the 47 protocols. A protocol that falls out of the 25 stays in the table and stops updating.
-
 - Protocols in the `CEX` category are exchange wallets that DefiLlama labels on its exchange pages. Their NEAR figure is the USD value of every asset those wallets hold on NEAR, at DefiLlama's prices, and DefiLlama leaves them out of chain TVL. `fct_exchange_balance_daily` keeps them per exchange per day: nine exchanges have history at the 2026-11-05 pin, Binance's wallets alone holding about $536M on 2026-11-04. Only labelled wallets count, so an exchange's unlabelled wallets are missing, and a relabelling moves the whole series.
 
 ### revenue.near.org
