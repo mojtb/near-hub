@@ -16,7 +16,7 @@ from typing import Callable, List, Tuple
 
 import duckdb
 
-from tools.catalog import expected_results
+from tools.catalog import expected_results, source_table, verdict
 from tools.export_gold import FINGERPRINTS, ROOT, WAREHOUSE, fingerprints
 
 BRONZE = ROOT / "data" / "bronze"
@@ -141,11 +141,15 @@ def check_fingerprints() -> Result:
 
 
 def check_readme_results() -> Result:
-    readme = (ROOT / "README.md").read_text()
-    expected = expected_results(_connect())
-    if expected not in readme:
-        return False, "the expected results in README.md do not match the warehouse; run `make catalog`"
-    return True, "the README's expected results match the warehouse"
+    """Both generated blocks: the README's expected results and the data notice's table of sources."""
+    con = _connect()
+    missing = sorted({name for name, body, path in (("README.md", verdict(con), ROOT / "README.md"),
+                                                    ("README.md", expected_results(con), ROOT / "README.md"),
+                                                    ("DATA_NOTICE.md", source_table(con), ROOT / "DATA_NOTICE.md"))
+                      if body not in path.read_text()})
+    if missing:
+        return False, f"{' and '.join(missing)} no longer match the warehouse; run `make catalog`"
+    return True, "the README's result and expected numbers and the data notice's sources match the warehouse"
 
 
 def check_unit_tests() -> Result:
@@ -163,7 +167,7 @@ CHECKS: List[Tuple[str, Callable[[], Result]]] = [
     ("every gold column is documented", check_gold_documented),
     ("reconciliation gaps are explained", check_reconciliation),
     ("gold tables reproduce their fingerprints", check_fingerprints),
-    ("the README's numbers are current", check_readme_results),
+    ("the README and the data notice are current", check_readme_results),
     ("unit tests pass", check_unit_tests),
 ]
 

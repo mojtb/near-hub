@@ -102,7 +102,7 @@ vars:
   # `make warehouse` passes the date from data/PINNED when that file exists.
   as_of: "9999-12-31"
   # A day's Intents fee and revenue figures can change until they are read this many nights after the day ended.
-  # Measured on 2026-11-05 from every snapshot; see docs/DATA_AUDIT_2026-11-05.md, finding 10. If you change it, change
+  # Measured on 2026-11-05 from every snapshot; see docs/audits/DATA_AUDIT_2026-11-05.md, finding 10. If you change it, change
   # the descriptions of is_fee_revenue_provisional on fct_intents_daily and fct_peer_daily, which state the number.
   intents_fee_settle_nights: 3
   # Percent of the larger price. When 1Click and Rhea price a token this far apart, fct_wallet_holdings leaves its value empty.

@@ -156,13 +156,55 @@ def expected_results(con: duckdb.DuckDBPyConnection) -> str:
     return "\n".join(lines)
 
 
-def write_readme_results(con: duckdb.DuckDBPyConnection) -> None:
-    readme = ROOT / "README.md"
-    text = readme.read_text()
-    start, end = "<!-- expected:start -->", "<!-- expected:end -->"
+def verdict(con: duckdb.DuckDBPyConnection) -> str:
+    """The README's headline result, so the first thing a reader sees cannot drift from the scorecard."""
+    one = lambda sql: con.execute(sql).fetchone()
+    # A claim for the case supports it when it holds; a claim naming a risk supports it when it fails.
+    stands = """count(*) filter (where (side = 'bull') = (status = 'holds') and status <> 'not_testable')"""
+    against = """count(*) filter (where (side = 'bull') <> (status = 'holds') and status <> 'not_testable')"""
+    no_test = "count(*) filter (where status = 'not_testable')"
+    f, a, n, day = one(f"select {stands}, {against}, {no_test}, max(as_of_date) from gold.fct_thesis_scorecard")
+    # The 30 days to the newest day whose fees have settled, which is the window THESIS.md and the dashboard read.
+    off = one("""select offset_share, date_day from gold.fct_net_dilution_daily
+                 where date_day = (select max(date_day) from gold.fct_intents_daily
+                                   where not is_fee_revenue_provisional)""")
+    return (f"**Where the case stands at the snapshot of {day}:** of {f + a} claims the data can test, "
+            f"**{f}** support the long case and **{a}** count against it; **{n}** more cannot be tested from public "
+            f"data. Over the 30 days to {off[1]}, fees reaching NEAR's revenue wallets and gas burned offset "
+            f"**{off[0] * 100:.1f}%** of the new NEAR the chain created.")
+
+
+def source_table(con: duckdb.DuckDBPyConnection) -> str:
+    """The data notice's table of sources, generated from registry/sources.csv so the notice cannot drift from it."""
+    rows = con.execute("""
+        select source, provides, terms_summary, terms_url
+        from gold.dim_source
+        where provides is not null and lower(provides) not like 'not used%'
+        order by source""").fetchall()
+    cell = lambda v: (v or "").replace("|", "\\|").replace("\n", " ").strip()
+    lines = ["| Source | What it gives this project | Its terms, as read when it was added | Terms page |", "|---|---|---|---|"]
+    for source, provides, terms, url in rows:
+        link = f"[{cell(url).split('//')[-1].split('/')[0]}]({cell(url)})" if url else "none found"
+        lines.append(f"| `{cell(source)}` | {cell(provides)} | {cell(terms)} | {link} |")
+    return "\n".join(lines)
+
+
+def _splice(path: Path, name: str, body: str) -> None:
+    """Replace what sits between <!-- name:start --> and <!-- name:end --> in a file that is otherwise written by hand."""
+    text = path.read_text()
+    start, end = f"<!-- {name}:start -->", f"<!-- {name}:end -->"
     before, rest = text.split(start, 1)
     _, after = rest.split(end, 1)
-    readme.write_text(f"{before}{start}\n{expected_results(con)}\n{end}{after}")
+    path.write_text(f"{before}{start}\n{body}\n{end}{after}")
+
+
+def write_readme_results(con: duckdb.DuckDBPyConnection) -> None:
+    _splice(ROOT / "README.md", "verdict", verdict(con))
+    _splice(ROOT / "README.md", "expected", expected_results(con))
+
+
+def write_data_notice(con: duckdb.DuckDBPyConnection) -> None:
+    _splice(ROOT / "DATA_NOTICE.md", "sources", source_table(con))
 
 
 def main() -> None:
@@ -173,8 +215,10 @@ def main() -> None:
     write_catalog(catalog)
     write_reconciliation(con)
     write_readme_results(con)
+    write_data_notice(con)
     (ROOT / "data" / "gold" / "_catalog.json").write_text(json.dumps(catalog, indent=1) + "\n")
-    print(f"Wrote docs/DATA_CATALOG.md, docs/RECONCILIATION.md and data/gold/_catalog.json ({len(catalog)} tables)")
+    print(f"Wrote docs/DATA_CATALOG.md, docs/RECONCILIATION.md, DATA_NOTICE.md's source table "
+          f"and data/gold/_catalog.json ({len(catalog)} tables)")
 
 
 if __name__ == "__main__":

@@ -166,7 +166,7 @@ NO_SAMPLE = {"fct_token_holders", "fct_wallet_counterparties", "fct_wallet_trans
 SAMPLE_ROWS = 5
 # What a table's history is counted in, by cadence. Event tables have no fixed period, so they show none.
 PERIODS = {"daily": "days", "weekly": "weeks", "monthly": "months", "trading": "trading days", "blockday": "blocks", "snapshot": "readings"}
-# The free GitHub Actions minutes a private repository gets each month (docs/DATA_AUDIT_2026-11-05_second_pass.md).
+# The free GitHub Actions minutes a private repository gets each month (docs/audits/DATA_AUDIT_2026-11-05_second_pass.md).
 # The queue's caveat is worked out from this and the run reports; set it to 0 once the repository is public.
 ACTIONS_FREE_MINUTES = 2000
 CHAIN_NAMES = {"ethereum": "Ethereum", "solana": "Solana", "avalanche": "Avalanche", "near": "NEAR", "ton": "TON", "aptos": "Aptos", "sui": "Sui"}
