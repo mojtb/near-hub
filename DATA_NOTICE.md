@@ -27,7 +27,7 @@ The tables hold accounts, contracts, repositories, protocols and counts. No colu
 on a public blockchain are pseudonymous, and they are kept because they are the evidence: a reader who doubts a figure
 can follow it to the account it came from. The governance forum's threads are stored as titles, dates and counts.
 Until 2026-11-13 the nightly fetch kept the forum's public replies whole, with each post's author, username and text.
-Those files were taken out of `main` on 2026-11-14; they remain in its earlier commits and on the `data/nightly`
+Those files were taken out of `main` on 2026-11-13; they remain in its earlier commits and on the `data/nightly`
 branch. The developer tables count authors without naming them.
 
 Three sources cannot be fetched by a script and are read by hand: the Bitwise fund's flows as news reports give them,
