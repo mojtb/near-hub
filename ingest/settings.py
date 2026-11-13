@@ -15,7 +15,7 @@ DATA = ROOT / "data"
 BRONZE = DATA / "bronze"
 STATE = DATA / "state"
 REGISTRY = ROOT / "registry"
-USER_AGENT = "near-thesis/0.1 (NEAR HACKATHON research; github.com/mojtb/near-thesis)"
+USER_AGENT = "near-hub/0.1 (NEAR HACKATHON research; github.com/mojtb/near-hub)"
 
 
 def load_dotenv(path: Path = ROOT / ".env") -> None:

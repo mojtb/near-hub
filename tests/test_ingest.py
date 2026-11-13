@@ -1414,7 +1414,7 @@ def test_pool_history_names_no_person_or_project_and_sends_no_key(tmp_path, monk
     pool.intents_pool_history(ctx)
     call = http.session.calls[0][2]
     assert call["headers"] == {"User-Agent": "python-requests"}
-    assert "near-thesis" not in json.dumps(call["json"]) and "test-value" not in json.dumps(call)
+    assert "near-hub" not in json.dumps(call["json"]) and "test-value" not in json.dumps(call)
 
 
 def test_pool_history_reads_month_ends_newest_first_and_keeps_the_chains_own_refusals(tmp_path, monkeypatch):

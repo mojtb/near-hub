@@ -771,7 +771,7 @@ class Site:
             "meta": {"pin": iso(self.pin), "last_day": iso(self.last_day), "tables": len(tables), "columns": sum(len(t["columns"]) for t in tables),
                      "earliest": earliest, "chain_start": iso(chain_start),
                      "nightly_minutes": nightly_minutes,
-                     "v1_off": endings[-1] if endings else None, "repo": "near-thesis", "queue_note": self.actions_note(jobs)},
+                     "v1_off": endings[-1] if endings else None, "repo": "near-hub", "queue_note": self.actions_note(jobs)},
             "kinds": KINDS, "areas": [a for a, _ in AREAS], "tables": tables, "jobs": jobs,
         }
 

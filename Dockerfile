@@ -1,4 +1,4 @@
-# The judge path in a container: docker build -t near-thesis . && docker run --rm near-thesis
+# The judge path in a container: docker build -t near-hub . && docker run --rm near-hub
 FROM python:3.11-slim
 RUN apt-get update -qq && apt-get install -y -qq --no-install-recommends make >/dev/null
 WORKDIR /app

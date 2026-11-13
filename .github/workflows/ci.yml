@@ -28,5 +28,5 @@ jobs:
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
-      - run: docker build -t near-thesis .
-      - run: docker run --rm near-thesis
+      - run: docker build -t near-hub .
+      - run: docker run --rm near-hub
