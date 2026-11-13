@@ -78,7 +78,6 @@ sources:
       - {name: github__commits_weekly, identifier: github/commits_weekly, description: "Weekly commits and author counts on the default branch, assembled from the commits list, for every tracked repository."}
       - {name: nearcatalog__projects, identifier: nearcatalog/projects, description: "NEAR Catalog project directory."}
       - {name: gov__topics, identifier: gov/topics, description: "Tracked governance threads."}
-      - {name: gov__search, identifier: gov/search, description: "Governance forum search results."}
       - {name: neardata__receiver_sample, identifier: neardata/receiver_sample, description: "Per-receiver activity counted from evenly spaced sample blocks."}
       - {name: dune__query_results, identifier: dune/query_results, description: "Latest stored results of public Dune queries, through the official API."}
       - {name: dune_public__near_intents_dashboard, identifier: dune_public/near_intents_dashboard, description: "Dated readings of the public NEAR Intents dashboard page."}

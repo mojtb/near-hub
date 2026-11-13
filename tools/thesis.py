@@ -1,8 +1,8 @@
 """`make thesis`: write THESIS.md from the warehouse's claim scorecard.
 
   .venv/bin/python -m tools.thesis
-Run after `make warehouse`. The warehouse is opened read-only. Every figure in THESIS.md is read from a gold table
-here, so the file holds no typed number: to change a claim or its bar, edit registry/claims.csv; to change the
+Run after `make warehouse`. The warehouse is opened read-only. Every figure in THESIS.md is read from the warehouse
+here (gold tables, and silver for the one line about nightly reads), so the file holds no typed number: to change a claim or its bar, edit registry/claims.csv; to change the
 wording, edit this module. Running it twice in a row writes the same file.
 """
 from __future__ import annotations
@@ -15,6 +15,8 @@ from datetime import date
 from pathlib import Path
 
 import duckdb
+
+from tools.catalog import closest_call
 
 ROOT = Path(__file__).resolve().parents[1]
 WAREHOUSE = ROOT / "data" / "warehouse.duckdb"
@@ -164,6 +166,31 @@ zec_month = one("""
     where is_in_daily_run and cast(date_trunc('month', date_day) as date)
           = (select max(month_start) from gold.fct_intents_channel_economics_monthly where is_month_complete)""")
 zec = by_id["zcash_is_on_a_fifth_of_volume"]
+# The claim nearest its bar, by one rule for every claim (tools/catalog.py), and the tally if that result turned
+close = closest_call(con)
+closest = by_id[close["claim_id"]]
+# The fee-growth claim: each side's growth over the scorecard's two quarters, and how the claim would have scored on
+# every nightly read of DefiLlama's fees since the newer quarter closed. Silver keeps each read; gold keeps the newest.
+fee = by_id["near_fees_outgrew_every_peer"]
+QUARTERS = f"""date_day > date '{fee['as_of_date']}' - interval 6 month and date_day <= date '{fee['as_of_date']}'"""
+NEWER = f"""date_day > date '{fee['as_of_date']}' - interval 3 month"""
+fee_sides = rows(f"""
+    select p.chain_id, sum(fees_usd) filter (where {NEWER}) / sum(fees_usd) filter (where not ({NEWER})) - 1 as change
+    from gold.fct_peer_daily p where {QUARTERS} group by 1 order by change desc""")
+fee_near = next(r for r in fee_sides if r["chain_id"] == "near")
+fee_peer = next(r for r in fee_sides if r["chain_id"] != "near")
+fee_reads = one(f"""
+    with per_read as (
+        select f.snapshot_date, p.chain_id,
+               sum(f.value_usd) filter (where {NEWER}) / sum(f.value_usd) filter (where not ({NEWER})) - 1 as change
+        from silver.stg_defillama__chain_fees f join registry.peers p using (llama_chain)
+        where f.data_type = 'dailyFees' and {QUARTERS} and f.snapshot_date > date '{fee['as_of_date']}'
+        group by 1, 2
+    ), gaps as (
+        select snapshot_date, max(change) filter (where chain_id = 'near') - max(change) filter (where chain_id <> 'near') as gap
+        from per_read group by 1
+    )
+    select count(*) as reads, count(*) filter (where gap >= {fee['threshold']}) as held, min(gap) as low, max(gap) as high from gaps""")
 thin = [
     f"- The ETF claim is read over the last 30 days, {etf['ratio_30d']:.2f}× what the chain issued. Since its first trading day "
     f"the fund has taken in {etf['ratio_all']:.2f}×, but that figure leans on its start: {pct(etf['first_week_near'] / etf['held_near'], 0)} "
@@ -171,7 +198,16 @@ thin = [
     f"{day(etf['peak_day'])}.",
     f"- The share of new NEAR received by the wallets or burned is up on the 90 days before, but it has not climbed steadily: over the 270 days to {day(settled)} "
     f"the 30-day share moved between {pct(offset_range['low'])} and {pct(offset_range['high'])}.",
-    f"- Zcash is the closest call on the list: {figure(zec['value'], zec['unit'])} of 1Click volume over three months against a bar of "
+    f"- The closest call on the list is \"{closest['claim']}\": measured {figure(closest['value'], closest['unit'])} against a bar of "
+    f"{WORDS[closest['comparison']]} {figure(closest['threshold'], closest['unit'], True)}. If that one result reversed, the count "
+    f"would be {close['if_reversed'][0]} for and {close['if_reversed'][1]} against.",
+    f"- The fee-growth claim rests on two nearly equal numbers: NEAR's application fees grew {pct(fee_near['change'], 2)} and "
+    f"{fee_peer['chain_id'].capitalize()}'s {pct(fee_peer['change'], 2)}, the last three complete months against the three before. "
+    f"DefiLlama restates these series after the fact. Scored on each of the {fee_reads['reads']} nightly reads taken since that "
+    f"quarter closed, the claim held on {fee_reads['held']} and failed on {fee_reads['reads'] - fee_reads['held']}, with the gap "
+    f"between {figure(fee_reads['low'], fee['unit'])} and {figure(fee_reads['high'], fee['unit'])} "
+    "(`silver.stg_defillama__chain_fees` keeps every read).",
+    f"- Zcash is near its bar too: {figure(zec['value'], zec['unit'])} of 1Click volume over three months against a bar of "
     f"{figure(zec['threshold'], zec['unit'], True)}, and {pct(zec_month['v'])} in {zec_month['d']:%B %Y} alone.",
 ]
 
@@ -285,7 +321,7 @@ md: list[str] = [
     "# The long case for NEAR, and what the data says about it",
     "",
     f"_Written by `make thesis` from the warehouse pinned at {pinned}: data through {day(last_day)}, fees and revenue settled "
-    f"through {day(settled)}. Every figure is read from a gold table, so none is typed. To change a claim or its bar, edit "
+    f"through {day(settled)}. Every figure is read from the warehouse, so none is typed. To change a claim or its bar, edit "
     "`registry/claims.csv`; to change the wording, edit `tools/thesis.py`._",
     "",
     "The same scorecard, with a chart and the query behind every claim, is on the dashboard at "

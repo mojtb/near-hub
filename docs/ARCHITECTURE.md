@@ -61,7 +61,7 @@ flowchart LR
 
 `data/nightly` shares no history with `main` and is never merged. Each night the job starts from `main`'s code, brings in the branch's `data/`, and commits the result on top of the branch. Up to `main`'s pin, `main`'s bronze is the record, so a reading added or removed by hand on `main` stays that way. After the pin, the branch's bronze is the record. A commit on the branch passes `make setup warehouse verify` by itself, except on a night the job reports a failed check.
 
-To move the pin: run `git fetch origin data/nightly && git checkout FETCH_HEAD -- data`, then `make warehouse fingerprints catalog verify`, and commit. `data/PINNED` comes along with the data.
+To move the pin: run `git fetch origin && python3 -m tools.bring_in_nightly`, then `make warehouse fingerprints catalog site thesis verify`, and commit. The helper takes the branch's `data/`, `data/PINNED` with it, and puts `main`'s own bronze back up to the old pin, so readings added by hand keep their files and their manifest lines.
 
 ## Conventions
 

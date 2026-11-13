@@ -6,3 +6,6 @@ data/gold/_catalog.json linguist-generated
 data/gold/_fingerprints.json linguist-generated
 docs/DATA_CATALOG.md linguist-generated
 docs/RECONCILIATION.md linguist-generated
+site/shared/data.js linguist-generated
+site/shared/catalog.js linguist-generated
+site/docs/index.html linguist-generated

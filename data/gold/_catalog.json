@@ -464,10 +464,10 @@
     "description": "What the terms say, as far as they were read. Not legal advice."
    },
    {
-    "name": "before_going_public",
+    "name": "publication_note",
     "type": "VARCHAR",
     "unit": "text",
-    "description": "What to settle before the repository is made public."
+    "description": "How this source's data is used here: with credit, as decided on 2026-11-13 where its terms left that open, or why no decision was needed. DATA_NOTICE.md says how a source can ask for removal."
    }
   ],
   "rows": 23,
@@ -1604,7 +1604,7 @@
  {
   "area": "NEAR Intents and revenue",
   "table": "fct_dune_dashboard_results",
-  "description": "Every row of every Dune widget or query read so far, as returned, so nothing waits for a typed table. Readings of NEAR's public Intents dashboard in a browser have read_via hand. Query results through Dune's official API have read_via api, once a DUNE_API_KEY with API access has run. NEAR uploads the data behind the dashboard, so it is self-reported.",
+  "description": "Every row of every Dune widget or query read so far, as returned, so nothing waits for a typed table. Readings of NEAR's public Intents dashboard in a browser have read_via browser. Query results through Dune's official API have read_via api, once a DUNE_API_KEY with API access has run. NEAR uploads the data behind the dashboard, so it is self-reported.",
   "grain": "snapshot_date, reading_id, row_index",
   "sources": "NEAR Intents dashboard on Dune by @near, read in a browser on request; Dune API",
   "path": "data/gold/fct_dune_dashboard_results.parquet",
@@ -1673,7 +1673,7 @@
     "name": "read_via",
     "type": "VARCHAR",
     "unit": "text",
-    "description": "hand for a reading of the dashboard page in a browser, on request and never on a schedule, by a person or by an AI-driven browser at the owner's request (the manifest note says which); api for a query read through Dune's API."
+    "description": "browser for a reading of the dashboard page in a browser, on request and never on a schedule, by a person or by an AI-driven browser at the owner's request (the manifest note says which); api for a query read through Dune's API."
    },
    {
     "name": "derived_from",
@@ -6178,7 +6178,7 @@
     "description": "Any change made before saving, such as trimming."
    }
   ],
-  "rows": 871,
+  "rows": 859,
   "first": "2026-10-28",
   "last": "2026-11-12"
  }

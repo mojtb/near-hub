@@ -185,7 +185,7 @@ SAMPLE_ROWS = 5
 PERIODS = {"daily": "days", "weekly": "weeks", "monthly": "months", "trading": "trading days", "blockday": "blocks", "snapshot": "readings"}
 # The free GitHub Actions minutes a private repository gets each month (docs/audits/DATA_AUDIT_2026-11-05_SECOND_PASS.md).
 # The queue's caveat is worked out from this and the run reports; set it to 0 once the repository is public.
-ACTIONS_FREE_MINUTES = 2000
+ACTIONS_FREE_MINUTES = 0
 CHAIN_NAMES = {"ethereum": "Ethereum", "solana": "Solana", "avalanche": "Avalanche", "near": "NEAR", "ton": "TON", "aptos": "Aptos", "sui": "Sui"}
 
 

@@ -22,6 +22,9 @@ jobs:
       - run: make setup PYTHON=python
       - run: make warehouse
       - run: make verify
+      # The committed site, thesis and generated docs must be what the build writes from the committed data.
+      - run: make catalog site thesis
+      - run: git diff --exit-code
 
   container:
     runs-on: ubuntu-latest

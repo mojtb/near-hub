@@ -1,8 +1,10 @@
 """Save widgets read in a browser from NEAR's public Intents dashboard on Dune into bronze, with credit.
 
 Results are public, but Dune's terms bar bots, scrapers and access other than through its own interface, so
-this stays a manual step: a person opens the dashboard in their own browser, lets every widget load, and saves
-the Network tab as a HAR file. Never schedule this or feed it from a script.
+this is meant as a manual step: a person opens the dashboard in their own browser, lets every widget load, and saves
+the Network tab as a HAR file. Never schedule it. The readings stored so far were not taken that way: an AI-driven
+browser took them at the owner's request, as each manifest note and docs/SOURCES.md record, and registry/sources.csv
+asks for a reading by hand to replace them.
 
 From the HAR this keeps each widget's response exactly as received, plus the query id, the dashboard's filter
 values and the columns asked for. Everything else stays behind, including headers, cookies and the page's

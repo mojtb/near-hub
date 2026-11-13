@@ -24,6 +24,9 @@ def _format(value: object) -> str:
 def main(sql: str) -> int:
     os.chdir(ROOT)
     result = duckdb.connect("data/warehouse.duckdb", read_only=True).execute(sql)
+    if result is None or result.description is None:
+        print("The statement returned no rows (was it only a comment?)")
+        return 1
     columns = [d[0] for d in result.description]
     rows = [[_format(v) for v in row] for row in result.fetchall()]
     widths = [max([len(c)] + [len(r[i]) for r in rows]) for i, c in enumerate(columns)]
@@ -36,6 +39,7 @@ def main(sql: str) -> int:
 
 
 if __name__ == "__main__":
-    if len(sys.argv) < 2 or not sys.argv[1].strip():
-        sys.exit('Give a query: make query SQL="select * from gold.fct_mpc_state limit 5"')
-    sys.exit(main(sys.argv[1]))
+    sql = sys.argv[1] if len(sys.argv) > 1 and sys.argv[1].strip() else ("" if sys.stdin.isatty() else sys.stdin.read())
+    if not sql.strip():
+        sys.exit('Give a query: make query SQL="select * from gold.fct_mpc_state limit 5", or make query < q.sql')
+    sys.exit(main(sql))

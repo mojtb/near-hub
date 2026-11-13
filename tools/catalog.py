@@ -156,6 +156,23 @@ def expected_results(con: duckdb.DuckDBPyConnection) -> str:
     return "\n".join(lines)
 
 
+def closest_call(con: duckdb.DuckDBPyConnection) -> Dict[str, Any]:
+    """The tested claim nearest its bar. The gap is a share of the bar; where the bar is zero the claim measures a
+    change between two periods, so the measured value is the gap. `if_reversed` is the tally with that result turned."""
+    cur = con.execute("""
+        select s.claim_id, s.claim, s.side, s.status, s.value, s.threshold,
+               case when s.threshold = 0 then abs(s.value) else abs(s.value - s.threshold) / abs(s.threshold) end as gap,
+               count(*) filter (where (side = 'bull') = (status = 'holds')) over () as stands_for,
+               count(*) filter (where (side = 'bull') <> (status = 'holds')) over () as stands_against
+        from gold.fct_thesis_scorecard s
+        where s.status <> 'not_testable'
+        order by gap, s.claim_id limit 1""")
+    row = dict(zip([d[0] for d in cur.description], cur.fetchone()))
+    turn = -1 if (row["side"] == "bull") == (row["status"] == "holds") else 1
+    row["if_reversed"] = (row["stands_for"] + turn, row["stands_against"] - turn)
+    return row
+
+
 def verdict(con: duckdb.DuckDBPyConnection) -> str:
     """The README's headline result, so the first thing a reader sees cannot drift from the scorecard."""
     one = lambda sql: con.execute(sql).fetchone()
@@ -168,10 +185,16 @@ def verdict(con: duckdb.DuckDBPyConnection) -> str:
     off = one("""select offset_share, date_day from gold.fct_net_dilution_daily
                  where date_day = (select max(date_day) from gold.fct_intents_daily
                                    where not is_fee_revenue_provisional)""")
+    # Said only while the count hangs on it: a result within a hundredth of its bar can turn on a source's revision.
+    close = closest_call(con)
+    by = (f"{close['status']} by {abs(close['value']) * 100:.2f} points" if close["threshold"] == 0
+          else f"is {close['gap'] * 100:.1f}% from its bar")
+    thin = (f" The closest result, \"{close['claim']}\", {by}; reversed, the count would be "
+            f"**{close['if_reversed'][0]}** and **{close['if_reversed'][1]}**.") if close["gap"] < 0.01 else ""
     return (f"**Where the case stands at the snapshot of {day}:** of {f + a} claims the data can test, "
             f"**{f}** support the long case and **{a}** count against it; **{n}** more cannot be tested from public "
             f"data. Over the 30 days to {off[1]}, fees reaching NEAR's revenue wallets and gas burned offset "
-            f"**{off[0] * 100:.1f}%** of the new NEAR the chain created.")
+            f"**{off[0] * 100:.1f}%** of the new NEAR the chain created.{thin}")
 
 
 def source_table(con: duckdb.DuckDBPyConnection) -> str:

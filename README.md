@@ -30,7 +30,7 @@
 ## Where the case stands
 
 <!-- verdict:start -->
-**Where the case stands at the snapshot of 2026-11-12:** of 19 claims the data can test, **10** support the long case and **9** count against it; **4** more cannot be tested from public data. Over the 30 days to 2026-11-09, fees reaching NEAR's revenue wallets and gas burned offset **16.1%** of the new NEAR the chain created.
+**Where the case stands at the snapshot of 2026-11-12:** of 19 claims the data can test, **10** support the long case and **9** count against it; **4** more cannot be tested from public data. Over the 30 days to 2026-11-09, fees reaching NEAR's revenue wallets and gas burned offset **16.1%** of the new NEAR the chain created. The closest result, "NEAR's application fees grew faster than any peer's over the last three complete months", holds by 0.11 points; reversed, the count would be **9** and **10**.
 <!-- verdict:end -->
 
 The count is not a vote, because the claims do not weigh the same. [THESIS.md](THESIS.md) says which one decides the
@@ -56,8 +56,8 @@ Three things, and each is built from the one before it:
 
 | | What it is | Where |
 |---|---|---|
-| **The warehouse** | Public on-chain, protocol, wallet and market data, collected every night, typed, joined into one documented set of tables and checked against itself. Every raw response is kept, so every number traces back to what a source said on the day it said it | [`data/`](data), [`warehouse/`](warehouse), [`registry/`](registry) |
-| **The thesis** | The long case for NEAR, set out as five links that depend on each other, with the evidence for and against each one and what would change the author's mind | [THESIS.md](THESIS.md) |
+| **The warehouse** | Public on-chain, protocol, wallet and market data, collected every night, typed, joined into one documented set of tables and checked against itself. Every response is kept as it was saved, whole or trimmed with a note, so every number traces back to what a source said on the day it said it | [`data/`](data), [`warehouse/`](warehouse), [`registry/`](registry) |
+| **The thesis** | The long case for NEAR as claims that can fail: the evidence for, the evidence against, the limits of both, and what would change the author's mind | [THESIS.md](THESIS.md) |
 | **The dashboard** | The case on one page, then a subject at a time: each question with its chart, its reading and the query that produced it | [nearhub.tech](https://nearhub.tech), [`site/`](site) |
 
 Neither the thesis nor the dashboard holds a typed number. Both are generated from the warehouse's claim scorecard, so
@@ -74,7 +74,7 @@ the chart and the query behind it.
 
 Eleven subjects, from NEAR Intents and revenue to supply, the Bitwise ETF, governance and security. Each is a list of
 questions, and each question has its finding as the heading, a chart, a reading in plain words, its sources, and the
-SQL that drew it. Paste that SQL into `make query` and the same rows come back from the tables you built.
+SQL that drew it. Save that SQL to a file, run `make query < q.sql`, and the same rows come back from the tables you built.
 
 ### A guide to every table
 
@@ -84,19 +84,19 @@ on the site at [nearhub.tech/docs](https://nearhub.tech/docs/), and as Markdown 
 
 ## The problem this solves
 
-Evidence about NEAR is scattered across a dozen services, and they disagree. Active accounts differ by 1.8x between two
+Evidence about NEAR is scattered across a dozen services, and they disagree. Active accounts differ by about 2x between two
 versions of one API today, and differed by 9x to 18x before April 2026. Some "independent" sources read the same
 NEAR-uploaded dataset. Price series are stamped a day apart. Free tiers and endpoints change or disappear. A thesis
 built on that is hard to check and easy to fool yourself with.
 
-This warehouse keeps every raw response, types it, joins it into shared tables, and publishes where sources disagree
+This warehouse keeps every response it reads, types it, joins it into shared tables, and publishes where sources disagree
 instead of picking the convenient number.
 
 ## How it is built
 
 ```mermaid
 flowchart LR
-    S["Public sources<br/>APIs, RPC,<br/>pages read by hand"] -->|ingest| B["Bronze<br/>every raw response,<br/>hashed"]
+    S["Public sources<br/>APIs, RPC,<br/>pages read by hand"] -->|ingest| B["Bronze<br/>every response as saved,<br/>hashed"]
     B -->|warehouse| V["Silver<br/>typed, every<br/>snapshot kept"]
     R["Registry<br/>reviewed CSVs:<br/>wallets, claims, terms"] --> V
     V --> G["Gold<br/>documented tables,<br/>source checks,<br/>claim scorecard"]
@@ -107,17 +107,18 @@ flowchart LR
 Each label on an arrow is a `make` command.
 
 `main` is pinned to one snapshot, the date in `data/PINNED`, so it rebuilds the same tables tomorrow as it does today.
-A nightly job keeps collecting on the `data/nightly` branch. [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) has the
-layers, the rules each one follows and the reasons for the tools.
+A nightly job collects on the `data/nightly` branch; it is paused while this entry is judged.
+[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) has the layers, the rules each one follows and the reasons for the tools.
 
 ## Rebuild it yourself
 
-You need Python 3.11 and `make`. No keys and no API calls are needed: everything is rebuilt from the raw responses
-committed in `data/bronze/`. Only `make setup` uses the network, to download the pinned Python packages. The clone is
-under 200 MB, because every raw response is in it.
+You need Python 3.11 and `make`, on macOS or Linux. No keys and no API calls are needed: everything is rebuilt from
+the responses committed in `data/bronze/`. Only `make setup` uses the network, to download the pinned Python packages.
+The command below fetches `main` alone, with its full history: about 140 MB, because every stored response is in it.
+A plain `git clone` also fetches every nightly snapshot, which is larger and grows each night.
 
 ```bash
-git clone https://github.com/mojtb/near-hub.git
+git clone --single-branch https://github.com/mojtb/near-hub.git
 cd near-hub
 make all
 ```
@@ -205,6 +206,9 @@ Run `make ingest`. See a status table with one line per dataset. It needs networ
 because it stays within free-tier limits and fills in history in batches. Keys in `.env` are optional and raise those
 limits; copy `.env.example` to start. Without a key, a keyed source is skipped with a clear message.
 
+A fetch is dated today, which is after the pin, so `make warehouse` alone does not read it. To build with it, run
+`make warehouse AS_OF=9999-12-31`, or move the pin as [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) describes.
+
 Run `make backfill` for the long history jobs. They run in batches, so run it again for more; they can be stopped and
 restarted.
 
@@ -212,13 +216,16 @@ A GitHub Action takes a snapshot every night on the `data/nightly` branch and re
 thesis with it. `main` stays on the date in `data/PINNED`, so the expected results above do not drift. Each commit on
 that branch holds that night's code and data, so `make setup warehouse verify` rebuilds it.
 
+**The nightly job is paused while this entry is judged, through 18 November 2026;** `main` stays on the snapshot of
+12 November.
+
 ## Repository map
 
 | Path | What it holds |
 |---|---|
 | [`THESIS.md`](THESIS.md) | The case, the evidence for and against, and its limits. Written by `make thesis` |
 | [`DATA_NOTICE.md`](DATA_NOTICE.md) | What is stored, where it came from, and the terms it is held under |
-| [`data/bronze/`](data/bronze) | Every raw response as it arrived, by source and day, with its SHA-256 hash in a manifest |
+| [`data/bronze/`](data/bronze) | Every response as it was saved, whole or trimmed with a note, by source and day, with its SHA-256 hash in a manifest |
 | [`data/gold/`](data/gold) | The finished tables as Parquet and CSV, with their fingerprints and catalog |
 | [`data/state/`](data/state) | Where the long history jobs resume from |
 | [`data/PINNED`](data/PINNED) | The snapshot date `main` is built at |
@@ -257,7 +264,8 @@ independent project, not affiliated with the NEAR Foundation, and nothing here i
   separate submission; `tools/import_legacy_snapshot.py` records how.
 - **Libraries:** dbt-core, dbt-duckdb, DuckDB, requests and pytest, pinned in `requirements.lock`. The dashboard loads
   D3, ECharts and its fonts from a CDN.
-- **AI assistance:** written with Claude Code.
+- **AI assistance:** written with Claude Code. The three readings of NEAR's dashboard on Dune were taken by an
+  AI-driven browser at the author's instruction; [DATA_NOTICE.md](DATA_NOTICE.md) says how.
 - **Self-reported data:** figures from NEAR's own dashboard on Dune and from revenue.near.org are NEAR's reports about
   itself. Every table built from them says so, and [DATA_NOTICE.md](DATA_NOTICE.md) says how each reading was taken.
 

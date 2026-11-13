@@ -326,7 +326,7 @@ models:
       - {name: confidential_tvl_usd, description: "Confidential Intents TVL per revenue.near.org. Self-reported by NEAR.", meta: {unit: "USD"}}
       - {name: is_fee_revenue_provisional, description: "True while this day's fee and revenue columns can still change, which is until they have been read 3 nights after the day ended: the newest two days of a nightly build. revenue.near.org and DefiLlama publish a day before its data has fully arrived, then rewrite it. The page read $9,319 for 2026-11-03 and $164,920 a night later, and DefiLlama follows a night after the page. Leave these days out of trends and totals. Volume columns are not affected. The number comes from few reads (2026-10-28 to 2026-11-05), and a data test fails if a figure moves in the day's first week after the flag clears. False does not mean final for good: a later rewrite of history would show in dq_revisions.", meta: {unit: "boolean"}, data_tests: [not_null]}
   - name: fct_dune_dashboard_results
-    description: "Every row of every Dune widget or query read so far, as returned, so nothing waits for a typed table. Readings of NEAR's public Intents dashboard in a browser have read_via hand. Query results through Dune's official API have read_via api, once a DUNE_API_KEY with API access has run. NEAR uploads the data behind the dashboard, so it is self-reported."
+    description: "Every row of every Dune widget or query read so far, as returned, so nothing waits for a typed table. Readings of NEAR's public Intents dashboard in a browser have read_via browser. Query results through Dune's official API have read_via api, once a DUNE_API_KEY with API access has run. NEAR uploads the data behind the dashboard, so it is self-reported."
     config:
       meta: {grain: "snapshot_date, reading_id, row_index", sources: "NEAR Intents dashboard on Dune by @near, read in a browser on request; Dune API"}
     data_tests:
@@ -343,7 +343,7 @@ models:
       - {name: is_complete, description: "False when the rows read, across all pages of a table, are only part of the query's rows. A tile asks for one row of a longer result, so it is false for most tiles.", meta: {unit: "boolean"}}
       - {name: row_index, description: "Position of the row in the result, from 1, counted across a table's pages.", meta: {unit: "integer"}}
       - {name: row_json, description: "The row as JSON, with the query's own column names.", meta: {unit: "JSON text"}}
-      - {name: read_via, description: "hand for a reading of the dashboard page in a browser, on request and never on a schedule, by a person or by an AI-driven browser at the owner's request (the manifest note says which); api for a query read through Dune's API.", meta: {unit: "text"}, data_tests: [not_null, {accepted_values: {arguments: {values: ["hand", "api"]}}}]}
+      - {name: read_via, description: "browser for a reading of the dashboard page in a browser, on request and never on a schedule, by a person or by an AI-driven browser at the owner's request (the manifest note says which); api for a query read through Dune's API.", meta: {unit: "text"}, data_tests: [not_null, {accepted_values: {arguments: {values: ["browser", "api"]}}}]}
       - {name: derived_from, description: "Credit to the dashboard and its creator, or to the query's creator for an API read.", meta: {unit: "text"}, data_tests: [not_null]}
   - name: fct_dune_intents_asset_daily
     description: "Derived from NEAR's Intents dashboard on Dune: all Intents volume per asset per day, public and confidential together, over the dashboard's full history. Each dollar of a swap is counted once, and the dashboard does not say on which side. NEAR uploads the data behind the dashboard, so it is self-reported; the dashboard is read in a browser on request, so the series stops at the last reading. fct_intents_asset_daily is the public-only view from NearBlocks, and symbols differ in places, such as BTC here and NBTC there."
@@ -1282,7 +1282,7 @@ models:
       - {name: limit_observed, description: "Rate limit as published or observed.", meta: {unit: "text"}}
       - {name: terms_url, description: "Where the terms are.", meta: {unit: "url"}}
       - {name: terms_summary, description: "What the terms say, as far as they were read. Not legal advice.", meta: {unit: "text"}}
-      - {name: before_going_public, description: "What to settle before the repository is made public.", meta: {unit: "text"}}
+      - {name: publication_note, description: "How this source's data is used here: with credit, as decided on 2026-11-13 where its terms left that open, or why no decision was needed. DATA_NOTICE.md says how a source can ask for removal.", meta: {unit: "text"}}
   - name: dq_ingest_runs
     description: "How each dataset fared on each run date: ok, partial, skipped or failed, and why."
     config:

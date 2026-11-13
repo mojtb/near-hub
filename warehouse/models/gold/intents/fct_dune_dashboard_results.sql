@@ -1,5 +1,5 @@
 -- Every row of every Dune widget or query read so far, as returned, so nothing waits for a typed table. Two routes land
--- here: readings of NEAR's public Intents dashboard in a browser (read_via 'hand'), and query results through Dune's official API
+-- here: readings of NEAR's public Intents dashboard in a browser (read_via 'browser'), and query results through Dune's official API
 -- (read_via 'api'), which needs a DUNE_API_KEY with API access and is empty until one has run. NEAR uploads the data
 -- behind the dashboard, so it is self-reported. Each row credits the dashboard or the query's creator.
 select
@@ -13,7 +13,7 @@ select
     r.is_complete,
     r.row_index,
     cast(r.row_doc as varchar) as row_json,
-    'hand' as read_via,
+    'browser' as read_via,
     {{ dune_credit() }} as derived_from
 from {{ ref('stg_dune_public__query_results') }} r
 left join {{ ref('dune_queries') }} q using (query_id)

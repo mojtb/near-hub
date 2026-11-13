@@ -5,9 +5,10 @@ DBT := $(VENV)/bin/dbt
 export DBT_PROFILES_DIR := .
 export DBT_TARGET_PATH := warehouse/target
 export DBT_LOG_PATH := warehouse/logs
-# Snapshots after AS_OF are invisible to the build. The nightly job overrides it to see everything.
+# Snapshots after AS_OF are invisible to the build. The nightly job moves data/PINNED to its own day first.
 AS_OF ?= $(shell cat data/PINNED 2>/dev/null || echo 9999-12-31)
 export AS_OF
+export SQL_TEXT := $(value SQL)
 DBT_VARS := --vars '{as_of: "$(AS_OF)"}'
 
 .PHONY: help setup ingest backfill warehouse fingerprints verify catalog site docs thesis query all clean
@@ -58,8 +59,9 @@ thesis:  ## Rewrite THESIS.md from the claim scorecard in the warehouse (no netw
 	$(PY) -m tools.thesis
 
 query:  ## Run SQL against the warehouse: make query SQL="select * from gold.fct_mpc_state"
-	@# SQL reaches the tool through the environment, so a query of several lines, copied from a chart, runs as it is.
-	@$(PY) -m tools.query "$$SQL"
+	@# SQL_TEXT is SQL as it was typed: make would otherwise expand a $ in it (a regex anchor, a dollar amount).
+	@# With no SQL given, the query is read from standard input: make query < q.sql
+	@$(PY) -m tools.query "$$SQL_TEXT"
 
 all: setup warehouse verify site thesis  ## The judge path: setup, build, check, the dashboard and the thesis
 

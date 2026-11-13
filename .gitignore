@@ -13,6 +13,8 @@ __pycache__/
 warehouse/target/
 warehouse/logs/
 logs/
+# dbt run by hand, outside make, writes here
+/target/
 dbt_packages/
 
 # The warehouse file is rebuilt by `make warehouse`; gold exports are committed instead.

@@ -1529,3 +1529,21 @@ def test_block_heights_and_the_token_list_come_before_the_pool_history():
     names = [f"{d.source}/{d.name}" for d in select("all", None, None)]
     for earlier in ("rpc/block_day", "oneclick/tokens"):
         assert names.index(earlier) < names.index("rpc/intents_pool_history")
+
+
+def test_forum_threads_are_saved_without_posts_or_authors(tmp_path):
+    from ingest.sources.ecosystem import GOV_TOPIC_FIELDS, gov_topics
+    reply = {"id": 1, "title": "t", "created_at": "2026-01-01T00:00:00Z", "last_posted_at": "2026-01-02T00:00:00Z", "posts_count": 2,
+             "views": 3, "like_count": 4, "closed": False, "details": {"participants": [{"username": "someone"}]},
+             "post_stream": {"posts": [{"name": "Some One", "username": "someone", "avatar_template": "/a.png", "cooked": "<p>text</p>"}]}}
+    http = client([FakeResponse(body=json.dumps(reply).encode()) for _ in range(4)])
+    http.policies = {}
+    ctx = Context("2026-11-14", http, BronzeWriter("2026-11-14", root=tmp_path))
+    gov_topics(ctx)
+    ctx.bronze.flush()
+    saved = sorted((tmp_path / "gov" / "topics" / "dt=2026-11-14").glob("*.json.gz"))
+    assert len(saved) == 4
+    for path in saved:
+        raw = gzip.decompress(path.read_bytes()).decode()
+        assert set(json.loads(raw)) == set(GOV_TOPIC_FIELDS)
+        assert "someone" not in raw and "cooked" not in raw

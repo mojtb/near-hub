@@ -17,19 +17,25 @@ the terms it is held under.
 
 ## What is stored, and why
 
-Every response is kept as it arrived, under `data/bronze/`, with the address it came from, the day it was fetched and
-its SHA-256 hash in a manifest. `make verify` re-hashes all of them, so a reader can confirm that the tables were
-built from the responses in this repository and not from something edited afterwards. Nothing is stored that was not
-public when it was read.
+Every response is kept as it was saved, under `data/bronze/`: in full, or, where a source returns personal data or
+very large pages, reduced before saving, with a manifest note that says how. Each file has the address it came from,
+the day it was fetched and its SHA-256 hash in a manifest. `make verify` re-hashes all of them, so a reader can
+confirm that the tables were built from the files in this repository and not from something edited afterwards.
+Nothing is stored that was not public when it was read.
 
 The tables hold accounts, contracts, repositories, protocols and counts. No column holds a person's name. Account ids
 on a public blockchain are pseudonymous, and they are kept because they are the evidence: a reader who doubts a figure
-can follow it to the account it came from. The governance forum's threads are stored as titles, dates and links, and
-the developer tables count authors without naming them.
+can follow it to the account it came from. The governance forum's threads are stored as titles, dates and counts.
+Until 2026-11-13 the nightly fetch kept the forum's public replies whole, with each post's author, username and text.
+Those files were taken out of `main` on 2026-11-14; they remain in its earlier commits and on the `data/nightly`
+branch. The developer tables count authors without naming them.
 
-Four sources cannot be fetched by a script and are read by hand: NEAR's public dashboard on Dune, the Bitwise fund's
-flows as news reports give them, NEAR's published supply figures, and the protocol upgrades that changed a rate. Each
-reading is dated, credited and kept with the rest, and the pages that use it say when it was taken.
+Three sources cannot be fetched by a script and are read by hand: the Bitwise fund's flows as news reports give them,
+NEAR's published supply figures, and the protocol upgrades that changed a rate. NEAR's public dashboard on Dune has no
+free API, so it is read as a page. Its three stored readings (2026-11-01, 11-10 and 11-12) were taken in a browser, on
+request and never on a schedule, by an AI-driven browser at the author's instruction; one widget of the first was
+copied by hand. Each reading is dated, credited and kept with the rest, and the pages that use it say when it was
+taken.
 
 ## Sources
 
@@ -68,7 +74,8 @@ can and cannot tell you is in [docs/SOURCES.md](docs/SOURCES.md).
   prices are used for NEAR, the peer chains and the assets held in the Intents pool.
 - **NEAR's dashboard on Dune** is NEAR's own: NEAR uploads the data behind it, so those figures are self-reported, and
   every table built from them carries a `derived_from` column that says so. The readings were taken in a browser, on
-  request and never on a schedule, and credit the dashboard's creator, @near.
+  request and never on a schedule, by an AI-driven browser at the author's instruction (each manifest note says how),
+  and credit the dashboard's creator, @near.
 - **Bitwise's fund page** has terms that limit copying site content, so the page itself is not stored. Only dated
   figures are kept, and each row in `registry/etf_nrr_history.csv` says how it was reached.
 - **DefiLlama's** site terms bar republishing its data without permission. Its responses are stored here so that the

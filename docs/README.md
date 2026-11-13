@@ -21,7 +21,7 @@ to test. The dashboard is live at [nearhub.tech](https://nearhub.tech). These fi
 - **Pin:** the day in `data/PINNED`. The build ignores anything fetched after it, so `main` rebuilds the same tables
   tomorrow as it does today.
 - **Reading:** a figure taken by hand, from a page that no script may fetch. Each one is dated and credited.
-- **Bronze, silver, gold:** the response as it arrived, the response typed, and the table a reader should use.
+- **Bronze, silver, gold:** the response as it was saved, the response typed, and the table a reader should use.
 - **Claim:** a sentence in `registry/claims.csv` with a test, a bar and a reason for that bar. `fct_thesis_scorecard`
   measures each one against the warehouse.
 - **Scorecard:** the result of all those claims, which the thesis and the dashboard are generated from.
@@ -36,8 +36,9 @@ Each of these ends with `make warehouse fingerprints catalog verify`, which must
   `warehouse/models/silver/<source>/`, and a line in `warehouse/models/silver/_bronze.yml`. Keep the response as it
   arrives; type it in silver, never in the fetch.
 - **A table:** add the model under `warehouse/models/gold/<area>/`, describe every column in
-  `warehouse/models/gold/_gold.yml` (a check fails if one has no description or unit), and add the data tests that
-  would catch it going wrong.
+  `warehouse/models/gold/_gold.yml` (a check fails if one has no description or unit), list it under an area in
+  `AREAS` in `tools/catalog.py`, give it a line in `HISTORY` in `tools/docsite.py` (each stops its build if the table
+  is missing), and add the data tests that would catch it going wrong.
 - **A comparison between sources:** add it to `warehouse/models/gold/quality/dq_reconciliation.sql` with a tolerance
   you can defend, and, if the two differ, a reason in `registry/reconciliation_notes.csv`.
 - **A claim:** add a row to `registry/claims.csv` with its test, its bar and why that bar, then measure it in
