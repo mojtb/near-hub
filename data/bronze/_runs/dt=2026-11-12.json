@@ -1,0 +1,451 @@
+{
+  "coinbase/candles": {
+    "detail": "",
+    "files": 1,
+    "seconds": 0.3,
+    "status": "ok"
+  },
+  "coinmetrics/asset_metrics": {
+    "detail": "",
+    "files": 7,
+    "seconds": 39.2,
+    "status": "ok"
+  },
+  "coinmetrics/token_price": {
+    "detail": "",
+    "files": 5,
+    "seconds": 26.5,
+    "status": "ok"
+  },
+  "defillama/chain_dex_volume": {
+    "detail": "",
+    "files": 7,
+    "seconds": 6.5,
+    "status": "ok"
+  },
+  "defillama/chain_fees": {
+    "detail": "",
+    "files": 14,
+    "seconds": 13.7,
+    "status": "ok"
+  },
+  "defillama/chain_gas_fees": {
+    "detail": "",
+    "files": 7,
+    "seconds": 3.1,
+    "status": "ok"
+  },
+  "defillama/chain_tvl": {
+    "detail": "",
+    "files": 7,
+    "seconds": 4.6,
+    "status": "ok"
+  },
+  "defillama/intents_fees": {
+    "detail": "",
+    "files": 2,
+    "seconds": 1.7,
+    "status": "ok"
+  },
+  "defillama/intents_volume": {
+    "detail": "",
+    "files": 1,
+    "seconds": 0.3,
+    "status": "ok"
+  },
+  "defillama/peer_price": {
+    "detail": "",
+    "files": 7,
+    "seconds": 3.9,
+    "status": "ok"
+  },
+  "defillama/protocols": {
+    "detail": "",
+    "files": 26,
+    "seconds": 46.2,
+    "status": "ok"
+  },
+  "defillama/stablecoin_assets": {
+    "detail": "",
+    "files": 1,
+    "seconds": 0.4,
+    "status": "ok"
+  },
+  "defillama/stablecoin_chain": {
+    "detail": "",
+    "files": 7,
+    "seconds": 4.9,
+    "status": "ok"
+  },
+  "defillama/swap_service_volume": {
+    "detail": "",
+    "files": 6,
+    "seconds": 6.2,
+    "status": "ok"
+  },
+  "defillama/token_price": {
+    "detail": "",
+    "files": 9,
+    "seconds": 6.1,
+    "status": "ok"
+  },
+  "defillama/yield_pools": {
+    "detail": "",
+    "files": 1,
+    "seconds": 0.7,
+    "status": "ok"
+  },
+  "dune/query_results": {
+    "detail": "needs DUNE_API_KEY",
+    "seconds": 0,
+    "status": "skipped"
+  },
+  "fastnear/account_full": {
+    "detail": "",
+    "files": 15,
+    "seconds": 3.9,
+    "status": "ok"
+  },
+  "fastnear/ft_top_holders": {
+    "detail": "",
+    "files": 12,
+    "seconds": 2.2,
+    "status": "ok"
+  },
+  "fastnear/transfers": {
+    "detail": "",
+    "files": 6,
+    "seconds": 1.5,
+    "status": "ok"
+  },
+  "fastnear/tx_counts": {
+    "detail": "",
+    "files": 1,
+    "seconds": 16.9,
+    "status": "ok"
+  },
+  "github/commit_activity": {
+    "detail": "",
+    "files": 18,
+    "seconds": 41.1,
+    "status": "ok"
+  },
+  "github/commits_weekly": {
+    "detail": "",
+    "files": 18,
+    "seconds": 152.5,
+    "status": "ok"
+  },
+  "github/repos": {
+    "detail": "",
+    "files": 18,
+    "seconds": 13.1,
+    "status": "ok"
+  },
+  "gov/topics": {
+    "detail": "",
+    "files": 9,
+    "seconds": 16.4,
+    "status": "ok"
+  },
+  "intents_explorer/daily_tally": {
+    "detail": "",
+    "files": 3,
+    "seconds": 366.3,
+    "status": "ok"
+  },
+  "nearblocks/address_stats": {
+    "detail": "",
+    "files": 1,
+    "seconds": 37.6,
+    "status": "ok"
+  },
+  "nearblocks/block_stats": {
+    "detail": "",
+    "files": 1,
+    "seconds": 6.0,
+    "status": "ok"
+  },
+  "nearblocks/blocks_24h": {
+    "detail": "",
+    "files": 1,
+    "seconds": 6.0,
+    "status": "ok"
+  },
+  "nearblocks/charts_v1": {
+    "detail": "",
+    "files": 1,
+    "seconds": 6.5,
+    "status": "ok"
+  },
+  "nearblocks/contract_txns": {
+    "detail": "",
+    "files": 54,
+    "seconds": 452.4,
+    "status": "ok"
+  },
+  "nearblocks/ft_transfer_stats": {
+    "detail": "",
+    "files": 12,
+    "seconds": 135.2,
+    "status": "ok"
+  },
+  "nearblocks/intents_accounts": {
+    "detail": "",
+    "files": 1,
+    "seconds": 6.0,
+    "status": "ok"
+  },
+  "nearblocks/intents_chains": {
+    "detail": "",
+    "files": 1,
+    "seconds": 6.0,
+    "status": "ok"
+  },
+  "nearblocks/intents_swaps": {
+    "detail": "",
+    "files": 1,
+    "seconds": 6.0,
+    "status": "ok"
+  },
+  "nearblocks/intents_tokens": {
+    "detail": "",
+    "files": 1,
+    "seconds": 6.1,
+    "status": "ok"
+  },
+  "nearblocks/intents_totals": {
+    "detail": "",
+    "files": 1,
+    "seconds": 6.4,
+    "status": "ok"
+  },
+  "nearblocks/intents_volume": {
+    "detail": "",
+    "files": 1,
+    "seconds": 5.8,
+    "status": "ok"
+  },
+  "nearblocks/intents_volume_by_asset": {
+    "detail": "",
+    "files": 1,
+    "seconds": 6.4,
+    "status": "ok"
+  },
+  "nearblocks/intents_volume_by_chain": {
+    "detail": "",
+    "files": 1,
+    "seconds": 36.8,
+    "status": "ok"
+  },
+  "nearblocks/mpc_operators": {
+    "detail": "",
+    "files": 1,
+    "seconds": 5.8,
+    "status": "ok"
+  },
+  "nearblocks/price_stats": {
+    "detail": "",
+    "files": 1,
+    "seconds": 6.0,
+    "status": "ok"
+  },
+  "nearblocks/signatures_24h": {
+    "detail": "",
+    "files": 1,
+    "seconds": 5.9,
+    "status": "ok"
+  },
+  "nearblocks/signer_stats": {
+    "detail": "",
+    "files": 1,
+    "seconds": 6.0,
+    "status": "ok"
+  },
+  "nearblocks/signer_totals": {
+    "detail": "",
+    "files": 1,
+    "seconds": 5.9,
+    "status": "ok"
+  },
+  "nearblocks/stats": {
+    "detail": "",
+    "files": 1,
+    "seconds": 0.8,
+    "status": "ok"
+  },
+  "nearblocks/stats_v1": {
+    "detail": "",
+    "files": 1,
+    "seconds": 5.4,
+    "status": "ok"
+  },
+  "nearblocks/tvl_stats": {
+    "detail": "",
+    "files": 1,
+    "seconds": 6.2,
+    "status": "ok"
+  },
+  "nearblocks/txn_stats": {
+    "detail": "",
+    "files": 1,
+    "seconds": 6.0,
+    "status": "ok"
+  },
+  "nearblocks/txns_24h": {
+    "detail": "",
+    "files": 1,
+    "seconds": 6.0,
+    "status": "ok"
+  },
+  "nearblocks/validators": {
+    "detail": "",
+    "files": 1,
+    "seconds": 85.3,
+    "status": "ok"
+  },
+  "nearblocks/validators_info": {
+    "detail": "",
+    "files": 1,
+    "seconds": 6.0,
+    "status": "ok"
+  },
+  "nearblocks/wallet_balance": {
+    "detail": "",
+    "files": 6,
+    "seconds": 66.6,
+    "status": "ok"
+  },
+  "nearcatalog/projects": {
+    "detail": "",
+    "files": 1,
+    "seconds": 1.1,
+    "status": "ok"
+  },
+  "neardata/receiver_sample": {
+    "detail": "",
+    "files": 1,
+    "seconds": 439.1,
+    "status": "ok"
+  },
+  "neardata/receiver_sample_backfill": {
+    "detail": "",
+    "files": 0,
+    "seconds": 0.0,
+    "status": "ok"
+  },
+  "nrr_fund/figures": {
+    "detail": "",
+    "files": 1,
+    "seconds": 0.3,
+    "status": "ok"
+  },
+  "oneclick/tokens": {
+    "detail": "",
+    "files": 1,
+    "seconds": 0.4,
+    "status": "ok"
+  },
+  "revenue_page/page": {
+    "detail": "",
+    "files": 2,
+    "seconds": 1.2,
+    "status": "ok"
+  },
+  "rhea/token_prices": {
+    "detail": "",
+    "files": 1,
+    "seconds": 1.8,
+    "status": "ok"
+  },
+  "rhea/top_pools": {
+    "detail": "",
+    "files": 1,
+    "seconds": 1.8,
+    "status": "ok"
+  },
+  "rpc/accounts": {
+    "detail": "",
+    "files": 1,
+    "seconds": 9.5,
+    "status": "ok"
+  },
+  "rpc/block_day": {
+    "detail": "",
+    "files": 1,
+    "seconds": 4.6,
+    "status": "ok"
+  },
+  "rpc/contract_views": {
+    "detail": "",
+    "files": 17,
+    "seconds": 2.5,
+    "status": "ok"
+  },
+  "rpc/contract_views_history": {
+    "detail": "",
+    "files": 1,
+    "seconds": 15.1,
+    "status": "ok"
+  },
+  "rpc/ft_metadata": {
+    "detail": "",
+    "files": 1,
+    "seconds": 5.3,
+    "status": "ok"
+  },
+  "rpc/gas_price": {
+    "detail": "",
+    "files": 1,
+    "seconds": 0.1,
+    "status": "ok"
+  },
+  "rpc/hos_proposals": {
+    "detail": "",
+    "files": 1,
+    "seconds": 0.6,
+    "status": "ok"
+  },
+  "rpc/intents_pool_history": {
+    "detail": "",
+    "files": 25,
+    "seconds": 4022.9,
+    "status": "ok"
+  },
+  "rpc/lockups": {
+    "detail": "",
+    "files": 2,
+    "seconds": 145.6,
+    "status": "ok"
+  },
+  "rpc/nrr_pool_daily": {
+    "detail": "",
+    "files": 1,
+    "seconds": 4.1,
+    "status": "ok"
+  },
+  "rpc/protocol_config": {
+    "detail": "",
+    "files": 1,
+    "seconds": 0.1,
+    "status": "ok"
+  },
+  "rpc/status": {
+    "detail": "",
+    "files": 1,
+    "seconds": 0.3,
+    "status": "ok"
+  },
+  "rpc/validators_current": {
+    "detail": "",
+    "files": 1,
+    "seconds": 0.3,
+    "status": "ok"
+  },
+  "rpc/validators_epoch": {
+    "detail": "",
+    "files": 2,
+    "seconds": 4.6,
+    "status": "ok"
+  }
+}
