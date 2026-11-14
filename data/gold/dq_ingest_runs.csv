@@ -741,6 +741,13 @@ snapshot_date,dataset,status,detail,files,seconds
 2026-11-11,rpc/status,ok,"",1,0.3
 2026-11-11,rpc/validators_current,ok,"",1,0.4
 2026-11-11,rpc/validators_epoch,ok,"",2,4.7
+2026-11-12,bigquery/actions_daily,ok,"",0,7.5
+2026-11-12,bigquery/blocks_daily,ok,"",1,9.1
+2026-11-12,bigquery/circulating_supply,ok,"",0,2.8
+2026-11-12,bigquery/partitions,ok,"",1,8.7
+2026-11-12,bigquery/signer_cohorts,ok,"",1,9.7
+2026-11-12,bigquery/tables,ok,"",0,5.8
+2026-11-12,bigquery/transactions_daily,ok,"",2,97.0
 2026-11-12,coinbase/candles,ok,"",1,0.3
 2026-11-12,coinmetrics/asset_metrics,ok,"",7,39.2
 2026-11-12,coinmetrics/token_price,ok,"",5,26.5

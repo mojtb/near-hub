@@ -152,8 +152,8 @@ These lines are generated from the warehouse, and `make verify` fails if they st
 
 <!-- expected:start -->
 - Data through: **2026-11-11**, the last full UTC day before the pinned snapshot of 2026-11-12; `dq_freshness` lists any source that ends earlier
-- Gold tables and columns: **87** and **842**
-- Reconciliation: **94** comparisons agree, **13** differ, each with a written explanation
+- Gold tables and columns: **95** and **928**
+- Reconciliation: **110** comparisons agree, **15** differ, each with a written explanation
 - Issuance over the last 30 days, from supply change plus burn: **2.49%** a year, against **2.50%** in the protocol config
 - Circulating supply, built from NEAR's lockup contracts: **1,309.38M** NEAR, **99.84%** of total supply; on 2025-08-26, the last day NearBlocks computed its own, **1,249.72M** against **1,249.65M**
 - Captured Intents revenue, all time: **$9.83M** per DefiLlama, **$9.80M** rebuilt from wallet transfers
@@ -169,13 +169,21 @@ Eleven areas: chain usage and supply, NEAR Intents and revenue, the Intents pool
 staking, capital and DeFi, market and peers, the Bitwise NEAR ETF, developers and governance, the thesis models, and
 data quality.
 
+**NEAR's public BigQuery dataset** (`bigquery-public-data.crypto_near_mainnet_us`) is queried too. The SQL is in
+[`ingest/sql/bigquery/`](ingest/sql/bigquery), one file per query, and only counts are kept. Over the 680 days read, it
+counts exactly the same distinct signers as NearBlocks on every day and the same transactions on 678, so the figures the
+site shows are checked day for day. It adds what no other source here gives: accounts by contract, and how many of the
+74.9 million accounts that ever signed a transaction came back. And NEAR's own circulating supply table agrees with the
+one this warehouse builds from the lockup contracts to within 24 NEAR of 2.1 million locked. The method, the cost and
+what it found are in [docs/SOURCES.md](docs/SOURCES.md#bigquery-public-dataset).
+
 <details>
 <summary><b>The main tables in each area, and where they come from</b></summary>
 <br>
 
 | Area | Main tables in `gold` | Main sources |
 |---|---|---|
-| Chain usage, supply | `fct_chain_daily`, `fct_supply_daily`, `fct_circulating_supply_daily`, `fct_protocol_config`, `fct_contract_daily`, `fct_receiver_sample_daily` | NearBlocks, archival RPC, Neardata |
+| Chain usage, supply | `fct_chain_daily`, `fct_supply_daily`, `fct_circulating_supply_daily`, `fct_protocol_config`, `fct_contract_daily`, `fct_receiver_sample_daily`, `fct_bigquery_chain_daily`, `fct_bigquery_contract_daily`, `fct_bigquery_action_daily`, `fct_bigquery_circulating_supply_daily`, `fct_bigquery_signer_cohort_monthly` | NearBlocks, archival RPC, Neardata, NEAR's public BigQuery dataset |
 | NEAR Intents, revenue | `fct_intents_daily`, `fct_intents_chain_daily`, `fct_intents_asset_daily`, `fct_intents_fee_channels`, `fct_dune_intents_asset_daily`, `fct_dune_intents_chain_daily`, `fct_dune_intents_swaps_daily`, `fct_dune_intents_tvl_daily`, `fct_dune_intents_tvl_asset_daily`, `fct_dune_dashboard_results`, `fct_intents_1click_daily`, `fct_intents_1click_channel_daily`, `fct_revenue_capture` | DefiLlama, NearBlocks, revenue.near.org, NEAR's dashboard on Dune, Intents Explorer API |
 | The Intents pool, on chain | `fct_intents_pool_chain_monthly`, `fct_token_price_daily` | Archival RPC, Coin Metrics, DefiLlama |
 | Wallets | `fct_wallet_transfers`, `fct_wallet_counterparties`, `fct_revenue_inflows_daily`, `fct_wallet_balance_daily`, `fct_wallet_holdings`, `fct_token_holders`, `dim_entity` | FastNear, RPC, 1Click, Rhea |
@@ -185,7 +193,7 @@ data quality.
 | Bitwise NEAR ETF flows | `fct_etf_nrr_daily`, `fct_etf_nrr_chain_daily` | Bitwise's page, archival RPC, SoSoValue through news reports |
 | Developers, governance | `fct_dev_activity_weekly`, `fct_repo_snapshot`, `fct_governance_proposals`, `fct_governance_decisions`, `fct_venear_snapshot`, `fct_governance_threads`, `dim_event` | GitHub, RPC, gov.near.org |
 | Thesis models | `fct_thesis_scorecard`, `dim_claim`, `fct_net_dilution_daily`, `fct_deflation_scenarios`, `fct_intents_unit_economics_monthly`, `fct_intents_channel_economics_monthly`, `fct_intents_concentration_monthly`, `fct_valuation_multiples_daily`, `fct_usage_quality_daily`, `fct_usage_lead_correlations`, `fct_etf_absorption_daily` | The gold tables above, `registry/claims.csv`, `registry/issuance_scenarios.csv` |
-| Data quality | `dq_reconciliation`, `dq_freshness`, `dq_revisions`, `dq_ingest_runs`, `dq_provenance` | All of the above |
+| Data quality | `dq_reconciliation`, `dq_freshness`, `dq_revisions`, `dq_ingest_runs`, `dq_provenance`, `dq_bigquery_tables`, `dq_bigquery_reads` | All of the above |
 
 </details>
 
@@ -205,6 +213,12 @@ Every table is also in `data/gold/` as Parquet, so you can read it without build
 Run `make ingest`. See a status table with one line per dataset. It needs network access and can take about 90 minutes,
 because it stays within free-tier limits and fills in history in batches. Keys in `.env` are optional and raise those
 limits; copy `.env.example` to start. Without a key, a keyed source is skipped with a clear message.
+
+BigQuery is the one source with no keyless route. It needs a Google Cloud key file and one extra package
+(`pip install -r requirements-bigquery.txt`), and it runs with `python -m ingest run --sources bigquery`. It asks
+BigQuery what each query would read before running it, and stops at 150 GB a query unless the limit is raised for
+that run. Rebuilding from the saved data
+needs neither.
 
 A fetch is dated today, which is after the pin, so `make warehouse` alone does not read it. To build with it, run
 `make warehouse AS_OF=9999-12-31`, or move the pin as [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) describes.
@@ -230,7 +244,7 @@ that branch holds that night's code and data, so `make setup warehouse verify` r
 | [`data/state/`](data/state) | Where the long history jobs resume from |
 | [`data/PINNED`](data/PINNED) | The snapshot date `main` is built at |
 | [`registry/`](registry) | Reviewed CSVs: wallets, tokens, peers, events, the claims and their bars, each source's terms |
-| [`ingest/`](ingest) | One fetcher per source, run by `make ingest` |
+| [`ingest/`](ingest) | One fetcher per source, run by `make ingest`; the BigQuery queries are in [`ingest/sql/bigquery/`](ingest/sql/bigquery) |
 | [`warehouse/`](warehouse) | The dbt models: silver types each response, gold holds the tables a reader should use, and the data tests |
 | [`tools/`](tools) | The build steps: export, verify, catalog, thesis, the site's data and the table guide |
 | [`site/`](site) | The dashboard, served at [nearhub.tech](https://nearhub.tech): one page, its data, and the table guide in `site/docs/` |

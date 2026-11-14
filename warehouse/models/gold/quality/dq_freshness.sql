@@ -2,7 +2,8 @@
 -- A daily dataset is measured by its newest day of data, a snapshot dataset by its newest read. Each carries the most
 -- days it may fall behind; past that it is stale and the test no_dataset_is_stale fails, so a source that stops arriving
 -- turns the build red instead of going quiet. The limits leave room for one missed night. No limit means the dataset is
--- not expected to keep up: a reading taken in a browser on request, or a source that is being switched off.
+-- not expected to keep up: a reading taken in a browser on request, a source that is being switched off, or BigQuery,
+-- which is read only where a Google key is set.
 {% set daily = [
     ('stg_nearblocks__charts_v1', 'NearBlocks legacy daily charts, switched off on 2026-11-22', none),
     ('stg_nearblocks__block_stats', 'NearBlocks daily blocks, gas and supply', 3),
@@ -14,6 +15,9 @@
     ('stg_nearblocks__intents_volume_by_asset', 'NearBlocks Intents by asset', 3),
     ('stg_nearblocks__signer_stats', 'NearBlocks v1.signer daily', 3),
     ('fct_dune_intents_asset_daily', 'Dune dashboard Intents by asset, read in a browser on request', none),
+    ('stg_bigquery__blocks_daily', 'BigQuery blocks per day, read where a Google key is set', none),
+    ('stg_bigquery__transactions_daily', 'BigQuery transactions and receivers per day, read where a Google key is set', none),
+    ('stg_bigquery__actions_daily', 'BigQuery actions and contracts per day, read where a Google key is set', none),
     ('stg_intents_explorer__days', 'Intents Explorer daily tally', 3),
     ('stg_rpc__contract_views_history', 'Contract views replayed by day: liquid staking, veNEAR, MPC', 3),
     ('stg_rpc__intents_pool_history', 'Intents pool on chain: named tokens at month ends and on the newest day', 35),

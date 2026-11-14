@@ -69,10 +69,12 @@ The sample prompt for this track gives a working hypothesis to test: "cross-chai
 - One or two weeks ahead, the largest link between Intents volume and any of four usage measures is +0.20 (distinct signers), and the token price's is +0.43 (gas paid). With 29 weeks, chance alone gives up to ±0.37.
 - The NEAR price 1 week ahead of gas paid is outside that band on weeks cut on Mondays. Cut on each of the seven weekdays it reads between +0.05 and +0.43, and it is outside the band on one of the seven.
 - In the same week both move with transactions (+0.69 for volume and +0.46 for the price) and neither with signers (0.00 and −0.22).
-- What would change this reading: a lead above the band once more weeks exist (97 weeks are needed to tell a correlation of 0.20 from chance), or a count of NEAR signers by application, which the warehouse does not hold.
+- What would change this reading: a lead above the band once more weeks exist (97 weeks are needed to tell a correlation of 0.20 from chance), or a test on signers by application. The warehouse holds that count from 3 Apr 2026 (`gold.fct_bigquery_contract_daily`), 32 weeks so far, too few to test.
 - On the other usage claim: 62,272 accounts a day signed a transaction over the newest 30 days. The claim that signers are falling stops holding above 112,100 a day.
 
-What these sources cannot compute, so it is not on the site: daily active people (both account counts follow one game and one wallet app); signers by application; who stands behind the HOT, Sweat and Kai-Ching accounts, which are named from their account ids alone; and new and deleted accounts once NearBlocks switches /v1 off on 22 November 2026. The prompt names the NEAR BigQuery public dataset; this warehouse does not query it. Its chain counts are NearBlocks', checked against a sample of blocks from Neardata.
+What these sources cannot compute, so it is not on the site: daily active people (both account counts follow one game and one wallet app); who stands behind the HOT, Sweat and Kai-Ching accounts, which are named from their account ids alone; and new accounts once NearBlocks switches /v1 off on 22 November 2026.
+
+The prompt names the NEAR BigQuery public dataset, and the warehouse queries it (the SQL is in `ingest/sql/bigquery/`). The chain counts on the site are NearBlocks', and BigQuery checks them day for day: over the 680 days read, the two count the same transactions on 678 and the same distinct signers on 680. BigQuery also counts accounts by contract, which the site does not chart yet: on 11 Nov 2026, 97.2% of the accounts that signed a function call called `game.hot.tg`, and 221 called `intents.near` (`gold.fct_bigquery_contract_daily`).
 
 ## Limits
 
@@ -87,7 +89,7 @@ What these sources cannot compute, so it is not on the site: daily active people
 - Intents volume and fees are NEAR's own published series. What its revenue wallets received is checked against the chain: DefiLlama's all-time figure is $9.83M and the same sum rebuilt from wallet transfers, valued as DefiLlama values it at each day's close, is $9.80M, 0.29% apart, so the two agree. DefiLlama takes its figure from NEAR's own count of the same wallets, so this confirms the count and nothing more. NEAR's own monthly revenue series says $11.69M; valued on the day each payment arrived, the wallets received $9.85M, 15.7% less, and no cause has been published.
 - Market caps are not on one supply rule: NEAR's counts nearly all of its supply, and each peer's counts what its project reports as circulating. Most of what DefiLlama counts as a chain's app fees is passed on to others. So the valuation result leans on its basis: NEAR is 1.65 times the median peer on app fees and 1.47 times on the part of fees that applications keep.
 - 38% of Intents volume in October 2026 settled confidentially. NEAR's own dashboard still gives that volume by chain and by asset, and no public record shows which account swapped what. That share is rising, so less of Intents can be checked from outside.
-- Across the warehouse, 73 comparisons between independent sources agree, 21 agree but share an upstream, and 13 differ. Each difference is explained in `docs/RECONCILIATION.md`.
+- Across the warehouse, 88 comparisons between independent sources agree, 22 agree but share an upstream, and 15 differ. Each difference is explained in `docs/RECONCILIATION.md`.
 - This is an entry in the NEAR HACKATHON Investment Thesis track, and prizes are paid in NEAR, so the author could gain exposure to the asset analysed here. It is an independent project, not affiliated with the NEAR Foundation, and it is not investment advice.
 
 ## Check it yourself

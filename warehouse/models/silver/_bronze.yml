@@ -85,3 +85,10 @@ sources:
       - {name: intents_explorer__daily_tally, identifier: intents_explorer/daily_tally, description: "1Click swaps counted per UTC day from the Intents Explorer API, with no row or wallet address kept."}
       - {name: nrr_fund__figures, identifier: nrr_fund/figures, description: "Figures and the wallet list from Bitwise's page for its NEAR ETF. The page itself is not kept."}
       - {name: rpc__nrr_pool_daily, identifier: rpc/nrr_pool_daily, description: "The wallets Bitwise lists for its NEAR ETF, inside their staking pool, at the first block of each UTC day. Other delegators are kept only as a total."}
+      - {name: bigquery__tables, identifier: bigquery/tables, description: "Every table in NEAR's public BigQuery dataset: rows, size and last change, from the dataset's own list of tables."}
+      - {name: bigquery__partitions, identifier: bigquery/partitions, description: "Rows per daily partition of every table in NEAR's public BigQuery dataset, from BigQuery's partition records."}
+      - {name: bigquery__blocks_daily, identifier: bigquery/blocks_daily, description: "Blocks per UTC day counted in BigQuery: heights, times, total supply at the day's last block, block producers."}
+      - {name: bigquery__transactions_daily, identifier: bigquery/transactions_daily, description: "Transactions, distinct signers and distinct receivers per UTC day counted in BigQuery, with each day's largest receivers."}
+      - {name: bigquery__actions_daily, identifier: bigquery/actions_daily, description: "Actions per UTC day and kind counted in BigQuery, with each day's largest contracts by function calls."}
+      - {name: bigquery__signer_cohorts, identifier: bigquery/signer_cohorts, description: "Signers by the month they first signed a transaction and each month they signed again, counted in BigQuery over the whole chain. The query reads about 155 GB, so it is started by hand."}
+      - {name: bigquery__circulating_supply, identifier: bigquery/circulating_supply, description: "NEAR's own daily circulating and total supply, from the circulating_supply table of its public BigQuery dataset."}

@@ -1268,6 +1268,159 @@ models:
       - {name: total_venear, description: "veNEAR outstanding: voting power, which includes the growth credited since each lock. It is not an amount of NEAR, so over NEAR's supply it is an upper bound on the share locked.", meta: {unit: "veNEAR"}}
       - {name: accounts, description: "Accounts registered with venear.dao. The count has never fallen, on days when veNEAR left included, so it counts accounts ever registered and not accounts holding veNEAR today.", meta: {unit: "count"}}
       - {name: read_from, description: "archival: replayed from the archival node at the first block of the UTC day. nightly: read at the tip when the snapshot of that date ran, used only for a date the replay has not read. All of a contract's figures on a date come from the same read.", meta: {unit: "label"}, data_tests: [not_null, {accepted_values: {arguments: {values: ["archival", "nightly"]}}}]}
+  - name: fct_bigquery_chain_daily
+    description: "The chain per UTC day as counted in NEAR's public BigQuery dataset (bigquery-public-data.crypto_near_mainnet_us), the source the hackathon's sample prompt names. It stands beside fct_chain_daily, which takes the same measures from NearBlocks, and dq_reconciliation holds the two against each other. Blocks and total supply cover every day since genesis; transactions, signers and receivers start where the read of the transactions table starts, because that read is billed by size; the three *_table_rows columns are BigQuery's own count of rows in each table's daily partition, which costs nothing to read and covers every day. The SQL is in ingest/sql/bigquery/, and dq_bigquery_reads lists every read."
+    config:
+      meta: {grain: "date_day", sources: "BigQuery public dataset crypto_near_mainnet_us: blocks, transactions and the tables' partition records"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["date_day"]}}
+      - no_missing_days: {arguments: {day_column: date_day}}
+      - min_rows: {arguments: {n: 2000}}
+    columns:
+      - {name: date_day, description: "UTC calendar day of the block.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: blocks, description: "Blocks produced that day.", meta: {unit: "count"}}
+      - {name: first_block_height, description: "Height of the day's first block.", meta: {unit: "blocks"}}
+      - {name: last_block_height, description: "Height of the day's last block.", meta: {unit: "blocks"}}
+      - {name: last_block_at, description: "Time of the day's last block in the dataset when it was read.", meta: {unit: "UTC timestamp"}}
+      - {name: is_day_complete, description: "True when the day's last block is within the last minute before midnight, so the whole day was loaded when it was read. A day that is not complete undercounts everything.", meta: {unit: "boolean"}}
+      - {name: block_producers, description: "Distinct accounts that produced a block that day.", meta: {unit: "count"}}
+      - {name: total_supply_near, description: "Total supply in the day's last block.", meta: {unit: "NEAR"}}
+      - {name: txns, description: "Transactions, counted from the transactions table. Empty before the window that table was read over.", meta: {unit: "count"}}
+      - {name: signers, description: "Distinct accounts that signed a transaction. A relayer that signs for many users counts once, and those users do not count. An account also signs its own deletion.", meta: {unit: "count"}}
+      - {name: receivers, description: "Distinct accounts a transaction was addressed to. A relayed transaction is addressed to the user's own account, so this rises with relayed activity.", meta: {unit: "count"}}
+      - {name: transactions_table_rows, description: "Rows in the transactions table's partition for the day, from BigQuery's partition records. Equal to txns where both exist unless the table holds a transaction twice.", meta: {unit: "count"}}
+      - {name: receipt_details_table_rows, description: "Rows in the receipt_details table's partition for the day: action receipts and data receipts together.", meta: {unit: "count"}}
+      - {name: receipt_actions_table_rows, description: "Rows in the receipt_actions table's partition for the day: one per action inside an action receipt.", meta: {unit: "count"}}
+  - name: fct_bigquery_receiver_daily
+    description: "Who the day's transactions were sent to, counted over every transaction in NEAR's public BigQuery dataset: each account among the day's 25 largest receivers by transactions or by distinct signers. fct_receiver_sample_daily estimates the same split from about one block in a thousand; this is the full count. A receiver is the account a transaction is addressed to, and a relayed transaction is addressed to the user's own account, so an application reached through a relayer does not appear here as one contract: fct_bigquery_contract_daily counts by the contract called. Accounts outside a day's top 25 never leave BigQuery."
+    config:
+      meta: {grain: "date_day, receiver_account_id", sources: "BigQuery public dataset crypto_near_mainnet_us: transactions"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["date_day", "receiver_account_id"]}}
+      - no_missing_days: {arguments: {day_column: date_day}}
+      - min_rows: {arguments: {n: 20000}}
+    columns:
+      - {name: date_day, description: "UTC calendar day.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: receiver_account_id, description: "Account the transactions were addressed to.", meta: {unit: "account id"}, data_tests: [not_null]}
+      - {name: entity, description: "Organization that runs the account, from the registry. Empty means not established.", meta: {unit: "text"}}
+      - {name: category, description: "Functional group, from the registry.", meta: {unit: "text"}}
+      - {name: txns, description: "Transactions addressed to this account that day.", meta: {unit: "count"}}
+      - {name: signers, description: "Distinct accounts that signed a transaction addressed to this account that day.", meta: {unit: "count"}}
+      - {name: txn_share, description: "txns divided by the day's transactions.", meta: {unit: "fraction"}}
+      - {name: signer_share, description: "signers divided by the day's distinct signers. A signer that used several accounts counts in each, so shares can add up to more than 1.", meta: {unit: "fraction"}}
+      - {name: rank_by_txns, description: "The account's rank that day by transactions, 1 the largest.", meta: {unit: "rank"}}
+      - {name: rank_by_signers, description: "The account's rank that day by distinct signers, 1 the largest.", meta: {unit: "rank"}}
+  - name: fct_bigquery_action_daily
+    description: "What the chain did each UTC day by kind of action, counted over every action receipt in NEAR's public BigQuery dataset: FUNCTION_CALL, TRANSFER, CREATE_ACCOUNT, DELETE_ACCOUNT, ADD_KEY, DELETE_KEY, DEPLOY_CONTRACT, STAKE, DELEGATE_ACTION (a relayed request), and the newer kinds for global contracts and state initialisation as the dataset names them. DELEGATE_ACTION's actions and receivers are NearBlocks' meta-transactions and the accounts a relayer signed for, almost to the unit. Accounts deleted and contracts deployed are counts NearBlocks stops serving when /v1 is switched off on 2026-11-22. An action is one step inside a receipt, and a transaction can lead to many receipts, so these are not transaction counts."
+    config:
+      meta: {grain: "date_day, action_kind", sources: "BigQuery public dataset crypto_near_mainnet_us: receipt_actions"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["date_day", "action_kind"]}}
+      - min_rows: {arguments: {n: 1500}}
+    columns:
+      - {name: date_day, description: "UTC calendar day.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: action_kind, description: "Kind of action, as the dataset names it.", meta: {unit: "text"}, data_tests: [not_null]}
+      - {name: actions, description: "Actions of this kind that day.", meta: {unit: "count"}}
+      - {name: signers, description: "Distinct accounts that signed the transaction an action of this kind came from. For a relayed action that is the relayer.", meta: {unit: "count"}}
+      - {name: predecessors, description: "Distinct accounts that sent a receipt holding an action of this kind. For a relayed action that is the user. Includes contracts that act on other contracts, and the account named system, which sends refunds.", meta: {unit: "count"}}
+      - {name: receivers, description: "Distinct accounts a receipt with an action of this kind went to: the contracts called for FUNCTION_CALL, the accounts created for CREATE_ACCOUNT, the accounts that received code for DEPLOY_CONTRACT, and so on.", meta: {unit: "count"}}
+      - {name: from_system, description: "Actions in receipts sent by the account named system: refunds of unused gas and deposits, which arrive as transfers.", meta: {unit: "count"}}
+      - {name: actions_not_from_system, description: "actions less from_system. For TRANSFER this is transfers that are not refunds.", meta: {unit: "count"}}
+  - name: fct_bigquery_contract_daily
+    description: "Which contracts the day's function calls went to, counted over every action receipt in NEAR's public BigQuery dataset: each contract among the day's 25 largest by calls, by distinct signers or by distinct callers. This is the count of accounts by application that NearBlocks and the block sample cannot give. signers are the accounts that signed the transaction a call came from, which for a relayed call is the relayer; callers are the accounts that sent the receipt, which for a relayed call is the user. Contracts outside a day's top 25 never leave BigQuery."
+    config:
+      meta: {grain: "date_day, contract_id", sources: "BigQuery public dataset crypto_near_mainnet_us: receipt_actions"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["date_day", "contract_id"]}}
+      - no_missing_days: {arguments: {day_column: date_day}}
+      - min_rows: {arguments: {n: 5000}}
+    columns:
+      - {name: date_day, description: "UTC calendar day.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: contract_id, description: "Account whose contract was called.", meta: {unit: "account id"}, data_tests: [not_null]}
+      - {name: entity, description: "Organization that runs the contract, from the registry. Empty means not established.", meta: {unit: "text"}}
+      - {name: category, description: "Functional group, from the registry.", meta: {unit: "text"}}
+      - {name: function_calls, description: "Function-call actions sent to this contract that day, counting calls made by other contracts.", meta: {unit: "count"}}
+      - {name: signers, description: "Distinct accounts that signed a transaction leading to a call of this contract. For relayed calls that is the relayer, so an application that pays for its users shows few signers.", meta: {unit: "count"}}
+      - {name: callers, description: "Distinct accounts that sent a receipt calling this contract: users who called it directly, users a relayer signed for, and other contracts.", meta: {unit: "count"}}
+      - {name: call_share, description: "function_calls divided by the day's function calls.", meta: {unit: "fraction"}}
+      - {name: signer_share, description: "signers divided by the day's distinct signers of any function call. A signer that reached several contracts counts in each, so shares can add up to more than 1.", meta: {unit: "fraction"}}
+      - {name: caller_share, description: "callers divided by the day's distinct callers of any function call. An account that called several contracts counts in each, so shares can add up to more than 1.", meta: {unit: "fraction"}}
+      - {name: rank_by_calls, description: "The contract's rank that day by function calls, 1 the largest.", meta: {unit: "rank"}}
+      - {name: rank_by_signers, description: "The contract's rank that day by distinct signers, 1 the largest.", meta: {unit: "rank"}}
+      - {name: rank_by_callers, description: "The contract's rank that day by distinct callers, 1 the largest.", meta: {unit: "rank"}}
+  - name: fct_bigquery_circulating_supply_daily
+    description: "NEAR's own daily circulating supply, as its lakehouse computes it and publishes it in the circulating_supply table of its public BigQuery dataset. It stands beside fct_circulating_supply_daily, which this warehouse builds from every lockup contract read on chain: two computations of the same figure by different hands, and dq_reconciliation holds them against each other. The site and the thesis read the warehouse's own series; this table is the outside check on it."
+    config:
+      meta: {grain: "date_day", sources: "BigQuery public dataset crypto_near_mainnet_us: circulating_supply"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["date_day"]}}
+      - min_rows: {arguments: {n: 1000}}
+    columns:
+      - {name: date_day, description: "UTC calendar day the figure is for.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: circulating_supply_near, description: "Circulating supply as NEAR's lakehouse computes it: total supply less what lockup contracts still hold locked. Empty on a day the table reports zero.", meta: {unit: "NEAR"}}
+      - {name: total_supply_near, description: "Total supply at the block the figure was computed at.", meta: {unit: "NEAR"}}
+      - {name: circulating_share_of_total, description: "circulating_supply_near divided by total_supply_near.", meta: {unit: "fraction"}}
+      - {name: not_circulating_near, description: "total_supply_near less circulating_supply_near: what NEAR's computation counts as locked.", meta: {unit: "NEAR"}}
+      - {name: is_zero_in_source, description: "True on a day NEAR's table reports a circulating supply of zero. That is a fault in the table, so the day carries no circulating figure here.", meta: {unit: "boolean"}}
+      - {name: computed_at_block_height, description: "Block the figure was computed at.", meta: {unit: "blocks"}}
+      - {name: computed_at, description: "Time of that block.", meta: {unit: "UTC timestamp"}}
+  - name: fct_bigquery_signer_cohort_monthly
+    description: "Do accounts come back? Every account that ever signed a transaction is placed in the month it first signed one, its cohort, and counted again in each later month in which it signed at least one. Counted in NEAR's public BigQuery dataset over every transaction since genesis; no other source in this warehouse can do it, because it needs each signer's whole history. The row where active_month equals cohort_month is the cohort's size. An account also signs its own deletion, and a batch that creates accounts to use once fills a cohort with accounts that were never going to return, so read a cohort beside what happened that month."
+    config:
+      meta: {grain: "cohort_month, active_month", sources: "BigQuery public dataset crypto_near_mainnet_us: transactions"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["cohort_month", "active_month"]}}
+      - min_rows: {arguments: {n: 2000}}
+    columns:
+      - {name: cohort_month, description: "First day of the month in which these accounts first signed a transaction.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: active_month, description: "First day of a month in which they signed at least one transaction.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: months_since_first, description: "Whole months from cohort_month to active_month; 0 is the cohort's own month.", meta: {unit: "months"}}
+      - {name: signers, description: "Accounts of the cohort that signed at least one transaction in active_month.", meta: {unit: "count"}}
+      - {name: cohort_signers, description: "Size of the cohort: accounts that first signed in cohort_month.", meta: {unit: "count"}}
+      - {name: retained_share, description: "signers divided by cohort_signers.", meta: {unit: "fraction"}}
+      - {name: is_active_month_complete, description: "False for the month the read ended in, which holds only its first days.", meta: {unit: "boolean"}}
+      - {name: read_through, description: "Last day of transactions the read covered.", meta: {unit: "date"}}
+  - name: dq_bigquery_tables
+    description: "Is NEAR's public BigQuery dataset still being loaded, and how large is it? One row per table on the newest read: rows, size, last change and the newest day that has rows. NEAR Lake, the feed the dataset's published loader reads, was switched off on 2026-03-24, and the loader's repository has not changed since 2025, so freshness is measured here, not assumed."
+    config:
+      meta: {grain: "table_name", sources: "BigQuery public dataset crypto_near_mainnet_us: its list of tables and their partition records"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["table_name"]}}
+      - min_rows: {arguments: {n: 10}}
+    columns:
+      - {name: snapshot_date, description: "Date the dataset was read.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: table_name, description: "Table or view in the dataset.", meta: {unit: "text"}, data_tests: [not_null]}
+      - {name: table_type, description: "table or view.", meta: {unit: "text"}}
+      - {name: row_count, description: "Rows in the table. A view has none of its own.", meta: {unit: "count"}}
+      - {name: size_gb, description: "Size of the table's data.", meta: {unit: "GB"}}
+      - {name: created_at, description: "When the table was created.", meta: {unit: "UTC timestamp"}}
+      - {name: last_modified_at, description: "When the table last changed: the last time its loader wrote to it.", meta: {unit: "UTC timestamp"}}
+      - {name: first_day_with_rows, description: "Oldest daily partition that holds rows.", meta: {unit: "date"}}
+      - {name: newest_day_with_rows, description: "Newest daily partition that holds rows.", meta: {unit: "date"}}
+      - {name: days_with_rows, description: "Daily partitions that hold rows.", meta: {unit: "days"}}
+      - {name: days_behind_read, description: "Days from newest_day_with_rows to the day of the read. 0 or 1 means the table was current.", meta: {unit: "days"}}
+  - name: dq_bigquery_reads
+    description: "Every query this warehouse has run in BigQuery: which SQL file, over which days, how much data it read and what Google billed. The SQL is in ingest/sql/bigquery/, one file per query, and sql_sha256 is the hash of the text that ran, so a result can be tied to the exact query. Google bills by the gigabytes of the columns a query reads, and the first 1,000 GB of a month are free."
+    config:
+      meta: {grain: "snapshot_date, dataset, read_key", sources: "BigQuery job statistics saved with each result"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["snapshot_date", "dataset", "read_key"]}}
+      - min_rows: {arguments: {n: 5}}
+    columns:
+      - {name: snapshot_date, description: "Snapshot the result was saved in.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: dataset, description: "Bronze dataset the result was saved as.", meta: {unit: "text"}}
+      - {name: query, description: "Name of the query: ingest/sql/bigquery/<query>.sql.", meta: {unit: "text"}}
+      - {name: read_key, description: "The days the read covered, as first day and last day, or the query's name where it has no window.", meta: {unit: "text"}}
+      - {name: sql_sha256, description: "SHA-256 of the SQL text that ran.", meta: {unit: "hash"}}
+      - {name: read_at, description: "When the query ran. Empty for a read saved before the loader recorded it.", meta: {unit: "UTC timestamp"}}
+      - {name: first_day, description: "First day the query read, where it has a window.", meta: {unit: "date"}}
+      - {name: last_day, description: "Last day the query read, where it has a window.", meta: {unit: "date"}}
+      - {name: gb_estimated, description: "What BigQuery's free dry run said the query would read.", meta: {unit: "GB"}}
+      - {name: gb_billed, description: "What Google billed the query for. 0 when the result came from BigQuery's cache.", meta: {unit: "GB"}}
+      - {name: is_cache_hit, description: "True when BigQuery answered from its cache of an identical query run within the day before.", meta: {unit: "boolean"}}
+      - {name: rows_returned, description: "Rows in the query's result.", meta: {unit: "count"}}
+      - {name: rows_saved, description: "Rows saved to bronze, over all pages. Equal to rows_returned for a complete read.", meta: {unit: "count"}}
+      - {name: pages, description: "Pages the result arrived in.", meta: {unit: "count"}}
   - name: dim_source
     description: "Every data source with its access, limits and terms."
     config:

@@ -1,0 +1,3 @@
+# Optional. Only `python -m ingest run --sources bigquery` needs it: Google's library turns a service-account key file
+# into an access token. `make all`, `make warehouse` and `make verify` never import it.
+google-auth>=2.38,<3

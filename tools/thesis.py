@@ -243,6 +243,18 @@ cuts = [one(f"""
            count(*) filter (where abs(correlation) > chance_bound) as cuts_outside, count(*) as cuts
     from gold.fct_usage_lead_correlations
     where leader = '{r['leader']}' and usage_measure = '{r['usage_measure']}' and lead_weeks = {r['lead_weeks']}""") for r in outside]
+# NEAR's public BigQuery dataset, the source the sample prompt names: how it compares with NearBlocks, and who the day's
+# function calls came from on the newest day read.
+bq = {r["check_id"]: r for r in rows("""
+    select check_id, cast(value_a as bigint) as a, cast(value_b as bigint) as b from gold.dq_reconciliation
+    where check_id in ('chain_txns_days_equal_bigquery_vs_nearblocks', 'chain_signers_days_equal_bigquery_vs_nearblocks')""")}
+bq_top = one("""
+    select date_day, contract_id, signers, signer_share from gold.fct_bigquery_contract_daily
+    where date_day = (select max(date_day) from gold.fct_bigquery_contract_daily) and rank_by_signers = 1""")
+bq_intents = one(f"""
+    select signers from gold.fct_bigquery_contract_daily where contract_id = 'intents.near' and date_day = date '{bq_top["date_day"]}'""")
+bq_span = one("select min(date_day) as first_day, cast(count(distinct date_day) / 7 as integer) as weeks from gold.fct_bigquery_contract_daily")
+
 signers_now = one("""
     select avg(distinct_signers) filter (where date_day > e.d - 30) as now,
            0.9 * avg(distinct_signers) filter (where date_day <= e.d - 180 and date_day > e.d - 210) as bar
@@ -281,15 +293,22 @@ hypothesis = [
     f"{corr(same[('near_price', 'transactions')])} for the price) and neither with signers "
     f"({corr(same[('intents_volume', 'signers')])} and {corr(same[('near_price', 'signers')])}).",
     f"- What would change this reading: a lead above the band once more weeks exist ({weeks_to_see(0.2)} weeks are needed "
-    "to tell a correlation of 0.20 from chance), or a count of NEAR signers by application, which the warehouse does not hold.",
+    "to tell a correlation of 0.20 from chance), or a test on signers by application. The warehouse holds that count from "
+    f"{day(bq_span['first_day'])} (`gold.fct_bigquery_contract_daily`), {bq_span['weeks']} weeks so far, too few to test.",
     f"- On the other usage claim: {signers_now['now']:,.0f} accounts a day signed a transaction over the newest 30 days. "
     f"The claim that signers are falling stops holding above {signers_now['bar']:,.0f} a day.",
     "",
     "What these sources cannot compute, so it is not on the site: daily active people (both account counts follow one game "
-    "and one wallet app); signers by application; who stands behind the HOT, Sweat and Kai-Ching accounts, which are named "
-    "from their account ids alone; and new and deleted accounts once NearBlocks switches /v1 off on 22 November 2026. The "
-    "prompt names the NEAR BigQuery public dataset; this warehouse does not query it. Its chain counts are NearBlocks', "
-    "checked against a sample of blocks from Neardata.",
+    "and one wallet app); who stands behind the HOT, Sweat and Kai-Ching accounts, which are named from their account ids "
+    "alone; and new accounts once NearBlocks switches /v1 off on 22 November 2026.",
+    "",
+    "The prompt names the NEAR BigQuery public dataset, and the warehouse queries it (the SQL is in `ingest/sql/bigquery/`). "
+    f"The chain counts on the site are NearBlocks', and BigQuery checks them day for day: over the {bq['chain_txns_days_equal_bigquery_vs_nearblocks']['b']} "
+    f"days read, the two count the same transactions on {bq['chain_txns_days_equal_bigquery_vs_nearblocks']['a']} and the same "
+    f"distinct signers on {bq['chain_signers_days_equal_bigquery_vs_nearblocks']['a']}. BigQuery also counts accounts by "
+    f"contract, which the site does not chart yet: on {day(bq_top['date_day'])}, {pct(bq_top['signer_share'])} of the accounts that "
+    f"signed a function call called `{bq_top['contract_id']}`, and {bq_intents['signers']:,.0f} called `intents.near` "
+    "(`gold.fct_bigquery_contract_daily`).",
     "",
 ]
 

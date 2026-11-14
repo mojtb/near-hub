@@ -19,6 +19,8 @@ DOCS = ROOT / "docs"
 AREAS = [
     ("Calendar and registry", ["dim_date", "dim_entity", "dim_token", "dim_event", "dim_block_day", "dim_protocol", "dim_source"]),
     ("Chain usage, supply and parameters", ["fct_chain_daily", "fct_supply_daily", "fct_circulating_supply_daily", "fct_protocol_config", "fct_contract_daily", "fct_receiver_sample_daily"]),
+    ("NEAR's public BigQuery dataset", ["fct_bigquery_chain_daily", "fct_bigquery_receiver_daily", "fct_bigquery_contract_daily", "fct_bigquery_action_daily",
+                                        "fct_bigquery_circulating_supply_daily", "fct_bigquery_signer_cohort_monthly"]),
     ("NEAR Intents and revenue", ["fct_intents_daily", "fct_intents_chain_daily", "fct_intents_asset_daily", "fct_intents_fee_channels",
                                   "fct_intents_dashboard_readings", "fct_dune_intents_asset_daily", "fct_dune_intents_chain_daily", "fct_dune_intents_swaps_daily",
                                   "fct_dune_intents_tvl_daily", "fct_dune_intents_tvl_asset_daily", "fct_intents_pool_chain_monthly", "fct_dune_dashboard_results",
@@ -35,7 +37,7 @@ AREAS = [
                        "fct_intents_unit_economics_monthly", "fct_intents_channel_economics_monthly", "fct_intents_concentration_monthly",
                        "fct_valuation_multiples_daily", "fct_usage_quality_daily", "fct_usage_lead_correlations",
                        "fct_etf_absorption_daily"]),
-    ("Data quality", ["dq_reconciliation", "dq_freshness", "dq_revisions", "dq_ingest_runs", "dq_provenance"]),
+    ("Data quality", ["dq_reconciliation", "dq_freshness", "dq_revisions", "dq_ingest_runs", "dq_provenance", "dq_bigquery_tables", "dq_bigquery_reads"]),
 ]
 DATE_COLUMNS = ("date_day", "snapshot_date", "week_start", "month_start", "event_date")
 

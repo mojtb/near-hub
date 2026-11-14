@@ -31,38 +31,78 @@
  },
  "dim_source": {
   "columns": 7,
-  "hash": "1662bb731a3f47b9c8beace9a09c167c",
-  "rows": 23
+  "hash": "597e7883d12f10dafc47e2f4d0e665fa",
+  "rows": 24
  },
  "dim_token": {
   "columns": 9,
   "hash": "8ef2cd4202a178d626b4bfc1bfb050ba",
   "rows": 12
  },
+ "dq_bigquery_reads": {
+  "columns": 14,
+  "hash": "676632a15bdfefe1f85f9ff0292f63c2",
+  "rows": 9
+ },
+ "dq_bigquery_tables": {
+  "columns": 11,
+  "hash": "63bcd1e95673cf0a55ac3444f12fff63",
+  "rows": 16
+ },
  "dq_freshness": {
   "columns": 10,
-  "hash": "401fdcd08a789c6de5a7a43155966578",
-  "rows": 61
+  "hash": "7c30b747f0740ca776285b3135b210cb",
+  "rows": 64
  },
  "dq_ingest_runs": {
   "columns": 6,
-  "hash": "46065e0b9b0b329d07b0b2ceff11589a",
-  "rows": 817
+  "hash": "24f8b8643261ce8fe83fa010f909875e",
+  "rows": 824
  },
  "dq_provenance": {
   "columns": 10,
-  "hash": "04e51317cd92ca826522e0e630a21ab0",
-  "rows": 859
+  "hash": "7ccb98154770899855adf78f854d39fa",
+  "rows": 866
  },
  "dq_reconciliation": {
   "columns": 13,
-  "hash": "856696e892ab8127bebd9cdf45646d9c",
-  "rows": 107
+  "hash": "a0a21e10347a80b3baca244876873bc6",
+  "rows": 125
  },
  "dq_revisions": {
   "columns": 9,
   "hash": "09b34e08fd9b88a158ea1c6eac6a3516",
   "rows": 8636
+ },
+ "fct_bigquery_action_daily": {
+  "columns": 8,
+  "hash": "98d226c3d393ccb25d8c3f5904c830aa",
+  "rows": 2490
+ },
+ "fct_bigquery_chain_daily": {
+  "columns": 14,
+  "hash": "0232cb05c2584fe83bdfb85e57a227b1",
+  "rows": 2305
+ },
+ "fct_bigquery_circulating_supply_daily": {
+  "columns": 8,
+  "hash": "2e4c5f8b6c90b17e966918583f7357ec",
+  "rows": 1409
+ },
+ "fct_bigquery_contract_daily": {
+  "columns": 13,
+  "hash": "ca4635af355c80fc7a2f3356ceec918a",
+  "rows": 9546
+ },
+ "fct_bigquery_receiver_daily": {
+  "columns": 10,
+  "hash": "27059b886e0d1934ea5c577457020eb2",
+  "rows": 28313
+ },
+ "fct_bigquery_signer_cohort_monthly": {
+  "columns": 8,
+  "hash": "b727c9b40045056fd9437f8d7ddc3a91",
+  "rows": 3003
  },
  "fct_catalog_projects": {
   "columns": 5,

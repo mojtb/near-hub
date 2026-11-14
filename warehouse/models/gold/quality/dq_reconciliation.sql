@@ -433,6 +433,75 @@ pool_dollars_widest_gap as (
     where widest = 1
 ),
 
+-- NEAR's public BigQuery dataset against NearBlocks and the archival node, on the days both hold. Only days BigQuery had
+-- loaded whole when it was read are compared. The two count from different copies of the chain: NearBlocks from its own
+-- indexer, BigQuery from NEAR's lakehouse loader.
+bq_days as (
+    select
+        b.date_day, b.txns as bq_txns, n.txns as nb_txns, b.signers as bq_signers, n.active_signers as nb_signers,
+        b.blocks as bq_blocks, n.blocks as nb_blocks, b.transactions_table_rows, b.total_supply_near as bq_supply
+    from {{ ref('fct_bigquery_chain_daily') }} b
+    join {{ ref('fct_chain_daily') }} n using (date_day)
+    where b.is_day_complete
+),
+
+bq_txn_days as (select * from bq_days where bq_txns is not null and nb_txns is not null),
+bq_signer_days as (select * from bq_days where bq_signers is not null and nb_signers is not null),
+bq_block_days as (select * from bq_days where bq_blocks is not null and nb_blocks is not null),
+bq_last_day as (select max(date_day) as d from bq_days where bq_supply is not null),
+
+-- Total supply at the day's last block in BigQuery against the next day's first block on the archival node, every day.
+bq_supply_days as (
+    select b.date_day, b.bq_supply, s.total_supply_near as chain_supply
+    from bq_days b
+    join {{ ref('fct_supply_daily') }} s using (date_day)
+    where b.bq_supply is not null and s.total_supply_near is not null
+),
+
+-- Every day since genesis: the rows BigQuery records in the transactions table's daily partition against NearBlocks.
+bq_all_days as (
+    select b.date_day, b.transactions_table_rows as bq_rows, n.txns as nb_txns
+    from {{ ref('fct_bigquery_chain_daily') }} b
+    join {{ ref('fct_chain_daily') }} n using (date_day)
+    where b.transactions_table_rows is not null and n.txns is not null
+),
+
+-- Actions by kind against the NearBlocks counts they correspond to. A relayed request is a DELEGATE_ACTION: its actions
+-- are NearBlocks' meta-transactions and the accounts it was sent to are the accounts a relayer signed for.
+bq_action_days as (
+    select
+        a.date_day,
+        max(case when a.action_kind = 'DELEGATE_ACTION' then a.actions end) as bq_meta_txns,
+        max(case when a.action_kind = 'DELEGATE_ACTION' then a.receivers end) as bq_meta_accounts,
+        max(case when a.action_kind = 'DELETE_ACCOUNT' then a.receivers end) as bq_deleted_accounts,
+        max(case when a.action_kind = 'FUNCTION_CALL' then a.receivers end) as bq_contracts_called,
+        max(n.meta_txns) as nb_meta_txns,
+        max(n.meta_accounts) as nb_meta_accounts,
+        max(n.deleted_accounts) as nb_deleted_accounts,
+        max(n.active_contracts) as nb_active_contracts
+    from {{ ref('fct_bigquery_action_daily') }} a
+    join {{ ref('fct_chain_daily') }} n using (date_day)
+    group by a.date_day
+),
+
+bq_intents_callers as (
+    select b.date_day, b.callers as bq_callers, c.unique_callers as nb_callers
+    from {{ ref('fct_bigquery_contract_daily') }} b
+    join {{ ref('fct_contract_daily') }} c on c.date_day = b.date_day and c.account_id = b.contract_id
+    where b.contract_id = 'intents.near' and c.unique_callers is not null
+),
+
+-- NEAR's own circulating supply against this warehouse's. The two are computed at different blocks of the day, so what
+-- is compared is the locked amount each takes off total supply, which does not move with the day's issuance.
+bq_locked as (
+    select b.date_day, b.not_circulating_near as bq_locked, c.lockup_locked_near + c.foundation_locked_near as chain_locked
+    from {{ ref('fct_bigquery_circulating_supply_daily') }} b
+    join {{ ref('fct_circulating_supply_daily') }} c using (date_day)
+    where b.not_circulating_near is not null
+),
+
+bq_locked_last as (select max(date_day) as d from bq_locked),
+
 checks as (
     select 'intents_volume_all_time_defillama_vs_page' as check_id, 'Intents all-time volume, USD' as metric, null as subject,
         'DefiLlama, sum of daily' as source_a, (select sum(volume_usd) from llama_volume) as value_a,
@@ -801,6 +870,93 @@ checks as (
         (select tvl_usd from protocol_tvl_latest where protocol_slug = 'near-intents')
             + (select arg_max(confidential_tvl_usd, date_day) from intents where confidential_tvl_usd is not null),
         20.0, 'independent'
+    union all select 'chain_txns_bigquery_vs_nearblocks', 'Transactions over the days both sources hold', null,
+        'BigQuery public dataset, count of the transactions table', (select sum(bq_txns) from bq_txn_days),
+        'NearBlocks', (select sum(nb_txns) from bq_txn_days),
+        0.1, 'independent'
+
+    union all select 'chain_txns_days_equal_bigquery_vs_nearblocks', 'Days on which both sources count exactly the same transactions', null,
+        'days with equal counts', (select count(*) from bq_txn_days where bq_txns = nb_txns),
+        'days both sources hold', (select count(*) from bq_txn_days),
+        1.0, 'independent'
+
+    union all select 'chain_signers_bigquery_vs_nearblocks', 'Distinct signers per day, summed over the days both sources hold', null,
+        'BigQuery public dataset, distinct signer_account_id', (select sum(bq_signers) from bq_signer_days),
+        'NearBlocks /v1 active accounts', (select sum(nb_signers) from bq_signer_days),
+        0.5, 'independent'
+
+    union all select 'chain_signers_days_equal_bigquery_vs_nearblocks', 'Days on which both sources count exactly the same distinct signers', null,
+        'days with equal counts', (select count(*) from bq_signer_days where bq_signers = nb_signers),
+        'days both sources hold', (select count(*) from bq_signer_days),
+        1.0, 'independent'
+
+    union all select 'chain_blocks_bigquery_vs_nearblocks', 'Blocks over the days both sources hold', null,
+        'BigQuery public dataset, count of the blocks table', (select sum(bq_blocks) from bq_block_days),
+        'NearBlocks', (select sum(nb_blocks) from bq_block_days),
+        0.1, 'independent'
+
+    union all select 'chain_txns_bigquery_count_vs_partition_rows', 'Transactions over the days counted, against the rows BigQuery records for the same daily partitions', null,
+        'BigQuery, count of the transactions table', (select sum(bq_txns) from bq_days where bq_txns is not null and transactions_table_rows is not null),
+        'BigQuery, rows in the table''s partitions', (select sum(transactions_table_rows) from bq_days where bq_txns is not null and transactions_table_rows is not null),
+        0.01, 'same_upstream'
+
+    union all select 'total_supply_latest_bigquery_vs_chain', 'Total supply at the end of the newest day BigQuery holds whole, NEAR', null,
+        'BigQuery public dataset, the day''s last block', (select bq_supply from bq_days, bq_last_day where date_day = d),
+        'archival node, the next day''s first block', (select total_supply_near from {{ ref('fct_supply_daily') }}, bq_last_day where date_day = d),
+        0.01, 'independent'
+    union all select 'chain_txns_all_history_bigquery_vs_nearblocks', 'Transactions since genesis, over every day both sources hold', null,
+        'BigQuery, rows in the transactions table''s daily partitions', (select sum(bq_rows) from bq_all_days),
+        'NearBlocks', (select sum(nb_txns) from bq_all_days),
+        0.1, 'independent'
+
+    union all select 'chain_txns_days_equal_all_history_bigquery_vs_nearblocks', 'Days since genesis on which both sources count exactly the same transactions', null,
+        'days with equal counts', (select count(*) from bq_all_days where bq_rows = nb_txns),
+        'days both sources hold', (select count(*) from bq_all_days),
+        1.0, 'independent'
+
+    union all select 'meta_txns_bigquery_vs_nearblocks', 'Relayed (meta) transactions over the days both sources hold', null,
+        'BigQuery, DELEGATE_ACTION actions', (select sum(bq_meta_txns) from bq_action_days where bq_meta_txns is not null and nb_meta_txns is not null),
+        'NearBlocks meta-transactions', (select sum(nb_meta_txns) from bq_action_days where bq_meta_txns is not null and nb_meta_txns is not null),
+        0.1, 'independent'
+
+    union all select 'meta_accounts_bigquery_vs_nearblocks', 'Accounts a relayer signed for per day, summed over the days both sources hold', null,
+        'BigQuery, distinct receivers of DELEGATE_ACTION', (select sum(bq_meta_accounts) from bq_action_days where bq_meta_accounts is not null and nb_meta_accounts is not null),
+        'NearBlocks meta accounts', (select sum(nb_meta_accounts) from bq_action_days where bq_meta_accounts is not null and nb_meta_accounts is not null),
+        0.5, 'independent'
+
+    union all select 'deleted_accounts_bigquery_vs_nearblocks', 'Accounts deleted over the days both sources hold', null,
+        'BigQuery, distinct receivers of DELETE_ACCOUNT per day', (select sum(bq_deleted_accounts) from bq_action_days where bq_deleted_accounts is not null and nb_deleted_accounts is not null),
+        'NearBlocks /v1 deleted accounts', (select sum(nb_deleted_accounts) from bq_action_days where bq_deleted_accounts is not null and nb_deleted_accounts is not null),
+        5.0, 'independent'
+
+    union all select 'active_contracts_bigquery_vs_nearblocks', 'Contracts active per day, mean over the days both sources hold', null,
+        'BigQuery, distinct accounts that received a function call', (select avg(bq_contracts_called) from bq_action_days where bq_contracts_called is not null and nb_active_contracts is not null),
+        'NearBlocks active contracts', (select avg(nb_active_contracts) from bq_action_days where bq_contracts_called is not null and nb_active_contracts is not null),
+        5.0, 'independent'
+
+    union all select 'intents_callers_bigquery_vs_nearblocks', 'Distinct callers of intents.near per day, summed over the days both sources hold', null,
+        'BigQuery, distinct senders of a receipt calling it', (select sum(bq_callers) from bq_intents_callers),
+        'NearBlocks unique callers', (select sum(nb_callers) from bq_intents_callers),
+        1.0, 'independent'
+
+    union all select 'locked_supply_latest_bigquery_vs_chain', 'NEAR still locked, on the newest day both hold: what each takes off total supply to get circulating supply', null,
+        'NEAR''s circulating_supply table in BigQuery', (select bq_locked from bq_locked, bq_locked_last where date_day = d),
+        'this warehouse, every lockup contract read on chain', (select chain_locked from bq_locked, bq_locked_last where date_day = d),
+        0.1, 'independent'
+
+    union all select 'locked_supply_days_within_bigquery_vs_chain', 'Days on which the two locked amounts are within 0.1% of each other', null,
+        'days within 0.1%', (select count(*) from bq_locked where abs(bq_locked - chain_locked) <= 0.001 * chain_locked),
+        'days NEAR''s table holds a figure', (select count(*) from bq_locked),
+        1.0, 'independent'
+    union all select 'chain_blocks_days_equal_bigquery_vs_nearblocks', 'Days on which both sources count exactly the same blocks', null,
+        'days with equal counts', (select count(*) from bq_block_days where bq_blocks = nb_blocks),
+        'days both sources hold', (select count(*) from bq_block_days),
+        1.0, 'independent'
+
+    union all select 'total_supply_days_within_bigquery_vs_chain', 'Days on which the two total supplies are within one part in a million', null,
+        'days within one part in a million', (select count(*) from bq_supply_days where abs(bq_supply - chain_supply) <= 1e-6 * chain_supply),
+        'days both sources hold', (select count(*) from bq_supply_days),
+        0.5, 'independent'
 )
 
 select

@@ -1547,3 +1547,123 @@ def test_forum_threads_are_saved_without_posts_or_authors(tmp_path):
         raw = gzip.decompress(path.read_bytes()).decode()
         assert set(json.loads(raw)) == set(GOV_TOPIC_FIELDS)
         assert "someone" not in raw and "cooked" not in raw
+
+
+# --- BigQuery ---------------------------------------------------------------------------------------------------------
+
+BQ_PROJECT = "reader-project-123"
+
+
+def _bq_reply(rows=None, fields=("block_date", "txns"), complete=True, token=None, total=None, processed=1000, status=200, **extra):
+    payload = {"kind": "bigquery#queryResponse", "jobComplete": complete, "totalBytesProcessed": str(processed),
+               "jobReference": {"projectId": BQ_PROJECT, "jobId": "job_abc", "location": "US"}, **extra}
+    if complete:
+        payload["schema"] = {"fields": [{"name": name, "type": "STRING"} for name in fields]}
+        payload["rows"] = [{"f": [{"v": value} for value in row]} for row in rows or []]
+        payload["totalRows"] = str(total if total is not None else len(rows or []))
+    if token:
+        payload["pageToken"] = token
+    return FakeResponse(status, json.dumps(payload).encode())
+
+
+def _bq_context(tmp_path, monkeypatch, replies, snapshot="2026-11-12"):
+    from ingest.sources import bigquery
+
+    monkeypatch.setattr("ingest.pipeline.STATE", tmp_path / "state")
+    monkeypatch.setattr(bigquery, "BRONZE", tmp_path / "bronze")
+    monkeypatch.setattr(bigquery, "open_session", lambda: bigquery.Session(BQ_PROJECT, {"Authorization": "Bearer test-value"}))
+    monkeypatch.setattr(bigquery, "_month", lambda: "2026-11")
+    for name in ("BIGQUERY_MAX_GB_PER_QUERY", "BIGQUERY_MAX_GB_PER_MONTH", "BIGQUERY_DRY_RUN", "BIGQUERY_FIRST_DAY_BLOCKS_DAILY"):
+        monkeypatch.delenv(name, raising=False)
+    http = client(replies)
+    return bigquery, Context(snapshot, http, BronzeWriter(snapshot, root=tmp_path / "bronze")), http
+
+
+def _bq_saved(tmp_path, dataset, snapshot="2026-11-12"):
+    folder = tmp_path / "bronze" / "bigquery" / dataset / f"dt={snapshot}"
+    return {p.name: json.loads(gzip.decompress(p.read_bytes())) for p in sorted(folder.glob("*.gz"))}
+
+
+def test_bigquery_asks_what_a_query_costs_first_and_does_not_run_one_over_the_limit(tmp_path, monkeypatch):
+    bigquery, ctx, http = _bq_context(tmp_path, monkeypatch, [_bq_reply(processed=151 * 10**9)])
+    bigquery.blocks_daily(ctx)
+    assert len(http.session.calls) == 1 and http.session.calls[0][2]["json"]["dryRun"] is True
+    assert "151.0 GB" in ctx.warnings[0] and "not run" in ctx.warnings[0]
+    assert not (tmp_path / "bronze" / "bigquery").exists() and ctx.load_state("bigquery_bytes") is None
+
+
+def test_bigquery_stops_at_the_months_limit_on_its_own_count(tmp_path, monkeypatch):
+    bigquery, ctx, http = _bq_context(tmp_path, monkeypatch, [_bq_reply(processed=100 * 10**9)])
+    ctx.save_state("bigquery_bytes", {"2026-11": 550 * 10**9, "2026-10": 999 * 10**9})
+    bigquery.blocks_daily(ctx)
+    assert len(http.session.calls) == 1 and "over the limit of 600 GB" in ctx.warnings[0]
+
+
+def test_bigquery_waits_for_the_query_reads_every_page_and_saves_no_project_id(tmp_path, monkeypatch):
+    replies = [
+        _bq_reply(processed=5000),  # the dry run
+        _bq_reply(complete=False),  # still running
+        _bq_reply([["2026-11-10", "880000"], ["2026-11-11", "891297"]], token="next", total=3, processed=5000, totalBytesBilled="10485760"),
+        _bq_reply([["2026-11-12", None]], total=3),
+    ]
+    bigquery, ctx, http = _bq_context(tmp_path, monkeypatch, replies)
+    bigquery.blocks_daily(ctx)
+    ctx.bronze.flush()
+    assert not ctx.warnings
+    dry, real, wait, more = http.session.calls
+    assert dry[1] == f"https://bigquery.googleapis.com/bigquery/v2/projects/{BQ_PROJECT}/queries"
+    assert real[2]["json"]["maximumBytesBilled"] == str(150 * 10**9) and "dryRun" not in real[2]["json"]
+    assert {p["name"]: p["parameterValue"]["value"] for p in real[2]["json"]["queryParameters"]} == {"first_day": "2020-07-21", "last_day": "2026-11-11"}
+    assert "location" not in real[2]["json"]  # BigQuery picks the place from the tables; a wrong one is refused
+    assert wait[1].endswith("/queries/job_abc") and wait[2]["params"]["location"] == "US" and more[2]["params"]["pageToken"] == "next"
+    pages = _bq_saved(tmp_path, "blocks_daily")
+    assert list(pages) == ["2020-07-21__2026-11-11__p000.json.gz", "2020-07-21__2026-11-11__p001.json.gz"]
+    first, second = pages.values()
+    assert first["rows"] == [{"block_date": "2026-11-10", "txns": "880000"}, {"block_date": "2026-11-11", "txns": "891297"}]
+    assert second["rows"] == [{"block_date": "2026-11-12", "txns": None}] and second["first_row"] == 2 and "sql" not in second
+    assert first["sql"] == (bigquery.SQL_DIR / "blocks_daily.sql").read_text()
+    assert first["sql_sha256"] == hashlib.sha256(first["sql"].encode()).hexdigest() and first["bytes_billed"] == 10485760
+    assert ctx.load_state("bigquery_bytes") == {"2026-11": 10485760}
+    everything = (tmp_path / "bronze" / "_manifest" / "dt=2026-11-12.jsonl").read_text() + json.dumps(list(pages.values()))
+    assert BQ_PROJECT not in everything and "job_abc" not in everything and "test-value" not in everything
+    assert "projects/{project}/queries" in everything
+
+
+def test_bigquery_reports_a_refusal_in_googles_words_without_the_project_id(tmp_path, monkeypatch):
+    refusal = {"error": {"code": 403, "message": f"Access Denied: Project {BQ_PROJECT}: User does not have bigquery.jobs.create permission"}}
+    bigquery, ctx, http = _bq_context(tmp_path, monkeypatch, [FakeResponse(403, json.dumps(refusal).encode())])
+    with pytest.raises(HttpError) as e:
+        bigquery.tables(ctx)
+    assert e.value.status == 403 and "bigquery.jobs.create" in str(e.value) and BQ_PROJECT not in str(e.value)
+
+
+def test_bigquery_first_read_takes_the_whole_window_and_later_reads_reach_back_past_the_last_one(tmp_path, monkeypatch):
+    bigquery, ctx, _ = _bq_context(tmp_path, monkeypatch, [], snapshot="2026-12-20")
+    assert bigquery.window(ctx, "actions_daily", "actions_daily") == (date(2026, 4, 3), date(2026, 12, 19))
+    # The runs were paused after 12 November. The next one reads from 14 days before that snapshot, so no day is lost.
+    earlier = tmp_path / "bronze" / "bigquery" / "actions_daily" / "dt=2026-11-12"
+    earlier.mkdir(parents=True)
+    (earlier / "x.json.gz").write_bytes(b"")
+    assert bigquery.window(ctx, "actions_daily", "actions_daily") == (date(2026, 10, 29), date(2026, 12, 19))
+    monkeypatch.setenv("BIGQUERY_FIRST_DAY_BLOCKS_DAILY", "2026-11-01")
+    assert bigquery.window(ctx, "blocks_daily", "blocks_daily") == (date(2026, 11, 1), date(2026, 12, 19))
+
+
+def test_bigquery_is_skipped_with_the_reason_when_the_key_file_is_not_there(tmp_path, monkeypatch):
+    from ingest.sources import bigquery
+
+    monkeypatch.setenv("GOOGLE_APPLICATION_CREDENTIALS", str(tmp_path / "no-such-key.json"))
+    with pytest.raises(Skip) as e:
+        bigquery.credentials()
+    assert "GOOGLE_APPLICATION_CREDENTIALS" in str(e.value) or "google-auth" in str(e.value)
+
+
+def test_bigquery_queries_name_only_the_public_dataset_and_return_no_single_transaction():
+    from ingest.sources import bigquery
+
+    for path in sorted(bigquery.SQL_DIR.glob("*.sql")):
+        sql = "\n".join(line for line in path.read_text().splitlines() if not line.lstrip().startswith("--"))
+        assert "`bigquery-public-data.crypto_near_mainnet_us." in sql, path.name
+        assert "transaction_hash" not in sql and "receipt_id" not in sql and "public_key" not in sql, path.name
+        if path.stem not in ("tables", "partitions", "circulating_supply"):  # these three read small tables of counts whole
+            assert "GROUP BY" in sql, path.name

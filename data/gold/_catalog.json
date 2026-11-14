@@ -470,7 +470,7 @@
     "description": "How this source's data is used here: with credit, as decided on 2026-11-13 where its terms left that open, or why no decision was needed. DATA_NOTICE.md says how a source can ask for removal."
    }
   ],
-  "rows": 23,
+  "rows": 24,
   "first": null,
   "last": null
  },
@@ -1001,6 +1001,450 @@
   "rows": 204003,
   "first": "2025-11-10",
   "last": "2026-11-11"
+ },
+ {
+  "area": "NEAR's public BigQuery dataset",
+  "table": "fct_bigquery_chain_daily",
+  "description": "The chain per UTC day as counted in NEAR's public BigQuery dataset (bigquery-public-data.crypto_near_mainnet_us), the source the hackathon's sample prompt names. It stands beside fct_chain_daily, which takes the same measures from NearBlocks, and dq_reconciliation holds the two against each other. Blocks and total supply cover every day since genesis; transactions, signers and receivers start where the read of the transactions table starts, because that read is billed by size; the three *_table_rows columns are BigQuery's own count of rows in each table's daily partition, which costs nothing to read and covers every day. The SQL is in ingest/sql/bigquery/, and dq_bigquery_reads lists every read.",
+  "grain": "date_day",
+  "sources": "BigQuery public dataset crypto_near_mainnet_us: blocks, transactions and the tables' partition records",
+  "path": "data/gold/fct_bigquery_chain_daily.parquet",
+  "columns": [
+   {
+    "name": "date_day",
+    "type": "DATE",
+    "unit": "date",
+    "description": "UTC calendar day of the block."
+   },
+   {
+    "name": "blocks",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "Blocks produced that day."
+   },
+   {
+    "name": "first_block_height",
+    "type": "BIGINT",
+    "unit": "blocks",
+    "description": "Height of the day's first block."
+   },
+   {
+    "name": "last_block_height",
+    "type": "BIGINT",
+    "unit": "blocks",
+    "description": "Height of the day's last block."
+   },
+   {
+    "name": "last_block_at",
+    "type": "TIMESTAMP",
+    "unit": "UTC timestamp",
+    "description": "Time of the day's last block in the dataset when it was read."
+   },
+   {
+    "name": "is_day_complete",
+    "type": "BOOLEAN",
+    "unit": "boolean",
+    "description": "True when the day's last block is within the last minute before midnight, so the whole day was loaded when it was read. A day that is not complete undercounts everything."
+   },
+   {
+    "name": "block_producers",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "Distinct accounts that produced a block that day."
+   },
+   {
+    "name": "total_supply_near",
+    "type": "DOUBLE",
+    "unit": "NEAR",
+    "description": "Total supply in the day's last block."
+   },
+   {
+    "name": "txns",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "Transactions, counted from the transactions table. Empty before the window that table was read over."
+   },
+   {
+    "name": "signers",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "Distinct accounts that signed a transaction. A relayer that signs for many users counts once, and those users do not count. An account also signs its own deletion."
+   },
+   {
+    "name": "receivers",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "Distinct accounts a transaction was addressed to. A relayed transaction is addressed to the user's own account, so this rises with relayed activity."
+   },
+   {
+    "name": "transactions_table_rows",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "Rows in the transactions table's partition for the day, from BigQuery's partition records. Equal to txns where both exist unless the table holds a transaction twice."
+   },
+   {
+    "name": "receipt_details_table_rows",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "Rows in the receipt_details table's partition for the day: action receipts and data receipts together."
+   },
+   {
+    "name": "receipt_actions_table_rows",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "Rows in the receipt_actions table's partition for the day: one per action inside an action receipt."
+   }
+  ],
+  "rows": 2305,
+  "first": "2020-07-21",
+  "last": "2026-11-11"
+ },
+ {
+  "area": "NEAR's public BigQuery dataset",
+  "table": "fct_bigquery_receiver_daily",
+  "description": "Who the day's transactions were sent to, counted over every transaction in NEAR's public BigQuery dataset: each account among the day's 25 largest receivers by transactions or by distinct signers. fct_receiver_sample_daily estimates the same split from about one block in a thousand; this is the full count. A receiver is the account a transaction is addressed to, and a relayed transaction is addressed to the user's own account, so an application reached through a relayer does not appear here as one contract: fct_bigquery_contract_daily counts by the contract called. Accounts outside a day's top 25 never leave BigQuery.",
+  "grain": "date_day, receiver_account_id",
+  "sources": "BigQuery public dataset crypto_near_mainnet_us: transactions",
+  "path": "data/gold/fct_bigquery_receiver_daily.parquet",
+  "columns": [
+   {
+    "name": "date_day",
+    "type": "DATE",
+    "unit": "date",
+    "description": "UTC calendar day."
+   },
+   {
+    "name": "receiver_account_id",
+    "type": "VARCHAR",
+    "unit": "account id",
+    "description": "Account the transactions were addressed to."
+   },
+   {
+    "name": "entity",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "Organization that runs the account, from the registry. Empty means not established."
+   },
+   {
+    "name": "category",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "Functional group, from the registry."
+   },
+   {
+    "name": "txns",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "Transactions addressed to this account that day."
+   },
+   {
+    "name": "signers",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "Distinct accounts that signed a transaction addressed to this account that day."
+   },
+   {
+    "name": "txn_share",
+    "type": "DOUBLE",
+    "unit": "fraction",
+    "description": "txns divided by the day's transactions."
+   },
+   {
+    "name": "signer_share",
+    "type": "DOUBLE",
+    "unit": "fraction",
+    "description": "signers divided by the day's distinct signers. A signer that used several accounts counts in each, so shares can add up to more than 1."
+   },
+   {
+    "name": "rank_by_txns",
+    "type": "INTEGER",
+    "unit": "rank",
+    "description": "The account's rank that day by transactions, 1 the largest."
+   },
+   {
+    "name": "rank_by_signers",
+    "type": "INTEGER",
+    "unit": "rank",
+    "description": "The account's rank that day by distinct signers, 1 the largest."
+   }
+  ],
+  "rows": 28313,
+  "first": "2025-01-01",
+  "last": "2026-11-11"
+ },
+ {
+  "area": "NEAR's public BigQuery dataset",
+  "table": "fct_bigquery_contract_daily",
+  "description": "Which contracts the day's function calls went to, counted over every action receipt in NEAR's public BigQuery dataset: each contract among the day's 25 largest by calls, by distinct signers or by distinct callers. This is the count of accounts by application that NearBlocks and the block sample cannot give. signers are the accounts that signed the transaction a call came from, which for a relayed call is the relayer; callers are the accounts that sent the receipt, which for a relayed call is the user. Contracts outside a day's top 25 never leave BigQuery.",
+  "grain": "date_day, contract_id",
+  "sources": "BigQuery public dataset crypto_near_mainnet_us: receipt_actions",
+  "path": "data/gold/fct_bigquery_contract_daily.parquet",
+  "columns": [
+   {
+    "name": "date_day",
+    "type": "DATE",
+    "unit": "date",
+    "description": "UTC calendar day."
+   },
+   {
+    "name": "contract_id",
+    "type": "VARCHAR",
+    "unit": "account id",
+    "description": "Account whose contract was called."
+   },
+   {
+    "name": "entity",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "Organization that runs the contract, from the registry. Empty means not established."
+   },
+   {
+    "name": "category",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "Functional group, from the registry."
+   },
+   {
+    "name": "function_calls",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "Function-call actions sent to this contract that day, counting calls made by other contracts."
+   },
+   {
+    "name": "signers",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "Distinct accounts that signed a transaction leading to a call of this contract. For relayed calls that is the relayer, so an application that pays for its users shows few signers."
+   },
+   {
+    "name": "callers",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "Distinct accounts that sent a receipt calling this contract: users who called it directly, users a relayer signed for, and other contracts."
+   },
+   {
+    "name": "call_share",
+    "type": "DOUBLE",
+    "unit": "fraction",
+    "description": "function_calls divided by the day's function calls."
+   },
+   {
+    "name": "signer_share",
+    "type": "DOUBLE",
+    "unit": "fraction",
+    "description": "signers divided by the day's distinct signers of any function call. A signer that reached several contracts counts in each, so shares can add up to more than 1."
+   },
+   {
+    "name": "caller_share",
+    "type": "DOUBLE",
+    "unit": "fraction",
+    "description": "callers divided by the day's distinct callers of any function call. An account that called several contracts counts in each, so shares can add up to more than 1."
+   },
+   {
+    "name": "rank_by_calls",
+    "type": "INTEGER",
+    "unit": "rank",
+    "description": "The contract's rank that day by function calls, 1 the largest."
+   },
+   {
+    "name": "rank_by_signers",
+    "type": "INTEGER",
+    "unit": "rank",
+    "description": "The contract's rank that day by distinct signers, 1 the largest."
+   },
+   {
+    "name": "rank_by_callers",
+    "type": "INTEGER",
+    "unit": "rank",
+    "description": "The contract's rank that day by distinct callers, 1 the largest."
+   }
+  ],
+  "rows": 9546,
+  "first": "2026-04-03",
+  "last": "2026-11-11"
+ },
+ {
+  "area": "NEAR's public BigQuery dataset",
+  "table": "fct_bigquery_action_daily",
+  "description": "What the chain did each UTC day by kind of action, counted over every action receipt in NEAR's public BigQuery dataset: FUNCTION_CALL, TRANSFER, CREATE_ACCOUNT, DELETE_ACCOUNT, ADD_KEY, DELETE_KEY, DEPLOY_CONTRACT, STAKE, DELEGATE_ACTION (a relayed request), and the newer kinds for global contracts and state initialisation as the dataset names them. DELEGATE_ACTION's actions and receivers are NearBlocks' meta-transactions and the accounts a relayer signed for, almost to the unit. Accounts deleted and contracts deployed are counts NearBlocks stops serving when /v1 is switched off on 2026-11-22. An action is one step inside a receipt, and a transaction can lead to many receipts, so these are not transaction counts.",
+  "grain": "date_day, action_kind",
+  "sources": "BigQuery public dataset crypto_near_mainnet_us: receipt_actions",
+  "path": "data/gold/fct_bigquery_action_daily.parquet",
+  "columns": [
+   {
+    "name": "date_day",
+    "type": "DATE",
+    "unit": "date",
+    "description": "UTC calendar day."
+   },
+   {
+    "name": "action_kind",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "Kind of action, as the dataset names it."
+   },
+   {
+    "name": "actions",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "Actions of this kind that day."
+   },
+   {
+    "name": "signers",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "Distinct accounts that signed the transaction an action of this kind came from. For a relayed action that is the relayer."
+   },
+   {
+    "name": "predecessors",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "Distinct accounts that sent a receipt holding an action of this kind. For a relayed action that is the user. Includes contracts that act on other contracts, and the account named system, which sends refunds."
+   },
+   {
+    "name": "receivers",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "Distinct accounts a receipt with an action of this kind went to: the contracts called for FUNCTION_CALL, the accounts created for CREATE_ACCOUNT, the accounts that received code for DEPLOY_CONTRACT, and so on."
+   },
+   {
+    "name": "from_system",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "Actions in receipts sent by the account named system: refunds of unused gas and deposits, which arrive as transfers."
+   },
+   {
+    "name": "actions_not_from_system",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "actions less from_system. For TRANSFER this is transfers that are not refunds."
+   }
+  ],
+  "rows": 2490,
+  "first": "2026-04-03",
+  "last": "2026-11-11"
+ },
+ {
+  "area": "NEAR's public BigQuery dataset",
+  "table": "fct_bigquery_circulating_supply_daily",
+  "description": "NEAR's own daily circulating supply, as its lakehouse computes it and publishes it in the circulating_supply table of its public BigQuery dataset. It stands beside fct_circulating_supply_daily, which this warehouse builds from every lockup contract read on chain: two computations of the same figure by different hands, and dq_reconciliation holds them against each other. The site and the thesis read the warehouse's own series; this table is the outside check on it.",
+  "grain": "date_day",
+  "sources": "BigQuery public dataset crypto_near_mainnet_us: circulating_supply",
+  "path": "data/gold/fct_bigquery_circulating_supply_daily.parquet",
+  "columns": [
+   {
+    "name": "date_day",
+    "type": "DATE",
+    "unit": "date",
+    "description": "UTC calendar day the figure is for."
+   },
+   {
+    "name": "circulating_supply_near",
+    "type": "DOUBLE",
+    "unit": "NEAR",
+    "description": "Circulating supply as NEAR's lakehouse computes it: total supply less what lockup contracts still hold locked. Empty on a day the table reports zero."
+   },
+   {
+    "name": "total_supply_near",
+    "type": "DOUBLE",
+    "unit": "NEAR",
+    "description": "Total supply at the block the figure was computed at."
+   },
+   {
+    "name": "circulating_share_of_total",
+    "type": "DOUBLE",
+    "unit": "fraction",
+    "description": "circulating_supply_near divided by total_supply_near."
+   },
+   {
+    "name": "not_circulating_near",
+    "type": "DOUBLE",
+    "unit": "NEAR",
+    "description": "total_supply_near less circulating_supply_near: what NEAR's computation counts as locked."
+   },
+   {
+    "name": "is_zero_in_source",
+    "type": "BOOLEAN",
+    "unit": "boolean",
+    "description": "True on a day NEAR's table reports a circulating supply of zero. That is a fault in the table, so the day carries no circulating figure here."
+   },
+   {
+    "name": "computed_at_block_height",
+    "type": "BIGINT",
+    "unit": "blocks",
+    "description": "Block the figure was computed at."
+   },
+   {
+    "name": "computed_at",
+    "type": "TIMESTAMP",
+    "unit": "UTC timestamp",
+    "description": "Time of that block."
+   }
+  ],
+  "rows": 1409,
+  "first": "2023-01-01",
+  "last": "2026-11-11"
+ },
+ {
+  "area": "NEAR's public BigQuery dataset",
+  "table": "fct_bigquery_signer_cohort_monthly",
+  "description": "Do accounts come back? Every account that ever signed a transaction is placed in the month it first signed one, its cohort, and counted again in each later month in which it signed at least one. Counted in NEAR's public BigQuery dataset over every transaction since genesis; no other source in this warehouse can do it, because it needs each signer's whole history. The row where active_month equals cohort_month is the cohort's size. An account also signs its own deletion, and a batch that creates accounts to use once fills a cohort with accounts that were never going to return, so read a cohort beside what happened that month.",
+  "grain": "cohort_month, active_month",
+  "sources": "BigQuery public dataset crypto_near_mainnet_us: transactions",
+  "path": "data/gold/fct_bigquery_signer_cohort_monthly.parquet",
+  "columns": [
+   {
+    "name": "cohort_month",
+    "type": "DATE",
+    "unit": "date",
+    "description": "First day of the month in which these accounts first signed a transaction."
+   },
+   {
+    "name": "active_month",
+    "type": "DATE",
+    "unit": "date",
+    "description": "First day of a month in which they signed at least one transaction."
+   },
+   {
+    "name": "months_since_first",
+    "type": "INTEGER",
+    "unit": "months",
+    "description": "Whole months from cohort_month to active_month; 0 is the cohort's own month."
+   },
+   {
+    "name": "signers",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "Accounts of the cohort that signed at least one transaction in active_month."
+   },
+   {
+    "name": "cohort_signers",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "Size of the cohort: accounts that first signed in cohort_month."
+   },
+   {
+    "name": "retained_share",
+    "type": "DOUBLE",
+    "unit": "fraction",
+    "description": "signers divided by cohort_signers."
+   },
+   {
+    "name": "is_active_month_complete",
+    "type": "BOOLEAN",
+    "unit": "boolean",
+    "description": "False for the month the read ended in, which holds only its first days."
+   },
+   {
+    "name": "read_through",
+    "type": "DATE",
+    "unit": "date",
+    "description": "Last day of transactions the read covered."
+   }
+  ],
+  "rows": 3003,
+  "first": null,
+  "last": null
  },
  {
   "area": "NEAR Intents and revenue",
@@ -5916,7 +6360,7 @@
     "description": "What sort of gap the note describes, from registry/reconciliation_notes.csv: open when no source says which figure is right, fault when one side is a known fault or a retired figure, defs when the two figures are right about different things, design when the method predicts a gap of this size. Empty for a check with no note, or with a note that is not about a gap."
    }
   ],
-  "rows": 107,
+  "rows": 125,
   "first": null,
   "last": null
  },
@@ -5989,7 +6433,7 @@
     "description": "Rows across all snapshots."
    }
   ],
-  "rows": 61,
+  "rows": 64,
   "first": null,
   "last": null
  },
@@ -6105,7 +6549,7 @@
     "description": "Time taken."
    }
   ],
-  "rows": 817,
+  "rows": 824,
   "first": "2026-11-01",
   "last": "2026-11-12"
  },
@@ -6178,8 +6622,184 @@
     "description": "Any change made before saving, such as trimming."
    }
   ],
-  "rows": 859,
+  "rows": 866,
   "first": "2026-10-28",
+  "last": "2026-11-12"
+ },
+ {
+  "area": "Data quality",
+  "table": "dq_bigquery_tables",
+  "description": "Is NEAR's public BigQuery dataset still being loaded, and how large is it? One row per table on the newest read: rows, size, last change and the newest day that has rows. NEAR Lake, the feed the dataset's published loader reads, was switched off on 2026-03-24, and the loader's repository has not changed since 2025, so freshness is measured here, not assumed.",
+  "grain": "table_name",
+  "sources": "BigQuery public dataset crypto_near_mainnet_us: its list of tables and their partition records",
+  "path": "data/gold/dq_bigquery_tables.parquet",
+  "columns": [
+   {
+    "name": "snapshot_date",
+    "type": "DATE",
+    "unit": "date",
+    "description": "Date the dataset was read."
+   },
+   {
+    "name": "table_name",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "Table or view in the dataset."
+   },
+   {
+    "name": "table_type",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "table or view."
+   },
+   {
+    "name": "row_count",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "Rows in the table. A view has none of its own."
+   },
+   {
+    "name": "size_gb",
+    "type": "DOUBLE",
+    "unit": "GB",
+    "description": "Size of the table's data."
+   },
+   {
+    "name": "created_at",
+    "type": "TIMESTAMP",
+    "unit": "UTC timestamp",
+    "description": "When the table was created."
+   },
+   {
+    "name": "last_modified_at",
+    "type": "TIMESTAMP",
+    "unit": "UTC timestamp",
+    "description": "When the table last changed: the last time its loader wrote to it."
+   },
+   {
+    "name": "first_day_with_rows",
+    "type": "DATE",
+    "unit": "date",
+    "description": "Oldest daily partition that holds rows."
+   },
+   {
+    "name": "newest_day_with_rows",
+    "type": "DATE",
+    "unit": "date",
+    "description": "Newest daily partition that holds rows."
+   },
+   {
+    "name": "days_with_rows",
+    "type": "BIGINT",
+    "unit": "days",
+    "description": "Daily partitions that hold rows."
+   },
+   {
+    "name": "days_behind_read",
+    "type": "BIGINT",
+    "unit": "days",
+    "description": "Days from newest_day_with_rows to the day of the read. 0 or 1 means the table was current."
+   }
+  ],
+  "rows": 16,
+  "first": "2026-11-12",
+  "last": "2026-11-12"
+ },
+ {
+  "area": "Data quality",
+  "table": "dq_bigquery_reads",
+  "description": "Every query this warehouse has run in BigQuery: which SQL file, over which days, how much data it read and what Google billed. The SQL is in ingest/sql/bigquery/, one file per query, and sql_sha256 is the hash of the text that ran, so a result can be tied to the exact query. Google bills by the gigabytes of the columns a query reads, and the first 1,000 GB of a month are free.",
+  "grain": "snapshot_date, dataset, read_key",
+  "sources": "BigQuery job statistics saved with each result",
+  "path": "data/gold/dq_bigquery_reads.parquet",
+  "columns": [
+   {
+    "name": "snapshot_date",
+    "type": "DATE",
+    "unit": "date",
+    "description": "Snapshot the result was saved in."
+   },
+   {
+    "name": "dataset",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "Bronze dataset the result was saved as."
+   },
+   {
+    "name": "query",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "Name of the query: ingest/sql/bigquery/<query>.sql."
+   },
+   {
+    "name": "read_key",
+    "type": "VARCHAR",
+    "unit": "text",
+    "description": "The days the read covered, as first day and last day, or the query's name where it has no window."
+   },
+   {
+    "name": "sql_sha256",
+    "type": "VARCHAR",
+    "unit": "hash",
+    "description": "SHA-256 of the SQL text that ran."
+   },
+   {
+    "name": "read_at",
+    "type": "TIMESTAMP",
+    "unit": "UTC timestamp",
+    "description": "When the query ran. Empty for a read saved before the loader recorded it."
+   },
+   {
+    "name": "first_day",
+    "type": "DATE",
+    "unit": "date",
+    "description": "First day the query read, where it has a window."
+   },
+   {
+    "name": "last_day",
+    "type": "DATE",
+    "unit": "date",
+    "description": "Last day the query read, where it has a window."
+   },
+   {
+    "name": "gb_estimated",
+    "type": "DOUBLE",
+    "unit": "GB",
+    "description": "What BigQuery's free dry run said the query would read."
+   },
+   {
+    "name": "gb_billed",
+    "type": "DOUBLE",
+    "unit": "GB",
+    "description": "What Google billed the query for. 0 when the result came from BigQuery's cache."
+   },
+   {
+    "name": "is_cache_hit",
+    "type": "BOOLEAN",
+    "unit": "boolean",
+    "description": "True when BigQuery answered from its cache of an identical query run within the day before."
+   },
+   {
+    "name": "rows_returned",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "Rows in the query's result."
+   },
+   {
+    "name": "rows_saved",
+    "type": "HUGEINT",
+    "unit": "count",
+    "description": "Rows saved to bronze, over all pages. Equal to rows_returned for a complete read."
+   },
+   {
+    "name": "pages",
+    "type": "BIGINT",
+    "unit": "count",
+    "description": "Pages the result arrived in."
+   }
+  ],
+  "rows": 9,
+  "first": "2026-11-12",
   "last": "2026-11-12"
  }
 ]
