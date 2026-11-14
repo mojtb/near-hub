@@ -1406,8 +1406,8 @@ table.corr{--trk:clamp(52px,9.5vw,136px);--val:52px;--gap:12px;font-size:15px}
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
 <!-- ECharts is fetched once the page has drawn: see the end of the script below -->
-<script src="shared/catalog.js?v=6e7d232b"></script>
-<script src="shared/data.js?v=19270b12"></script>
+<script src="shared/catalog.js?v=ea2cd22b"></script>
+<script src="shared/data.js?v=0d6ff80a"></script>
 <script src="shared/charts.js?v=9d74e7aa"></script>
 <script src="shared/viz.js?v=6238b9d1"></script>
 <script>
@@ -1553,7 +1553,7 @@ const AGM=(()=>{const by=new Map();AG.d.forEach((d,i)=>{const m=d.slice(0,8)+'01
   return{full,now,ago,through:AG.d[AG.d.length-1]}})();
 const agRead=`Volume on every route, confidential included, split by asset as NEAR's dashboard does. Each dollar of a swap is counted once, so these shares cannot be set beside the 1Click tabs, which count an asset whenever it is on either side. Stablecoins are USDT, USDC and ten smaller ones; Bitcoin includes Bitcoin bridged to NEAR, and wrapped Bitcoin on other chains is in other assets.`;
 const agSql=(period,where)=>`select ${period},\n       sum(volume_usd) filter (where symbol in (${STABLES})) / sum(volume_usd) as stablecoins,\n       sum(volume_usd) filter (where symbol = 'BTC') / sum(volume_usd) as bitcoin,\n       sum(volume_usd) filter (where symbol = 'ZEC') / sum(volume_usd) as zcash,\n       sum(volume_usd) filter (where symbol in ('ETH', 'WETH')) / sum(volume_usd) as ether,\n       sum(volume_usd) filter (where symbol in ('NEAR', 'wNEAR')) / sum(volume_usd) as near\nfrom gold.fct_dune_intents_asset_daily${where?`\nwhere ${where}`:''}\ngroup by 1\norder by 1;`;
-const SCC=id=>TH.scorecard.concat(TH.open||[]).find(c=>c.claim_id===id)||{},whyNot=c=>String(c.test||'').replace(/^Not testable:\s*/,'').replace(/\.$/,'').replace(/^./,m=>m.toUpperCase());
+const SCC=id=>TH.scorecard.concat(TH.open||[]).find(c=>c.claim_id===id)||{},whyNot=c=>String(c.test||'').replace(/^Not (testable|settled):\s*/,'').replace(/\.$/,'').replace(/^./,m=>m.toUpperCase());
 const BANDS=[['under_100','Under $100','#b9c1bd'],['100_to_1k','$100 to $1,000','#a9c0f5'],['1k_to_10k','$1,000 to $10,000','#7f9fee'],['10k_to_100k','$10,000 to $100,000','#3f6fe8'],['100k_and_over','$100,000 and over','#1f3f9e']];
 const szOf=(b,k)=>(SZ.find(r=>r.band===b)||{})[k]||0,szBig=k=>(szOf('10k_to_100k',k)+szOf('100k_and_over',k))/d3.sum(SZ,r=>r[k]);
 const szFrom=Math.max(0,SZM.m.indexOf(MIX.m[mixFrom]));
@@ -2159,8 +2159,8 @@ const USE=(()=>{
   const kcShares=famMonths.filter(m=>m<B.day.slice(0,8)+'01').map(m=>famAt(m,'Kai-Ching').share).filter(v=>v!=null);
   const famNow=lastOf(famMonths),famPartial=famNow&&byMonth.has(famNow)&&!fullMonths.some(r=>r.m===famNow);
 
-  /* The price's link is firm only when it stays above chance on every weekday the weeks can start on. The bar is the
-     scorecard's; vSeen is volume's largest link as it is printed, and the weeks needed to see a link that size. */
+  /* The price's link is firm only when it stays above chance on every weekday the weeks can start on. The bar is what
+     chance alone gives; vSeen is volume's largest link as it is printed, and the weeks needed to see a link that size. */
   const priceFirm=priceLeads&&pBest.low>pBest.bound,bar=SCR('intents_volume_leads_usage').threshold||bound,vSeen=+vBest.r.toFixed(2);
   const contractsSql=U.contractsSql.replace('The busiest contracts the warehouse tracks','The busiest contracts tracked here');
   const f={
@@ -2196,7 +2196,7 @@ const USE=(()=>{
     families:`Each bar splits a month's transactions by who they are for, from a sample of blocks in which each transaction counts once${famPartial?`; the last bar is ${monthName(famNow)} so far`:''}. Over the 30 days to ${dm(LC.asOf)}: ${famTop.map(r=>`${famShort(r.family)} ${fmt.pct(r.share,1)}${r.family===HOT_ALL?` (its contracts ${fmt.pct(fam30('HOT contracts').share,1)}, its players' own accounts ${fmt.pct(fam30('HOT players').share,1)})`:''}`).join(', ')}, each good to between ±${(d3.min(famTop,r=>r.plus_minus)*100).toFixed(1)} and ±${(d3.max(famTop,r=>r.plus_minus)*100).toFixed(1)} points${famTied?', so the sample cannot rank neighbours in that list':''}.`,
     lines:`Accounts a day on a log scale. Signers leave out accounts that only signed their own deletion.${step?` From ${dm(step.from)} to ${dm(step.to)} HOT's callers rose by ${fmt.compact(step.callers)} and signers by ${fmt.compact(step.signers)}: the signer count follows that game.`:''}${gap?` In the week of ${dm(gap.week)}, the widest gap since ${monthName(B.relay_day)}, at least ${fmt.compact(gap.v)} signers a day did not call it.`:''}`,
     long:`Distinct signers a day since ${fmt.month(D.d[Math.max(0,D.signers.findIndex(v=>v!=null))])}, on a log scale. They stood at ${fmt.compact(baseLo)} to ${fmt.compact(baseHi)} a day from late 2022 to mid-2023, before the consumer programs took them to ${cm(peak.v)} in ${qName(peak.q)}; the 30-day average is now ${fmt.compact(sig)}. NearBlocks has announced the end of this count for 22 November 2026. From then the line continues as active accounts less the accounts a relayer signed for, which has stayed within a few percent of it.`,
-    lags:`A common claim is that volume through NEAR Intents leads network usage better than the token price does. Each number is the correlation of weekly changes over ${weeks} weeks, from −1 to +1. In the same week ${both('transactions',v=>v>bound)?`both move with transactions (${r2(same('intents_volume','transactions'))} and ${r2(same('near_price','transactions'))})`:`volume's link with transactions is ${r2(same('intents_volume','transactions'))} and the price's ${r2(same('near_price','transactions'))}`}. One or two weeks ahead, volume's largest link is ${r2(vBest.r)} and the price's ${r2(pBest.r)}${priceLeads&&!priceFirm?', which depends on the weekday the weeks start':''}. The scorecard's bar is ${bar.toFixed(2)}: a link under it cannot be told from chance.${!volLeads&&vSeen>=.05?` About ${weeksToSee(vSeen)} weeks would be needed to see a link of ${vSeen.toFixed(2)}.`:''}`,
+    lags:`A common claim is that volume through NEAR Intents leads network usage better than the token price does. Each number is the correlation of weekly changes over ${weeks} weeks, from −1 to +1. In the same week ${both('transactions',v=>v>bound)?`both move with transactions (${r2(same('intents_volume','transactions'))} and ${r2(same('near_price','transactions'))})`:`volume's link with transactions is ${r2(same('intents_volume','transactions'))} and the price's ${r2(same('near_price','transactions'))}`}. One or two weeks ahead, volume's largest link is ${r2(vBest.r)} and the price's ${r2(pBest.r)}${priceLeads&&!priceFirm?', which depends on the weekday the weeks start':''}. Chance alone gives up to ${bar.toFixed(2)} on so few weeks, and a link under that cannot be told from it, so this stays among the <a href="#a-untestable">claims the data cannot settle</a>.${!volLeads&&vSeen>=.05?` About ${weeksToSee(vSeen)} weeks would be needed to see a link of ${vSeen.toFixed(2)}.`:''}`,
     footprint:`Transactions a day that touch intents.near, beside the swaps a day that NEAR's dashboard counts on every route. Intents is ${fmt.pct(IN.share,1)} of NEAR's transactions outside the batch streams, ${IN.share>IN.share6?'up from':'against'} ${fmt.pct(IN.share6,1)} six months ago, on ${IN.swaps<IN.swaps6?'fewer':'more'} swaps (${fmt.compact(IN.swaps)} a day against ${fmt.compact(IN.swaps6)}). About ${fmt.int(IN.callers)} NEAR accounts a day call the contract, because its users sign on other chains.${IN.through<X.d[n]?` The swap count stops at ${dm(IN.through)}, the dashboard's last reading.`:''} More on the <a href="#s-intents">Intents</a> page.`,
     sigTx:`Transactions a day to the signer contract; the week and month views average them.${CS.times?` The last full week ran ${CS.times.toFixed(1)} times the same week a year earlier, and ${fmt.pct(1-CS.tx/CS.peakTx,0)} below the peak week, which began on ${fmt.date(CS.peakWeek)}, when ${fmt.int(CS.peakCallers)} accounts sent ${fmt.compact(CS.peakTx)} a day.`:''} The marks are the days the contract began to support one more signature scheme. Who holds its keys is on the <a href="#a-mpc">Security</a> page.`,
     sigCallers:`Distinct accounts that asked the contract for a signature each day; the week and month views average them. Each caller sends about ${fmt.int(CS.per)} transactions a day${CS.perYear?`, ${Math.abs(CS.per/CS.perYear-1)<.1?'as':'against'} a year ago (${fmt.int(CS.perYear)})`:''}; in the peak week it was ${fmt.int(CS.perPeak)}. The data here does not show who the callers are.`};
@@ -2748,14 +2748,14 @@ order by 4 desc;`;
 
   /* FEE GROWTH. The scorecard's test (three complete months against the three before), then the yearly and 90-day looks at it */
   const yrG=c=>gOf(c).f90/gOf(c).f90_year_ago-1,qG=c=>gOf(c).f90/gOf(c).f90_before-1,mG=c=>gOf(c).q_now/gOf(c).q_before-1,bestBy=fn=>others.reduce((a,c)=>fn(c)>fn(a)?c:a);
-  const bestYr=bestBy(yrG),bestQ=bestBy(qG),bestM=bestBy(mG),leadYr=yrG('near')-yrG(bestYr),leadQ=qG('near')-qG(bestQ),leadM=mG('near')-mG(bestM);
+  const bestYr=bestBy(yrG),bestQ=bestBy(qG),bestM=bestBy(mG),leadYr=yrG('near')-yrG(bestYr),leadQ=qG('near')-qG(bestQ),leadM=mG('near')-mG(bestM),medM=d3.median(others,mG),leadMed=mG('near')-medM;
   const flat=gN.f90/gN.f90_year_ago_in_a_month-1,d30f=gN.f30/gN.f30_before-1,pts=v=>`${v>=0?'+':'−'}${Math.abs(v*100).toFixed(Math.abs(v)<.1?1:0)} points`;
   const Q=K.quarters,mo=d=>monthName(d),qNow=`${mo(Q.now_from)} to ${mo(Q.now_to)}`,qBefore=`${mo(Q.before_from)} to ${mo(addDays(Q.now_from,-1))}`;
   const GR=[...chains].sort((a,b)=>mG(b)-mG(a));
-  f.growth=`NEAR's app fees ${rose(mG('near'))} ${pc(mG('near'))} over ${qNow} against ${qBefore}, and the best peer's (${nm(bestM)}) ${rose(mG(bestM))} ${pc(mG(bestM))}: ${Math.abs(leadM)<.01?'the two are level':`NEAR ${leadM>=0?'leads':'trails'} by ${pts(Math.abs(leadM)).replace(/^\+/,'')}`}.`;
-  ans.growth=[sp(mG('near'),1),`in app fees, ${qNow} against the three months before; the best peer ${sp(mG(bestM),1)}`];
+  f.growth=`NEAR's app fees ${rose(mG('near'))} ${pc(mG('near'))} over ${qNow} against ${qBefore}, and the median peer's ${rose(medM)} ${pc(medM)}: NEAR ${leadMed>=0?'leads':'trails'} by ${pts(Math.abs(leadMed)).replace(/^\+/,'')}.`;
+  ans.growth=[sp(mG('near'),1),`in app fees, ${qNow} against the three months before; the median peer ${sp(medM,1)}`];
   key.growth=`NEAR ${sp(mG('near'),1)} on the three months before and ${sp(yrG('near'))} over a year`;
-  read.growth=`Two bars for each chain. The first is its app fees over ${qNow} against ${qBefore}, the scorecard's test: NEAR ${sp(mG('near'),1)}, the best peer (${nm(bestM)}) ${sp(mG(bestM),1)}${Math.abs(leadM)<.01?', a lead too small to call':''}. The second is the 90 days to ${dm(set)} against the same 90 days a year earlier: NEAR ${sp(yrG('near'))}, the best peer (${nm(bestYr)}) ${sp(yrG(bestYr))}. A year ago NEAR's fees had barely started, which is why the scorecard reads quarters. Its last 30 days of fees are ${pc(d30f)} ${d30f<0?'below':'above'} the 30 before, and ${fmt.pct(iFees,0)} of them are NEAR Intents, in figures NEAR reports.`;
+  read.growth=`Two bars for each chain. The first is its app fees over ${qNow} against ${qBefore}, the scorecard's test: NEAR ${sp(mG('near'),1)}, the median peer ${sp(medM,1)} and the fastest (${nm(bestM)}) ${sp(mG(bestM),1)}${Math.abs(leadM)<.01?', level with NEAR':''}. The second is the 90 days to ${dm(set)} against the same 90 days a year earlier: NEAR ${sp(yrG('near'))}, the best peer (${nm(bestYr)}) ${sp(yrG(bestYr))}. A year ago NEAR's fees had barely started, which is why the scorecard reads quarters. Its last 30 days of fees are ${pc(d30f)} ${d30f<0?'below':'above'} the 30 before, and ${fmt.pct(iFees,0)} of them are NEAR Intents, in figures NEAR reports.`;
   /* Two bars a chain on one scale, with zero where the scale puts it */
   view.growth=el=>{const all=GR.flatMap(c=>[mG(c),yrG(c)]),min=Math.min(0,d3.min(all)),max=Math.max(0,d3.max(all)),pad=17,at=v=>pad+(v-min)/(max-min)*(100-2*pad),zero=at(0);
     const bar=(v,cls)=>`<span class="mk-gt"><i class="mk-gz" style="left:${zero}%"></i><i class="mk-gb ${cls}" style="left:${Math.min(zero,at(v))}%;width:${Math.max(.6,Math.abs(at(v)-zero))}%"></i><b style="${v>=0?`left:calc(${at(v)}% + 6px)`:`right:calc(${100-at(v)}% + 6px)`}">${sp(v)}</b></span>`;
@@ -2869,12 +2869,12 @@ order by share_of_chain_fees_30d desc, chain_id;`;
   read.rerate=`NEAR's market cap over a year of app fees, beside the median of six peers. ${rNow>=1?`${lastUnder>=0?`NEAR was cheaper than the median until ${dm(X.d[lastUnder])}`:'NEAR was dearer than the median on every day of the year'} and is ${rNow.toFixed(2)} times it on ${dm(set)}, the scorecard's result against the case`:`NEAR is cheaper than the median, at ${rNow.toFixed(2)} times it on ${dm(set)}, which the scorecard counts for the case`}. Part of the gap is how fees are counted: some peers' fees include yield passed to holders of funds and staked tokens, and with that left out NEAR is ${d3.min(yCuts).toFixed(2)} to ${d3.max(yCuts).toFixed(2)} times the median (see <a href="#a-rankings--largest-app">Where does NEAR rank</a>).`;
 
   /* WHAT WOULD CHANGE THIS READING. Two rows are scorecard claims and keep its bars; the others are watched. */
-  const dear=SCV('near_is_dearer_than_the_median_peer'),grew=SCV('near_fees_outgrew_every_peer'),STAMP={holds:['holds','Holds'],against:['risk','Against'],crossed:['risk','Crossed'],watch:['pending','Watched']};
+  const dear=SCV('near_is_dearer_than_the_median_peer'),grew=SCV('near_fees_outgrew_the_median_peer'),STAMP={holds:['holds','Holds'],against:['risk','Against'],crossed:['risk','Crossed'],watch:['pending','Watched']};
   const T=[
    {id:'near_is_dearer_than_the_median_peer',what:"NEAR's multiple on app fees over the median peer's",to:'rerating',st:dear>=1?'against':'holds',fig:times(dear),v:dear,bar:1,
     text:`The scorecard's one result on price, and it ${dear>=1?'stands against the case':'holds for the case'}. Below 1, NEAR would be cheaper than the median peer on app fees${aboveSince?`, as it was until ${dm(X.d[lastUnder])}`:''}.`},
-   {id:'near_fees_outgrew_every_peer',what:'App fees on the three months before, NEAR less the best peer',to:'fee-growth',st:grew>=0?'holds':'crossed',fig:pts(grew),v:grew,bar:0,
-    text:`NEAR's change in app fees over three complete months less the best peer's, the scorecard's test. Below zero, a peer's fees would have grown faster than NEAR's.`},
+   {id:'near_fees_outgrew_the_median_peer',what:'App fees on the three months before, NEAR less the median peer',to:'fee-growth',st:grew>=0?'holds':'crossed',fig:pts(grew),v:grew,bar:0,
+    text:`NEAR's change in app fees over three complete months less the median peer's, the scorecard's test. Below zero, NEAR's fees would have grown more slowly than most of its peers'.`},
    {id:'multiple_on_what_applications_keep',what:'The same multiple on what applications keep',to:'worth--app-revenue',st:'watch',fig:times(revRatio),v:revRatio,
     text:`NEAR's multiple over the median peer's on the part of fees applications keep. Below 1 would mean the premium lies in what is counted as fees and not in the price.`},
    {id:'fee_lead_on_the_90_days_before',what:'Fee growth on the 90 days before, NEAR less the best peer',to:'fee-growth',st:'watch',fig:pts(leadQ),v:leadQ,
@@ -2888,7 +2888,7 @@ order by share_of_chain_fees_30d desc, chain_id;`;
   const tc={holds:0,against:0,crossed:0,watch:0};T.forEach(r=>tc[r.st]++);const barred=T.length-tc.watch,NUM=['none','one','two','three','four','five','six','seven'],cap=s=>s[0].toUpperCase()+s.slice(1);
   f.trip=`${cap(NUM[tc.holds])} of the ${NUM[barred]} tests under this page ${tc.holds===1?'holds':'hold'}${tc.against+tc.crossed?` and ${NUM[tc.against+tc.crossed]} ${tc.against+tc.crossed===1?'stands':'stand'} against the case`:''}; ${NUM[tc.watch]} more figures are watched without a bar.`;
   ans.trip=[`${tc.holds} of ${barred}`,`tests with a bar hold${tc.against+tc.crossed?`; ${NUM[tc.against+tc.crossed]} already ${tc.against+tc.crossed===1?'stands':'stand'} against the case`:''}`];
-  read.trip=`Each row is something this page's reading rests on, the figure it stands at today and what would change it. The first two are claims from the scorecard and keep its bars: NEAR's multiple on app fees over the median peer's, and its fee growth over three complete months less the best peer's. The others have no bar and are only watched. Each name links to the question that shows it.`;
+  read.trip=`Each row is something this page's reading rests on, the figure it stands at today and what would change it. The first two are claims from the scorecard and keep its bars: NEAR's multiple on app fees over the median peer's, and its fee growth over three complete months less the median peer's. The others have no bar and are only watched. Each name links to the question that shows it.`;
   view.trip=el=>{el.innerHTML=`<div class="tw"><table class="t chk trip"><thead><tr><th>What the reading rests on</th><th>Today</th><th>What would change it</th></tr></thead><tbody>${T.map(r=>`<tr><td><a href="#a-${r.to}">${r.what}</a></td><td><b class="fig">${r.fig}</b><span class="stamp ${STAMP[r.st][0]}">${STAMP[r.st][1]}</span></td><td>${r.text}</td></tr>`).join('')}</tbody></table></div>`};
   const w90=`date_day > date '${set}' - interval 90 day`,w30=sqlWin(set);
   sql.trip=`-- Two tests are scorecard claims, read from the scorecard with their bars. The other five are worked out
@@ -2911,7 +2911,7 @@ with fees as (
 )
 select claim_id as test, value, threshold as bar
 from gold.fct_thesis_scorecard
-where claim_id in ('near_is_dearer_than_the_median_peer', 'near_fees_outgrew_every_peer')
+where claim_id in ('near_is_dearer_than_the_median_peer', 'near_fees_outgrew_the_median_peer')
 union all
 select 'multiple_on_what_applications_keep',
        max(multiple) filter (where chain_id = 'near') / median(multiple) filter (where chain_id <> 'near'), null
@@ -2945,12 +2945,14 @@ order by 1;`;
     ratio:{t:`NEAR's multiple on app fees over the median peer's, ${dm(set)}`,v:times(rNow),s:`${times(ratio[iMin])} on ${dm(X.d[iMin])}${aboveSince?`; below 1 until ${dm(X.d[lastUnder])}`:''}`,x:X.d,y:ratio},
     token:{t:`Market cap over a year of what reaches the token, ${dm(set)}`,v:`${fmt.int(M('holder_revenue'))}×`,s:`${fmt.int(tokLo)}× to ${fmt.int(tokHi)}× since ${dm(tokFrom)}`,x:tk.map(i=>X.d[i]),y:tk.map(i=>X.token[i])}};
   /* Beside the fee claim's gap on the front page: the two rates it is made of */
-  const claimNote={near_fees_outgrew_every_peer:`NEAR ${sp(mG('near'),1)}, the best peer ${sp(mG(bestM),1)}`};
+  const claimNote={near_fees_outgrew_the_median_peer:`NEAR ${sp(mG('near'),1)}, the median peer ${sp(medM,1)}`};
+  /* The fastest peer over the scorecard's quarters, for the note under the fee claim on the front page */
+  const fast={name:nm(bestM),g:mG(bestM),lead:leadM};
   const limits=['Why the price moved. The marks on the charts are dated events and name no cause.',
    'How NEAR compares with the whole market: the peers are six chains, and Bitcoin\'s price is not in the data here.',
    'What reaches a peer\'s token. No peer has a series like the revenue wallets\' receipts, so that multiple is NEAR\'s alone.',
    'A like-for-like count of fees. What counts as a fee is DefiLlama\'s reading of each chain\'s applications, and NEAR Intents\' figures are NEAR\'s own.'];
-  return{K,P,X,N9,f,ans,key,read,view,sql,rows,sqlFor,lines,peersDomain,tile,gauges,T,STAMP,RK,rkCap,day,day0,set,claimNote,leadQ,leadYr,limits};
+  return{K,P,X,N9,f,ans,key,read,view,sql,rows,sqlFor,lines,peersDomain,tile,gauges,T,STAMP,RK,rkCap,day,day0,set,claimNote,fast,leadQ,leadYr,limits};
 })();
 
 /* ============================================================================================
@@ -3288,8 +3290,13 @@ const FR_BY=(()=>{const m=new Map();FR.forEach(r=>{const id=dqSrcOf(r.model);if(
 const frWorst=g=>g.stale?['risk',`${g.stale} past ${g.stale===1?'its':'their'} limit`]:g.behind>1?['notyet',`Up to ${g.behind} days behind`]:['holds','Current'];
 /* The registry's wording for a claim that cannot be tested, with this site's names: market makers, and the data here */
 const dqSay=t=>String(t||'').replace(/\bsolvers\b/g,'market makers').replace(/\bsolver\b/g,'market maker').replace(/\b([Tt])he warehouse holds\b/g,'$1he data here holds').replace(/\s*\(registry\/[^)]*\)/g,'').replace(/\b\d{4}-\d{2}-\d{2}\b/g,d=>fmt.date(d));
-const dqOpen=()=>`<div class="tw"><table class="t dq-open"><thead><tr><th>Claim</th><th>It would count</th><th>Why it cannot be tested</th></tr></thead><tbody>${TH.open.map(c=>`<tr><td style="min-width:200px"><b>${dqSay(c.claim)}</b></td><td style="white-space:nowrap">${c.side==='bull'?'For the long case':'Against it'}</td><td style="min-width:260px">${dqCap(dqSay((c.test||'').replace(/^Not testable:\s*/,'')))}</td></tr>`).join('')}</tbody></table></div>`;
+const dqOpen=()=>`<div class="tw"><table class="t dq-open"><thead><tr><th>Claim</th><th>It would count</th><th>Why the data cannot settle it</th></tr></thead><tbody>${TH.open.map(c=>`<tr><td style="min-width:200px"><b>${dqSay(c.claim)}</b></td><td style="white-space:nowrap">${c.side==='bull'?'For the long case':'Against it'}</td><td style="min-width:260px">${dqCap(dqSay((c.test||'').replace(/^Not (testable|settled):\s*/,'')))}</td></tr>`).join('')}</tbody></table></div>`;
 /* How the claims were chosen: dated history, so its figures are fixed. The four rules are listed; the reading gives the rest. */
+/* The claims off the scorecard, by why: no public source can test them, or a test ran and its result cannot be told from chance */
+const dqOpenKinds=()=>{const no=TH.open.filter(c=>c.status!=='not_settled').length,odd=TH.open.length-no,bits=[];
+  if(no)bits.push(`${numWord(no)} ${no===1?'has':'have'} no public source that can test ${no===1?'it':'them'}`);
+  if(odd)bits.push(`${numWord(odd)} ${odd===1?'was':'were'} tested and the result cannot be told from chance`);
+  return bits.length?dqCap(bits.join(', and '))+'.':''};
 const DQ_RULES=[
   ['On the case',"A claim sits on one of the case's links or names a risk to it."],
   ['Scored once','No measurement is scored twice.'],
@@ -3389,7 +3396,25 @@ const BQ=(()=>{const B=LC.more.bigquery||{},HUE='#7f62e0',ord=n=>{const s=['th',
         /* Narrow, the result moves under the comparison's name, so the table keeps two columns */
         const stamp=r=>r.status==='differs'?`<span class="stamp ${DQ_KINDS[kind(r)].c}">${DQ_KINDS[kind(r)].t}</span>`:'<span class="stamp holds">Within its limit</span>';
         el.innerHTML=`<div class="tw"><table class="t"><thead><tr><th>What is compared</th><th class="num">Apart</th>${narrow?'':'<th>Result</th>'}</tr></thead><tbody>${K.map(r=>`<tr><td style="min-width:${narrow?0:220}px;white-space:normal;line-height:1.45"><b style="font-weight:500">${r.metric}</b>${narrow?`<div style="margin:3px 0 1px">${stamp(r)}</div>`:''}${sub(`${src(r.source_a)}: ${dqVal(r.value_a)}`)}${sub(`${src(r.source_b)}: ${dqVal(r.value_b)}`)}${r.status==='differs'&&r.explanation?sub(dqGist(r.explanation)):''}</td><td class="num" style="vertical-align:top">${dqPct(r.diff_pct)}${sub(`limit ${+r.tolerance_pct}%`)}</td>${narrow?'':`<td style="vertical-align:top">${stamp(r)}</td>`}</tr>`).join('')}</tbody></table></div>`}};})();
-  return{who,back,check};
+  /* INTENTS' SHARE OF THE CHAIN'S TRANSACTIONS, the claim intents_share_of_transactions_is_rising. The line is the
+     share of the transactions of the seven days to each day that were sent to the Intents contract; the two quarters
+     are the ones the scorecard's test reads. `check` sets the chain's count beside the volume NEAR reports, for the
+     note under the growth claim on the front page. */
+  const traffic=(()=>{const T=B.traffic,Y=T&&T.cols,F=T&&T.facts;if(!Y||!Y.date_day||Y.date_day.length<8||!F||F.share_now==null||F.share_before==null)return null;
+    const sum7=(a,i)=>d3.sum(a.slice(i-6,i+1)),roll=Y.date_day.map((d,i)=>i<6?null:sum7(Y.intents_txns,i)/sum7(Y.all_txns,i)).slice(6),days=Y.date_day.slice(6);
+    const mAt=k=>{const t=new Date(F.end_day+'T00:00:00Z');return new Date(Date.UTC(t.getUTCFullYear(),t.getUTCMonth()+k,1)).toISOString().slice(0,10)},span=k=>`${monthName(mAt(k-2))} to ${monthName(mAt(k))}`;
+    const up=F.share_now>=F.share_before,since=F.days_since>=7&&F.share_since!=null,word=v=>v<0?'fell':'rose';
+    return{roll,
+      f:`${fmt.pct(F.share_now,1)} of NEAR's transactions went to the Intents contract over ${span(0)}, against ${fmt.pct(F.share_before,1)} over the three months before`,
+      ans:[fmt.pct(F.share_now,1),`of NEAR's transactions went to the Intents contract over ${span(0)}, ${fmt.pct(F.share_before,1)} over the three months before`],
+      read:`The line is the share of each day's transactions sent to the Intents contract, as a mean of the seven days to that day. It was ${fmt.pct(F.share_before,1)} over ${span(-3)} and ${fmt.pct(F.share_now,1)} over ${span(0)}${since?`, and ${fmt.pct(F.share_since,1)} over the ${F.days_since} days since${F.days_first_since===F.days_since?', on each of which the contract received more transactions than any other account':''}`:''}. ${up?'More':'Less'} of the chain's work is now the product the case rests on, which the <a href="#overview">scorecard</a> counts ${up?'for':'against'} it. Relayers and market makers send these transactions, so they measure activity and not users.`,
+      check:F.txns_change!=null&&F.volume_change!=null?`On the chain, transactions sent to the Intents contract ${word(F.txns_change)} ${fmt.pct(Math.abs(F.txns_change),1)} over the same months, and the volume NEAR reports ${word(F.volume_change)} ${fmt.pct(Math.abs(F.volume_change),1)}.`:'',
+      sql:T.sql,
+      rows:()=>({cols:['date_day','all_txns','intents_txns','share','rank_by_txns'],rows:Y.date_day.map((d,i)=>[d,Y.all_txns[i],Y.intents_txns[i],Y.share[i],Y.rank_by_txns[i]])}),
+      view:chart(()=>({x:days,series:[{name:'Sent to the Intents contract, share of the seven days to each day',values:roll,color:'#3f6fe8'}],yFmt:v=>fmt.pct(v,0),tipFmt:v=>fmt.pct(v,1),height:320}))}})();
+  /* What the count of signers is made of, for the note under the usage claim on the front page */
+  const game=B.game&&B.game.share!=null?{...B.game,name:NAME[B.game.contract_id]||B.game.contract_id}:null;
+  return{who,back,check,traffic,game};
 })();
 /* ============================================================================================
    HOW THE COUNT HAS MOVED. The scorecard on every day, from gold.fct_thesis_scorecard_daily (TH.history): each
@@ -3611,7 +3636,7 @@ const CZH=(()=>{
     f:`In the last 12 months between ${C12.lo} and ${C12.hi} of the ${TOTAL} results supported the case for a week or more; the count changed on ${C12.days} days`,
     ans:[`${C12.moved} of ${TOTAL}`,'tests changed side in 12 months'],
     key:{count:'Results that support the case above the line, results that count against it below',tests:'How long each result has stood, and how many times it turned'},
-    read:{count:`Each day runs the scorecard's own tests again on the data up to that day. A test joins once the stretch it reads is whole: six complete months for a test of three months against three, a year for a yearly test, twelve weeks for the lead test. The data is as it stood on ${dY(H.end)}; sources revise recent days, so a day's count can differ from what was read on that day. The tests and their bars were set in November 2026 with these series in view, so this shows how today's tests read on earlier data, not what was argued then.`,
+    read:{count:`Each day runs the scorecard's own tests again on the data up to that day. A test joins once the stretch it reads is whole: six complete months for a test of three months against three, a year for a yearly test. The data is as it stood on ${dY(H.end)}; sources revise recent days, so a day's count can differ from what was read on that day. The tests and their bars were set in November 2026 with these series in view, so this shows how today's tests read on earlier data, not what was argued then.`,
       tests:`${sent(word(steady))} of the ${TOTAL} tests stayed on one side all through the last 12 months; the others turned at least once. The tests are grouped by the part of the case they rest on, in the order of <a href="#overview">The case so far</a>. A turn is a change of side; the first day a test could run is not one.`},
     sql:{count:`-- Results for and against the long case on each day, with every test's data cut at that day.\n-- The chart draws the days its range switch names; these are all of them.\nselect date_day,\n       count(*) filter (where stands = 'for') as results_for,\n       count(*) filter (where stands = 'against') as results_against,\n       count(*) filter (where status = 'not_yet_testable') as not_yet_testable\nfrom gold.fct_thesis_scorecard_daily\ngroup by 1\norder by 1;`,
       tests:`-- Each tested claim's result as stretches of days: a new row whenever it changes side, or first can be tested\nwith marked as (\n  select *, case when stands is distinct from lag(stands) over (partition by claim_id order by date_day) then 1 else 0 end as starts\n  from gold.fct_thesis_scorecard_daily\n), numbered as (\n  select *, sum(starts) over (partition by claim_id order by date_day) as stretch from marked\n)\nselect claim_id, min(date_day) as first_day, max(date_day) as last_day, count(*) as days, any_value(stands) as stands\nfrom numbered\ngroup by claim_id, stretch\norder by claim_id, first_day;`},
@@ -3674,6 +3699,7 @@ order by 1;`,view:chart(()=>({type:'stack',x:LINES.months,series:[{name:'Matched
  {id:'clean-usage',isNew:true,subject:'usage',form:'Stacked bars',q:'What is left without the two batch streams, and is it growing?',f:USE.f.clean,ans:USE.ans.clean,src:['nearblocks','revenue'],read:USE.read.clean,table:'gold.fct_usage_quality_daily',sql:'',view:null},
  {id:'who-uses',isNew:true,subject:'usage',form:'Table',q:'Which contracts are used?',f:USE.f.who,ans:USE.ans.who,src:['nearblocks'],read:USE.read.table,table:'gold.fct_contract_daily, gold.fct_chain_daily',sql:USE.contractsSql,view:USE.view.table},
  ...(BQ.who?[{id:'who-signs',isNew:true,subject:'usage',form:'Ranked bars',q:'Which contracts do accounts call?',f:BQ.who.f,ans:BQ.who.ans,src:['bigquery','registry'],read:BQ.who.read.newest,table:'gold.fct_bigquery_contract_daily',sql:BQ.who.sql.newest,view:BQ.who.view.newest}]:[]),
+ ...(BQ.traffic?[{id:'intents-traffic',isNew:true,subject:'usage',form:'Line chart',q:"How many of NEAR's transactions go to Intents?",f:BQ.traffic.f,ans:BQ.traffic.ans,src:['bigquery'],read:BQ.traffic.read,table:'gold.fct_bigquery_receiver_daily, gold.fct_bigquery_chain_daily',sql:BQ.traffic.sql,exact:BQ.traffic.rows,view:BQ.traffic.view}]:[]),
  ...(BQ.back?[{id:'come-back',isNew:true,subject:'usage',form:'Heatmap',q:'Do accounts come back?',f:BQ.back.f,ans:BQ.back.ans,src:['bigquery'],read:BQ.back.read,table:'gold.fct_bigquery_signer_cohort_monthly',sql:BQ.back.sql,exact:BQ.back.rows,view:BQ.back.view}]:[]),
  {id:'volume-and-users',isNew:true,subject:'usage',form:'Table',q:'Does Intents volume lead network usage?',f:USE.f.lead,ans:USE.ans.lead,src:['revenue','coinmetrics','nearblocks'],read:USE.read.lags,table:'gold.fct_usage_lead_correlations',sql:USE.lagsSql,view:USE.view.lags},
  {id:'chain-sigs',isNew:true,subject:'usage',form:'Line chart',q:'How much is Chain Signatures used?',f:USE.f.sigs,ans:USE.ans.sigs,src:['nearblocks','rpc'],read:USE.read.sigTx,table:'gold.fct_chain_signatures_daily, gold.fct_mpc_state',sql:'',view:null},
@@ -3721,8 +3747,8 @@ order by 1;`,view:chart(()=>({type:'stack',x:LINES.months,series:[{name:'Matched
  {id:'ledger',subject:'quality',form:'Dot strip',q:'How far apart are the sources?',f:`${R.differs} of ${R.total} comparisons between sources fall outside their limit, ${R.independent_differs?`${R.independent_differs} of them`:'none of them'} between independent sources`,read:`Each dot is one comparison of two figures for the same thing, placed by how far apart they are. A dot is red when the gap is beyond the limit set for that check, so a green dot can sit to the right of a red one. ${R.independent_agree} of the ${R.agree} agreements are between independent sources; the other ${R.same_upstream_agree} share an upstream.${R.not_available?` ${R.not_available===1?'One check':dqCap(numWord(R.not_available))+' checks'} could not run on this snapshot, so ${R.not_available===1?'it has':'they have'} no dot.`:''} Select a dot to read it.`,table:'gold.dq_reconciliation',sql:'select check_id, value_a, value_b, diff_pct, tolerance_pct, independence, status\nfrom gold.dq_reconciliation order by status, diff_pct desc;',view:el=>{el.innerHTML=legend([['#00b37a','Within its limit'],['#e5604f','Beyond its limit']])+'<div id="l-s"></div><div class="dq-card" id="l-r" aria-live="polite"></div>';const rows=LC.recon.filter(r=>r.diff_pct!=null);const pick=i=>{$('#l-r').innerHTML=dqCard(rows[i])};pick(0);return VZ.ledgerStrip($('#l-s'),rows,{onPick:pick,height:320})}},
  {id:'disagreements',subject:'quality',form:'Table',q:`Why do the ${numWord(R.differs)} differ?`,f:dqCount('open')?`${dqCap(numWord(dqCount('open')))} of the ${numWord(R.differs)} gaps ${dqCount('open')===1?'is':'are'} unsettled${R.differs>dqCount('open')?`; the other ${numWord(R.differs-dqCount('open'))} ${R.differs-dqCount('open')===1?'is':'are'} accounted for`:''}`:`None of the ${numWord(R.differs)} gaps is unsettled; each is accounted for`,read:`Each row is a comparison beyond its limit, sorted by what kind of gap it is. The kind is this site's reading of the note written for the check, and the note is under each row in full. Each check has its own limit, from ${d3.min(LC.recon,r=>+r.tolerance_pct)}% to ${d3.max(LC.recon,r=>+r.tolerance_pct)}%. Where a row names a year, a repository or a launch day, only that one comparison of the check differs.`,table:'gold.dq_reconciliation',sql:"select * from gold.dq_reconciliation where status = 'differs';",view:el=>{el.innerHTML=dqDiffs();dqOneOpen(el)}},
  ...(BQ.check?[{id:'bigquery-check',isNew:true,subject:'quality',form:'Table',q:'Can the chain counts be checked?',f:BQ.check.f,ans:BQ.check.ans,src:['bigquery','nearblocks','rpc'],read:BQ.check.read,table:'gold.dq_reconciliation',sql:BQ.check.sql,exact:BQ.check.rows,view:BQ.check.view}]:[]),
- {id:'untestable',isNew:true,subject:'quality',form:'Table',q:'What can the data not settle?',f:`${dqCap(numWord(TH.open.length))} of the ${TH.scorecard.length+TH.open.length} claims have no public data to test them, so they stay off the scorecard`,ans:[String(TH.open.length),`of ${TH.scorecard.length+TH.open.length} claims no public source can test`],src:['registry'],read:`A claim goes on the scorecard only when a public source can test it. These ${numWord(TH.open.length)} stay listed here so that their absence from the scorecard is not read as a result: ${numWord(TH.open.filter(c=>c.side==='bear').length)} would count against the long case and ${numWord(TH.open.filter(c=>c.side==='bull').length)} for it.`,table:'gold.fct_thesis_scorecard, gold.dim_claim',sql:`select s.claim, s.side, c.pillar, c.test\nfrom gold.fct_thesis_scorecard s\njoin gold.dim_claim c using (claim_id)\nwhere s.status = 'not_testable';`,exact:()=>({cols:['claim','side','pillar','test'],rows:TH.open.map(c=>[c.claim,c.side,c.pillar,c.test])}),view:el=>{el.innerHTML=dqOpen()}},
- {id:'method',subject:'quality',form:'Table',q:'How were the claims chosen?',f:'The claims were cut from 29 to 20 on 11 November 2026 by four rules, and three were added on 12 November',ans:[String(DQ_RULES.length),'rules a claim had to pass'],src:['registry'],read:`On 12 November 2026 three claims were added and two were pointed at a different measure. On 13 November the claim on fee growth was moved from a yearly window to quarters, the window the other growth claims read. The bars were written on 10 to 12 November with the readings in view, so they are round bars for what each claim means, not predictions. Today ${TH.scorecard.length} claims are tested on the <a href="#overview">scorecard</a>${TH.open.length?` and ${numWord(TH.open.length)} cannot be tested (see <a href="#a-untestable">the question before this one</a>)`:''}. The query lists each bar with the reason written for it.`,table:'gold.dim_claim',sql:`-- Each tested claim with the part of the case it sits on, its bar and the reason written for the bar\nselect claim_id, pillar, side, comparison, threshold, unit, why_this_threshold\nfrom gold.dim_claim\nwhere comparison is not null\norder by pillar, claim_id;`,exact:()=>({cols:['claim_id','pillar','side','comparison','threshold','unit','why_this_threshold'],rows:[...TH.scorecard].sort((a,b)=>d3.ascending(a.pillar,b.pillar)||d3.ascending(a.claim_id,b.claim_id)).map(c=>[c.claim_id,c.pillar,c.side,c.comparison,c.threshold,c.unit,c.why])}),view:el=>{el.innerHTML=dqMethod()}},
+ {id:'untestable',isNew:true,subject:'quality',form:'Table',q:'What can the data not settle?',f:`${dqCap(numWord(TH.open.length))} of the ${TH.scorecard.length+TH.open.length} claims cannot be settled by the data yet, so they stay off the scorecard`,ans:[String(TH.open.length),`of ${TH.scorecard.length+TH.open.length} claims the data cannot settle yet`],src:['registry'],read:`A claim goes on the scorecard only when the data can settle it. ${dqOpenKinds()} They stay listed here so that their absence from the scorecard is not read as a result: ${numWord(TH.open.filter(c=>c.side==='bear').length)} would count against the long case and ${numWord(TH.open.filter(c=>c.side==='bull').length)} for it.`,table:'gold.fct_thesis_scorecard, gold.dim_claim',sql:`select s.claim, s.side, c.pillar, c.test\nfrom gold.fct_thesis_scorecard s\njoin gold.dim_claim c using (claim_id)\nwhere s.status in ('not_testable', 'not_settled');`,exact:()=>({cols:['claim','side','pillar','test'],rows:TH.open.map(c=>[c.claim,c.side,c.pillar,c.test])}),view:el=>{el.innerHTML=dqOpen()}},
+ {id:'method',subject:'quality',form:'Table',q:'How were the claims chosen?',f:'The claims were cut from 29 to 20 on 11 November 2026 by four rules; three were added on 12 November and one on 14 November',ans:[String(DQ_RULES.length),'rules a claim had to pass'],src:['registry'],read:`On 12 November 2026 three claims were added and two were pointed at a different measure. On 13 November the claim on fee growth was moved from a yearly window to quarters, the window the other growth claims read. On 14 November that claim was pointed at the median peer, which the claim on price already read, the hypothesis that Intents volume leads usage was moved to the claims the data cannot settle, and a claim on Intents' share of the chain's transactions was added. The bars were written on 10 to 14 November with the readings in view, so they are round bars for what each claim means, not predictions. Today ${TH.scorecard.length} claims are tested on the <a href="#overview">scorecard</a>${TH.open.length?` and ${numWord(TH.open.length)} cannot be settled (see <a href="#a-untestable">the question before this one</a>)`:''}. The query lists each bar with the reason written for it.`,table:'gold.dim_claim',sql:`-- Each tested claim with the part of the case it sits on, its bar and the reason written for the bar\nselect claim_id, pillar, side, comparison, threshold, unit, why_this_threshold\nfrom gold.dim_claim\nwhere comparison is not null\norder by pillar, claim_id;`,exact:()=>({cols:['claim_id','pillar','side','comparison','threshold','unit','why_this_threshold'],rows:[...TH.scorecard].sort((a,b)=>d3.ascending(a.pillar,b.pillar)||d3.ascending(a.claim_id,b.claim_id)).map(c=>[c.claim_id,c.pillar,c.side,c.comparison,c.threshold,c.unit,c.why])}),view:el=>{el.innerHTML=dqMethod()}},
  ...(CZH?[{id:'steady',isNew:true,subject:'quality',form:'Step lines',q:'How steady is the count?',f:CZH.f,ans:CZH.ans,src:CZH.src,read:CZH.read.count,table:'gold.fct_thesis_scorecard_daily',sql:'',view:CZH.view.count}]:[]),
 ];
 
@@ -4914,7 +4940,7 @@ const sxHl=sql=>sxEsc(sql).replace(SX_RE,(m,c,s,k,n)=>c?`<i class="c">${c}</i>`:
 const SX_FIND=svg('<circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4"/>',15);
 const HERO_RANGES={All:null,'1Y':'1Y','6M':'6M'};
 /* The scorecard on the home page. Where each claim's evidence sits on the site today; a claim with no chart yet goes to its subject. */
-const CLAIM_AT={intents_is_gaining_share:'a-market-share',volume_stayed_above_2bn_a_month:'a-intents-volume',capture_is_rising:'a-revenue-drivers',fee_base_is_widening:'a-who-pays',revenue_reaches_the_wallets:'a-wallet-check',revenue_wallets_keep_their_near:'a-wallet-use',etf_took_in_more_than_issuance:'a-etf-absorption',offsets_are_rising:'a-issuance-share',unlocks_are_behind:'a-unlocks',a_doubling_of_volume_reaches_deflation_after_the_cut:'a-net-issuance',near_fees_outgrew_every_peer:'a-fee-growth',near_is_dearer_than_the_median_peer:'a-rerating',fees_depend_on_one_partner:'a-who-pays',zcash_is_on_a_fifth_of_volume:'a-where-swaps-go',usage_is_falling:'a-accounts',intents_volume_leads_usage:'a-volume-and-users',ten_pools_hold_a_third:'a-concentration',liquid_staking_is_shrinking:'a-near-at-work',dollars_are_arriving_in_intents:'a-dollars'};
+const CLAIM_AT={intents_is_gaining_share:'a-market-share',volume_stayed_above_2bn_a_month:'a-intents-volume',capture_is_rising:'a-revenue-drivers',fee_base_is_widening:'a-who-pays',revenue_reaches_the_wallets:'a-wallet-check',revenue_wallets_keep_their_near:'a-wallet-use',etf_took_in_more_than_issuance:'a-etf-absorption',offsets_are_rising:'a-issuance-share',unlocks_are_behind:'a-unlocks',a_doubling_of_volume_reaches_deflation_after_the_cut:'a-net-issuance',near_fees_outgrew_the_median_peer:'a-fee-growth',near_is_dearer_than_the_median_peer:'a-rerating',fees_depend_on_one_partner:'a-who-pays',zcash_is_on_a_fifth_of_volume:'a-where-swaps-go',usage_is_falling:'a-accounts',intents_volume_leads_usage:'a-volume-and-users',intents_share_of_transactions_is_rising:'a-intents-traffic',ten_pools_hold_a_third:'a-concentration',liquid_staking_is_shrinking:'a-near-at-work',dollars_are_arriving_in_intents:'a-dollars'};
 /* A claim's comparison in words, for a bar written out in full */
 const SC_CMP={'>=':'at least','<=':'at most'};
 const cap=s=>s.charAt(0).toUpperCase()+s.slice(1);
@@ -4934,7 +4960,7 @@ const scNum=(v,u,bar)=>{if(v==null)return '–';const a=Math.abs(v);
    result with its number, in the same order. Counts, words and marks all come from gold.fct_thesis_scorecard, so the
    section redraws itself whatever registry/claims.csv holds. Claims that cannot be tested stay off this page.
    ============================================================================================ */
-const csTested=()=>TH.scorecard.filter(c=>c.status!=='not_testable');
+const csTested=()=>TH.scorecard.filter(c=>c.status==='holds'||c.status==='fails');
 /* A close call sits within 15% of a bar of its own size, so the next reading could turn it. A bar of zero has no size. */
 const CS_NEAR=.15,csNear=c=>!!c.threshold&&c.value!=null&&Math.abs(c.value/c.threshold-1)<=CS_NEAR;
 const csNearWords=c=>{const d=c.value-c.threshold,a=Math.abs(d),u=c.unit,p=trim0((a*100).toFixed(1));
@@ -5006,6 +5032,10 @@ const czLede=P=>{
       :`${czWord(a)} of the ${czWord(n)} tests of ${p.short} ${a===1?'counts':'count'} against it`)});
   if(bits.length)s.push(cap(bits.length<3?bits.join(', and '):czList(bits))+'.');
   return s.join(' ')};
+/* The same count by what a test reads (dim_claim.reading): where NEAR stands against a fixed bar, and which way it is
+   moving between two stretches of time. A long case is a case about direction, so the two are said apart. */
+const czWays=T=>{const of=k=>T.filter(c=>c.reading===k),st=of('state'),di=of('direction'),f=a=>a.filter(c=>c.stands==='for').length;
+  return st.length&&di.length?`Of the ${czWord(st.length)} tests of where NEAR stands today, ${czWord(f(st))} ${f(st)===1?'supports':'support'} the case; of the ${czWord(di.length)} tests of which way it is moving, ${czWord(f(di))} ${f(di)===1?'does':'do'}.`:''};
 /* The series a claim rests on, where the site carries one. A small line beside the claim shows whether its result is
    a trend or one reading; `bar` adds the claim's own bar where the series is in the bar's unit. A claim with no entry
    here, or whose series is missing, simply has no line. */
@@ -5018,12 +5048,13 @@ const CASE_TREND={
   etf_took_in_more_than_issuance:c=>({v:TH.etfAbsorption.ratio30.filter(v=>v!=null),bar:c.threshold}),
   offsets_are_rising:()=>({v:TH.dilution.offs.slice(-420)}),
   unlocks_are_behind:()=>{const k=LC.more.locked;return{v:k.lockups.map((x,i)=>x+(k.foundation[i]||0)).slice(-160)}},
-  near_fees_outgrew_every_peer:()=>({v:LC.peerFeesWeekly.near.fees.slice(-78)}),
+  near_fees_outgrew_the_median_peer:()=>({v:LC.peerFeesWeekly.near.fees.slice(-78)}),
   near_is_dearer_than_the_median_peer:c=>{const mm=TH.multiples.monthly,near=mm['near|app_fees'],peers=Object.keys(mm).filter(k=>k.endsWith('|app_fees')&&!k.startsWith('near|')).map(k=>new Map(mm[k].m.map((m,i)=>[m,mm[k].v[i]])));
     return{v:near.m.map((m,i)=>{const p=peers.map(x=>x.get(m)).filter(x=>x>0);return near.v[i]>0&&p.length>2?near.v[i]/d3.median(p):null}),bar:c.threshold}},
   fees_depend_on_one_partner:c=>({v:TH.concentration.filter(r=>r.dimension==='channel_fees'&&r.complete).map(r=>r.top1),bar:c.threshold}),
   zcash_is_on_a_fifth_of_volume:c=>({v:TH.oneclickMix.zec,bar:c.threshold}),
   usage_is_falling:()=>({v:USE.sigRoll.slice(-400)}),
+  intents_share_of_transactions_is_rising:()=>({v:BQ.traffic?BQ.traffic.roll:[]}),
   ten_pools_hold_a_third:c=>({v:LC.validatorsDaily.top10.slice(-400),bar:c.threshold}),
   liquid_staking_is_shrinking:()=>{const L=MO.lstDaily;return{v:L.d.map((_,i)=>d3.sum(Object.values(L.by),v=>v[i]||0)).slice(-400)}},
   dollars_are_arriving_in_intents:()=>({v:CPL.Q.dollars.slice(CPL.af)}),
@@ -5059,7 +5090,9 @@ const GROUP_NOTE={
   growth:()=>VOL30==null?'':`The newest 30 days of volume are ${fmt.pct(Math.abs(VOL30),0)} ${VOL30<0?'below':'above'} the 30 before.`,
 };
 const CLAIM_NOTE={
-  near_fees_outgrew_every_peer:()=>{const l=MKT.leadQ,y=MKT.leadYr,w=v=>`${v<0?'trails':'leads'} by ${Math.abs(v*100).toFixed(0)} points`;return l==null?'':`On the newest 90 days against the 90 before, NEAR ${w(l)}${y==null?'':`; against the same 90 days a year earlier, it ${w(y)}`}.`},
+  near_fees_outgrew_the_median_peer:()=>{const F=MKT.fast;return !F||F.g==null?'':`The fastest peer, ${F.name}, ${F.g<0?'fell':'rose'} ${fmt.pct(Math.abs(F.g),1)}: ${Math.abs(F.lead)<.01?'level with NEAR':`${Math.abs(F.lead*100).toFixed(0)} points ${F.lead>0?'behind':'ahead of'} NEAR`}.`},
+  intents_is_gaining_share:()=>BQ.traffic?BQ.traffic.check:'',
+  usage_is_falling:()=>{const G=BQ.game;return G?`${fmt.pct(G.share,0)} of the accounts that signed any transaction in these 30 days called ${G.name}. Outside it ${fmt.int(G.outside_now)} accounts a day signed, against ${fmt.int(G.outside_before)} six months earlier.`:''},
   capture_is_rising:()=>{const u=lastOf(ueDone),p=lastOf(TH.unitEconomics),part=p&&!p.complete&&p.fees>0?p:null;
     return `${fmt.pct(u.capture,0)} in ${monthName(u.m)}${part?` and ${fmt.pct(part.capture,0)} in ${monthName(part.m)} so far`:''}${u.m===lastMonth.start&&isFinite(LINES.share)?`; ${fmt.pct(LINES.share,0)} of ${monthName(u.m)}'s receipts match a fee that names the wallets`:''}.`},
   zcash_is_on_a_fifth_of_volume:()=>`${fmt.pct(lastOf(MIX.zec),0)} in ${monthName(lastOf(MIX.m))} alone.`,
@@ -5070,7 +5103,7 @@ const CLAIM_NOTE={
   revenue_reaches_the_wallets:c=>c.status==='fails'?"Because it does not hold, the revenue on this site is what NEAR's wallets received, not what NEAR reports.":'',
 };
 /* Claims that read complete months; the others read to their newest day */
-const CZ_MONTHLY=['intents_is_gaining_share','capture_is_rising','fee_base_is_widening','dollars_are_arriving_in_intents','volume_stayed_above_2bn_a_month','fees_depend_on_one_partner','zcash_is_on_a_fifth_of_volume','near_fees_outgrew_every_peer'];
+const CZ_MONTHLY=['intents_is_gaining_share','capture_is_rising','fee_base_is_widening','dollars_are_arriving_in_intents','volume_stayed_above_2bn_a_month','fees_depend_on_one_partner','zcash_is_on_a_fifth_of_volume','near_fees_outgrew_the_median_peer','intents_share_of_transactions_is_rising'];
 /* The stretch of time each claim's test reads, in words, worked out from the day the scorecard measured it. The row on
    the front page and the line under the claim's question both say it, so a result over three months is never taken
    for today's figure. Each entry follows the claim's test in registry/claims.csv; a claim with no entry says its day. */
@@ -5078,7 +5111,7 @@ const czMonth=(d,k)=>{const t=new Date(d+'T00:00:00Z');return new Date(Date.UTC(
 const czQtr=(d,k)=>`${monShort(czMonth(d,k-2))} to ${monShort(czMonth(d,k))}`;
 const czQtrs=d=>`${czQtr(d,0)}, against ${czQtr(d,-3)}`;
 const CLAIM_SPAN={
-  intents_is_gaining_share:czQtrs,capture_is_rising:czQtrs,fee_base_is_widening:czQtrs,dollars_are_arriving_in_intents:czQtrs,near_fees_outgrew_every_peer:czQtrs,
+  intents_is_gaining_share:czQtrs,capture_is_rising:czQtrs,fee_base_is_widening:czQtrs,dollars_are_arriving_in_intents:czQtrs,near_fees_outgrew_the_median_peer:czQtrs,intents_share_of_transactions_is_rising:czQtrs,
   volume_stayed_above_2bn_a_month:d=>`The lowest month of ${czQtr(d,0)}`,
   fees_depend_on_one_partner:d=>czQtr(d,0),zcash_is_on_a_fifth_of_volume:d=>czQtr(d,0),
   revenue_reaches_the_wallets:d=>`All time, to ${dm(d)}`,revenue_wallets_keep_their_near:d=>`All time, to ${dm(d)}`,
@@ -5107,7 +5140,7 @@ const czSection=T=>{
     <div class="sec-head"><h2 id="case-h">The case so far</h2><span class="cz-tally"><span><i class="cz-m is-for" aria-hidden="true"></i><b>${nF}</b> ${nF===1?'result supports':'results support'} the long case</span><span><i class="cz-m is-against" aria-hidden="true"></i><b>${nA}</b> ${nA===1?'counts':'count'} against it</span></span></div>
     <p class="cz-lede">${czVerdict(P)}</p>
     ${czTry(czStake)?`<p class="cz-sub cz-stake">${czTry(czStake)}</p>`:''}
-    <p class="cz-sub">${czLede(P)}</p>
+    <p class="cz-sub">${czLede(P)}${czWays(T)?` ${czWays(T)}`:''}</p>
     <div class="card cz" id="cz">
       <ol class="cz-rail" style="--n:${P.length}" aria-label="The parts of the long case, in order">${rail}</ol>
       <div class="cz-tip" id="cz-tip" hidden></div>

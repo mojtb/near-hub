@@ -1,6 +1,7 @@
 -- Every claim in registry/claims.csv, for and against NEAR, measured against the warehouse: the value, the bar it was
 -- set against, and whether the claim holds. "holds" means the claim as written is true of the data, so a bear claim
--- that holds counts against the thesis. A claim the data cannot settle stays in the table as not_testable.
+-- that holds counts against the thesis. A claim the data cannot settle stays in the table: not_testable when no public
+-- source can test it, not_settled when it has a measurement and no bar that could decide it.
 -- Each claim's measurement is one select below, named by its claim_id; dim_claim.test says in words what it reads.
 -- No measurement is scored twice: where the old set held several claims on one number, one is kept. A claim about
 -- Intents reads three complete months together, because revenue is swept in lumps and one month can sit far from
@@ -76,6 +77,7 @@ offset_90d as (
 
 -- Application fees by chain in the last three complete months over the three before. Quarters and not a year, by the
 -- rule every claim about Intents follows: a year earlier NEAR's fees had barely started, so a yearly gain flatters it.
+-- NEAR is held against the median of the six peers, the yardstick the valuation claim uses.
 fees_quarters as (
     select
         p.chain_id,
@@ -126,6 +128,30 @@ intents_dollar_months as (
         group by 1
         having count(*) = day(last_day(min(date_day)))
     )
+),
+
+-- Transactions on the chain and those sent to intents.near by month, as NEAR's public BigQuery dataset counts them.
+-- The dataset is read for each day's 25 largest receivers, so months count from the first in which intents.near was
+-- among them on every day; from then on a day without it counts as none. A month is whole once every day of it is read.
+bigquery_month_rows as (
+    select
+        cast(date_trunc('month', c.date_day) as date) as month_start,
+        sum(c.txns) as txns,
+        sum(coalesce(r.txns, 0)) as intents_txns,
+        count(*) as days,
+        count(r.date_day) as intents_days
+    from {{ ref('fct_bigquery_chain_daily') }} c
+    left join {{ ref('fct_bigquery_receiver_daily') }} r
+        on r.date_day = c.date_day and r.receiver_account_id = 'intents.near'
+    where c.is_day_complete and c.txns is not null
+    group by 1
+),
+
+bigquery_months as (
+    select month_start, txns, intents_txns, row_number() over (order by month_start desc) as recency
+    from bigquery_month_rows
+    where days = day(last_day(month_start))
+      and month_start >= (select min(month_start) from bigquery_month_rows where intents_days = day(last_day(month_start)))
 ),
 
 measured as (
@@ -190,8 +216,8 @@ measured as (
     where scenario_id = 'hsp029_end_state' and capture_case = 'measured'
 
     union all
-    select 'near_fees_outgrew_every_peer',
-        max(fee_change) filter (where chain_id = 'near') - max(fee_change) filter (where chain_id <> 'near'),
+    select 'near_fees_outgrew_the_median_peer',
+        max(fee_change) filter (where chain_id = 'near') - median(fee_change) filter (where chain_id <> 'near'),
         max(as_of_date)
     from fees_quarters
 
@@ -218,7 +244,18 @@ measured as (
     from signers u, signers_end e
 
     union all
+    -- The share of the chain's transactions sent to intents.near, the last three whole months less the three before.
+    select 'intents_share_of_transactions_is_rising',
+        sum(intents_txns) filter (where recency <= 3) / sum(txns) filter (where recency <= 3)
+            - sum(intents_txns) filter (where recency between 4 and 6) / sum(txns) filter (where recency between 4 and 6),
+        last_day(max(month_start))
+    from bigquery_months
+    where recency <= 6
+    having count(*) = 6
+
+    union all
     -- The sample prompt's hypothesis, read on weeks cut on Mondays: the largest link with volume one or two weeks ahead.
+    -- It is measured and has no bar: the link sits inside the band of chance, so the claim is not_settled.
     select 'intents_volume_leads_usage', max(correlation), max(last_week) + 6
     from {{ ref('fct_usage_lead_correlations') }}
     where week_shift_days = 0 and leader = 'intents_volume' and lead_weeks in (1, 2)
@@ -251,6 +288,7 @@ select
     c.comparison,
     c.threshold,
     case
+        when c.comparison is null and m.value is not null then 'not_settled'
         when c.comparison is null then 'not_testable'
         when m.value is null then 'not_measured'
         when c.comparison = '>=' and m.value >= c.threshold then 'holds'

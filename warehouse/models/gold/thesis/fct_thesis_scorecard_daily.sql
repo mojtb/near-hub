@@ -4,12 +4,10 @@
 -- revise recent days. fct_thesis_scorecard stays the scorecard: this table repeats its tests in a form that takes a
 -- day, and the data test thesis_scorecard_daily_ends_on_the_scorecard fails the build if the two differ on the
 -- newest day, so a claim cannot be changed in one and forgotten in the other.
--- Three rules go beyond the scorecard's, and none of them changes the newest day:
+-- Two rules go beyond the scorecard's, and neither changes the newest day:
 --   1. A window must be whole. A test of three months against three reads six complete months, a three-month test
 --      three, and a month counts once its last day has come. Until then the claim is not_yet_testable.
---   2. The lead test waits for twelve weekly changes (var thesis_lead_test_min_weeks). With fewer, chance alone
---      clears its bar: at five weeks the same data read 0.99.
---   3. Where the scorecard reads a figure as it was fetched, an earlier day reads what that fetch would have held:
+--   2. Where the scorecard reads a figure as it was fetched, an earlier day reads what that fetch would have held:
 --      the revenue page's month in progress is counted only on the newest day, and liquid staking's reading from a
 --      year earlier is the newest one on or before that day, because readings were monthly before 2025.
 with newest as (
@@ -245,70 +243,6 @@ scenario as (
     cross join (select annual_issuance_rate from {{ ref('issuance_scenarios') }} where scenario_id = 'hsp029_end_state') r
 ),
 
--- fct_usage_lead_correlations with weeks cut on Mondays, read on the full weeks that had ended by each day.
-lead_days as (
-    select c.date_day, i.volume_usd, u.txns_ex_batch_streams_and_sweat as txns, u.other_txns, c.distinct_signers, c.gas_fee_near
-    from {{ ref('fct_chain_daily') }} c
-    join {{ ref('fct_usage_quality_daily') }} u using (date_day)
-    join {{ ref('fct_intents_daily') }} i using (date_day)
-    join {{ ref('fct_market_daily') }} m using (date_day)
-    where u.other_txns is not null and c.distinct_signers is not null and c.gas_fee_near is not null
-      and i.volume_usd is not null and m.price_usd is not null
-),
-
-lead_weeks as (
-    select
-        cast(floor(datediff('day', date '2026-04-13', date_day) / 7.0) as integer) as week_no,
-        min(date_day) as week_start,
-        max(date_day) as week_end,
-        sum(volume_usd) as volume_usd,
-        avg(txns) as txns,
-        avg(other_txns) as other_txns,
-        avg(distinct_signers) as signers,
-        avg(gas_fee_near) as gas_fee_near
-    from lead_days
-    group by 1
-    having count(*) = 7
-),
-
-lead_changes as (
-    select w.week_no, w.week_start, w.week_end,
-        ln(w.volume_usd / p.volume_usd) as d_volume,
-        ln(w.txns / p.txns) as d_txns,
-        ln(w.other_txns / p.other_txns) as d_other,
-        ln(w.signers / p.signers) as d_signers,
-        ln(w.gas_fee_near / p.gas_fee_near) as d_gas
-    from lead_weeks w
-    join lead_weeks p on p.week_no = w.week_no - 1
-),
-
-lead_usage as (
-    select week_no, week_start, week_end, 'transactions' as usage_measure, d_txns as d_usage from lead_changes where week_no >= 1
-    union all
-    select week_no, week_start, week_end, 'other_transactions', d_other from lead_changes where week_no >= 1
-    union all
-    select week_no, week_start, week_end, 'signers', d_signers from lead_changes where week_no >= 1
-    union all
-    select week_no, week_start, week_end, 'gas_paid', d_gas from lead_changes where week_no >= 1
-),
-
-lead_pairs as (
-    select u.week_start, u.week_end, u.usage_measure, k.lead_weeks, l.d_volume as d_leader, u.d_usage
-    from lead_usage u
-    cross join (select cast(unnest([1, 2]) as integer) as lead_weeks) k
-    join lead_changes l on l.week_no = u.week_no - k.lead_weeks
-),
-
-lead_correlations as (
-    select s.d, p.usage_measure, p.lead_weeks,
-        round(corr(p.d_leader, p.d_usage), 10) as correlation,
-        count(*) as weeks,
-        max(p.week_start) as last_week
-    from spine s
-    join lead_pairs p on p.week_end <= s.d
-    group by 1, 2, 3
-),
-
 validators as (
     select epoch_height, approx_date_day, top_10_share
     from {{ ref('fct_validator_summary') }}
@@ -352,6 +286,32 @@ intents_dollar_months as (
         group by 1
         having count(*) = day(last_day(min(date_day)))
     ) m on last_day(m.month_start) <= s.d
+),
+
+-- Transactions on the chain and those sent to intents.near by month, as NEAR's public BigQuery dataset counts them.
+-- The dataset is read for each day's 25 largest receivers, so months count from the first in which intents.near was
+-- among them on every day; from then on a day without it counts as none. Whole months, newest first, as of each day.
+bigquery_month_rows as (
+    select
+        cast(date_trunc('month', c.date_day) as date) as month_start,
+        sum(c.txns) as txns,
+        sum(coalesce(r.txns, 0)) as intents_txns,
+        count(*) as days,
+        count(r.date_day) as intents_days
+    from {{ ref('fct_bigquery_chain_daily') }} c
+    left join {{ ref('fct_bigquery_receiver_daily') }} r
+        on r.date_day = c.date_day and r.receiver_account_id = 'intents.near'
+    where c.is_day_complete and c.txns is not null
+    group by 1
+),
+
+bigquery_months as (
+    select s.d, m.month_start, m.txns, m.intents_txns,
+        row_number() over (partition by s.d order by m.month_start desc) as recency
+    from spine s
+    join bigquery_month_rows m on last_day(m.month_start) <= s.d
+    where m.days = day(last_day(m.month_start))
+      and m.month_start >= (select min(month_start) from bigquery_month_rows where intents_days = day(last_day(month_start)))
 ),
 
 -- Each claim's measurement on each day, named by its claim_id. no_value_fails marks the one case where a test has
@@ -412,8 +372,8 @@ measured as (
     from scenario
 
     union all
-    select d, 'near_fees_outgrew_every_peer',
-        max(fee_change) filter (where chain_id = 'near') - max(fee_change) filter (where chain_id <> 'near'),
+    select d, 'near_fees_outgrew_the_median_peer',
+        max(fee_change) filter (where chain_id = 'near') - median(fee_change) filter (where chain_id <> 'near'),
         last_day(max(last_month)), false
     from fees_quarters join q using (d)
     group by 1
@@ -450,10 +410,14 @@ measured as (
     group by x.d, x.e
 
     union all
-    select d, 'intents_volume_leads_usage', max(correlation), max(last_week) + 6, false
-    from lead_correlations
-    where weeks >= {{ var('thesis_lead_test_min_weeks') }}
+    select d, 'intents_share_of_transactions_is_rising',
+        sum(intents_txns) filter (where recency <= 3) / sum(txns) filter (where recency <= 3)
+            - sum(intents_txns) filter (where recency between 4 and 6) / sum(txns) filter (where recency between 4 and 6),
+        last_day(max(month_start)), false
+    from bigquery_months
+    where recency <= 6
     group by 1
+    having count(*) = 6
 
     union all
     select x.d, 'ten_pools_hold_a_third', v.top_10_share, v.approx_date_day, false

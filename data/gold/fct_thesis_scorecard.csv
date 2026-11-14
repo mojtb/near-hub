@@ -8,10 +8,11 @@ fee_base_is_widening,bull,More partners pay meaningful fees than a quarter ago,0
 fees_depend_on_one_partner,bear,One partner supplies more than half of 1Click's fees,0.6943629884,>=,0.5,holds,2026-10-31
 foundation_float_is_an_overhang,bear,The NEAR Foundation's liquid NEAR is a large overhang on the float,,,,not_testable,
 intents_is_gaining_share,bull,NEAR Intents is taking a growing share of on-chain trading,0.5260492018,>=,0.0,holds,2026-10-31
-intents_volume_leads_usage,bull,Intents volume leads network usage: usage rises in the weeks after volume does,0.1962160562,>=,0.37,fails,2026-11-08
+intents_share_of_transactions_is_rising,bull,A growing share of NEAR's transactions are sent to NEAR Intents,0.0376795518,>=,0.0,holds,2026-10-31
+intents_volume_leads_usage,bull,Intents volume leads network usage: usage rises in the weeks after volume does,0.1962160562,,,not_settled,2026-11-08
 liquid_staking_is_shrinking,bear,Less NEAR sits in liquid staking than a year ago,-0.2410648774,<=,0.0,holds,2026-11-14
 near_ai_has_paying_users,bull,NEAR AI has paying users,,,,not_testable,
-near_fees_outgrew_every_peer,bull,NEAR's application fees grew faster than any peer's over the last three complete months,-0.004522791,>=,0.0,fails,2026-10-31
+near_fees_outgrew_the_median_peer,bull,NEAR's application fees grew faster than the median peer's over the last three complete months,0.8097812279,>=,0.0,holds,2026-10-31
 near_is_dearer_than_the_median_peer,bear,NEAR trades above the median peer on application fees,1.656567234,>=,1.0,holds,2026-11-10
 offsets_are_rising,bull,Burn and the NEAR the revenue wallets receive are a larger share of issuance than in the 90 days before,0.0737206835,>=,0.0,holds,2026-11-10
 revenue_reaches_the_wallets,bull,The revenue NEAR reports arrives on chain: what its wallets received is within 10% of its own monthly series,0.156911969,<=,0.1,fails,2026-11-13

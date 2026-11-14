@@ -30,7 +30,7 @@
 ## Where the case stands
 
 <!-- verdict:start -->
-**Not yet.** Over the 30 days to 2026-11-10, the fees NEAR's revenue wallets received and the gas burned offset **16.1%** of the new NEAR the chain created; to match it, Intents volume has to be **5.2×** today's, or **3.3×** once the voted cut of issuance to 1.6% is in force. Volume grew **58%** over the last year; at that pace, with the price and NEAR's share of fees unchanged, that is about **3.6 years** away, or **2.6** after the cut: arithmetic, not a forecast. At the snapshot of 2026-11-14, of 19 claims the data can test, **9** support the long case and **10** count against it; **4** more cannot be tested from public data. The closest result, "NEAR's application fees grew faster than any peer's over the last three complete months", fails by 0.45 points; reversed, the count would be **10** and **9**.
+**Not yet.** Over the 30 days to 2026-11-10, the fees NEAR's revenue wallets received and the gas burned offset **16.1%** of the new NEAR the chain created; to match it, Intents volume has to be **5.2×** today's, or **3.3×** once the voted cut of issuance to 1.6% is in force. Volume grew **58%** over the last year; at that pace, with the price and NEAR's share of fees unchanged, that is about **3.6 years** away, or **2.6** after the cut: arithmetic, not a forecast. At the snapshot of 2026-11-14, of 19 claims the data can test, **11** support the long case and **8** count against it; **5** more cannot be settled yet. Of the 10 that test where NEAR stands today, **4** support it; of the 9 that test which way it is moving, **7** do.
 <!-- verdict:end -->
 
 The count is not a vote, because the claims do not weigh the same. [THESIS.md](THESIS.md) says which one decides the
@@ -156,7 +156,7 @@ These lines are generated from the warehouse, and `make verify` fails if they st
 
 <!-- expected:start -->
 - Data through: **2026-11-13**, the last full UTC day before the pinned snapshot of 2026-11-14; `dq_freshness` lists any source that ends earlier
-- Gold tables and columns: **96** and **935**
+- Gold tables and columns: **96** and **936**
 - Reconciliation: **112** comparisons agree, **13** differ, each with a written explanation
 - Issuance over the last 30 days, from supply change plus burn: **2.47%** a year, against **2.50%** in the protocol config
 - Circulating supply, built from NEAR's lockup contracts: **1,309.54M** NEAR, **99.84%** of total supply; on 2025-08-26, the last day NearBlocks computed its own, **1,249.72M** against **1,249.65M**
@@ -174,13 +174,13 @@ for this track. This is where each thing it asks for is in this repository.
 
 | The prompt asks for | Where it is here |
 |---|---|
-| A working hypothesis, tested, with what cuts against it: "cross-chain volume through NEAR Intents is a better leading indicator of real network usage than token price" | It is claim `intents_volume_leads_usage` on the scorecard, and it fails. [THESIS.md](THESIS.md#the-sample-prompts-hypothesis) gives the test and its result; the table is `gold.fct_usage_lead_correlations` |
+| A working hypothesis, tested, with what cuts against it: "cross-chain volume through NEAR Intents is a better leading indicator of real network usage than token price" | It is claim `intents_volume_leads_usage`: the test finds no lead, and with so few weeks a link that weak cannot be told from chance, so it is listed with the claims the data cannot settle and counts neither for the case nor against it. [THESIS.md](THESIS.md#the-sample-prompts-hypothesis) gives the test and its result; the table is `gold.fct_usage_lead_correlations` |
 | SQL against the NEAR BigQuery public dataset for daily active accounts, transaction counts and contract usage, filtered on `block_date` | [`ingest/sql/bigquery/`](ingest/sql/bigquery), one file per query: `transactions_daily.sql` counts transactions and distinct signers by day (`gold.fct_bigquery_chain_daily`), and `actions_daily.sql` counts calls, signers and callers by contract (`gold.fct_bigquery_contract_daily`). Each daily query is cut to its partitions by `block_date`, and priced with a dry run before it runs |
 | A pull from the NEAR Intents Explorer API for swap volume | [`ingest/sources/intents.py`](ingest/sources/intents.py) reads it day by day from November 2024; the responses are in `data/bronze/intents_explorer/` and the tables are `gold.fct_intents_1click_daily` and the five beside it |
 | One command that rebuilds every chart from raw data | `make all`, from the responses in `data/bronze/`, with no key and no API call |
 | A static dashboard page: each chart, the query behind it, and one plain sentence on what it shows | [nearhub.tech](https://nearhub.tech), which is [`site/index.html`](site/index.html). Every question has its finding as the heading, a chart, a reading, and a Query button that shows the SQL that drew it. Two questions on the Usage page and one on the Checks page are drawn from the BigQuery tables |
 | `THESIS.md` with the claim, the evidence for it, the evidence against it, and what result would change my mind | [THESIS.md](THESIS.md) has those four sections under those names, and opens with where the case stands |
-| Never invent numbers; if a metric cannot be computed from these sources, say so | THESIS.md and the numbers on this page are written by the build from the warehouse, and `make verify` fails when they stop matching it. THESIS.md lists four claims the data cannot settle, and what these sources cannot compute |
+| Never invent numbers; if a metric cannot be computed from these sources, say so | THESIS.md and the numbers on this page are written by the build from the warehouse, and `make verify` fails when they stop matching it. THESIS.md lists the claims the data cannot settle, and what these sources cannot compute |
 
 ## What the warehouse holds
 

@@ -8,6 +8,7 @@ wording, edit this module. Running it twice in a row writes the same file.
 from __future__ import annotations
 
 import csv
+import hashlib
 import json
 import re
 import sys
@@ -93,13 +94,23 @@ WORDS = {">=": "at least", "<=": "at most"}
 COUNT = ["none", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"]
 order = {r["claim_id"]: i for i, r in enumerate(csv.DictReader((ROOT / "registry" / "claims.csv").open()))}
 claims = sorted(rows("""
-    select s.claim_id, s.side, c.pillar, s.claim, s.value, s.comparison, s.threshold, c.unit, s.status, s.as_of_date,
+    select s.claim_id, s.side, c.pillar, c.reading, s.claim, s.value, s.comparison, s.threshold, c.unit, s.status, s.as_of_date,
            c.test, c.why_this_threshold as why
     from gold.fct_thesis_scorecard s join gold.dim_claim c using (claim_id)"""), key=lambda r: order[r["claim_id"]])
 for c in claims:
-    c["stands"] = "open" if c["status"] == "not_testable" else "for" if (c["side"] == "bull") == (c["status"] == "holds") else "against"
+    # not_testable and not_settled are both open: the data puts the claim on neither side
+    c["stands"] = "open" if c["status"] not in ("holds", "fails") else "for" if (c["side"] == "bull") == (c["status"] == "holds") else "against"
 tally = {k: sum(1 for c in claims if c["stands"] == k) for k in ("for", "against", "open")}
 tested = tally["for"] + tally["against"]
+# The same count by what a claim reads: where NEAR stands against a fixed bar, and which way it is moving
+READS = {"state": "Where NEAR stands", "direction": "Which way it is moving"}
+by_reading = {k: [c for c in claims if c["reading"] == k and c["stands"] != "open"] for k in READS}
+two_ways = (
+    f"Read by what they test, the two halves differ: of the {len(by_reading['state'])} claims that test where NEAR stands "
+    f"today, {sum(1 for c in by_reading['state'] if c['stands'] == 'for')} support the case, and of the "
+    f"{len(by_reading['direction'])} that test which way it is moving, "
+    f"{sum(1 for c in by_reading['direction'] if c['stands'] == 'for')} do. "
+) if by_reading["state"] and by_reading["direction"] else ""
 
 settled = one("select max(date_day) as d from gold.fct_intents_daily where not is_fee_revenue_provisional")["d"]
 last_day = one("select max(date_day) as d from gold.fct_supply_daily")["d"]
@@ -160,6 +171,7 @@ claim_notes = [s.strip() for s in re.split(r"(?<=[a-z])\.\s", catalog["dim_claim
 bars_note = next((s for s in claim_notes if "thresholds were written" in s), None)
 set_note = next((s for s in claim_notes if "was cut from" in s), None)
 added_note = next((s for s in claim_notes if "one claim was added" in s), None)
+moved_note = next((s for s in claim_notes if "On 2026-11-14" in s), None)
 by_id = {c["claim_id"]: c for c in claims}
 
 # Where a claim's row says less than it seems to. Each figure is read here, so none is typed.
@@ -187,7 +199,7 @@ close = closest_call(con)
 closest = by_id[close["claim_id"]]
 # The fee-growth claim: each side's growth over the scorecard's two quarters, and how the claim would have scored on
 # every nightly read of DefiLlama's fees since the newer quarter closed. Silver keeps each read; gold keeps the newest.
-fee = by_id["near_fees_outgrew_every_peer"]
+fee = by_id["near_fees_outgrew_the_median_peer"]
 QUARTERS = f"""date_day > date '{fee['as_of_date']}' - interval 6 month and date_day <= date '{fee['as_of_date']}'"""
 NEWER = f"""date_day > date '{fee['as_of_date']}' - interval 3 month"""
 fee_sides = rows(f"""
@@ -203,10 +215,16 @@ fee_reads = one(f"""
         where f.data_type = 'dailyFees' and {QUARTERS} and f.snapshot_date > date '{fee['as_of_date']}'
         group by 1, 2
     ), gaps as (
-        select snapshot_date, max(change) filter (where chain_id = 'near') - max(change) filter (where chain_id <> 'near') as gap
+        select snapshot_date,
+               max(change) filter (where chain_id = 'near') - max(change) filter (where chain_id <> 'near') as gap,
+               max(change) filter (where chain_id = 'near') - median(change) filter (where chain_id <> 'near') as median_gap
         from per_read group by 1
     )
-    select count(*) as reads, count(*) filter (where gap >= {fee['threshold']}) as held, min(gap) as low, max(gap) as high from gaps""")
+    select count(*) as reads, count(*) filter (where gap >= {fee['threshold']}) as held, min(gap) as low, max(gap) as high,
+           count(*) filter (where median_gap >= {fee['threshold']}) as median_held, min(median_gap) as median_low,
+           max(median_gap) as median_high
+    from gaps""")
+FEE_MOVED = date(2026, 11, 14)  # the day the claim was pointed at the median peer (registry/claims.csv says why)
 thin = [
     f"- The ETF claim is read over the last 30 days, {figure(etf['ratio_30d'], 'multiple')} what the chain issued. Since its first trading day "
     f"the fund has taken in {etf['ratio_all']:.2f}×, but that figure leans on its start: {pct(etf['first_week_near'] / etf['held_near'], 0)} "
@@ -217,11 +235,15 @@ thin = [
     f"- The closest call on the list is \"{closest['claim']}\": measured {figure(closest['value'], closest['unit'])} against a bar of "
     f"{WORDS[closest['comparison']]} {figure(closest['threshold'], closest['unit'], True)}. If that one result reversed, the count "
     f"would be {close['if_reversed'][0]} for and {close['if_reversed'][1]} against.",
-    f"- The fee-growth claim rests on two nearly equal numbers: NEAR's application fees grew {pct(fee_near['change'], 2)} and "
+    f"- The fee-growth claim has read the median peer since {day(FEE_MOVED)}. Against the fastest peer, as it read before, the "
+    f"result rested on two nearly equal numbers: NEAR's application fees grew {pct(fee_near['change'], 2)} and "
     f"{fee_peer['chain_id'].capitalize()}'s {pct(fee_peer['change'], 2)}, the last three complete months against the three before. "
     f"DefiLlama restates these series after the fact. Scored on each of the {fee_reads['reads']} nightly reads taken since that "
-    f"quarter closed, the claim held on {fee_reads['held']} and failed on {fee_reads['reads'] - fee_reads['held']}, with the gap "
-    f"between {figure(fee_reads['low'], fee['unit'])} and {figure(fee_reads['high'], fee['unit'])} "
+    f"quarter closed, the earlier form held on {fee_reads['held']} and failed on {fee_reads['reads'] - fee_reads['held']}, with the gap "
+    f"between {figure(fee_reads['low'], fee['unit'])} and {figure(fee_reads['high'], fee['unit'])}; the present form "
+    + (f"held on all {fee_reads['reads']}" if fee_reads['median_held'] == fee_reads['reads'] else
+       f"held on {fee_reads['median_held']} and failed on {fee_reads['reads'] - fee_reads['median_held']}")
+    + f", with the gap between {figure(fee_reads['median_low'], fee['unit'])} and {figure(fee_reads['median_high'], fee['unit'])} "
     "(`silver.stg_defillama__chain_fees` keeps every read).",
     f"- Zcash is near its bar too: {figure(zec['value'], zec['unit'])} of 1Click volume over three months against a bar of "
     f"{figure(zec['threshold'], zec['unit'], True)}, and {pct(zec_month['v'])} in {zec_month['d']:%B %Y} alone.",
@@ -280,6 +302,31 @@ signers_now = one("""
     from gold.fct_chain_daily, (select max(date_day) as d from gold.fct_chain_daily where distinct_signers is not null) e""")
 
 
+# The signer count follows one game: over the newest 30 days read from BigQuery and the 30 days ending 180 days
+# earlier, the accounts that signed any transaction, those that called the contract most accounts call (bq_top), and
+# the accounts that did not call it. A median, because a day of account deletions lifts the count for that day alone.
+game = one(f"""
+    with d as (
+        select c.date_day, c.signers as everyone, g.signers as game,
+               c.date_day > e.d - 30 as newest, c.date_day <= e.d - 180 and c.date_day > e.d - 210 as before
+        from gold.fct_bigquery_chain_daily c
+        join gold.fct_bigquery_contract_daily g on g.date_day = c.date_day and g.contract_id = '{bq_top["contract_id"]}'
+        cross join (select max(date_day) as d from gold.fct_bigquery_contract_daily) e
+    )
+    select sum(game) filter (where newest) / sum(everyone) filter (where newest) as share,
+           avg(game) filter (where newest) as game_now, avg(game) filter (where before) as game_before,
+           median(everyone - game) filter (where newest) as outside_now,
+           median(everyone - game) filter (where before) as outside_before,
+           count(*) filter (where newest) as days_now, count(*) filter (where before) as days_before
+    from d""")
+game_line = (
+    f" That count follows one game: over the same 30 days {pct(game['share'], 0)} of the accounts that signed called "
+    f"`{bq_top['contract_id']}`, and its signers went from {game['game_before']:,.0f} a day to {game['game_now']:,.0f} in six "
+    f"months. Outside it, a median of {game['outside_now']:,.0f} accounts a day signed, against {game['outside_before']:,.0f} "
+    "(`gold.fct_bigquery_contract_daily`)."
+) if game["days_now"] == 30 and game["days_before"] == 30 else ""
+
+
 def weeks_to_see(r: float) -> int:
     """The fewest weekly changes with which a correlation of r is more than chance alone gives."""
     n = 5
@@ -296,10 +343,13 @@ hypothesis = [
     "## The sample prompt's hypothesis",
     "",
     "The sample prompt for this track gives a working hypothesis to test: \"cross-chain volume through NEAR Intents is a "
-    "better leading indicator of real network usage than token price\". It is on the scorecard as "
-    f"`intents_volume_leads_usage`, and it {by_id['intents_volume_leads_usage']['status']}. The test reads {vol['weeks']} weekly "
-    f"changes, from the week of {day(vol['first_week'])} to the week of {day(vol['last_week'])} "
-    "(`gold.fct_usage_lead_correlations`).",
+    "better leading indicator of real network usage than token price\". "
+    + (f"It is on the scorecard as `intents_volume_leads_usage`, and it {by_id['intents_volume_leads_usage']['status']}. "
+       if by_id["intents_volume_leads_usage"]["stands"] != "open" else
+       "The warehouse tests it and finds no lead. A link this weak cannot be told from chance on so few weeks, so the "
+       "hypothesis is listed with the claims the data cannot settle yet, and it is counted neither for the case nor against it. ")
+    + f"The test reads {vol['weeks']} weekly changes, from the week of {day(vol['first_week'])} to the week of "
+    f"{day(vol['last_week'])} (`gold.fct_usage_lead_correlations`).",
     "",
     f"- One or two weeks ahead, the largest link between Intents volume and any of four usage measures is {corr(vol['best'])} "
     f"({USAGE_NAMES[vol['measure']]}), and the token price's is {corr(px['best'])} ({USAGE_NAMES[px['measure']]}). With "
@@ -315,7 +365,7 @@ hypothesis = [
     "to tell a correlation of 0.20 from chance), or a test on signers by application. The warehouse holds that count from "
     f"{day(bq_span['first_day'])} (`gold.fct_bigquery_contract_daily`), {bq_span['weeks']} weeks so far, too few to test.",
     f"- On the other usage claim: {signers_now['now']:,.0f} accounts a day signed a transaction over the newest 30 days. "
-    f"The claim that signers are falling stops holding above {signers_now['bar']:,.0f} a day.",
+    f"The claim that signers are falling stops holding above {signers_now['bar']:,.0f} a day.{game_line}",
     "",
     "What these sources cannot compute, so it is not on the site: daily active people (both account counts follow one game "
     "and one wallet app); who stands behind the HOT, Sweat and Kai-Ching accounts, which are named from their account ids "
@@ -333,16 +383,16 @@ hypothesis = [
 
 
 def reason(c: dict) -> str:
-    """Why a claim cannot be tested, as dim_claim.test words it."""
-    text = re.sub(r"^Not testable:\s*", "", c["test"]).rstrip(".")
+    """Why the data cannot settle a claim, as dim_claim.test words it."""
+    text = re.sub(r"^Not (testable|settled):\s*", "", c["test"]).rstrip(".")
     return text[:1].upper() + text[1:]
 
 
 def table(side_rows: list[dict]) -> list[str]:
-    out = ["| Claim | Result | Measured | Bar | As of |", "|---|---|---|---|---|"]
+    out = ["| Claim | It tests | Result | Measured | Bar | As of |", "|---|---|---|---|---|---|"]
     for c in side_rows:
         result = f"{'Bull' if c['side'] == 'bull' else 'Bear'} claim {c['status']}"
-        out.append(f"| {cell(c['claim'])} | {result} | **{figure(c['value'], c['unit'])}** | "
+        out.append(f"| {cell(c['claim'])} | {READS.get(c['reading'], '–')} | {result} | **{figure(c['value'], c['unit'])}** | "
                    f"{WORDS[c['comparison']]} {figure(c['threshold'], c['unit'], True)} | {day(c['as_of_date'])} |")
     return out
 
@@ -488,7 +538,7 @@ unlock_line = (f"- The unlock result rests on a definition. Lockups whose owners
                + (f"over the bar of {WORDS[unlocks['comparison']]} {figure(unlocks['threshold'], unlocks['unit'], True)}, and "
                   f"the claim would {'fail' if unlocks['status'] == 'holds' else 'hold'}." if over_bar else
                   f"still inside the bar of {WORDS[unlocks['comparison']]} {figure(unlocks['threshold'], unlocks['unit'], True)}."))
-NEAR_BAR = {"near_fees_outgrew_every_peer": "fee growth against peers", "zcash_is_on_a_fifth_of_volume": "Zcash's share of 1Click volume",
+NEAR_BAR = {"zcash_is_on_a_fifth_of_volume": "Zcash's share of 1Click volume",
             "unlocks_are_behind": "the share of supply still locked"}
 leaning = [by_id[k] for k in NEAR_BAR if by_id[k]["stands"] == "for"]
 ALL = {1: "It counts", 2: "Both count", 3: "All three count"}
@@ -588,10 +638,10 @@ watch_section = ["## What to watch", "", "What is due next, in date order, and w
 
 # Results that count for the case and read the same months: the tests on complete months among those for the case. A
 # claim measures NEAR Intents when its test names a table whose name holds "intents" (fct_intents_*,
-# fct_dune_intents_*). The rule reads the test text, so a claim on NEAR's fees in fct_peer_daily does not count, though
+# fct_dune_intents_*) or the contract intents.near. The rule reads the test text, so a claim on NEAR's fees in fct_peer_daily does not count, though
 # most of those fees are charged on Intents. Fewer than three sharing a window prints nothing.
 shared = [c for c in complete if c["stands"] == "for"]
-shared_intents = [c for c in shared if re.search(r"\bfct_\w*intents\w*", c["test"])]
+shared_intents = [c for c in shared if re.search(r"\bfct_\w*intents\w*|\bintents\.near\b", c["test"])]
 shared_line = (
     f"- {'Most' if 2 * len(shared) > tally['for'] else 'Several'} results that count for the case read the same months: "
     f"{len(shared)} of the {tally['for']} read the {span} to {day(months['this_end'])}" +
@@ -601,11 +651,43 @@ shared_line = (
      f". A strong or weak {stretch} would move them together, so they are fewer independent pieces of evidence than their "
      "number suggests.")
 ) if len(shared) >= 3 else None
-# The claims file as submitted carries an OpenTimestamps proof. The sentence is printed only when the proof is in the
-# repository, so this file never points to one that is not there.
-ots_line = (" The claims file as submitted is timestamped (`registry/claims.csv.ots`, an OpenTimestamps proof) and the "
-            "submitted state is tagged `submission-2026-11-14`, so a later change to a bar can be seen."
-            if (ROOT / "registry" / "claims.csv.ots").exists() else "")
+# NEAR's reported Intents volume against the chain's public record of its contract, over the two quarters the claims
+# on Intents read: transactions sent to intents.near (BigQuery) and the volume NEAR reports, each as a change from the
+# three months before. Printed only when BigQuery holds those months whole, which the claim on its share tells.
+share_claim = by_id.get("intents_share_of_transactions_is_rising")
+chain_check = one(f"""
+    select (select sum(txns) filter (where date_day > date '{months['this_end']}' - interval 3 month)
+                 / sum(txns) filter (where date_day <= date '{months['this_end']}' - interval 3 month) - 1
+            from gold.fct_bigquery_receiver_daily
+            where receiver_account_id = 'intents.near'
+              and date_day > date '{months['this_end']}' - interval 6 month and date_day <= date '{months['this_end']}') as txns,
+           (select sum(volume_usd) filter (where last_day(month_start) > date '{months['this_end']}' - interval 3 month)
+                 / sum(volume_usd) filter (where last_day(month_start) <= date '{months['this_end']}' - interval 3 month) - 1
+            from gold.fct_intents_unit_economics_monthly
+            where is_month_complete and last_day(month_start) > date '{months['this_end']}' - interval 6 month
+              and last_day(month_start) <= date '{months['this_end']}') as volume""")
+chain_line = (
+    f" The chain's public record moves with that volume: over the three months to {day(months['this_end'])}, against the "
+    f"three before, transactions sent to `intents.near` changed by {signed(chain_check['txns'], 1)} "
+    f"(`gold.fct_bigquery_receiver_daily`) and the volume NEAR reports by {signed(chain_check['volume'], 1)}. That checks "
+    "the direction of the series, not its dollars."
+) if share_claim and share_claim["as_of_date"] == months["this_end"] and chain_check["txns"] is not None else ""
+# The claims file carries an OpenTimestamps proof. A proof holds the SHA-256 of the file it was made for, right after
+# its header, so this module can tell whether it is a proof of the claims file as it stands. It says which, so this
+# file never presents a proof of an earlier state as a proof of this one.
+OTS_HEADER = b"\x00OpenTimestamps\x00\x00Proof\x00\xbf\x89\xe2\xe8\x84\xe8\x92\x94"
+proof_file, claims_file = ROOT / "registry" / "claims.csv.ots", ROOT / "registry" / "claims.csv"
+ots_line = ""
+if proof_file.exists():
+    proof = proof_file.read_bytes()
+    stamped = (proof[len(OTS_HEADER) + 2:len(OTS_HEADER) + 34]
+               if proof.startswith(OTS_HEADER) and proof[len(OTS_HEADER) + 1:len(OTS_HEADER) + 2] == b"\x08" else None)
+    if stamped == hashlib.sha256(claims_file.read_bytes()).digest():
+        ots_line = (" The claims file as submitted is timestamped (`registry/claims.csv.ots`, an OpenTimestamps proof) and the "
+                    "submitted state is tagged `submission-2026-11-14`, so a later change to a bar can be seen.")
+    else:
+        ots_line = (" `registry/claims.csv.ots` is an OpenTimestamps proof of the claims file as it stood before the last "
+                    "change to it, so that change can be seen; the file as it stands now has not been stamped.")
 
 md: list[str] = [
     "# The long case for NEAR, and what the data says about it",
@@ -644,10 +726,10 @@ md: list[str] = [
     "",
     f"The verdict above is where the case stands on today's data, not a forecast of where it goes. The warehouse holds {tested} claims the data can settle: the "
     "links the case rests on, in order, and the risks to it, each with a measurement and a bar. "
-    f"**{tally['for']} support the long case and {tally['against']} count against it**. The count is not a vote: the claims do "
+    f"**{tally['for']} support the long case and {tally['against']} count against it**. {two_ways}The count is not a vote: the claims do "
     "not weigh the same, and the one that decides the case, how far revenue is from covering issuance, is among those "
     f"{by_id['a_doubling_of_volume_reaches_deflation_after_the_cut']['stands']}. "
-    f"{COUNT[tally['open']].capitalize()} more claims cannot be tested yet and are listed apart.",
+    f"{COUNT[tally['open']].capitalize()} more claims cannot be settled yet and are listed apart.",
     "",
     *how_far,
     "## Evidence for",
@@ -685,12 +767,13 @@ md: list[str] = [
     "",
     *([f"- {set_note}."] if set_note else []),
     *([f"- {added_note}."] if added_note else []),
+    *([f"- {moved_note}."] if moved_note else []),
     *([f"- {bars_note}.{ots_line}"] if bars_note else []),
     *thin,
     unlock_line,
     *([lean_line] if lean_line else []),
     *([shared_line] if shared_line else []),
-    f"- Intents volume and fees are NEAR's own published series. What its revenue wallets received is checked against the "
+    f"- Intents volume and fees are NEAR's own published series.{chain_line} What its revenue wallets received is checked against the "
     f"chain: DefiLlama's all-time figure is {usd(wallets['value_a'])} and the same sum rebuilt from wallet transfers, valued as DefiLlama "
     f"values it at each day's close, is {usd(wallets['value_b'])}, {wallets['diff_pct']:.2f}% apart, so the two {wallets['status']}. DefiLlama takes its figure "
     f"from NEAR's own count of the same wallets, so this confirms the count and nothing more. NEAR's own monthly revenue series "
@@ -721,12 +804,13 @@ md: list[str] = [
     "",
     "## How each claim is measured",
     "",
-    "| Claim id | Side | Pillar | What is measured | Why this bar |",
-    "|---|---|---|---|---|",
-    *[f"| `{c['claim_id']}` | {c['side']} | {c['pillar']} | {cell(c['test'])} | {cell(c['why'] or '–')} |" for c in claims],
+    "| Claim id | Side | Pillar | It tests | What is measured | Why this bar |",
+    "|---|---|---|---|---|---|",
+    *[f"| `{c['claim_id']}` | {c['side']} | {c['pillar']} | {READS.get(c['reading'], '–').lower()} | {cell(c['test'])} | "
+      f"{cell(c['why'] or '–')} |" for c in claims],
     "",
 ]
 
 OUT.write_text("\n".join(md))
-print(f"wrote THESIS.md: {len(claims)} claims, {tally['for']} for, {tally['against']} against, {tally['open']} not testable, "
+print(f"wrote THESIS.md: {len(claims)} claims, {tally['for']} for, {tally['against']} against, {tally['open']} not settled, "
       f"settled through {settled}")

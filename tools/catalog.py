@@ -164,10 +164,10 @@ def closest_call(con: duckdb.DuckDBPyConnection) -> Dict[str, Any]:
     cur = con.execute("""
         select s.claim_id, s.claim, s.side, s.status, s.value, s.threshold,
                case when s.threshold = 0 then abs(s.value) else abs(s.value - s.threshold) / abs(s.threshold) end as gap,
-               count(*) filter (where (side = 'bull') = (status = 'holds')) over () as stands_for,
-               count(*) filter (where (side = 'bull') <> (status = 'holds')) over () as stands_against
+               count(*) filter (where (s.side = 'bull') = (s.status = 'holds')) over () as stands_for,
+               count(*) filter (where (s.side = 'bull') <> (s.status = 'holds')) over () as stands_against
         from gold.fct_thesis_scorecard s
-        where s.status <> 'not_testable'
+        where s.status in ('holds', 'fails')
         order by gap, s.claim_id limit 1""")
     row = dict(zip([d[0] for d in cur.description], cur.fetchone()))
     turn = -1 if (row["side"] == "bull") == (row["status"] == "holds") else 1
@@ -179,10 +179,19 @@ def verdict(con: duckdb.DuckDBPyConnection) -> str:
     """The README's headline result, so the first thing a reader sees cannot drift from the scorecard."""
     one = lambda sql: con.execute(sql).fetchone()
     # A claim for the case supports it when it holds; a claim naming a risk supports it when it fails.
-    stands = """count(*) filter (where (side = 'bull') = (status = 'holds') and status <> 'not_testable')"""
-    against = """count(*) filter (where (side = 'bull') <> (status = 'holds') and status <> 'not_testable')"""
-    no_test = "count(*) filter (where status = 'not_testable')"
+    # A claim the data cannot settle (not_testable, not_settled) is on neither side.
+    stands = """count(*) filter (where (side = 'bull') = (status = 'holds') and status in ('holds', 'fails'))"""
+    against = """count(*) filter (where (side = 'bull') <> (status = 'holds') and status in ('holds', 'fails'))"""
+    no_test = "count(*) filter (where status not in ('holds', 'fails'))"
     f, a, n, day = one(f"select {stands}, {against}, {no_test}, max(as_of_date) from gold.fct_thesis_scorecard")
+    # The same count by what a claim reads (dim_claim.reading): where NEAR stands, and which way it is moving.
+    kinds = {r[0]: r[1:] for r in con.execute(f"""
+        select c.reading, {stands}, count(*)
+        from gold.fct_thesis_scorecard s join (select claim_id, reading from gold.dim_claim) c using (claim_id)
+        where s.status in ('holds', 'fails') group by 1""").fetchall()}
+    two_ways = (f" Of the {kinds['state'][1]} that test where NEAR stands today, **{kinds['state'][0]}** support it; of the "
+                f"{kinds['direction'][1]} that test which way it is moving, **{kinds['direction'][0]}** do."
+                if {"state", "direction"} <= set(kinds) else "")
     # The 30 days to the newest day whose fees have settled, which is the window THESIS.md and the dashboard read.
     off = one("""select offset_share, date_day from gold.fct_net_dilution_daily
                  where date_day = (select max(date_day) from gold.fct_intents_daily
@@ -221,8 +230,8 @@ def verdict(con: duckdb.DuckDBPyConnection) -> str:
                      f"fees unchanged, that is about **{pace['current']['years_to_breakeven']:.1f} years** away"
                      + (f", or **{years_cut:.1f}** after the cut" if years_cut else "") + ": arithmetic, not a forecast.")
     return (f"{lead} At the snapshot of {day}, of {f + a} claims the data can test, "
-            f"**{f}** support the long case and **{a}** count against it; **{n}** more cannot be tested from public "
-            f"data.{thin}")
+            f"**{f}** support the long case and **{a}** count against it; **{n}** more cannot be settled "
+            f"yet.{two_ways}{thin}")
 
 
 def source_table(con: duckdb.DuckDBPyConnection) -> str:

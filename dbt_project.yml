@@ -113,7 +113,3 @@ vars:
   # A token nobody has vetted gets a value only up to this many times the vetted assets opposite it in Rhea's pools. A pool's
   # own reserves read about 1, and 90% read under 1.4. The result hardly depends on this number; see docs/SOURCES.md.
   price_depth_multiple: 3
-  # fct_thesis_scorecard_daily starts the lead test once it has this many weekly changes. The test's bar of 0.37 was set
-  # for about 30 weeks; with five the same data read 0.99, so an earlier start would count chance as a result. Twelve
-  # weeks is a quarter. The scorecard itself reads 29 weeks at the 2026-11-12 pin, so this does not touch it.
-  thesis_lead_test_min_weeks: 12

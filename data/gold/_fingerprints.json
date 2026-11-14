@@ -5,9 +5,9 @@
   "rows": 736
  },
  "dim_claim": {
-  "columns": 10,
-  "hash": "60aa8506ee3ad0305cea06c5e0879bed",
-  "rows": 23
+  "columns": 11,
+  "hash": "c2c94bd8827db2ea5b725f278813befd",
+  "rows": 24
  },
  "dim_date": {
   "columns": 7,
@@ -396,12 +396,12 @@
  },
  "fct_thesis_scorecard": {
   "columns": 8,
-  "hash": "0c7142ee51ac4d20b543f5bd90806cfe",
-  "rows": 23
+  "hash": "35ed049c9b2d1d5c426f26fdf65b43ed",
+  "rows": 24
  },
  "fct_thesis_scorecard_daily": {
   "columns": 7,
-  "hash": "9c51628c869a0ce3d3824585743d09f9",
+  "hash": "7998f981dc2cc41eb19658f6c9d34773",
   "rows": 12977
  },
  "fct_token_holders": {

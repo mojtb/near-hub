@@ -11,7 +11,7 @@ select coalesce(s.claim_id, d.claim_id) as claim_id,
     s.status as scorecard_status, d.status as daily_status,
     s.value as scorecard_value, d.value as daily_value,
     s.as_of_date as scorecard_as_of_date, d.as_of_date as daily_as_of_date
-from (select * from {{ ref('fct_thesis_scorecard') }} where status <> 'not_testable') s
+from (select * from {{ ref('fct_thesis_scorecard') }} where status in ('holds', 'fails')) s
 full join newest d using (claim_id)
 where s.claim_id is null or d.claim_id is null
    or s.status <> d.status

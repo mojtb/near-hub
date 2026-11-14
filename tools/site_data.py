@@ -6,6 +6,7 @@ The warehouse is opened read-only. Every number on the site comes from this file
 """
 import csv
 import json
+import statistics
 import sys
 from datetime import date, datetime
 from decimal import Decimal
@@ -328,11 +329,12 @@ etf_prices = one("""
 # the series behind the home page's figures and the subject pages that read the thesis tables.
 claim_order = {r["claim_id"]: i for i, r in enumerate(csv.DictReader((ROOT / "registry" / "claims.csv").open()))}
 all_claims = sorted(table("""
-  select s.claim_id, s.side, c.pillar, s.claim, s.value, s.comparison, s.threshold, c.unit, s.status, s.as_of_date,
+  select s.claim_id, s.side, c.pillar, c.reading, s.claim, s.value, s.comparison, s.threshold, c.unit, s.status, s.as_of_date,
          c.test, c.why_this_threshold why
   from gold.fct_thesis_scorecard s join gold.dim_claim c using (claim_id)""", 6), key=lambda r: claim_order[r["claim_id"]])
 for row in all_claims:
-    row["stands"] = "open" if row["status"] == "not_testable" else "for" if (row["side"] == "bull") == (row["status"] == "holds") else "against"
+    # not_testable and not_settled are both open: the data puts the claim on neither side
+    row["stands"] = "open" if row["status"] not in ("holds", "fails") else "for" if (row["side"] == "bull") == (row["status"] == "holds") else "against"
 scorecard = [r for r in all_claims if r["stands"] != "open"]
 open_claims = [r for r in all_claims if r["stands"] == "open"]
 tally = {k: sum(1 for r in all_claims if r["stands"] == k) for k in ("for", "against", "open")}
@@ -1436,8 +1438,8 @@ mkt_growth = table(f"""
          avg(market_cap_usd) filter (where date_day > {FEES} - interval 455 day and date_day <= {FEES} - interval 365 day) as cap_90d_year_ago,
          count(gas_fees_usd) filter (where date_day > {FEES} - interval 30 day) as gas_days_30d
   from gold.fct_peer_daily where date_day <= {FEES} group by 1 order by 1""", 0)
-mkt_claim = one("select value from gold.fct_thesis_scorecard where claim_id = 'near_fees_outgrew_every_peer'")["value"]
-mkt_gap = (lambda g: g("near") - max(g(r["chain_id"]) for r in mkt_growth if r["chain_id"] != "near"))(
+mkt_claim = one("select value from gold.fct_thesis_scorecard where claim_id = 'near_fees_outgrew_the_median_peer'")["value"]
+mkt_gap = (lambda g: g("near") - statistics.median(g(r["chain_id"]) for r in mkt_growth if r["chain_id"] != "near"))(
     lambda c: next(r["q_now"] / r["q_before"] - 1 for r in mkt_growth if r["chain_id"] == c))
 if mkt_claim is not None and abs(mkt_gap - float(mkt_claim)) > 0.002:
     sys.exit(f"The Market page: fee growth here ({mkt_gap:.4f}) is not what the scorecard measures ({float(mkt_claim):.4f})")
@@ -2129,7 +2131,21 @@ left join gold.fct_bigquery_signer_cohort_monthly r
 where c.cohort_month + to_months(l.months_later) <= m.last_month
 group by 1, 2
 order by 1, 2;"""
-bigquery = {"contracts": None, "days": None, "cohorts": None}
+BQ_TRAFFIC_SQL = f"""-- The share of each day's transactions that were sent to NEAR Intents' contract, intents.near, as NEAR's public
+-- BigQuery dataset counts them, from the first day of the six months the scorecard's test reads. The test holds the
+-- share over the last three complete months against the share over the three before. rank_by_txns is the contract's
+-- place among the day's receivers by transactions.
+select c.date_day, c.txns as all_txns, coalesce(r.txns, 0) as intents_txns,
+       coalesce(r.txns, 0) / c.txns as share, r.rank_by_txns
+from gold.fct_bigquery_chain_daily c
+left join gold.fct_bigquery_receiver_daily r
+  on r.date_day = c.date_day and r.receiver_account_id = 'intents.near'
+where c.is_day_complete and c.txns is not null
+  and c.date_day >= (select date_trunc('month', as_of_date) - interval 5 month from gold.fct_thesis_scorecard
+                     where claim_id = 'intents_share_of_transactions_is_rising')
+  and c.date_day <= {LAST}
+order by 1;"""
+bigquery = {"contracts": None, "days": None, "cohorts": None, "traffic": None, "game": None}
 if {"fct_bigquery_contract_daily", "fct_bigquery_action_daily"} <= BQ_HAVE:
     bigquery["contracts"] = {"sql": BQ_CONTRACTS_SQL, "rows": table(BQ_CONTRACTS_SQL.rstrip(";"), 6)}
     bigquery["days"] = {"sql": BQ_DAYS_SQL, "cols": columns(BQ_DAYS_SQL.rstrip(";"), 6)}
@@ -2149,6 +2165,66 @@ if "fct_bigquery_signer_cohort_monthly" in BQ_HAVE:
                  sum(r.signers) filter (where year(r.cohort_month) < year(m.last_month)) as signed_last_month_older
           from gold.fct_bigquery_signer_cohort_monthly r join m on r.active_month = m.last_month""").items()},
     }
+
+# The claim on Intents' share of the chain's transactions: the two quarters it reads, the days since, and the same
+# quarters of the volume NEAR reports, so the page can set the chain's record beside NEAR's own series. The page's
+# shares must be the scorecard's measurement.
+share_claim = next((r for r in scorecard if r["claim_id"] == "intents_share_of_transactions_is_rising"), None)
+if share_claim and {"fct_bigquery_receiver_daily", "fct_bigquery_chain_daily"} <= BQ_HAVE:
+    traffic_facts = one(f"""
+      with q as (select as_of_date as end_day, cast(date_trunc('month', as_of_date) as date) as last_month
+                 from gold.fct_thesis_scorecard where claim_id = 'intents_share_of_transactions_is_rising'),
+           d as (select c.date_day, c.txns as all_txns, coalesce(r.txns, 0) as intents_txns, r.rank_by_txns,
+                        c.date_day >= q.last_month - interval 2 month and c.date_day <= q.end_day as now,
+                        c.date_day >= q.last_month - interval 5 month and c.date_day < q.last_month - interval 2 month as before,
+                        c.date_day > q.end_day as since
+                 from gold.fct_bigquery_chain_daily c
+                 left join gold.fct_bigquery_receiver_daily r
+                   on r.date_day = c.date_day and r.receiver_account_id = 'intents.near'
+                 cross join q
+                 where c.is_day_complete and c.txns is not null and c.date_day <= {LAST})
+      select (select end_day from q) as end_day,
+             sum(intents_txns) filter (where now) / sum(all_txns) filter (where now) as share_now,
+             sum(intents_txns) filter (where before) / sum(all_txns) filter (where before) as share_before,
+             sum(intents_txns) filter (where now) / sum(intents_txns) filter (where before) - 1 as txns_change,
+             sum(intents_txns) filter (where since) / sum(all_txns) filter (where since) as share_since,
+             count(*) filter (where since) as days_since,
+             count(*) filter (where since and rank_by_txns = 1) as days_first_since,
+             max(date_day) as newest_day
+      from d""")
+    traffic_facts["volume_change"] = one("""
+      with q as (select cast(date_trunc('month', as_of_date) as date) as last_month from gold.fct_thesis_scorecard
+                 where claim_id = 'intents_share_of_transactions_is_rising')
+      select sum(volume_usd) filter (where month_start >= q.last_month - interval 2 month)
+               / sum(volume_usd) filter (where month_start < q.last_month - interval 2 month) - 1 as v
+      from gold.fct_intents_unit_economics_monthly, q
+      where is_month_complete and month_start >= q.last_month - interval 5 month and month_start <= q.last_month""")["v"]
+    if abs(float(traffic_facts["share_now"]) - float(traffic_facts["share_before"]) - float(share_claim["value"])) > 1e-6:
+        sys.exit("The Usage page: Intents' share of transactions here is not what the scorecard measures")
+    bigquery["traffic"] = {"sql": BQ_TRAFFIC_SQL, "cols": columns(BQ_TRAFFIC_SQL.rstrip(";"), 6),
+                           "facts": {k: clean(v, 6) for k, v in traffic_facts.items()}}
+# What the signer count is made of: over the newest 30 days read and the 30 days ending 180 days earlier, the accounts
+# that signed any transaction, those that called the contract most accounts call, and the accounts that did not call
+# it. A median for those outside, because a day of account deletions lifts the count for that day alone.
+if {"fct_bigquery_contract_daily", "fct_bigquery_chain_daily"} <= BQ_HAVE:
+    game_facts = one(f"""
+      with leader as (select contract_id from gold.fct_bigquery_contract_daily
+                      where date_day = {BQ_NEWEST} order by rank_by_signers, contract_id limit 1),
+           d as (select c.date_day, c.signers as everyone, g.signers as game, g.contract_id,
+                        c.date_day > e.d - 30 as newest, c.date_day <= e.d - 180 and c.date_day > e.d - 210 as before
+                 from gold.fct_bigquery_chain_daily c
+                 join gold.fct_bigquery_contract_daily g
+                   on g.date_day = c.date_day and g.contract_id = (select contract_id from leader)
+                 cross join (select {BQ_NEWEST} as d) e)
+      select max(contract_id) as contract_id,
+             sum(game) filter (where newest) / sum(everyone) filter (where newest) as share,
+             avg(game) filter (where newest) as game_now, avg(game) filter (where before) as game_before,
+             median(everyone - game) filter (where newest) as outside_now,
+             median(everyone - game) filter (where before) as outside_before,
+             count(*) filter (where newest) as days_now, count(*) filter (where before) as days_before
+      from d""")
+    if game_facts["days_now"] == 30 and game_facts["days_before"] == 30:
+        bigquery["game"] = {k: clean(v, 6) for k, v in game_facts.items()}
 
 more = {
     "horizon": horizon,
@@ -2409,4 +2485,4 @@ OUT.parent.mkdir(parents=True, exist_ok=True)
 OUT.write_text("window.LC = " + json.dumps(payload, separators=(",", ":"), default=str) + ";\n")
 print(f"wrote {OUT.relative_to(ROOT)} ({OUT.stat().st_size / 1024:.0f} KB): data through {payload['asOf']}, "
       f"fees settled through {payload['windows']['fees']}, {len(scorecard)} claims "
-      f"({tally['for']} for, {tally['against']} against, {tally['open']} not testable)")
+      f"({tally['for']} for, {tally['against']} against, {tally['open']} not settled)")

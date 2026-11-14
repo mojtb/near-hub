@@ -5377,7 +5377,7 @@
  {
   "area": "Thesis models",
   "table": "fct_thesis_scorecard",
-  "description": "Every claim in dim_claim measured against the warehouse: the value, the bar, and whether the claim holds. holds means the claim as written is true of the data, so a bear claim that holds counts against the thesis and a bull claim that fails does too. A claim the data cannot settle stays in the table as not_testable. The measurement behind each row is a select named by its claim_id in warehouse/models/gold/thesis/fct_thesis_scorecard.sql, and dim_claim.test says in words what it reads.",
+  "description": "Every claim in dim_claim measured against the warehouse: the value, the bar, and whether the claim holds. holds means the claim as written is true of the data, so a bear claim that holds counts against the thesis and a bull claim that fails does too. A claim the data cannot settle stays in the table: not_testable when no public source can test it, not_settled when it is measured and no bar could decide it. The measurement behind each row is a select named by its claim_id in warehouse/models/gold/thesis/fct_thesis_scorecard.sql, and dim_claim.test says in words what it reads.",
   "grain": "claim_id",
   "sources": "dim_claim and the gold tables each claim's test names",
   "path": "data/gold/fct_thesis_scorecard.parquet",
@@ -5404,7 +5404,7 @@
     "name": "value",
     "type": "DOUBLE",
     "unit": "see dim_claim.unit",
-    "description": "The measured value, in dim_claim.unit. Empty for a claim that cannot be tested."
+    "description": "The measured value, in dim_claim.unit. Empty for a claim that cannot be tested; a claim that is not_settled keeps its measurement."
    },
    {
     "name": "comparison",
@@ -5422,7 +5422,7 @@
     "name": "status",
     "type": "VARCHAR",
     "unit": "label",
-    "description": "holds if the value meets the bar, fails if it does not, not_testable if the claim has no test. A fourth value, not_measured, would mean a test returned nothing, and a data test fails the build if it appears."
+    "description": "holds if the value meets the bar, fails if it does not, not_testable if the claim has no test, not_settled if it has a measurement and no bar that could decide it. A fifth value, not_measured, would mean a test returned nothing, and a data test fails the build if it appears."
    },
    {
     "name": "as_of_date",
@@ -5431,14 +5431,14 @@
     "description": "The newest day, or the last day of the month, the value rests on."
    }
   ],
-  "rows": 23,
+  "rows": 24,
   "first": null,
   "last": null
  },
  {
   "area": "Thesis models",
   "table": "fct_thesis_scorecard_daily",
-  "description": "The scorecard on every day since 2025-01-01: each tested claim in dim_claim measured as fct_thesis_scorecard measures it, with every input cut at that day. It answers what the scorecard would have said with the data up to a day, from the warehouse as it stands now; it is not a record of what was read on the day, because sources revise recent days. On its newest day it equals fct_thesis_scorecard, and a data test fails the build if it does not. A claim reads not_yet_testable until the window its test needs is whole: six complete months for a test of three months against three, three for a three-month test, a year of readings for a yearly test, and var thesis_lead_test_min_weeks weekly changes for the lead test. The claims and their bars were set in November 2026 with these series in view, so the table shows how today's tests read on earlier data and is not evidence of its own. Claims that cannot be tested are left out. One row per day and tested claim.",
+  "description": "The scorecard on every day since 2025-01-01: each tested claim in dim_claim measured as fct_thesis_scorecard measures it, with every input cut at that day. It answers what the scorecard would have said with the data up to a day, from the warehouse as it stands now; it is not a record of what was read on the day, because sources revise recent days. On its newest day it equals fct_thesis_scorecard, and a data test fails the build if it does not. A claim reads not_yet_testable until the window its test needs is whole: six complete months for a test of three months against three, three for a three-month test, and a year of readings for a yearly test. The claims and their bars were set in November 2026 with these series in view, so the table shows how today's tests read on earlier data and is not evidence of its own. Claims the data cannot settle are left out. One row per day and tested claim.",
   "grain": "date_day, claim_id",
   "sources": "dim_claim and the gold tables each claim's test names",
   "path": "data/gold/fct_thesis_scorecard_daily.parquet",
@@ -5493,7 +5493,7 @@
  {
   "area": "Thesis models",
   "table": "dim_claim",
-  "description": "The claims a long-term case for NEAR rests on, and the claims made against it, each with the measurement that would settle it and the bar it is held to. fct_thesis_scorecard evaluates them. The set was cut from 29 claims to 20 on 2026-11-11 by four rules: a claim sits on the chain the thesis argues (Intents grows, NEAR keeps more of its fees, the revenue reaches the token, supply growth slows, and the price paid) or names a risk to it; no measurement is scored twice; a claim must be able to hold and able to fail; and a claim about Intents reads three complete months together, so that one month does not decide it. On 2026-11-12 one claim was added, the working hypothesis in the track's sample prompt (that Intents volume leads network usage), and the usage claim was pointed at distinct signers in place of transactions; two more came from the review of the Capital page, one for the case (dollars held in NEAR Intents are rising) and one against it (less NEAR sits in liquid staking than a year ago). The same day the security claim was pointed at the ten largest pools' share of the stake in place of the number of validator pools, because the pools that left in 60 days held under 1% of the stake. Nineteen claims are tested and four cannot be. The thresholds were written between 2026-11-10 and 2026-11-12 with the readings of those days in view, so they are round bars for what each claim's wording means, not predictions; why_this_threshold gives the reason for each. Where a claim was made in public, source_url points to it.",
+  "description": "The claims a long-term case for NEAR rests on, and the claims made against it, each with the measurement that would settle it and the bar it is held to. fct_thesis_scorecard evaluates them. The set was cut from 29 claims to 20 on 2026-11-11 by four rules: a claim sits on the chain the thesis argues (Intents grows, NEAR keeps more of its fees, the revenue reaches the token, supply growth slows, and the price paid) or names a risk to it; no measurement is scored twice; a claim must be able to hold and able to fail; and a claim about Intents reads three complete months together, so that one month does not decide it. On 2026-11-12 one claim was added, the working hypothesis in the track's sample prompt (that Intents volume leads network usage), and the usage claim was pointed at distinct signers in place of transactions; two more came from the review of the Capital page, one for the case (dollars held in NEAR Intents are rising) and one against it (less NEAR sits in liquid staking than a year ago). The same day the security claim was pointed at the ten largest pools' share of the stake in place of the number of validator pools, because the pools that left in 60 days held under 1% of the stake. On 2026-11-14, when NEAR's public BigQuery dataset had joined the warehouse, three things changed: the claim on fee growth was pointed at the median peer in place of the fastest one, the yardstick the valuation claim already used, because NEAR and the fastest peer had grown within a point of each other and the result turned on which nightly read was scored; the working hypothesis was moved to the claims the data cannot settle, because its result sat inside the band of chance; and one claim read from BigQuery was added (a growing share of NEAR's transactions are sent to NEAR Intents). At the snapshot of 2026-11-12 that took the count from 10 for and 9 against to 11 for and 8 against, with nineteen claims tested as before; at the snapshot of 2026-11-14, where the fee-growth claim fails in its earlier form, it took the count from 9 for and 10 against to 11 for and 8 against. Each tested claim is marked by what it reads: state, where NEAR stands against a fixed bar, or direction, which way it is moving between two stretches of time. Nineteen claims are tested and five cannot be settled. The thresholds were written between 2026-11-10 and 2026-11-14 with the readings of those days in view, so they are round bars for what each claim's wording means, not predictions; why_this_threshold gives the reason for each. Where a claim was made in public, source_url points to it.",
   "grain": "claim_id",
   "sources": "registry/claims.csv",
   "path": "data/gold/dim_claim.parquet",
@@ -5517,6 +5517,12 @@
     "description": "The part of the thesis the claim belongs to."
    },
    {
+    "name": "reading",
+    "type": "VARCHAR",
+    "unit": "label",
+    "description": "What the test reads: state if it holds where NEAR stands against a fixed bar, direction if it holds a change between two stretches of time against a bar. Empty for a claim the data cannot settle."
+   },
+   {
     "name": "claim",
     "type": "VARCHAR",
     "unit": "text",
@@ -5526,13 +5532,13 @@
     "name": "test",
     "type": "VARCHAR",
     "unit": "text",
-    "description": "What is measured and from which gold table, or why the claim cannot be tested."
+    "description": "What is measured and from which gold table, or why the data cannot settle the claim."
    },
    {
     "name": "comparison",
     "type": "VARCHAR",
     "unit": "label",
-    "description": "How the measured value is held to the threshold: >= or <=. Empty for a claim that cannot be tested."
+    "description": "How the measured value is held to the threshold: >= or <=. Empty for a claim the data cannot settle."
    },
    {
     "name": "threshold",
@@ -5559,7 +5565,7 @@
     "description": "Where the claim was made in public, where one was found."
    }
   ],
-  "rows": 23,
+  "rows": 24,
   "first": null,
   "last": null
  },
