@@ -262,7 +262,7 @@ that branch holds that night's code and data, so `make setup warehouse verify` r
 | [`data/gold/`](data/gold) | The finished tables as Parquet and CSV, with their fingerprints and catalog |
 | [`data/state/`](data/state) | Where the long history jobs resume from |
 | [`data/PINNED`](data/PINNED) | The snapshot date `main` is built at |
-| [`registry/`](registry) | Reviewed CSVs: wallets, tokens, peers, events, the claims and their bars, each source's terms |
+| [`registry/`](registry) | Reviewed CSVs: wallets, tokens, peers, events, the claims and their bars, each source's terms. `claims.csv.ots` is an [OpenTimestamps](https://opentimestamps.org) proof of the claims file as submitted, so a later change to a bar can be seen: `ots verify registry/claims.csv.ots` |
 | [`ingest/`](ingest) | One fetcher per source, run by `make ingest`; the BigQuery queries are in [`ingest/sql/bigquery/`](ingest/sql/bigquery) |
 | [`warehouse/`](warehouse) | The dbt models: silver types each response, gold holds the tables a reader should use, and the data tests |
 | [`tools/`](tools) | The build steps: export, verify, catalog, thesis, the site's data and the table guide |

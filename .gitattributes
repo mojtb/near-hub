@@ -9,3 +9,5 @@ docs/RECONCILIATION.md linguist-generated
 site/shared/data.js linguist-generated
 site/shared/catalog.js linguist-generated
 site/docs/index.html linguist-generated
+# A timestamp proof is binary.
+registry/*.ots binary
