@@ -24,7 +24,7 @@
 </p>
 
 <p align="center">
-  <a href="https://nearhub.tech"><img src="docs/images/hub-home.png" width="640" alt="The NEAR Hub home page: a headline that sets the value of the new NEAR created in 30 days beside what NEAR's revenue wallets received, four figures the case turns on, and a chart of both amounts by week."></a>
+  <a href="https://nearhub.tech"><img src="docs/images/hub-home.png" width="640" alt="The NEAR Hub home page in night mode: a headline that sets the value of the new NEAR created in 30 days beside what NEAR's revenue wallets received, four figures the case turns on, and a chart of both amounts by week."></a>
 </p>
 
 ## Where the case stands
@@ -45,7 +45,7 @@ case, where it stands, and what would change the author's mind. A claim that fai
 ## A short tour
 
 <p align="center">
-  <a href="https://nearhub.tech"><img src="docs/images/hub-tour.gif" width="640" alt="A tour of NEAR Hub: the case as five links with a result for each test, the eleven subjects, one question about NEAR Intents with its chart, reading and query, the guide to every table, and the home page."></a>
+  <a href="https://nearhub.tech"><img src="docs/images/hub-tour.gif" width="640" alt="A tour of NEAR Hub in night mode: the case so far, its links opened one at a time with a result for each test, how the count has moved and the findings, the subjects at a glance, one question about NEAR Intents with its chart, reading and query, the guide to every table, and the home page."></a>
 </p>
 
 The pictures on this page show the snapshot of 12 November 2026, and they and the demo video were made on
