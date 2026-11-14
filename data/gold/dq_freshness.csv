@@ -1,9 +1,9 @@
 dataset,model,cadence,latest_snapshot,latest_data_day,as_of,days_behind,max_days_behind,is_stale,rows_all_snapshots
 1Click token list,stg_oneclick__tokens,snapshot,2026-11-14,2026-11-14,2026-11-14,0,2,false,3059
 Archival RPC daily block,stg_rpc__block_day,daily,2026-11-14,2026-11-14,2026-11-14,0,3,false,736
-"BigQuery actions and contracts per day, read where a Google key is set",stg_bigquery__actions_daily,daily,2026-11-12,2026-11-11,2026-11-14,3,,false,12036
-"BigQuery blocks per day, read where a Google key is set",stg_bigquery__blocks_daily,daily,2026-11-12,2026-11-11,2026-11-14,3,,false,2681
-"BigQuery transactions and receivers per day, read where a Google key is set",stg_bigquery__transactions_daily,daily,2026-11-12,2026-11-11,2026-11-14,3,,false,36104
+"BigQuery actions and contracts per day, read where a Google key is set",stg_bigquery__actions_daily,daily,2026-11-14,2026-11-13,2026-11-14,1,,false,12949
+"BigQuery blocks per day, read where a Google key is set",stg_bigquery__blocks_daily,daily,2026-11-14,2026-11-13,2026-11-14,1,,false,2697
+"BigQuery transactions and receivers per day, read where a Google key is set",stg_bigquery__transactions_daily,daily,2026-11-14,2026-11-13,2026-11-14,1,,false,36813
 Bitwise NEAR ETF NAV and market price,stg_nrr_fund__prices,daily,2026-11-14,2026-11-12,2026-11-14,2,7,false,308
 Bitwise NEAR ETF fund readings,stg_nrr_fund__readings,daily,2026-11-14,2026-11-13,2026-11-14,1,7,false,11
 Bitwise NEAR ETF wallets on chain,stg_rpc__nrr_pool_daily,daily,2026-11-14,2026-11-13,2026-11-14,1,3,false,4526

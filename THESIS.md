@@ -103,7 +103,7 @@ Beyond those, two figures decide the case. The share of new NEAR received by the
 What is due next, in date order, and what each means for the case.
 
 - **16 Nov 2026.** HSP-029's timelock is due to end. That does not start the cut to 1.6%, which validators must still adopt, and until the cut is in force the break-even multiple is the 5.2× for issuance as now, not the 3.3× at the end of its ramp.
-- **22 Nov 2026.** NearBlocks switches /v1 off and with it its count of distinct signers, the measure behind the claim that signers are falling. NEAR's public BigQuery dataset, which counted the same distinct signers on every one of the 680 days both sources hold, can carry the count on.
+- **22 Nov 2026.** NearBlocks switches /v1 off and with it its count of distinct signers, the measure behind the claim that signers are falling. NEAR's public BigQuery dataset, which counted the same distinct signers on every one of the 682 days both sources hold, can carry the count on.
 - **30 Nov 2026.** November 2026 closes. The 8 claims that read complete months, 6 of them counting for the case today, then read the three months to 30 Nov 2026 in place of those to 31 Oct 2026.
 - **30 Dec 2026.** Sweat Wallet is due to end in its present form. Its relayer carried 24.2% of the transactions outside the batch streams over the 30 days to 13 Nov 2026, so another break in the transaction counts is likely, and it is one reason the usage claim reads signers and not transactions.
 - **No date set.** HSP-029's cut to 1.6% comes into force. Its text puts a grace period of 90 days before the first basis point comes off and then lowers the cap in a straight line over 24 months; the one precedent here, the proposal "Remove the NEAR Developer Gas Rebate", came into force on 4 Nov 2026, 124 days after its vote ended on 3 Jul 2026.
@@ -120,7 +120,7 @@ The sample prompt for this track gives a working hypothesis to test: "cross-chai
 
 What these sources cannot compute, so it is not on the site: daily active people (both account counts follow one game and one wallet app); who stands behind the HOT, Sweat and Kai-Ching accounts, which are named from their account ids alone; and new accounts once NearBlocks switches /v1 off on 22 Nov 2026.
 
-The prompt names the NEAR BigQuery public dataset, and the warehouse queries it (the SQL is in `ingest/sql/bigquery/`). The chain counts on the site are NearBlocks', and BigQuery checks them day for day: over the 680 days read, the two count the same transactions on 678 and the same distinct signers on 680. BigQuery also counts accounts by contract and accounts that come back, which the Usage page charts: on 11 Nov 2026, 97.2% of the accounts that signed a function call called `game.hot.tg`, and 221 called `intents.near` (`gold.fct_bigquery_contract_daily`).
+The prompt names the NEAR BigQuery public dataset, and the warehouse queries it (the SQL is in `ingest/sql/bigquery/`). The chain counts on the site are NearBlocks', and BigQuery checks them day for day: over the 682 days read, the two count the same transactions on 680 and the same distinct signers on 682. BigQuery also counts accounts by contract and accounts that come back, which the Usage page charts: on 13 Nov 2026, 97.0% of the accounts that signed a function call called `game.hot.tg`, and 217 called `intents.near` (`gold.fct_bigquery_contract_daily`).
 
 ## Limits
 

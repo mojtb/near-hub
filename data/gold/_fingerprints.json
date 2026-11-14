@@ -41,32 +41,32 @@
  },
  "dq_bigquery_reads": {
   "columns": 14,
-  "hash": "676632a15bdfefe1f85f9ff0292f63c2",
-  "rows": 9
+  "hash": "9106815958782fb23e0cf9752f3cf62b",
+  "rows": 15
  },
  "dq_bigquery_tables": {
   "columns": 11,
-  "hash": "63bcd1e95673cf0a55ac3444f12fff63",
+  "hash": "2173ff827d907242981a2ea69bb2991d",
   "rows": 16
  },
  "dq_freshness": {
   "columns": 10,
-  "hash": "000b5e4562467235521c92ec2aef7469",
+  "hash": "073f773b8d7bd000f301898a9b6ee2ab",
   "rows": 64
  },
  "dq_ingest_runs": {
   "columns": 6,
-  "hash": "8cd8899926981dd2442886ae0915dfdf",
-  "rows": 970
+  "hash": "6485a3ae19df0883b7a28e10d76046b6",
+  "rows": 976
  },
  "dq_provenance": {
   "columns": 10,
-  "hash": "f02cdc2d4b24e8ddfd83f2185dd5591b",
-  "rows": 1012
+  "hash": "f7dea1f343ef7a566dd4ab3a47304933",
+  "rows": 1018
  },
  "dq_reconciliation": {
   "columns": 13,
-  "hash": "a17b22e75ae8e8d7492fb9c1c23a0dc2",
+  "hash": "efd8e56f53949cb8c8a83338940ea872",
   "rows": 125
  },
  "dq_revisions": {
@@ -76,28 +76,28 @@
  },
  "fct_bigquery_action_daily": {
   "columns": 8,
-  "hash": "98d226c3d393ccb25d8c3f5904c830aa",
-  "rows": 2490
+  "hash": "c4b23b374a2747d56f5c2686f4753752",
+  "rows": 2522
  },
  "fct_bigquery_chain_daily": {
   "columns": 14,
-  "hash": "0232cb05c2584fe83bdfb85e57a227b1",
-  "rows": 2305
+  "hash": "921a95da8f604d3b333bfe3ca350b9df",
+  "rows": 2307
  },
  "fct_bigquery_circulating_supply_daily": {
   "columns": 8,
-  "hash": "2e4c5f8b6c90b17e966918583f7357ec",
-  "rows": 1409
+  "hash": "1769db45d45dd06ec794baa3032055ce",
+  "rows": 1411
  },
  "fct_bigquery_contract_daily": {
   "columns": 13,
-  "hash": "ca4635af355c80fc7a2f3356ceec918a",
-  "rows": 9546
+  "hash": "dbc2975fb5440487606ea32af059995f",
+  "rows": 9636
  },
  "fct_bigquery_receiver_daily": {
   "columns": 10,
-  "hash": "27059b886e0d1934ea5c577457020eb2",
-  "rows": 28313
+  "hash": "f1e66be433ab88f1192f239a9254984e",
+  "rows": 28398
  },
  "fct_bigquery_signer_cohort_monthly": {
   "columns": 8,

@@ -189,8 +189,8 @@ staking, capital and DeFi, market and peers, the Bitwise NEAR ETF, developers an
 data quality.
 
 **NEAR's public BigQuery dataset** (`bigquery-public-data.crypto_near_mainnet_us`) is queried too. The SQL is in
-[`ingest/sql/bigquery/`](ingest/sql/bigquery), one file per query, and only counts are kept. Over the 680 days read, it
-counts exactly the same distinct signers as NearBlocks on every day and the same transactions on 678, so the figures the
+[`ingest/sql/bigquery/`](ingest/sql/bigquery), one file per query, and only counts are kept. Over the 682 days read, it
+counts exactly the same distinct signers as NearBlocks on every day and the same transactions on 680, so the figures the
 site shows are checked day for day. It adds what no other source here gives: accounts by contract, and how many of the
 74.9 million accounts that ever signed a transaction came back. And NEAR's own circulating supply table agrees with the
 one this warehouse builds from the lockup contracts to within 24 NEAR of 2.1 million locked. The method, the cost and

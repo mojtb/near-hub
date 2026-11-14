@@ -1,4 +1,40 @@
 {
+ "bigquery/actions_daily": {
+  "detail": "",
+  "files": 1,
+  "seconds": 4.1,
+  "status": "ok"
+ },
+ "bigquery/blocks_daily": {
+  "detail": "",
+  "files": 1,
+  "seconds": 2.9,
+  "status": "ok"
+ },
+ "bigquery/circulating_supply": {
+  "detail": "",
+  "files": 1,
+  "seconds": 2.6,
+  "status": "ok"
+ },
+ "bigquery/partitions": {
+  "detail": "",
+  "files": 2,
+  "seconds": 6.9,
+  "status": "ok"
+ },
+ "bigquery/tables": {
+  "detail": "",
+  "files": 1,
+  "seconds": 5.0,
+  "status": "ok"
+ },
+ "bigquery/transactions_daily": {
+  "detail": "",
+  "files": 1,
+  "seconds": 9.0,
+  "status": "ok"
+ },
  "coinbase/candles": {
   "detail": "",
   "files": 1,

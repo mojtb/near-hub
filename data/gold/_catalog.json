@@ -1095,9 +1095,9 @@
     "description": "Rows in the receipt_actions table's partition for the day: one per action inside an action receipt."
    }
   ],
-  "rows": 2305,
+  "rows": 2307,
   "first": "2020-07-21",
-  "last": "2026-11-11"
+  "last": "2026-11-13"
  },
  {
   "area": "NEAR's public BigQuery dataset",
@@ -1168,9 +1168,9 @@
     "description": "The account's rank that day by distinct signers, 1 the largest."
    }
   ],
-  "rows": 28313,
+  "rows": 28398,
   "first": "2025-01-01",
-  "last": "2026-11-11"
+  "last": "2026-11-13"
  },
  {
   "area": "NEAR's public BigQuery dataset",
@@ -1259,9 +1259,9 @@
     "description": "The contract's rank that day by distinct callers, 1 the largest."
    }
   ],
-  "rows": 9546,
+  "rows": 9636,
   "first": "2026-04-03",
-  "last": "2026-11-11"
+  "last": "2026-11-13"
  },
  {
   "area": "NEAR's public BigQuery dataset",
@@ -1320,9 +1320,9 @@
     "description": "actions less from_system. For TRANSFER this is transfers that are not refunds."
    }
   ],
-  "rows": 2490,
+  "rows": 2522,
   "first": "2026-04-03",
-  "last": "2026-11-11"
+  "last": "2026-11-13"
  },
  {
   "area": "NEAR's public BigQuery dataset",
@@ -1381,9 +1381,9 @@
     "description": "Time of that block."
    }
   ],
-  "rows": 1409,
+  "rows": 1411,
   "first": "2023-01-01",
-  "last": "2026-11-11"
+  "last": "2026-11-13"
  },
  {
   "area": "NEAR's public BigQuery dataset",
@@ -6604,7 +6604,7 @@
     "description": "Time taken."
    }
   ],
-  "rows": 970,
+  "rows": 976,
   "first": "2026-11-01",
   "last": "2026-11-14"
  },
@@ -6677,7 +6677,7 @@
     "description": "Any change made before saving, such as trimming."
    }
   ],
-  "rows": 1012,
+  "rows": 1018,
   "first": "2026-10-28",
   "last": "2026-11-14"
  },
@@ -6757,8 +6757,8 @@
    }
   ],
   "rows": 16,
-  "first": "2026-11-12",
-  "last": "2026-11-12"
+  "first": "2026-11-14",
+  "last": "2026-11-14"
  },
  {
   "area": "Data quality",
@@ -6853,8 +6853,8 @@
     "description": "Pages the result arrived in."
    }
   ],
-  "rows": 9,
+  "rows": 15,
   "first": "2026-11-12",
-  "last": "2026-11-12"
+  "last": "2026-11-14"
  }
 ]
