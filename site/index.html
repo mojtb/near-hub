@@ -980,6 +980,12 @@ table.corr{--trk:clamp(52px,9.5vw,136px);--val:52px;--gap:12px;font-size:15px}
 .cz-leg{margin:0;padding:16px var(--px) 0;font-size:13px;line-height:1.5;color:var(--mute)}
 .cz-gnote{margin:9px 0 1px;padding-left:var(--ind);font-size:13px;line-height:1.45;color:color-mix(in srgb,var(--ink) 72%,var(--page))}
 .cz-n{display:block;margin-top:3px;color:color-mix(in srgb,var(--ink) 72%,var(--page))}
+/* Findings from the subject pages: plain lines in the type of the case's quieter line, the figure in ink, each a link */
+.cz-finds{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(460px,100%),1fr));column-gap:clamp(28px,4vw,64px)}
+.cz-finds li{padding:5px 0;font-size:15.5px;line-height:1.5;text-wrap:pretty}
+.cz-finds a{color:var(--mute);text-decoration:underline;text-decoration-thickness:1px;text-decoration-color:color-mix(in srgb,var(--mute) 32%,transparent);text-underline-offset:4px;transition:color .15s,text-decoration-color .15s}
+.cz-finds b{font-weight:500;color:var(--ink);font-variant-numeric:tabular-nums}
+.cz-finds a:hover{color:var(--ink);text-decoration-color:currentColor}
 .view-err{margin:0;padding:28px 18px;border:1px dashed var(--line);border-radius:var(--r);font-size:14px;color:var(--mute);text-align:center}
 /* The pool's month ends: the dashboard's figure sits quieter beside the chain's, and each gap is small type */
 .ph td,.ph th{white-space:nowrap}.ph-d{color:var(--mute);font-weight:400}.ph-g{font-size:13px;color:var(--mute)}
@@ -4675,6 +4681,7 @@ const CLAIM_NOTE={
     return `The pool turned over ${T.turns_per_30_days[i].toFixed(1)} times in ${monthName(m)}${y<0?'':`, ${T.turns_per_30_days[y].toFixed(1)} a year earlier`}.`},
   liquid_staking_is_shrinking:()=>{const g=CPL.stakeChg;return g==null?'':`All staked NEAR is ${fmt.pct(Math.abs(g),1)} ${g<0?'lower':'higher'} than before the 2025 cut.`},
   intents_volume_leads_usage:c=>{const l=LC.usage.lags.find(r=>r.leader==='intents_volume');return c.status==='holds'||!l?'':`No lead found: ${l.weeks} weeks cannot tell a link this weak from chance.`},
+  revenue_reaches_the_wallets:c=>c.status==='fails'?"Because it does not hold, the revenue on this site is what NEAR's wallets received, not what NEAR reports.":'',
 };
 /* Claims that read complete months; the others read to their newest day */
 const CZ_MONTHLY=['intents_is_gaining_share','capture_is_rising','fee_base_is_widening','dollars_are_arriving_in_intents','volume_stayed_above_2bn_a_month','fees_depend_on_one_partner','zcash_is_on_a_fifth_of_volume','near_fees_outgrew_every_peer'];
@@ -4723,6 +4730,23 @@ const czSection=T=>{
       <p class="cz-foot">${when}Each row states its own period. <a href="#a-method">How the claims were chosen</a></p>
     </div>
   </section>`};
+/* Four findings the subject pages hold, each one line that leads with its figure and links to the question that shows
+   it. Each line is built from the figures its question prints and says no more than the question does; a line whose
+   figures or question are missing is left out, and the block shows only with two lines or more. */
+const czFinds=()=>{const yr=LC.asOf.slice(0,4),live=id=>ANALYSES.some(a=>a.id===id&&isLive(a));
+  const L=[
+    ['wallet-check',()=>CHECK.open&&CHECK.gap>0?[fmt.usd(CHECK.gap,2),`of the revenue NEAR has reported since ${monthName(CHECK.from)} was not received by its wallets.`]:null],
+    ['who-signs',()=>{const w=BQ.who;return w&&w.f.startsWith(w.ans[0])?[w.ans[0],`${w.f.slice(w.ans[0].length).trim()}.`]:null}],
+    ['come-back',()=>{const one=(LC.more.bigquery.cohorts.rows||[]).filter(r=>r.months_later===1);if(!one.length)return null;
+      const big=one.reduce((a,b)=>b.accounts>a.accounts?b:a),now=one.reduce((a,b)=>b.first_signed_year>a.first_signed_year?b:a),y=r=>String(r.first_signed_year)===yr?'this year':`in ${r.first_signed_year}`;
+      return[fmt.pct(now.retained_share,1),big===now?`of the accounts that first signed ${y(now)}, the year with the most new accounts, signed again the next month.`
+        :`of the accounts that first signed ${y(now)} signed again the next month, against ${fmt.pct(big.retained_share,1)} for ${big.first_signed_year}, the year with the most new accounts.`]}],
+    ['treasury-share',()=>{const t=SUP.tre;if(!t.paid)return null;const one=t.payDays.every(d=>d.slice(0,4)===yr);
+      return[`${fmt.compact(t.paid,1)} NEAR`,`was paid out by treasury.near ${one?'this year':`on ${t.when}`}, ${fmt.pct(t.ofSupply,1)} of supply; no House of Stake proposal covers these payouts.`]}],
+  ].map(([id,f])=>{if(!live(id))return null;try{const r=f();return r&&r[0]&&r[1]?{id,v:r[0],t:r[1]}:null}catch(e){return null}}).filter(Boolean);
+  if(L.length<2)return '';
+  return `<div class="sec-head"><h2>${cap(czWord(L.length))} findings from the evidence</h2></div>
+    <ul class="cz-finds">${L.map(r=>`<li><a href="#a-${r.id}"><b>${r.v}</b> ${r.t}</a></li>`).join('')}</ul>`};
 /* The rail and the ledger point at each other: a mark lights its row and a row its mark; a part of the rail opens its rows */
 const czWire=()=>{
   const box=$('#cz'),tip=$('#cz-tip');if(!box||!tip)return;
@@ -4998,6 +5022,7 @@ const V={
   </div></section>
   <div class="sheet"><div class="wrap">
     ${caseHtml}
+    ${czFinds()}
     <div class="sec-head"><h2>Subjects at a glance</h2><a href="#library">${live.length} questions in the library${planned.length?`, ${planned.length} planned`:''}</a></div>
     <div class="bento" id="grid"></div>
     ${next.length?`<div class="sec-head"><h2>What is next</h2></div><section class="nx" aria-labelledby="nx-h">
