@@ -193,10 +193,36 @@ def verdict(con: duckdb.DuckDBPyConnection) -> str:
           else f"is {close['gap'] * 100:.1f}% from its bar")
     thin = (f" The closest result, \"{close['claim']}\", {by}; reversed, the count would be "
             f"**{close['if_reversed'][0]}** and **{close['if_reversed'][1]}**.") if close["gap"] < 0.01 else ""
-    return (f"**Where the case stands at the snapshot of {day}:** of {f + a} claims the data can test, "
+    # The verdict leads, worded as THESIS.md words it: the offset, the break-even multiples today and after the cut, and
+    # the years at the measured growth of volume (tools/horizon.py), each with its wording when it turns.
+    from tools.horizon import horizon
+    pace = {r["scenario_id"]: r for r in horizon(con) if r["pace"] == "measured"}
+    m_now, m_cut = pace["current"]["breakeven_volume_multiple"], pace["hsp029_end_state"]["breakeven_volume_multiple"]
+    growth, price_day = pace["current"]["growth_a_year"], pace["current"]["as_of_date"]
+    rate, status = one("select annual_issuance_rate, status from registry.issuance_scenarios where scenario_id = 'hsp029_end_state'")
+    cut = f"{rate * 100:.1f}".rstrip("0").rstrip(".") + "%"
+    when = f"once the voted cut of issuance to {cut} is in force" if status == "passed_vote_not_in_force" else f"at the end of HSP-029's ramp to {cut}"
+    offset = (f"Over the 30 days to {off[1]}, the fees NEAR's revenue wallets received and the gas burned "
+              f"{'came to' if off[0] >= 1 else 'offset'} **{off[0] * 100:.1f}%** of the new NEAR the chain created")
+    if off[0] >= 1:
+        lead = f"**The gap has closed.** {offset}, so they match it."
+    elif m_now <= 1:
+        lead = (f"**Not yet.** {offset}; at NEAR's close on {price_day}, today's Intents volume would already be enough to "
+                f"match it (**{m_now:.1f}×**). That is arithmetic, not a forecast.")
+    else:
+        lead = (f"**Not yet.** {offset}; to match it, Intents volume has to be **{m_now:.1f}×** today's, " +
+                (f"or **{m_cut:.1f}×** {when}." if m_cut > 1 else f"and {when}, today's volume would be enough (**{m_cut:.1f}×**)."))
+        if growth is None or growth <= 0:
+            lead += (f" Volume {'fell **' + f'{-growth * 100:.0f}%' + '**' if growth and growth < 0 else 'did not grow'} over "
+                     "the last year, so at this pace the gap does not close. That is arithmetic, not a forecast.")
+        else:
+            years_cut = pace["hsp029_end_state"]["years_to_breakeven"]
+            lead += (f" Volume grew **{growth * 100:.0f}%** over the last year; at that pace, with the price and NEAR's share of "
+                     f"fees unchanged, that is about **{pace['current']['years_to_breakeven']:.1f} years** away"
+                     + (f", or **{years_cut:.1f}** after the cut" if years_cut else "") + ": arithmetic, not a forecast.")
+    return (f"{lead} At the snapshot of {day}, of {f + a} claims the data can test, "
             f"**{f}** support the long case and **{a}** count against it; **{n}** more cannot be tested from public "
-            f"data. Over the 30 days to {off[1]}, fees reaching NEAR's revenue wallets and gas burned offset "
-            f"**{off[0] * 100:.1f}%** of the new NEAR the chain created.{thin}")
+            f"data.{thin}")
 
 
 def source_table(con: duckdb.DuckDBPyConnection) -> str:

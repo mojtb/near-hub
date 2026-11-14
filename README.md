@@ -30,7 +30,7 @@
 ## Where the case stands
 
 <!-- verdict:start -->
-**Where the case stands at the snapshot of 2026-11-12:** of 19 claims the data can test, **10** support the long case and **9** count against it; **4** more cannot be tested from public data. Over the 30 days to 2026-11-09, fees reaching NEAR's revenue wallets and gas burned offset **16.1%** of the new NEAR the chain created. The closest result, "NEAR's application fees grew faster than any peer's over the last three complete months", holds by 0.11 points; reversed, the count would be **9** and **10**.
+**Not yet.** Over the 30 days to 2026-11-09, the fees NEAR's revenue wallets received and the gas burned offset **16.1%** of the new NEAR the chain created; to match it, Intents volume has to be **5.2×** today's, or **3.3×** once the voted cut of issuance to 1.6% is in force. Volume grew **60%** over the last year; at that pace, with the price and NEAR's share of fees unchanged, that is about **3.5 years** away, or **2.6** after the cut: arithmetic, not a forecast. At the snapshot of 2026-11-12, of 19 claims the data can test, **10** support the long case and **9** count against it; **4** more cannot be tested from public data. The closest result, "NEAR's application fees grew faster than any peer's over the last three complete months", holds by 0.11 points; reversed, the count would be **9** and **10**.
 <!-- verdict:end -->
 
 The count is not a vote, because the claims do not weigh the same. [THESIS.md](THESIS.md) says which one decides the

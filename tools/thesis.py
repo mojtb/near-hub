@@ -17,6 +17,7 @@ from pathlib import Path
 import duckdb
 
 from tools.catalog import closest_call
+from tools.horizon import horizon
 
 ROOT = Path(__file__).resolve().parents[1]
 WAREHOUSE = ROOT / "data" / "warehouse.duckdb"
@@ -114,6 +115,21 @@ share_points = round(dilution["offset_share"] * 1000) / 10
 received_points = round(received_share * 1000) / 10
 scenario = {r["scenario_id"]: r for r in rows("select * from gold.fct_deflation_scenarios where capture_case = 'measured'")}
 ramp = next(r for r in csv.DictReader((ROOT / "registry" / "issuance_scenarios.csv").open()) if r["scenario_id"] == "hsp029_end_state")
+CUT = trim(pct(float(ramp["annual_issuance_rate"])))
+CUT_WHEN = (f"once the voted cut of issuance to {CUT} is in force" if ramp["status"] == "passed_vote_not_in_force"
+            else f"at the end of HSP-029's ramp to {CUT}")
+# Every scenario row, for the table under "How far away", and the years to break even at each pace (tools/horizon.py,
+# which the dashboard reads too, so both print the same years)
+scenarios = {(r["scenario_id"], r["capture_case"]): r for r in rows("select * from gold.fct_deflation_scenarios")}
+paces = horizon(con)
+pace_now = {r["scenario_id"]: r for r in paces if r["pace"] == "measured"}
+growth = pace_now["current"]["growth_a_year"]
+# The break-even multiple on the NEAR the wallets received over the 30 days, at each day's price: NEAR created less
+# burned, over NEAR received. The Supply page computes the same (BILL.mult in site/index.html), so the two agree.
+received_multiple = ((dilution["minted_30d_near"] - dilution["burn_30d_near"]) / dilution["revenue_inflow_30d_near"]
+                     if dilution["revenue_inflow_30d_near"] else None)
+received_price = (dilution["revenue_inflow_30d_usd"] / dilution["revenue_inflow_30d_near"]
+                  if dilution["revenue_inflow_30d_near"] else None)
 month = one("""select month_start, confidential_volume_share, capture_rate from gold.fct_intents_unit_economics_monthly
                where is_month_complete order by month_start desc limit 1""")
 # NEAR's own monthly revenue series beside what the Intents contract paid its revenue wallets, counted on the day it
@@ -336,6 +352,134 @@ ramp_line = ("HSP-029, which would set the ramp to 1.6%, has passed its vote and
              "validators must adopt it first, so 1.6% is a scenario and not a schedule."
              if ramp["status"] == "passed_vote_not_in_force" else f"The 1.6% rate is HSP-029's end state; its status in the registry is `{ramp['status']}`.")
 
+
+def signed(v: float, digits: int = 0) -> str:
+    return ("+" if v >= 0 else "−") + pct(abs(v), digits)
+
+
+def years(y) -> str:
+    """A cell of the horizon table: None when volume is not growing, 0 when today's volume is already enough."""
+    return "never at this pace" if y is None else "already enough" if y == 0 else f"{y:.1f}"
+
+
+# The verdict: where the case stands on the settled day, and how far away the break-even is at the measured pace. It
+# reads the offset, the two break-even multiples and the years from the data, so each state has its own wording.
+m_now, m_cut = scenario["current"]["breakeven_volume_multiple"], scenario["hsp029_end_state"]["breakeven_volume_multiple"]
+y_now, y_cut = pace_now["current"]["years_to_breakeven"], pace_now["hsp029_end_state"]["years_to_breakeven"]
+price_day = scenario["current"]["as_of_date"]
+NEEDS = "The long case needs the fees NEAR's revenue wallets receive and the gas burned to match the new NEAR the chain creates."
+if dilution["offset_share"] >= 1:
+    verdict = (f"**The gap has closed.** {NEEDS} Over the 30 days to {day(settled)} they came to {pct(dilution['offset_share'])} "
+               "of it, so they match it. Whether that lasts turns on the price, the fee rate and NEAR's share of fees, which "
+               "this file does not forecast.")
+else:
+    if m_now <= 1:
+        match = (f"At NEAR's close on {day(price_day)}, today's Intents volume would already be enough to match it: the "
+                 f"break-even multiple is {m_now:.1f}×.")
+        pace_line = ""
+    else:
+        match = (f"To match it, Intents volume has to be {m_now:.1f}× today's, " +
+                 (f"or {m_cut:.1f}× {CUT_WHEN}." if m_cut > 1 else f"and {CUT_WHEN}, today's volume would be enough ({m_cut:.1f}×)."))
+        if growth is None or growth <= 0:
+            pace_line = (f" Volume {'fell ' + pct(-growth, 0) if growth and growth < 0 else 'did not grow'} over the last year, "
+                         "so at this pace the gap does not close.")
+        else:
+            pace_line = (f" Volume grew {pct(growth, 0)} over the last year; at that pace, with the price and NEAR's share of "
+                         f"fees unchanged, that is about {y_now:.1f} years away" + (f", or {y_cut:.1f} after the cut." if y_cut else "."))
+    verdict = (f"**Not yet.** {NEEDS} Over the 30 days to {day(settled)} they offset {pct(dilution['offset_share'])} of it. "
+               f"{match}{pace_line} That is arithmetic, not a forecast: [How far away](#how-far-away) sets out the sums.")
+# The first objection of anyone who knows NEAR: new NEAR goes to stakers, so who is diluted?
+real = dilution["real_staking_yield_rate"]
+staking = (f"New NEAR is paid mostly to stakers: {pct(dilution['staked_share'], 0)} of supply is staked and earns "
+           f"{pct(dilution['nominal_staking_yield_rate'])} a year, {signed(real, 1).lstrip('+')} after dilution, so " +
+           ("the dilution falls on NEAR that is not staked." if real > 0 else
+            "even a staker is diluted, and NEAR that is not staked more so.")
+           if dilution["nominal_staking_yield_rate"] is not None and dilution["staked_share"] is not None else "")
+
+# How far away: the years at each pace, and every scenario row
+PACE_NAMES = {"measured": "as measured"}
+horizon_rows = [
+    f"| {signed(r['growth_a_year'])}{', ' + PACE_NAMES[r['pace']] if r['pace'] in PACE_NAMES else ''}"
+    f"{' (doubling)' if r['growth_a_year'] == 1 else ''} | {years(r['years_to_breakeven'])} | "
+    f"{years(next(q for q in paces if q['pace'] == r['pace'] and q['scenario_id'] == 'hsp029_end_state')['years_to_breakeven'])} |"
+    for r in paces if r["scenario_id"] == "current"]
+CASES = ["measured", "at_50_pct", "at_70_pct", "at_100_pct"]
+scenario_rows = [
+    f"| {pct(scenarios[('current', k)]['capture_rate']) + ', as measured' if k == 'measured' else trim(pct(scenarios[('current', k)]['capture_rate']))} | "
+    f"{scenarios[('current', k)]['breakeven_volume_multiple']:.2f}× | {scenarios[('hsp029_end_state', k)]['breakeven_volume_multiple']:.2f}× | "
+    f"{signed(scenarios[('current', k)]['net_inflation_rate_at_current_volume'], 2)} | "
+    f"{signed(scenarios[('hsp029_end_state', k)]['net_inflation_rate_at_current_volume'], 2)} |" for k in CASES]
+grown = pace_now["current"]
+growth_words = ("did not change" if not growth else f"grew {pct(growth, 0)}" if growth > 0 else f"fell {pct(-growth, 0)}")
+at_close = signed(scenarios[("current", "measured")]["net_inflation_rate_at_current_volume"], 2).lstrip("+")
+how_far = [
+    "## How far away",
+    "",
+    f"Intents volume over the 30 days to {day(grown['as_of_date'])} was {usd(grown['volume_30d_usd'])}, against "
+    f"{usd(grown['volume_30d_year_earlier_usd'])} over the same 30 days a year before, so it {growth_words} in a year.",
+    "",
+    f"Years until Intents volume reaches the break-even multiple, {m_now:.1f}× today and {m_cut:.1f}× after the cut to "
+    f"{CUT}, if it grows at the measured pace or at a round one (`tools/horizon.py`):",
+    "",
+    f"| Growth of Intents volume a year | Years to break even, issuance as now | Years after the cut to {CUT} |",
+    "|---|---|---|",
+    *horizon_rows,
+    "",
+    "The multiple itself turns on NEAR's share of fees. These are the eight rows of `gold.fct_deflation_scenarios`, at the "
+    f"share measured over the 30 days and at three higher ones, for issuance as now ({pct(dilution['gross_inflation_rate'], 2)} "
+    f"of supply a year) and at {CUT}: the break-even multiple, and how fast the NEAR outside the wallets would grow a year "
+    "at today's volume.",
+    "",
+    f"| NEAR's share of fees | Multiple, issuance as now | Multiple, at {CUT} | Growth at today's volume, issuance as now | "
+    f"Growth, at {CUT} |",
+    "|---|---|---|---|---|",
+    *scenario_rows,
+    "",
+    *([f"The growth columns count the NEAR the wallets would receive at the close of ${scenario['current']['price_usd']:.2f} on "
+       f"{day(price_day)}, so the measured row's {at_close} differs from the {pct(dilution['net_inflation_rate'], 2)} in "
+       "The claim, which counts the NEAR they received at each day's price.", ""]
+      if at_close != pct(dilution["net_inflation_rate"], 2) else []),
+    f"All of this is arithmetic with the price, the fee rate and NEAR's share of fees held as measured on {day(price_day)}, "
+    "and not a forecast. Issuance is paid in NEAR, so its value in dollars rises with the price, while revenue is charged "
+    "in dollars and does not: a higher price moves the break-even further away, and a lower one brings it closer.",
+    "",
+]
+
+# The two Limits that the count leans on: how the unlock result counts lockups that never switched transfers on, and
+# the results near their bars that count for the case today, with the count if they all reversed.
+unlocks = by_id["unlocks_are_behind"]
+strict = one("""select transfers_never_enabled_near as never, date_day,
+                       1 - circulating_share_of_total + transfers_never_enabled_near
+                           / (circulating_supply_near / circulating_share_of_total) as share
+                from gold.fct_circulating_supply_daily order by date_day desc limit 1""")
+over_bar = strict["share"] > unlocks["threshold"] if unlocks["comparison"] == "<=" else strict["share"] < unlocks["threshold"]
+unlock_line = (f"- The unlock result rests on a definition. Lockups whose owners never switched transfers on held "
+               f"{near(strict['never'])} on {day(strict['date_day'])}, and they count as unlocked, as in NEAR Explorer. "
+               f"Counted as locked, the share still locked would be {figure(strict['share'], unlocks['unit'])}, "
+               + (f"over the bar of {WORDS[unlocks['comparison']]} {figure(unlocks['threshold'], unlocks['unit'], True)}, and "
+                  f"the claim would {'fail' if unlocks['status'] == 'holds' else 'hold'}." if over_bar else
+                  f"still inside the bar of {WORDS[unlocks['comparison']]} {figure(unlocks['threshold'], unlocks['unit'], True)}."))
+NEAR_BAR = {"near_fees_outgrew_every_peer": "fee growth against peers", "zcash_is_on_a_fifth_of_volume": "Zcash's share of 1Click volume",
+            "unlocks_are_behind": "the share of supply still locked"}
+leaning = [by_id[k] for k in NEAR_BAR if by_id[k]["stands"] == "for"]
+ALL = {1: "It counts", 2: "Both count", 3: "All three count"}
+IF_ALL = {1: "if it reversed", 2: "if both reversed", 3: "if all three reversed"}
+named = [f"{NEAR_BAR[c['claim_id']]} ({figure(c['value'], c['unit'])} against a bar of {WORDS[c['comparison']]} "
+         f"{figure(c['threshold'], c['unit'], True)})" for c in leaning]
+lean_line = (f"- The count leans on results that sit close to their bars or on a definition: "
+             f"{', '.join(named[:-1]) + ' and ' + named[-1] if len(named) > 1 else named[0]}. {ALL[len(leaning)]} for the "
+             f"case today; {IF_ALL[len(leaning)]}, the count would be {tally['for'] - len(leaning)} for and "
+             f"{tally['against'] + len(leaning)} against.") if leaning else None
+# What follows from the revenue tripwire when it trips
+revenue_check = by_id["revenue_reaches_the_wallets"]
+revenue_tripped = (
+    "Because the revenue check fails, the revenue figures in this file are what NEAR's revenue wallets received on chain" +
+    (f" (DefiLlama's count of the wallets, which their transfers confirm within {wallets['diff_pct']:.2f}%)"
+     if wallets["status"] == "agree" else "") +
+    f", not what NEAR reports. The wallets received {figure(revenue_check['value'], revenue_check['unit'])} less than NEAR's "
+    "own monthly series says, and that series stays unexplained until a cause for the gap is published."
+) if revenue_check["status"] == "fails" else None
+
 md: list[str] = [
     "# The long case for NEAR, and what the data says about it",
     "",
@@ -346,6 +490,11 @@ md: list[str] = [
     "The same scorecard, with a chart and the query behind every claim, is on the dashboard at "
     "[nearhub.tech](https://nearhub.tech).",
     "",
+    "## The verdict",
+    "",
+    verdict,
+    "",
+    *([staking, ""] if staking else []),
     "## The claim",
     "",
     f"Over the 30 days to {day(settled)}, NEAR minted {near(dilution['minted_30d_near'])}, which is "
@@ -354,18 +503,26 @@ md: list[str] = [
     f"{share_points - received_points:.1f}% burned. **The long case is that this gap closes:** NEAR Intents keeps "
     "growing, NEAR keeps a larger share of the fees charged on it, and issuance falls to 1.6% a year.",
     "",
-    f"On today's numbers the gap has not closed. Only the burned part leaves supply, so total supply grows "
+    f"On today's numbers the gap has {'closed' if dilution['offset_share'] >= 1 else 'not closed'}. Only the burned part leaves supply, so total supply grows "
     f"{pct(supply_growth, 2)} a year, and the NEAR outside the revenue wallets grows {pct(dilution['net_inflation_rate'], 2)}. "
-    f"At the fee rate and the share of fees measured over those 30 days, Intents volume would have to be "
+    f"At the fee rate and the share of fees measured over those 30 days, and at NEAR's close of "
+    f"${scenario['current']['price_usd']:.2f} on {day(price_day)}, Intents volume would have to be "
     f"{scenario['current']['breakeven_volume_multiple']:.1f}× what it is for the wallets to receive as much NEAR as is "
-    f"minted net of burn, or {scenario['hsp029_end_state']['breakeven_volume_multiple']:.1f}× once issuance is 1.6%. {ramp_line}",
+    f"minted net of burn, or {scenario['hsp029_end_state']['breakeven_volume_multiple']:.1f}× once issuance is {CUT}. " +
+    (f"Counted on the NEAR the wallets actually received over the 30 days, at each day's price (${received_price:.2f} a NEAR "
+     f"on average), the multiple today is {received_multiple:.1f}× (NEAR created less burned, over NEAR received): NEAR "
+     f"closed {'below' if received_price > scenario['current']['price_usd'] else 'above'} that average, so at the close the "
+     f"same fees bring in {'more' if received_price > scenario['current']['price_usd'] else 'less'} NEAR. "
+     if received_multiple is not None else "") + ramp_line,
     "",
-    f"So this is a case with a test attached, not a forecast. The warehouse holds {tested} claims the data can settle: the "
+    f"The verdict above is where the case stands on today's data, not a forecast of where it goes. The warehouse holds {tested} claims the data can settle: the "
     "links the case rests on, in order, and the risks to it, each with a measurement and a bar. "
     f"**{tally['for']} support the long case and {tally['against']} count against it**. The count is not a vote: the claims do "
-    "not weigh the same, and the one that decides the case, how far revenue is from covering issuance, is among those against. "
+    "not weigh the same, and the one that decides the case, how far revenue is from covering issuance, is among those "
+    f"{by_id['a_doubling_of_volume_reaches_deflation_after_the_cut']['stands']}. "
     f"{COUNT[tally['open']].capitalize()} more claims cannot be tested yet and are listed apart.",
     "",
+    *how_far,
     "## Evidence for",
     "",
     "These results support the long case: a bull claim that holds, or a bear claim that fails.",
@@ -389,6 +546,7 @@ md: list[str] = [
     *[f"- **{c['claim']}.** Measured {figure(c['value'], c['unit'])} against a bar of {WORDS[c['comparison']]} "
       f"{figure(c['threshold'], c['unit'], True)}, on {day(c['as_of_date'])}: it {c['status']}." for c in watch],
     "",
+    *([revenue_tripped, ""] if revenue_tripped else []),
     f"Beyond those, two figures decide the case. The share of new NEAR received by the wallets or burned, "
     f"{pct(dilution['offset_share'])} now, has to reach 100%. At 100% the NEAR outside the wallets stops growing; total supply "
     f"stops growing only if what the wallets hold is burned. The break-even multiple, "
@@ -401,6 +559,8 @@ md: list[str] = [
     *([f"- {added_note}."] if added_note else []),
     *([f"- {bars_note}."] if bars_note else []),
     *thin,
+    unlock_line,
+    *([lean_line] if lean_line else []),
     f"- Intents volume and fees are NEAR's own published series. What its revenue wallets received is checked against the "
     f"chain: DefiLlama's all-time figure is {usd(wallets['value_a'])} and the same sum rebuilt from wallet transfers, valued as DefiLlama "
     f"values it at each day's close, is {usd(wallets['value_b'])}, {wallets['diff_pct']:.2f}% apart, so the two {wallets['status']}. DefiLlama takes its figure "
