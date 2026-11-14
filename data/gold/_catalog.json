@@ -165,7 +165,7 @@
     "description": "Date of the on-chain check."
    }
   ],
-  "rows": 73,
+  "rows": 72,
   "first": null,
   "last": null
  },
@@ -3326,7 +3326,7 @@
     "description": "Why the row has a value or not, checked in this order. no_price: no list has a positive price in this snapshot. no_decimals: decimals are unknown, which the metadata backlog clears. decimals_disagree: the list counts whole tokens with other decimals than the holding, so the price would be off by powers of ten. sources_disagree: 1Click and Rhea are more than price_disagreement_pct (20) apart, and nothing here says which is right. thin_price: an unvetted token whose position would be worth more than price_depth_multiple (3) times price_depth_usd. valued: value_usd is filled."
    }
   ],
-  "rows": 120209,
+  "rows": 120208,
   "first": "2026-10-28",
   "last": "2026-11-14"
  },
@@ -6846,7 +6846,7 @@
     "description": "Change from first to last, as a percentage."
    }
   ],
-  "rows": 11374,
+  "rows": 11376,
   "first": "2021-05-21",
   "last": "2026-11-12"
  },

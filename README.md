@@ -24,7 +24,7 @@
 </p>
 
 <p align="center">
-  <a href="https://nearhub.tech"><img src="docs/images/hub-home.png" width="640" alt="The NEAR Hub home page: a headline that sets the value of the new NEAR created in 30 days beside what NEAR's revenue wallets received, four figures the case turns on, and a chart of both amounts by week."></a>
+  <a href="https://nearhub.tech"><img src="docs/images/hub-home.png" width="640" alt="The NEAR Hub home page in night mode: a headline that sets the value of the new NEAR created in 30 days beside what NEAR's revenue wallets received, four figures the case turns on, and a chart of both amounts by week."></a>
 </p>
 
 ## Where the case stands
@@ -45,7 +45,7 @@ case, where it stands, and what would change the author's mind. A claim that fai
 ## A short tour
 
 <p align="center">
-  <a href="https://nearhub.tech"><img src="docs/images/hub-tour.gif" width="640" alt="A tour of NEAR Hub: the case as five links with a result for each test, the eleven subjects, one question about NEAR Intents with its chart, reading and query, the guide to every table, and the home page."></a>
+  <a href="https://nearhub.tech"><img src="docs/images/hub-tour.gif" width="640" alt="A tour of NEAR Hub in night mode: the case so far, its links opened one at a time with a result for each test, how the count has moved and the findings, the subjects at a glance, one question about NEAR Intents with its chart, reading and query, the guide to every table, and the home page."></a>
 </p>
 
 The pictures on this page show the snapshot of 12 November 2026, and they and the demo video were made on
@@ -175,10 +175,10 @@ for this track. This is where each thing it asks for is in this repository.
 | The prompt asks for | Where it is here |
 |---|---|
 | A working hypothesis, tested, with what cuts against it: "cross-chain volume through NEAR Intents is a better leading indicator of real network usage than token price" | It is claim `intents_volume_leads_usage`: the test finds no lead, and with so few weeks a link that weak cannot be told from chance, so it is listed with the claims the data cannot settle and counts neither for the case nor against it. [THESIS.md](THESIS.md#the-sample-prompts-hypothesis) gives the test and its result; the table is `gold.fct_usage_lead_correlations` |
-| SQL against the NEAR BigQuery public dataset for daily active accounts, transaction counts and contract usage, filtered on `block_date` | [`ingest/sql/bigquery/`](ingest/sql/bigquery), one file per query: `transactions_daily.sql` counts transactions and distinct signers by day (`gold.fct_bigquery_chain_daily`), and `actions_daily.sql` counts calls, signers and callers by contract (`gold.fct_bigquery_contract_daily`). Each daily query is cut to its partitions by `block_date`, and priced with a dry run before it runs |
+| SQL against the NEAR BigQuery public dataset for daily active accounts, transaction counts and contract usage, filtered on `block_date` | [`ingest/sql/bigquery/`](ingest/sql/bigquery), one file per query: `transactions_daily.sql` counts transactions and distinct signers by day (`gold.fct_bigquery_chain_daily`), and `actions_daily.sql` counts calls, signers and callers by contract (`gold.fct_bigquery_contract_daily`); `signers_daily.sql` and `callers_daily.sql` add who signs the day's transactions and who calls two contracts. Each daily query is cut to its partitions by `block_date`, and priced with a dry run before it runs |
 | A pull from the NEAR Intents Explorer API for swap volume | [`ingest/sources/intents.py`](ingest/sources/intents.py) reads it day by day from November 2024; the responses are in `data/bronze/intents_explorer/` and the tables are `gold.fct_intents_1click_daily` and the five beside it |
 | One command that rebuilds every chart from raw data | `make all`, from the responses in `data/bronze/`, with no key and no API call |
-| A static dashboard page: each chart, the query behind it, and one plain sentence on what it shows | [nearhub.tech](https://nearhub.tech), which is [`site/index.html`](site/index.html). Every question has its finding as the heading, a chart, a reading, and a Query button that shows the SQL that drew it. Two questions on the Usage page and one on the Checks page are drawn from the BigQuery tables |
+| A static dashboard page: each chart, the query behind it, and one plain sentence on what it shows | [nearhub.tech](https://nearhub.tech), which is [`site/index.html`](site/index.html). Every question has its finding as the heading, a chart, a reading, and a Query button that shows the SQL that drew it. Seven questions are drawn from the BigQuery tables alone (three on the Usage page, two on Security, one on Developers and one on Checks), and seven more carry a chart from them |
 | `THESIS.md` with the claim, the evidence for it, the evidence against it, and what result would change my mind | [THESIS.md](THESIS.md) has those four sections under those names, and opens with where the case stands |
 | Never invent numbers; if a metric cannot be computed from these sources, say so | THESIS.md and the numbers on this page are written by the build from the warehouse, and `make verify` fails when they stop matching it. THESIS.md lists the claims the data cannot settle, and what these sources cannot compute |
 
@@ -190,11 +190,12 @@ data quality.
 
 **NEAR's public BigQuery dataset** (`bigquery-public-data.crypto_near_mainnet_us`) is queried too. The SQL is in
 [`ingest/sql/bigquery/`](ingest/sql/bigquery), one file per query, and only counts are kept. Over the 682 days read, it
-counts exactly the same distinct signers as NearBlocks on every day and the same transactions on 680, so the figures the
-site shows are checked day for day. It adds what no other source here gives: accounts by contract, who signs the day's transactions, who calls
-Chain Signatures, and how many of the 74.9 million accounts that ever signed a transaction came back. And NEAR's own circulating supply table agrees with the
-one this warehouse builds from the lockup contracts to within 24 NEAR of 2.1 million locked. The method, the cost and
-what it found are in [docs/SOURCES.md](docs/SOURCES.md#bigquery-public-dataset).
+counts exactly the same distinct signers as NearBlocks on every day and the same transactions on 680, so the
+transaction and signer counts the site shows are checked day for day. It adds what no other source here gives:
+accounts by contract, who signs the day's transactions, who calls Chain Signatures, who owns the staked NEAR, and how
+many of the 74.9 million accounts that ever signed a transaction came back. And NEAR's own circulating supply table
+agrees with the one this warehouse builds from the lockup contracts to within 24 NEAR of 2.1 million locked. The
+method, the cost and what it found are in [docs/SOURCES.md](docs/SOURCES.md#bigquery-public-dataset).
 
 <details>
 <summary><b>The main tables in each area, and where they come from</b></summary>
@@ -202,11 +203,11 @@ what it found are in [docs/SOURCES.md](docs/SOURCES.md#bigquery-public-dataset).
 
 | Area | Main tables in `gold` | Main sources |
 |---|---|---|
-| Chain usage, supply | `fct_chain_daily`, `fct_supply_daily`, `fct_circulating_supply_daily`, `fct_protocol_config`, `fct_contract_daily`, `fct_receiver_sample_daily`, `fct_bigquery_chain_daily`, `fct_bigquery_contract_daily`, `fct_bigquery_action_daily`, `fct_bigquery_circulating_supply_daily`, `fct_bigquery_signer_cohort_monthly`, `fct_bigquery_signer_daily`, `fct_bigquery_caller_daily`, `fct_bigquery_staking_balance_daily` | NearBlocks, archival RPC, Neardata, NEAR's public BigQuery dataset |
+| Chain usage, supply | `fct_chain_daily`, `fct_supply_daily`, `fct_circulating_supply_daily`, `fct_protocol_config`, `fct_contract_daily`, `fct_receiver_sample_daily`, `fct_bigquery_chain_daily`, `fct_bigquery_receiver_daily`, `fct_bigquery_signer_daily`, `fct_bigquery_contract_daily`, `fct_bigquery_caller_daily`, `fct_bigquery_action_daily`, `fct_bigquery_circulating_supply_daily`, `fct_bigquery_signer_cohort_monthly` | NearBlocks, archival RPC, Neardata, NEAR's public BigQuery dataset |
 | NEAR Intents, revenue | `fct_intents_daily`, `fct_intents_chain_daily`, `fct_intents_asset_daily`, `fct_intents_fee_channels`, `fct_dune_intents_asset_daily`, `fct_dune_intents_chain_daily`, `fct_dune_intents_swaps_daily`, `fct_dune_intents_tvl_daily`, `fct_dune_intents_tvl_asset_daily`, `fct_dune_dashboard_results`, `fct_intents_1click_daily`, `fct_intents_1click_channel_daily`, `fct_revenue_capture` | DefiLlama, NearBlocks, revenue.near.org, NEAR's dashboard on Dune, Intents Explorer API |
 | The Intents pool, on chain | `fct_intents_pool_chain_monthly`, `fct_token_price_daily` | Archival RPC, Coin Metrics, DefiLlama |
 | Wallets | `fct_wallet_transfers`, `fct_wallet_counterparties`, `fct_revenue_inflows_daily`, `fct_wallet_balance_daily`, `fct_wallet_holdings`, `fct_token_holders`, `dim_entity` | FastNear, RPC, 1Click, Rhea |
-| Security, staking | `fct_validator_summary`, `fct_chain_signatures_daily`, `fct_mpc_state`, `fct_lst_snapshot` | RPC, NearBlocks |
+| Security, staking | `fct_validator_summary`, `fct_chain_signatures_daily`, `fct_mpc_state`, `fct_lst_snapshot`, `fct_bigquery_staking_balance_daily` | RPC, NearBlocks, NEAR's public BigQuery dataset |
 | Capital, DeFi | `fct_protocol_tvl_daily`, `fct_defi_tvl_daily`, `fct_exchange_balance_daily`, `fct_protocol_fees_snapshot`, `fct_stablecoin_assets`, `fct_yield_pools` | DefiLlama |
 | Market, peers | `fct_market_daily`, `fct_token_prices`, `fct_peer_daily`, `fct_peer_supply_readings`, `fct_swap_services_daily` | CoinMetrics, Coinbase, DefiLlama, 1Click, Rhea |
 | Bitwise NEAR ETF flows | `fct_etf_nrr_daily`, `fct_etf_nrr_chain_daily` | Bitwise's page, archival RPC, SoSoValue through news reports |
@@ -235,10 +236,9 @@ limits; copy `.env.example` to start. Without a key, a keyed source is skipped w
 
 BigQuery is the one source with no keyless route. It needs a Google Cloud key file and one extra package
 (`pip install -r requirements-bigquery.txt`), and it runs with `python -m ingest run --sources bigquery`. It asks
-BigQuery what each query would read before running it, and stops at 150 GB a query unless the limit is raised for
-that run. The nightly job reads it only if the repository holds the key file as the secret
-`GOOGLE_APPLICATION_CREDENTIALS_JSON`. Rebuilding from the saved data
-needs neither.
+BigQuery what each query would read before running it, and stops at 150 GB a query and 600 GB a month unless a
+limit is raised. The nightly job reads it only if the repository holds the key file as the secret
+`GOOGLE_APPLICATION_CREDENTIALS_JSON`. Rebuilding from the saved data needs neither.
 
 A fetch is dated today, which is after the pin, so `make warehouse` alone does not read it. To build with it, run
 `make warehouse AS_OF=9999-12-31`, or move the pin as [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) describes.
@@ -278,7 +278,9 @@ The warehouse reads NEAR directly through RPC and archival RPC, including contra
 Signatures), `intents.near` (NEAR Intents), `meta-pool.near`, `linear-protocol.near`, `lst.rhealab.near` and
 `venear.dao` (House of Stake). It tracks NEAR Intents volume, fees and revenue, traces the revenue wallets named on
 revenue.near.org, reads what the Intents contract held at every month end since it was deployed, and reads the Bitwise
-NEAR ETF's holdings from its staking pool, `bitwise_2.poolv1.near`. No contract is deployed and no transaction is sent.
+NEAR ETF's holdings from its staking pool, `bitwise_2.poolv1.near`. It also queries NEAR's public BigQuery dataset,
+which NEAR's own lakehouse loads, for counts over every transaction and receipt. No contract is deployed and no
+transaction is sent.
 
 ## Data and licence
 

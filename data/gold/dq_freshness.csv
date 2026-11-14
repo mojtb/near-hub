@@ -54,7 +54,7 @@ NearBlocks v1.signer daily,stg_nearblocks__signer_stats,daily,2026-11-14,2026-11
 NearBlocks wallet balances,stg_nearblocks__wallet_balance,daily,2026-11-14,2026-11-13,2026-11-14,1,3,false,2010
 Neardata receiver sample,stg_neardata__receiver_sample,daily,2026-11-14,2026-11-13,2026-11-14,1,3,false,205300
 Protocol config,stg_rpc__protocol_config,snapshot,2026-11-14,2026-11-14,2026-11-14,0,2,false,15
-Registry accounts on chain,stg_rpc__accounts,snapshot,2026-11-14,2026-11-14,2026-11-14,0,2,false,821
+Registry accounts on chain,stg_rpc__accounts,snapshot,2026-11-14,2026-11-14,2026-11-14,0,2,false,820
 Rhea token prices,stg_rhea__token_prices,snapshot,2026-11-14,2026-11-14,2026-11-14,0,2,false,66858
 Validator set,stg_rpc__validators,snapshot,2026-11-14,2026-11-14,2026-11-14,0,2,false,243845
 revenue.near.org capture rates,stg_revenue_page__capture_rates,snapshot,2026-11-14,2026-11-14,2026-11-14,0,2,false,168

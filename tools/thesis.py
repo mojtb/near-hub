@@ -372,10 +372,12 @@ hypothesis = [
     f"alone; and new accounts once NearBlocks switches /v1 off on {day(V1_ENDS)}.",
     "",
     "The prompt names the NEAR BigQuery public dataset, and the warehouse queries it (the SQL is in `ingest/sql/bigquery/`). "
-    f"The chain counts on the site are NearBlocks', and BigQuery checks them day for day: over the {bq['chain_txns_days_equal_bigquery_vs_nearblocks']['b']} "
+    f"The transaction and signer counts on the site are NearBlocks', and BigQuery checks them day for day: over the {bq['chain_txns_days_equal_bigquery_vs_nearblocks']['b']} "
     f"days read, the two count the same transactions on {bq['chain_txns_days_equal_bigquery_vs_nearblocks']['a']} and the same "
-    f"distinct signers on {bq['chain_signers_days_equal_bigquery_vs_nearblocks']['a']}. BigQuery also counts accounts by "
-    f"contract and accounts that come back, which the Usage page charts: on {day(bq_top['date_day'])}, {pct(bq_top['signer_share'])} of the accounts that "
+    f"distinct signers on {bq['chain_signers_days_equal_bigquery_vs_nearblocks']['a']}. BigQuery also counts what no other "
+    "source here does, charted on the Usage, Developers, Security and Capital pages: accounts by contract, accounts that "
+    "come back, who signs the day's transactions, deploys, blocks since launch and the owners of stake. Of accounts by "
+    f"contract: on {day(bq_top['date_day'])}, {pct(bq_top['signer_share'])} of the accounts that "
     f"signed a function call called `{bq_top['contract_id']}`, and {bq_intents['signers']:,.0f} called `intents.near` "
     "(`gold.fct_bigquery_contract_daily`).",
     "",

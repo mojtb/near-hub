@@ -29,7 +29,7 @@ if(location.protocol==='file:')addEventListener('click',function(e){var a=e.targ
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&display=swap" onload="this.onload=null;this.rel='stylesheet'">
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&display=swap"></noscript>
 <style>
-/* Layout concept: a night sky of data above a bright sheet. The dark hero states the thesis as a sentence with real numbers and shows the chart behind it. The sheet below holds every subject as a bento of live mini charts. Pages, navigation and search all generate from two lists, so new analyses need no layout work. */
+/* Layout concept: by night, a night sky of data above a bright sheet; by day, one light page from the header to the footer. The hero states the thesis as a sentence with real numbers and shows the chart behind it. The sheet below holds every subject as a bento of live mini charts. Pages, navigation and search all generate from two lists, so new analyses need no layout work. */
 :root{
   --night:#090e0d;--night-2:#111816;--night-ink:#f3f7f5;--night-mute:rgba(243,247,245,.62);--night-line:rgba(243,247,245,.11);--mint:#00ec97;
   --page:#f4f5f5;--surface:#ffffff;--ink:#0c100f;--mute:#59625f;--faint:#646c69;--line:rgba(12,16,15,.09);--soft:#f1f3f2;--accent:#008a60;--wash:#e8faf2;
@@ -64,7 +64,7 @@ h1,h2,h3{margin:0;font-weight:500;text-wrap:balance;letter-spacing:-.022em}
 p{margin:0}
 .wrap{padding-inline:max(var(--gutter),env(safe-area-inset-left,0px)) max(var(--gutter),env(safe-area-inset-right,0px));max-width:1460px;margin-inline:auto}
 
-/* Header: always on the night surface, as a bar of dark glass. The subjects sit in a rounded track, on the bar's one
+/* Header: a bar of glass, dark by night and light by day (day mode sets its paint, further down). The subjects sit in a rounded track, on the bar's one
    line or on a row of their own under it (fits 4 and 5, and phones); the page you are on is a pill lit in its
    subject's colour. No tab changes width when it is the current one, so the bar keeps its layout from page to page. */
 .head{position:sticky;top:0;z-index:30;background:rgba(9,14,13,.94);backdrop-filter:saturate(1.6) blur(18px);-webkit-backdrop-filter:saturate(1.6) blur(18px);box-shadow:0 1px 0 var(--night-line);color:var(--night-ink);transition:--cur-x .34s cubic-bezier(.3,.7,.2,1)}
@@ -219,8 +219,8 @@ p{margin:0}
 .sec-head span,.sec-head a{font-size:14.5px;color:var(--mute)}.sec-head a{display:inline-flex;align-items:center;min-height:24px}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);min-width:0}
 
-/* The case so far: the long case as its links, in the order the argument runs. A rail gives each link one mark for
-   each result, and the ledger under it lists every result with its number. A solid mark supports the case and a hollow
+/* The case so far: the long case as its links, in the order the argument runs. The chain gives each link one mark for
+   each result, and beside it the link in view lists its results with their numbers. A solid mark supports the case and a hollow
    one counts against it, so colour is never the only sign; the green and red passed the palette checks for colour-blind
    readers in both themes, and status words use the --st tokens, which read at 4.5:1. */
 .case-sec,.bento{--help:#0b9a7d;--hurt:#d9553f}
@@ -233,7 +233,6 @@ p{margin:0}
 .cz-tally{display:flex;flex-wrap:wrap;gap:2px 20px}
 .cz-tally>span{display:inline-flex;align-items:center;gap:8px}
 .cz-tally b{font-weight:500;color:var(--ink);font-variant-numeric:tabular-nums;margin-right:-3px}
-.cz-lede{font-size:clamp(17px,1.45vw,20px);line-height:1.45;letter-spacing:-.008em;color:color-mix(in srgb,var(--ink) 84%,var(--page));max-width:66ch;margin:-2px 0 0;text-wrap:pretty}
 .cz{position:relative;margin-top:clamp(18px,3vh,28px);--px:clamp(18px,2.5vw,36px)}
 /* The rail: one column for each part of the case. A short string joins each link's marks to the next link's. */
 .cz-rail{--gap:clamp(14px,1.9vw,28px);display:grid;grid-template-columns:repeat(var(--n),minmax(0,1fr));column-gap:var(--gap);row-gap:0;margin:0;padding:clamp(22px,2.5vw,32px) var(--px) clamp(20px,2.2vw,28px);list-style:none;border-bottom:1px solid var(--line)}
@@ -263,26 +262,7 @@ p{margin:0}
 .cz-tip{position:absolute;z-index:6;left:0;top:0;width:max-content;max-width:min(320px,calc(100% - 16px));transform:translate(-50%,calc(-100% - 12px));background:var(--tip-bg);color:var(--tip-ink);border-radius:10px;padding:9px 12px 10px;font-size:13px;line-height:1.38;pointer-events:none;box-shadow:0 10px 28px rgba(0,0,0,.22)}
 .cz-tip b{display:block;font-weight:500;font-size:13.5px;margin-bottom:3px}
 .cz-tip span{display:block;opacity:.8}
-/* The ledger: the same parts in the same order, in two columns the browser keeps level */
-.cz-led{--ind:25px;columns:2;column-gap:clamp(40px,5vw,84px);column-rule:1px solid var(--line);padding:clamp(22px,2.4vw,32px) var(--px) 2px}
-.cz-g{break-inside:avoid;padding-bottom:clamp(20px,2.2vw,30px);scroll-margin-top:calc(var(--head-h,58px) + 20px)}
-.cz-gh{display:grid;grid-template-columns:var(--ind) minmax(0,1fr) auto;align-items:baseline;column-gap:0;padding-bottom:9px;border-bottom:1px solid var(--ink)}
-.cz-gn{font-size:17px;font-weight:400;color:var(--mute);font-variant-numeric:tabular-nums}
-.cz-gh h3{font-size:17px;font-weight:600;letter-spacing:-.018em}
-.cz-gv{padding-left:16px;font-size:13px;color:var(--mute);text-align:right}
-.cz-g ul{margin:0;padding:0;list-style:none}
-.cz-r{position:relative;display:grid;grid-template-columns:var(--ind) minmax(0,1fr) auto 6.1rem;grid-template-areas:"m t p v" "m s p v";column-gap:0;align-items:start;margin-inline:-10px;padding:11px 10px 12px;border-radius:9px;color:inherit;text-decoration:none;scroll-margin-top:calc(var(--head-h,58px) + 20px);transition:background .15s}
-.cz-r::before{content:"";position:absolute;left:10px;right:10px;top:0;height:1px;background:var(--line)}
-.cz-g li:first-child .cz-r::before{display:none}
-.cz-r:hover,.cz-r.lit{background:var(--soft)}
-.cz-r .cz-m{grid-area:m;margin-top:6px}
-.cz-r strong{grid-area:t;font-weight:500;font-size:15px;line-height:1.33;letter-spacing:-.01em;text-wrap:pretty}
-.cz-r small{grid-area:s;margin-top:3px;font-size:13px;line-height:1.42;color:var(--mute)}
-.cz-r small b{font-weight:500;color:var(--st-holds)}
-.cz-r.is-against small b{color:var(--st-risk)}
 .cz-tag{display:inline-block;margin-left:7px;padding:0 7px;border:1px solid var(--string);border-radius:999px;font-size:11.5px;font-style:normal;line-height:1.55;color:var(--mute);white-space:nowrap;vertical-align:1px}
-/* The stretch of time a result reads, under its outcome, so a result over three months is never taken for today's figure */
-.cz-w{display:block;margin-top:1px;color:var(--faint)}
 /* The trend behind a result: its own series, in the colour of what it does to the case, with the bar dashed where it applies */
 .cz-r.is-for{--c:var(--help)}.cz-r.is-against{--c:var(--hurt)}
 .cz-sp{grid-area:p;align-self:center;width:clamp(70px,6.4vw,96px);height:30px;margin-left:18px;overflow:visible}
@@ -291,7 +271,6 @@ p{margin:0}
 .cz-sp .ar{fill:var(--c);opacity:.1}
 .cz-sp .br{stroke:var(--mute);stroke-width:1;stroke-dasharray:2 3;opacity:.75}
 .cz-sp .dt{stroke:var(--c);stroke-width:5.5;stroke-linecap:round}
-.cz-v{grid-area:v;padding-left:12px;text-align:right;font-size:17px;font-weight:500;line-height:1.25;letter-spacing:-.02em;white-space:nowrap;font-variant-numeric:tabular-nums}
 .cz-foot{margin:0;padding:14px var(--px) 18px;border-top:1px solid var(--line);font-size:13px;line-height:1.5;color:var(--mute)}
 .cz-foot span{white-space:nowrap}
 /* How the count has moved: the base of the case card. The rail opens the card on a band of its own and this band
@@ -301,14 +280,11 @@ p{margin:0}
   --czg:color-mix(in srgb,var(--soft) 78%,var(--surface));background:radial-gradient(56% 150% at 0% 135%,color-mix(in srgb,var(--accent) 12%,transparent),transparent 62%),var(--czg)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .czb{--help:#19c99a;--hurt:#ff7d66;--czg:var(--night);background:radial-gradient(56% 150% at 0% 135%,rgba(0,236,151,.1),transparent 62%),var(--night);border-top-color:transparent}}
 :root[data-theme="dark"] .czb{--help:#19c99a;--hurt:#ff7d66;--czg:var(--night);background:radial-gradient(56% 150% at 0% 135%,rgba(0,236,151,.1),transparent 62%),var(--night);border-top-color:transparent}
-.czb-top h3{font-size:17px;font-weight:600;letter-spacing:-.018em;line-height:1.25}
-.czb-top p{margin:3px 0 0;font-size:13px;line-height:1.45;color:var(--mute)}
 .czb-go{position:absolute;top:clamp(18px,2vw,25px);right:var(--px);display:inline-flex;align-items:center;gap:7px;height:34px;padding:0 10px 0 14px;border-radius:10px;font-size:13.5px;font-weight:600;letter-spacing:-.005em;line-height:1;white-space:nowrap;text-decoration:none;color:var(--ink);background:color-mix(in srgb,var(--surface) 72%,transparent);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--ink) 13%,transparent);transition:background .16s,box-shadow .16s}
 .czb-go:hover{background:var(--surface);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--ink) 28%,transparent)}
 .czb-go:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .czb-go svg{width:15px;height:15px;flex:none;transition:transform .16s}
 .czb-go:hover svg{transform:translateX(2px)}
-.czb-main{display:grid;grid-template-columns:minmax(236px,.92fr) minmax(0,2.7fr);gap:10px clamp(26px,3.6vw,56px);align-items:center;margin-top:clamp(10px,1.2vw,16px)}
 .czb-rows{list-style:none;margin:0;padding:0}
 .czb-row{position:relative;display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;column-gap:14px;margin-inline:-10px;padding:9px 10px 10px;border-radius:9px;transition:background .15s}
 .czb-row+.czb-row::before{content:"";position:absolute;left:10px;right:10px;top:0;height:1px;background:var(--line)}
@@ -319,10 +295,8 @@ p{margin:0}
 /* A count in the case's marks: solid for, hollow against. The numbers keep a column each, so three counts line up. */
 .czn{display:inline-flex;align-items:center;gap:7px;font-variant-numeric:tabular-nums;white-space:nowrap}
 .czn b{font-size:22px;font-weight:500;letter-spacing:-.03em;line-height:1;min-width:1.2em}
-.czn b+.sx-vh+.cz-m{margin-left:7px}
 .czb-plot{position:relative;min-width:0;touch-action:pan-y}
 @media (max-width:760px){
-  .czb-main{grid-template-columns:minmax(0,1fr);row-gap:14px;align-items:start}
   .czb-go{position:static;display:flex;justify-content:center;margin-top:14px;height:40px}}
 /* The chart of the count, here and in the question "How steady is the count?": results for the case above the line
    and against it below, each fill fading toward the line, a named column under each stretch, the case's mark at
@@ -379,7 +353,6 @@ p{margin:0}
 .czs .t{display:block;font-size:13.5px;line-height:1.3;color:var(--mute)}
 .czs .czn{margin-top:7px;gap:8px}
 .czs .czn b{font-size:clamp(24px,2.4vw,32px);min-width:0}
-.czs .czn .cz-m{width:10px;height:10px}
 .czs small{display:block;margin-top:6px;font-size:13px;line-height:1.35;color:var(--mute)}
 /* The latest changes as a timeline: a spine, a mark for each change, the newest first. Each row leads to its claim's question. */
 .czt-h{margin:20px 0 2px;font-size:15px;font-weight:600;letter-spacing:-.012em}
@@ -441,10 +414,10 @@ p{margin:0}
   .czt .v b{display:inline;font-size:14px;margin-left:4px}
   .czt-r::before{left:calc(10px + 8px)}
   .czt li:nth-child(n+4){display:none}
-  .czs>li{padding:11px 10px 12px}.czs .czn b{font-size:22px}.czs .czn{gap:6px}.czs .czn b+.sx-vh+.cz-m{margin-left:3px}
+  .czs>li{padding:11px 10px 12px}.czs .czn b{font-size:22px}.czs .czn{gap:6px}
   .czq-note{text-align:left}}
 .cz-r.flash{animation:cz-flash 1.5s ease-out}
-.cz-g.flash .cz-gh h3{animation:cz-ink 1.5s ease-out}
+.czp.flash .czp-h h3{animation:cz-ink 1.5s ease-out}
 @keyframes cz-flash{0%,25%{background:color-mix(in srgb,var(--help) 16%,var(--surface))}100%{background:transparent}}
 @keyframes cz-ink{0%,25%{color:var(--accent)}100%{color:inherit}}
 /* Six columns need room: below it the rail is three by two, and on a phone a list with the marks at the end of each line */
@@ -454,7 +427,6 @@ p{margin:0}
   .cz-s::before{display:none}
   .cz-rail li.cz-base::before{display:none}
 }
-@media (max-width:900px){.cz-led{columns:1}}
 @media (max-width:600px){
   .cz-rail{grid-template-columns:minmax(0,1fr);row-gap:0;padding-block:6px}
   .cz-rail li{display:block;grid-row:auto}
@@ -465,13 +437,8 @@ p{margin:0}
   .cz-t{margin:0;padding-right:14px;font-size:15px}
   .cz-s{margin:0;height:7px}
   .cz-vd{display:none}
-  .cz-gh{grid-template-columns:var(--ind) minmax(0,1fr)}
-  .cz-gv{grid-column:2;padding:2px 0 0;text-align:left}
-  .cz-r{grid-template-columns:var(--ind) minmax(0,1fr) auto;grid-template-areas:"m t t" "m s v"}
-  .cz-sp{display:none}
-  .cz-v{align-self:end;padding-left:14px}
 }
-@media (prefers-reduced-motion:reduce){.cz-r.flash,.cz-g.flash .cz-gh h3{animation:none}.cz-s i{transition:none}}
+@media (prefers-reduced-motion:reduce){.cz-r.flash,.czp.flash .czp-h h3{animation:none}.cz-s i{transition:none}}
 .stamp{font-size:12.5px;font-weight:600;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
 .stamp::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
 /* Status words are text, so each theme gets shades that read at 4.5:1 or better */
@@ -916,11 +883,11 @@ table.corr{--trk:clamp(52px,9.5vw,136px);--val:52px;--gap:12px;font-size:15px}
 .cmdk ul{list-style:none;margin:0;padding:6px;overflow-y:auto}
 .cmdk li button{display:flex;justify-content:space-between;gap:14px;width:100%;padding:9px 11px;border-radius:9px;text-align:left;font-size:14.5px}
 .cmdk li button span{min-width:0}.cmdk li button small{color:var(--faint);white-space:nowrap}.cmdk li button.on{background:var(--soft)}
-/* The footer is the header, unrolled. It stands on the same night surface, its mark has the same glow, the subjects
-   sit in the same rounded track with the page you are on lit in its subject's colour, and the site's other pages
-   carry the header's own icons. The bright sheet ends on it in rounded corners, as it begins under the hero, and a
-   wash of the current subject's colour (mint on any other page) lies under that edge. The last line says whose site
-   this is not. */
+/* The footer is the header, unrolled. It stands on the same surface (night by night, the page's own by day), its
+   mark has the same glow, the subjects sit in the same rounded track with the page you are on lit in its subject's
+   colour, and the site's other pages carry the header's own icons. By night the bright sheet ends on it in rounded
+   corners, as it begins under the hero; by day one rule parts them. A wash of the current subject's colour (mint on
+   any other page) lies under that edge. The last line says whose site this is not. */
 @property --end-hue{syntax:'<color>';inherits:true;initial-value:#00ec97}
 .end{position:relative;isolation:isolate;overflow:hidden;background:var(--night);color:var(--night-mute);padding-block:calc(26px + clamp(30px,5vh,50px)) max(22px,env(safe-area-inset-bottom,0px));font-size:13.5px;transition:--end-hue .5s}
 .end::before{content:"";position:absolute;z-index:1;left:0;right:0;top:0;height:26px;background:var(--page);border-radius:0 0 26px 26px;box-shadow:0 1px 0 var(--night-line)}
@@ -1124,17 +1091,467 @@ table.corr{--trk:clamp(52px,9.5vw,136px);--val:52px;--gap:12px;font-size:15px}
 </style>
 <!-- The Studio is not part of this page: it is the folder site/studio/, fetched the first time #studio is opened. Its stylesheet is placed here, between the two style blocks, so the rules below keep the last word. -->
 <style id="css-tail">
-/* The verdict leads the case; where the links stand follows it in a quieter line */
-.cz-sub{font-size:15.5px;line-height:1.5;color:var(--mute);max-width:78ch;margin:12px 0 0;text-wrap:pretty}
-.cz-leg{margin:0;padding:16px var(--px) 0;font-size:13px;line-height:1.5;color:var(--mute)}
-.cz-gnote{margin:9px 0 1px;padding-left:var(--ind);font-size:13px;line-height:1.45;color:color-mix(in srgb,var(--ink) 72%,var(--page))}
-.cz-n{display:block;margin-top:3px;color:color-mix(in srgb,var(--ink) 72%,var(--page))}
-/* Findings from the subject pages: plain lines in the type of the case's quieter line, the figure in ink, each a link */
-.cz-finds{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(460px,100%),1fr));column-gap:clamp(28px,4vw,64px)}
-.cz-finds li{padding:5px 0;font-size:15.5px;line-height:1.5;text-wrap:pretty}
-.cz-finds a{color:var(--mute);text-decoration:underline;text-decoration-thickness:1px;text-decoration-color:color-mix(in srgb,var(--mute) 32%,transparent);text-underline-offset:4px;transition:color .15s,text-decoration-color .15s}
-.cz-finds b{font-weight:500;color:var(--ink);font-variant-numeric:tabular-nums}
-.cz-finds a:hover{color:var(--ink);text-decoration-color:currentColor}
+/* ============================================================================================
+   THE CASE, THE FINDINGS, THE HEROES AND DAY MODE. These rules follow the ones above and refine them:
+   1 the answer under "The case so far" is two justified columns that fill the sheet;
+   2 the case card is the chain of the case down its side, with the tests of the link in view beside it;
+   3 a count is a meter, and "How the count has moved" is built as the card above it is;
+   4 the findings are one card of four rows;
+   5 the home page's hero: its figures, its bar and its chart;
+   6 subject pages: the head, the gauges as tiles, the question cards;
+   7 day mode, which is day throughout.
+   ============================================================================================ */
+
+/* 1. The answer. The verdict takes the wide column; what it rests on stands beside it in a narrower one. Every
+   paragraph is justified and hyphenated, as the readings under the charts are. */
+.czv{display:grid;grid-template-columns:minmax(0,1.36fr) minmax(0,1fr);column-gap:clamp(28px,3.4vw,56px);margin-top:clamp(2px,.6vw,8px)}
+.czv p{margin:0;text-align:justify;hyphens:auto;-webkit-hyphens:auto;text-wrap:pretty}
+.czv-a{font-size:clamp(19px,1.62vw,22.5px);line-height:1.4;letter-spacing:-.014em;color:var(--ink)}
+.czv p.czv-a{hyphens:manual;-webkit-hyphens:manual}
+.czv-a b{font-weight:600}
+.czv-b{margin-top:clamp(12px,1.2vw,16px)!important;font-size:clamp(16px,1.24vw,17.5px);line-height:1.64;color:color-mix(in srgb,var(--ink) 78%,var(--page))}
+.czv-b b.n{font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums}
+.czv-c{margin-top:clamp(10px,1vw,14px)!important;font-size:14px;line-height:1.55;color:var(--mute)}
+.czv-side{padding-left:clamp(28px,3.4vw,56px);border-left:1px solid var(--line);align-self:stretch;display:flex;flex-direction:column;justify-content:space-between}
+.czv-side p{padding:clamp(10px,1vw,14px) 0;font-size:15px;line-height:1.58;color:var(--mute)}
+.czv-side p+p{border-top:1px solid var(--line)}
+.czv-side p:first-child{padding-top:2px}.czv-side p:last-child{padding-bottom:2px}
+.czv-side p b{font-weight:500;color:var(--ink)}
+@media (max-width:1280px){.czv{grid-template-columns:minmax(0,1.16fr) minmax(0,1fr)}}
+@media (max-width:980px){
+  .czv{grid-template-columns:minmax(0,1fr)}
+  .czv-side{margin-top:18px;padding:0;border-left:0;border-top:1px solid var(--line)}
+  .czv-side p:first-child{padding-top:14px}}
+@media (max-width:560px){.czv p{text-align:left}}
+
+/* 2. The case card: the chain down the side, the tests beside it. On a wide window the six parts stand in a column
+   as numbered links joined by a line, the argument read from the top down; the part in view lies on the card's
+   surface as a tab that opens to the right into its tests. With every part open the chain stays in sight and
+   follows the reader. On a tablet the parts fold into rows of three above the tests, and on a phone each part
+   opens in place, under its own line. */
+.cz .cz-rail{position:relative;isolation:isolate}
+.cz .cz-rail li.cz-glide{display:block;position:absolute;z-index:-1;left:0;top:0;width:0;height:0;margin:0;padding:0;border:0;grid-row:auto;border-radius:12px;background:var(--surface);box-shadow:0 0 0 1px var(--line);visibility:hidden;pointer-events:none}
+.cz .cz-rail li.cz-glide::before{display:none}
+.cz .cz-rail li.cz-glide.on{visibility:visible}
+.cz .cz-rail li.cz-glide.col{border-radius:12px 0 0 12px;border:1px solid var(--line);border-right:0;box-shadow:inset 2px 0 0 color-mix(in srgb,var(--accent) 85%,transparent)}
+.cz .cz-rail li.cz-glide.ready{transition:transform .36s cubic-bezier(.3,.7,.2,1),width .36s cubic-bezier(.3,.7,.2,1),height .36s cubic-bezier(.3,.7,.2,1)}
+@media (prefers-reduced-motion:reduce){.cz .cz-rail li.cz-glide.ready{transition:none}}
+.cz .cz-rail li.on .cz-no{color:var(--ink)}
+.cz .cz-rail li:not(.on) .cz-p:not(:hover):not(:focus-visible) .cz-t{color:color-mix(in srgb,var(--ink) 74%,var(--soft))}
+.cz .cz-p{cursor:pointer}
+.cz .cz-p:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.cz-body{position:relative;min-width:0;display:flex;flex-direction:column}
+.cz-body>.cz-foot{margin-top:auto}
+/* The two controls: one part or all of them, and the part before and after */
+.cz-bar{display:flex;justify-content:flex-end;padding:clamp(14px,1.5vw,18px) var(--px) 0}
+.cz-ctl{display:flex;align-items:center;gap:8px}
+.cz-seg{display:inline-flex;gap:1px;padding:3px;border-radius:12px;background:color-mix(in srgb,var(--ink) 6%,var(--surface))}
+.cz-seg button{min-height:28px;padding:4px 12px;border-radius:9px;font-size:12.5px;font-weight:600;color:var(--mute);white-space:nowrap;transition:color .16s}
+.cz-seg button:hover{color:var(--ink)}
+.cz-seg button[aria-pressed="true"]{color:var(--ink);background:var(--surface);box-shadow:0 1px 2px rgba(12,16,15,.14),0 0 0 1px var(--line)}
+.cz-seg button:focus-visible,.cz-nav button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.cz-nav{display:inline-flex;gap:4px}
+.cz-nav button{display:grid;place-items:center;width:34px;height:34px;border-radius:10px;box-shadow:inset 0 0 0 1px var(--line);color:var(--mute);transition:color .15s,box-shadow .15s}
+.cz-nav button:hover:not(:disabled){color:var(--ink);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--ink) 30%,transparent)}
+.cz-nav button:disabled{color:color-mix(in srgb,var(--mute) 38%,transparent);cursor:default}
+.cz.all .cz-nav{display:none}
+/* A part's tests: its name, how it came out in a sentence, then the table */
+.cz-panels{padding:clamp(4px,.8vw,10px) var(--px) clamp(10px,1.3vw,18px)}
+.czp{scroll-margin-top:calc(var(--head-h,58px) + 18px)}
+.czp[hidden]{display:none}
+.czp-h{display:flex;align-items:center;gap:13px;min-height:34px}
+.czp-nu,.cz-main .cz-no{font-variant-numeric:tabular-nums}
+.czp-nu{flex:none;display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--ink);color:var(--surface);font-size:14px;font-weight:600;line-height:1}
+.czp-h h3{font-size:clamp(19px,1.72vw,23px);font-weight:600;letter-spacing:-.024em;line-height:1.2;text-wrap:balance}
+.czp-sub{margin:7px 0 0;padding-left:43px;max-width:86ch;font-size:14.5px;line-height:1.5;color:var(--mute);text-wrap:pretty}
+.czp-sub b{font-weight:500;color:var(--ink)}
+.cz.all .czp+.czp{margin-top:clamp(18px,2vw,26px);padding-top:clamp(20px,2.2vw,28px);border-top:1px solid var(--line)}
+/* The table: one grid for the column heads and every row, so the results, trends and numbers stand in columns */
+.czr-h,.cz .cz-r{display:grid;grid-template-columns:minmax(0,1fr) 11.2rem clamp(78px,6.6vw,100px) minmax(7.6rem,9.2rem);grid-template-areas:none;column-gap:clamp(14px,1.7vw,26px);margin-inline:-10px;padding-inline:10px}
+.czr-h{padding-top:clamp(14px,1.5vw,18px);padding-bottom:9px;border-bottom:1px solid color-mix(in srgb,var(--ink) 62%,var(--surface));font-size:12.5px;line-height:1.3;color:var(--faint)}
+.czr-h span:first-child{padding-left:24px}
+.czr-h span:last-child{text-align:right}
+.czp ul{margin:0;padding:0;list-style:none}
+.cz .cz-r{position:relative;align-items:start;padding-top:15px;padding-bottom:16px;border-radius:10px;color:inherit;text-decoration:none;scroll-margin-top:calc(var(--head-h,58px) + 20px);transition:background .15s}
+.cz .cz-r::before{content:"";position:absolute;left:10px;right:10px;top:0;height:1px;background:var(--line)}
+.czp li:first-child .cz-r::before{display:none}
+.cz .cz-r:hover,.cz .cz-r.lit,.cz .cz-r:focus-visible{background:color-mix(in srgb,var(--ink) 4.5%,var(--surface))}
+.cz .cz-r:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.czr-t{position:relative;min-width:0;padding-left:24px}
+.czr-t .cz-m{position:absolute;left:0;top:6px;margin:0}
+.cz .cz-r .czr-t strong{display:block;max-width:64ch;font-weight:500;font-size:15.5px;line-height:1.36;letter-spacing:-.011em;text-wrap:pretty}
+.cz .cz-r .cz-w{display:block;margin-top:4px;font-size:13px;line-height:1.4;color:var(--faint)}
+.cz .cz-r .cz-n{display:block;max-width:74ch;margin-top:3px;font-size:13px;line-height:1.45;color:color-mix(in srgb,var(--ink) 70%,var(--page))}
+.czr-o{min-width:0;padding-top:1px}
+.czr-o b{display:block;font-size:14px;font-weight:500;line-height:1.4;letter-spacing:-.005em}
+.czr-o>span:last-child{display:block;font-size:13px;line-height:1.4;color:var(--st-holds)}
+.cz-r.is-against .czr-o>span:last-child{color:var(--st-risk)}
+.czr-p{display:block;align-self:center;min-width:0}
+.cz .czr-p .cz-sp{display:block;width:100%;height:32px;margin:0}
+.czr-v{min-width:0;text-align:right}
+.czr-v b{display:block;font-size:19px;font-weight:500;line-height:1.2;letter-spacing:-.025em;white-space:nowrap;font-variant-numeric:tabular-nums}
+.czr-v>span{display:block;margin-top:3px;font-size:12.5px;line-height:1.4;color:var(--mute);text-wrap:balance}
+/* A row is a link to its chart: its claim is underlined under the pointer */
+.cz .cz-r:hover .czr-t strong{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px;text-decoration-color:color-mix(in srgb,var(--ink) 45%,transparent)}
+.cz .cz-r:hover .czr-t strong .cz-tag{text-decoration:none}
+.cz .cz-foot{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:clamp(28px,4vw,64px);row-gap:6px;padding-top:15px}
+.cz .cz-foot p{margin:0;text-wrap:pretty}
+.cz .cz-foot a{white-space:nowrap}
+@media (max-width:900px){.cz .cz-foot{grid-template-columns:minmax(0,1fr)}}
+
+/* Wide: the chain and its tab */
+@media (min-width:1001px){
+  .cz-main{display:grid;grid-template-columns:clamp(262px,24%,316px) minmax(0,1fr)}
+  .cz-side{position:relative;border-right:1px solid var(--line);border-radius:calc(var(--r) - 1px) 0 0 0;background:radial-gradient(130% 46% at 0% 0%,color-mix(in srgb,var(--accent) 12%,transparent),transparent 66%),color-mix(in srgb,var(--soft) 78%,var(--surface))}
+  .cz .cz-rail{display:flex;flex-direction:column;gap:2px;position:sticky;top:calc(var(--head-h,58px) + 6px);margin:0;padding:14px 0 14px 12px;border-bottom:0;border-radius:0;background:none}
+  .cz .cz-rail li{display:block;grid-row:auto}
+  .cz .cz-rail .cz-p{display:grid;grid-row:auto;grid-template-rows:none;grid-template-columns:30px minmax(0,1fr);column-gap:13px;row-gap:9px;align-items:center;padding:11px 18px 13px 10px;border-radius:10px}
+  .cz-main .cz-no{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;box-shadow:inset 0 0 0 1px var(--string);font-size:14px;font-weight:600;line-height:1;letter-spacing:0;color:var(--mute);transition:background .22s,color .22s,box-shadow .22s}
+  .cz .cz-rail li.on .cz-no{background:var(--ink);box-shadow:none;color:var(--surface)}
+  .cz .cz-rail .cz-p:hover .cz-no,.cz .cz-rail .cz-p:focus-visible .cz-no{color:var(--ink);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--ink) 55%,transparent)}
+  .cz .cz-rail li.on .cz-p .cz-no{color:var(--surface);box-shadow:none}
+  .cz-main .cz-t{margin:0;font-size:15px;line-height:1.3;text-wrap:pretty}
+  .cz-main .cz-s{grid-column:2;height:7px;margin:0;gap:4px}
+  .cz-main .cz-s::before{display:none}
+  .cz-main .cz-s i{flex:0 0 clamp(22px,2.05vw,30px)}
+  /* The words are in the tests' heading here; the marks say it in the chain */
+  .cz-main .cz-vd{position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+  /* The line that joins one link to the next; what the links rest on stands apart under a rule */
+  .cz .cz-rail li:not(.cz-end):not(.cz-glide)::after{content:"";position:absolute;left:24.5px;top:44px;bottom:-11px;width:1px;background:var(--string)}
+  .cz .cz-rail li.cz-base{margin-top:9px;padding-top:9px}
+  .cz .cz-rail li.cz-base::before{left:10px;right:18px;top:0;bottom:auto;width:auto;height:1px;background:var(--line)}
+  .cz-bar{position:absolute;z-index:2;top:clamp(18px,1.9vw,24px);right:var(--px);padding:0}
+  .cz-panels{padding-top:clamp(18px,1.9vw,24px)}
+  .cz:not(.all) .czp-h{padding-right:284px}
+  .cz.all .czp:first-child .czp-h{padding-right:200px}
+  .cz:not(.all) .czp-nu{display:none}
+  .cz:not(.all) .czp-sub{padding-left:0}}
+@media (min-width:1001px) and (prefers-color-scheme:dark){:root:not([data-theme="light"]) .cz .cz-rail{background:none}:root:not([data-theme="light"]) .cz-side{background:radial-gradient(130% 46% at 0% 0%,rgba(0,236,151,.1),transparent 66%),var(--night);border-right-color:transparent}}
+@media (min-width:1001px){:root[data-theme="dark"] .cz .cz-rail{background:none}:root[data-theme="dark"] .cz-side{background:radial-gradient(130% 46% at 0% 0%,rgba(0,236,151,.1),transparent 66%),var(--night);border-right-color:transparent}}
+@media (min-width:1001px) and (max-width:1180px){
+  .czr-h,.cz .cz-r{grid-template-columns:minmax(0,1fr) 10.6rem minmax(7.6rem,9rem)}
+  .czr-h span:nth-child(3),.czr-p{display:none}}
+/* Tablet: the parts in rows of three above the tests */
+@media (max-width:1000px){
+  .czr-h,.cz .cz-r{grid-template-columns:minmax(0,1fr) minmax(140px,11rem) minmax(8rem,10.5rem)}
+  .czr-h span:nth-child(3),.czr-p{display:none}}
+/* Phone: the parts are a list and each opens in place */
+@media (max-width:600px){
+  .cz .cz-rail li.cz-glide{display:none}
+  .cz .cz-rail li.on .cz-no{color:var(--mute)}
+  .cz .cz-rail .cz-p{grid-template-columns:24px minmax(0,1fr) clamp(56px,21vw,96px) 30px}
+  .cz-chev{display:block!important;justify-self:end;color:var(--mute);transition:transform .18s}
+  .cz-p[aria-expanded="true"] .cz-chev{transform:rotate(180deg)}
+  .cz-rail .czp{padding:0 0 8px}
+  .czp-h,.czr-h{display:none}
+  .czp-sub{margin:0 0 6px;padding-left:24px}
+  .cz.all .czp+.czp{margin-top:0;padding-top:0;border-top:0}
+  .cz .cz-r{grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"t t" "o v";row-gap:9px;column-gap:14px;margin-inline:0;padding:13px 0 14px;border-radius:0}
+  .cz .cz-r::before{left:0;right:0}
+  .czp li:first-child .cz-r::before{display:block}
+  .czr-t{grid-area:t}.czr-o{grid-area:o;padding-left:24px}.czr-v{grid-area:v;align-self:end}
+  .czr-v>span{max-width:13ch;margin-left:auto}
+  .cz-bar{justify-content:flex-start;padding-bottom:12px}
+  .cz-nav{display:none}
+  .cz-panels{display:none}}
+.cz-chev{display:none}
+@media (prefers-reduced-motion:reduce){.cz-chev,.cz-main .cz-no{transition:none}}
+
+/* 3. A count as a meter. The number for the case stands at the solid end and the number against it at the hollow
+   end, in the card's own marks; tests that could not run yet leave a gap between them. */
+.czn{display:inline-grid;grid-template-columns:auto minmax(56px,var(--czn-w,104px)) auto;align-items:center;gap:0 9px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.czn b{font-size:19px;font-weight:500;letter-spacing:-.03em;line-height:1;min-width:1.2em}
+.czn b.czn-f{text-align:right}.czn b.czn-a{text-align:left}
+.czn-bar{display:flex;gap:3px;height:7px;min-width:0}
+.czn-bar i{min-width:0;border-radius:4px}
+.czn-bar .is-for{background:var(--help)}
+.czn-bar .is-against{box-shadow:inset 0 0 0 1.5px var(--hurt)}
+.czn-bar .is-wait{align-self:center;height:1.5px;border-radius:0;background:repeating-linear-gradient(90deg,var(--mute) 0 2px,transparent 2px 5px)}
+.czn-k{display:flex;justify-content:space-between;font-size:12px;line-height:1.3;color:var(--mute)}
+.czs .czn{display:grid;grid-template-columns:auto minmax(40px,1fr) auto;max-width:15rem}
+.czs .czn b{font-size:clamp(24px,2.4vw,32px)}
+.czs .czn-bar{height:8px}
+
+/* How the count has moved, at the foot of the case card, is built as the card above it is: the three counts stand
+   in the side column, under the chain and on its ground, and the chart stands beside them under its name, with the
+   way to the full view where the card keeps its controls. A count is one line, its days under it. */
+.czb{display:grid;grid-template-columns:minmax(0,1fr);padding:0}
+.czb-side{min-width:0;padding:14px var(--px) 2px}
+.czb-body{min-width:0;padding:12px var(--px) 12px}
+.czb-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 14px;min-height:26px}
+.czb-head h3{font-size:16px;font-weight:600;letter-spacing:-.016em;line-height:1.3}
+.czb-head p{flex:1 1 auto;margin:0;font-size:13px;line-height:1.4;color:var(--mute)}
+.czb .czb-go{position:static;align-self:center;height:26px;margin:0 -2px 0 auto;padding:0 2px;border-radius:6px;background:none;box-shadow:none;font-size:13px;font-weight:600;color:color-mix(in srgb,var(--ink) 80%,var(--page))}
+.czb .czb-go:hover{background:none;box-shadow:none;color:var(--ink)}
+.czb .czb-rows{margin:0}
+.czb-hd{display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:12px;margin-inline:-10px;padding:0 10px 1px}
+.czb-hd .czn b{height:0}
+.czb .czb-row{grid-template-columns:minmax(0,1fr) auto;column-gap:12px;row-gap:1px;padding:6px 10px 7px}
+.czb .czb-l{display:contents}
+.czb .czb-l b{grid-column:1;grid-row:1;align-self:center;font-size:14px}
+.czb .czb-l small{grid-column:1 / -1;grid-row:2;margin:0;font-size:12.5px;line-height:1.3}
+.czb .czb-row .czn{grid-column:2;grid-row:1}
+/* Wide: the side column runs on from the chain */
+@media (min-width:1001px){
+  .czb{grid-template-columns:clamp(262px,24%,316px) minmax(0,1fr);border-top:0;background:none}
+  .czb-side{padding:13px 18px 9px 22px;border-top:1px solid var(--line);border-right:1px solid var(--line);border-radius:0 0 0 calc(var(--r) - 1px);background:radial-gradient(120% 90% at 0% 100%,color-mix(in srgb,var(--accent) 10%,transparent),transparent 64%),color-mix(in srgb,var(--soft) 78%,var(--surface))}
+  .czb-body{--czg:var(--surface);padding:13px var(--px) 10px;border-top:1px solid var(--line);border-radius:0 0 calc(var(--r) - 1px) 0;background:var(--surface)}
+  .czb .czn{--czn-w:clamp(56px,6vw,92px)}}
+@media (min-width:1001px) and (prefers-color-scheme:dark){:root:not([data-theme="light"]) .czb{background:none}:root:not([data-theme="light"]) .czb-side{background:radial-gradient(120% 90% at 0% 100%,rgba(0,236,151,.09),transparent 64%),var(--night);border-right-color:transparent}}
+@media (min-width:1001px){:root[data-theme="dark"] .czb{background:none}:root[data-theme="dark"] .czb-side{background:radial-gradient(120% 90% at 0% 100%,rgba(0,236,151,.09),transparent 64%),var(--night);border-right-color:transparent}}
+/* Tablet: the counts beside the chart, on the band's own ground */
+@media (min-width:761px) and (max-width:1000px){
+  .czb{grid-template-columns:minmax(232px,max-content) minmax(0,1fr)}
+  .czb-side{padding:16px 6px 10px var(--px)}
+  .czb-body{padding:14px var(--px) 12px clamp(14px,2vw,24px)}}
+/* Phone: the name and the chart first, then the three counts */
+@media (max-width:760px){.czb-body{order:1;padding:14px var(--px) 2px}.czb-side{order:2;padding:4px var(--px) 12px}}
+@media (max-width:420px){.czb .czn{--czn-w:84px}}
+
+/* 4. The findings: one card of four rows, two and two, the sheet's answer to the four figures in the hero and built
+   as they are. Each row is the figure with the subject it comes from under it, the sentence that finishes it, and
+   the mark that it opens. It takes the room of a short paragraph. */
+.czf{margin-top:clamp(30px,5vh,52px)}
+.czf-l{position:relative;list-style:none;margin:0;padding:6px clamp(18px,2.5vw,36px);display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:clamp(36px,5vw,84px)}
+.czf-l::before{content:"";position:absolute;left:50%;top:16px;bottom:16px;width:1px;background:var(--line)}
+.czf-l li{display:flex;min-width:0}
+.czf-r{position:relative;flex:1 1 auto;display:grid;grid-template-columns:7.4rem minmax(0,1fr) 16px;column-gap:clamp(12px,1.6vw,22px);align-items:center;margin-inline:-10px;padding:13px 10px 14px;border-radius:10px;color:inherit;text-decoration:none;transition:background .15s}
+.czf-l li:nth-child(n+3) .czf-r::before{content:"";position:absolute;left:10px;right:10px;top:0;height:1px;background:var(--line)}
+.czf-r:hover,.czf-r:focus-visible{background:color-mix(in srgb,var(--ink) 4.5%,var(--surface))}
+.czf-r:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.czf-n{min-width:0}
+.czf-v{display:block;font-size:clamp(20px,1.8vw,24px);font-weight:500;line-height:1.15;letter-spacing:-.03em;white-space:nowrap;font-variant-numeric:tabular-nums}
+.czf-v small{margin-left:.24em;font-size:.56em;font-weight:500;letter-spacing:0;color:var(--mute)}
+.czf-k{display:flex;align-items:center;gap:7px;margin-top:4px;font-size:12.5px;line-height:1.3;color:var(--mute)}
+.czf-k i{flex:none;width:7px;height:7px;border-radius:50%;background:var(--hue,var(--accent))}
+.czf-x{font-size:14.5px;line-height:1.46;color:color-mix(in srgb,var(--ink) 82%,var(--page));text-wrap:pretty}
+.czf-r>svg{justify-self:end;width:16px;height:16px;color:color-mix(in srgb,var(--mute) 55%,transparent);transition:color .15s,transform .15s}
+.czf-r:hover>svg,.czf-r:focus-visible>svg{color:var(--ink);transform:translateX(3px)}
+@media (max-width:860px){
+  .czf-l{grid-template-columns:minmax(0,1fr)}
+  .czf-l::before{display:none}
+  .czf-l li:nth-child(n+2) .czf-r::before{content:"";position:absolute;left:10px;right:10px;top:0;height:1px;background:var(--line)}}
+@media (max-width:460px){.czf-r{grid-template-columns:5.6rem minmax(0,1fr);align-items:start}.czf-r>svg{display:none}.czf-v{font-size:19px}}
+@media (prefers-reduced-motion:reduce){.czf-r>svg{transition:none}}
+
+/* 5. The hero. The figures panel stands as tall as the sentence beside it, its notes carry their own figures in
+   ink, each figure shows that it opens, the bar fills once to its true length, and a rule sets the chart apart. */
+@media (min-width:1101px){
+  .hero-top{align-items:stretch}
+  .hero-top>div:first-child{align-self:center}
+  .hfig{display:flex;flex-direction:column}
+  .hfig .stats{flex:1 1 auto;display:flex;flex-direction:column}
+  .hfig .stat{flex:1 1 auto}}
+.hfig-h{font-size:13px}
+.hfig .stat{grid-template-columns:6.5rem minmax(0,1fr) 12px}
+.hfig .stat::after{content:"";justify-self:end;width:7px;height:7px;border-top:1.5px solid;border-right:1.5px solid;color:rgba(243,247,245,.26);transform:rotate(45deg);transition:color .15s,transform .15s}
+.hfig .stat:hover::after,.hfig .stat:focus-visible::after{color:var(--mint);transform:translateX(3px) rotate(45deg)}
+.hfig .stat span{line-height:1.44}
+.hfig .stat span b.n,.hfig .stat:hover span b.n{font:inherit;font-weight:500;letter-spacing:0;color:rgba(243,247,245,.92);font-variant-numeric:tabular-nums}
+/* The bar under the sentence is one bar: the whole length is what was created, in the headline's orange and dimmed,
+   and what was received is the lit length at its start, brightest at its tip. Nothing is drawn around the lit part;
+   it throws a short shadow on the track instead, so the two colours never sit raw against each other. */
+.gb-track{position:relative;isolation:isolate;height:10px;border-radius:99px;background:linear-gradient(90deg,rgba(255,155,84,.74),rgba(255,155,84,.5) 50%,rgba(255,155,84,.38));box-shadow:inset 0 0 0 1px rgba(255,170,110,.22),inset 0 1px 0 rgba(255,255,255,.1),inset 0 -1px 1px rgba(0,0,0,.25)}
+.gb-track i{position:relative;min-width:14px;background:linear-gradient(90deg,#00b87a,#00ec97 58%,#a8ffe2);box-shadow:inset 0 1px 0 rgba(255,255,255,.45),0 0 16px rgba(0,236,151,.5),0 0 3px rgba(0,236,151,.7)}
+.gb-track i::after{content:"";position:absolute;z-index:-1;left:calc(100% - 6px);top:0;bottom:0;width:30px;border-radius:0 99px 99px 0;background:linear-gradient(90deg,rgba(6,10,9,.62),rgba(6,10,9,0))}
+.gb-key{margin-top:9px}
+@keyframes gb-fill{from{width:14px}}
+.gb-track i{animation:gb-fill 1.15s .3s cubic-bezier(.22,.8,.2,1) both}
+/* The chart under it is one low panel on the same glass as the figures: the key and the switches on one line, then
+   the two lines, at about two thirds of the old height. */
+.hero-chart{margin-top:clamp(20px,3.4vh,34px);padding:11px clamp(14px,1.5vw,20px) 9px;border-radius:20px;background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.016));box-shadow:inset 0 0 0 1px rgba(255,255,255,.075),inset 0 1px 0 rgba(255,255,255,.09),0 30px 60px -36px rgba(0,0,0,.7)}
+.hero-chart .hc-top{margin-bottom:0;gap:8px 14px;font-size:13px;min-height:32px}
+.hero-chart .hc-key{gap:4px 18px}
+.hero-chart .hc-key span{gap:8px}
+.hero-chart .hc-key i{width:14px;height:3px;border-radius:2px}
+.hero-chart .seg{padding:2px;border-radius:9px;background:rgba(255,255,255,.06)}
+.hero-chart .seg button{min-height:24px;padding:2px 9px;font-size:12.5px}
+@media (max-width:600px){.hero-chart{padding-inline:12px;border-radius:16px}}
+@media (prefers-reduced-motion:reduce){.gb-track i{animation:none}.hfig .stat::after{transition:none}}
+
+/* 6. Subject pages. The head is lower: a smaller name, one line for the dates, less air above and below. The subject's
+   reading (its gauges, then the other key numbers and where its claims stand) is set on glass, as the figures and
+   the chart are in the home page's hero. */
+.s-hero{padding-block:clamp(16px,2.6vh,26px) clamp(46px,7vh,64px)}
+.s-top{margin-bottom:2px}
+.s-hero h1{font-size:clamp(32px,3.85vw,54px);line-height:1.02;letter-spacing:-.034em}
+.s-hero .s-head p{margin-top:8px;font-size:clamp(15.5px,1.2vw,17px);line-height:1.45}
+.s-hero .s-head p.s-asof{max-width:none;margin-top:7px;font-size:13px;line-height:1.45;text-wrap:pretty}
+.s-head{align-items:center}
+/* The subject's reading is three tiles of glass, one for each gauge, and a slim strip under them for the other key
+   numbers. A tile is lit from its far corner in the subject's colour and along its top edge; its number is the
+   largest thing on it and is lit from above, as the two amounts in the home page's headline are; its chart's line
+   glows and ends on a lit point. Under the pointer the tile's edge takes the colour and the number becomes that
+   day's. */
+.gz-box{margin-top:clamp(16px,2.4vh,24px)}
+.gz-box .gz{margin:0;padding:0;border-top:0;column-gap:clamp(10px,1.1vw,14px)}
+.gz-box .gz-i,.gz-box .gz-i:first-child,.gz-box .gz-i:last-child{position:relative;padding:16px clamp(16px,1.7vw,22px) 12px;border:0;border-radius:18px;overflow:hidden;background:var(--gz-tile,radial-gradient(95% 85% at 100% 0%,color-mix(in srgb,var(--hue) 22%,transparent),transparent 64%),linear-gradient(180deg,rgba(255,255,255,.062),rgba(255,255,255,.022)));box-shadow:var(--gz-edge,inset 0 0 0 1px rgba(255,255,255,.08),inset 0 1px 0 color-mix(in srgb,var(--ink2) 34%,rgba(255,255,255,.1)),0 26px 50px -32px rgba(0,0,0,.75));transition:box-shadow .2s}
+.gz-box .gz-i.on{box-shadow:var(--gz-edge-on,inset 0 0 0 1px color-mix(in srgb,var(--ink2) 46%,transparent),inset 0 1px 0 color-mix(in srgb,var(--ink2) 60%,transparent),0 26px 50px -32px rgba(0,0,0,.75))}
+.s-hero .gz-t{margin:0 0 6px;font-size:14px;line-height:1.35}
+.s-hero .gz-v{font-size:clamp(28px,2.8vw,39px);line-height:1.05;letter-spacing:-.035em;background-image:var(--gz-num,linear-gradient(180deg,#fff 22%,color-mix(in srgb,var(--ink2) 58%,#fff)));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.s-hero .gz-i.on .gz-v{background-image:none;-webkit-text-fill-color:currentColor}
+.s-hero .gz-s{margin:5px 0 0;font-size:13.5px;line-height:1.36}
+.gz-box .gz-c{height:60px;margin-top:12px}
+.gz-box .gz-c .ln{stroke-width:2.2;filter:drop-shadow(0 3px 6px color-mix(in srgb,var(--ink2) 55%,transparent))}
+.gz-box .gz-c stop:first-child{stop-opacity:.44!important}
+.gz-box .gz-c .dot{fill:var(--ink2);stroke:var(--gz-ring,rgba(9,14,13,.85));stroke-width:2;filter:drop-shadow(0 0 6px color-mix(in srgb,var(--ink2) 80%,transparent))}
+.gz-box .gz-c .br{opacity:.46}.gz-box .gz-c .br.now,.gz-box .gz-c .br.at{opacity:1;filter:drop-shadow(0 0 6px color-mix(in srgb,var(--ink2) 60%,transparent))}
+.gz-box .gz-e{margin-top:7px}
+.gz-box .gz-bar{height:12px;margin-top:16px;border-radius:99px;gap:3px}
+.gz-box .gz-bar i{border-radius:99px}
+/* Under the tiles, the other key numbers stand in the open: a row of small figures, each over its name, ruled apart,
+   and at the row's end where the subject's claims stand on the scorecard, in the round marks the home page's tally
+   uses (a solid dot for the case, a ring against it, a dotted ring for a claim that cannot be tested yet). No box
+   holds them. */
+.gz-box .gz-also{--g:clamp(28px,3.6vw,52px);display:flex;flex-wrap:wrap;align-items:flex-end;gap:14px var(--g);overflow:hidden;margin:clamp(16px,1.7vw,22px) 0 0;padding:0 clamp(4px,.5vw,8px);border:0;border-radius:0;background:none;box-shadow:none;font-size:13px}
+/* Each rule stands in the gap before its figure, so the first figure of a row, whose gap falls outside the row, has none */
+.gz-box .gz-also dl div{position:relative;flex-direction:column-reverse;align-items:flex-start;gap:3px}
+.gz-box .gz-also dl div::after{content:"";position:absolute;left:calc(var(--g) / -2);top:3px;bottom:3px;width:1px;background:var(--night-line)}
+.gz-box .gz-also dt{font-size:12.5px;line-height:1.3;color:var(--night-mute)}
+.gz-box .gz-also dd{font-size:17px;font-weight:600;line-height:1.15;letter-spacing:-.02em;color:var(--night-ink)}
+.gz-box .gz-case{display:flex;flex-wrap:wrap;justify-content:flex-end;align-items:center;gap:3px 16px;min-height:0}
+.gz-box .gz-case span:first-child{order:2;flex:1 0 100%;font-size:12.5px;line-height:1.3;text-align:right;transition:color .15s}
+.gz-box .gz-case b{gap:7px;font-size:15px;font-weight:600;line-height:1.3;letter-spacing:-.012em;color:var(--night-ink)}
+.gz-box .gz-case b::before{flex:none;width:9px;height:9px;border-radius:50%}
+.gz-box .gz-case .for::before{background:var(--help,#19c99a)}
+.gz-box .gz-case .against::before{background:none;box-shadow:inset 0 0 0 2px var(--hurt,#ff7d66)}
+.gz-box .gz-case .open::before{background:none;border:1.5px dotted var(--night-mute)}
+/* On Sources and Library the same place holds ways on, not a count: a name and an arrow */
+.mt-hero .gz-box .gz-case{margin-left:0}
+.mt-hero .gz-box .gz-case:first-of-type{margin-left:auto}
+.mt-hero .gz-box .gz-case span:first-child{text-align:left}
+.mt-hero .gz-box .gz-case{justify-content:flex-start}
+.mt-hero .gz-box .gz-case b::before{display:none}
+.mt-hero .gz-box .gz-case b::after{content:"";width:6px;height:6px;margin-left:1px;border-top:1.5px solid;border-right:1.5px solid;transform:rotate(45deg);opacity:.6;transition:transform .15s,opacity .15s}
+.mt-hero .gz-box .gz-case:hover b::after{opacity:1;transform:translateX(3px) rotate(45deg)}
+@media (max-width:760px){
+  .gz-box .gz{row-gap:10px}
+  .gz-box .gz-i,.gz-box .gz-i:first-child,.gz-box .gz-i:last-child{padding:13px 16px 12px;border-radius:16px}
+  .gz-box .gz-c{height:52px;margin-top:0}
+  .s-hero .gz-v{font-size:27px}
+  .gz-box .gz-also{row-gap:12px}
+  .gz-box .gz-case,.mt-hero .gz-box .gz-case,.mt-hero .gz-box .gz-case:first-of-type{flex:1 0 100%;margin-left:0;justify-content:flex-start}
+  .gz-box .gz-case span:first-child{text-align:left}}
+@media (prefers-reduced-motion:reduce){.gz-box .gz-i,.mt-hero .gz-box .gz-case b::after{transition:none}}
+
+/* By day a subject's page opens by day: in day mode a subject's hero (and those of Sources and Library) stands on
+   the page's own ground, washed in the subject's colour, with ink for its words and white tiles for its gauges.
+   The hero's rules read their paint from the night's tokens and a few variables of their own, and day mode sets
+   those, so no rule is written twice. */
+.s-night{background:var(--sn-bg,radial-gradient(70% 90% at 88% -12%,color-mix(in srgb,var(--hue) 30%,transparent),transparent 62%),radial-gradient(46% 70% at 6% 6%,color-mix(in srgb,var(--hue) 13%,transparent),transparent 66%),var(--night))}
+.s-night .gz{--ink2:var(--gz-ink2,color-mix(in srgb,var(--hue) 72%,#fff))}
+:root[data-theme="light"] .s-night{--night-ink:var(--ink);--night-mute:var(--mute);--night-line:var(--line);--chart-ink:#6a7370;--chart-grid:rgba(12,16,15,.07);--chart-surface:#ffffff;--chart-strong:#191f1d;--chart-mark:#a8b0ad;--tip-bg:#0c100f;--tip-ink:#f3f7f5;--accent:#008a60;--help:#0b9a7d;--hurt:#d9553f;
+  --sn-bg:radial-gradient(70% 90% at 88% -12%,color-mix(in srgb,var(--hue) 19%,transparent),transparent 62%),radial-gradient(46% 70% at 6% 6%,color-mix(in srgb,var(--hue) 9%,transparent),transparent 66%),var(--page);
+  --gz-ink2:color-mix(in srgb,var(--hue) 86%,var(--ink));--gz-tile:radial-gradient(95% 85% at 100% 0%,color-mix(in srgb,var(--hue) 12%,transparent),transparent 64%),var(--surface);--gz-edge:0 0 0 1px var(--line),0 1px 2px rgba(12,16,15,.04),0 16px 36px -18px rgba(12,16,15,.16);--gz-edge-on:0 0 0 1px color-mix(in srgb,var(--hue) 55%,transparent),0 1px 2px rgba(12,16,15,.04),0 16px 36px -18px rgba(12,16,15,.16);
+  --gz-num:linear-gradient(180deg,var(--ink) 30%,color-mix(in srgb,var(--hue) 62%,var(--ink)));--gz-ring:var(--surface)}
+:root[data-theme="light"] .s-night .s-sig{--surface:#ffffff;--ink:#0c100f;--mute:#59625f;--line:rgba(12,16,15,.09);--soft:#f1f3f2;--chart-ink:#6a7370;--chart-grid:rgba(12,16,15,.07);--chart-surface:#ffffff;--chart-strong:#191f1d;--chart-mark:#a8b0ad;--chart-mute:#cfd5d2;--cal-bg:#f4f8f6;--cal-low:#e3f2ea;--cal-mid:#5cc59c;--cal-high:#00704a;--cal-ink:#59625f;--cal-mark:#0c100f}
+@media (prefers-color-scheme:light){
+:root:not([data-theme="dark"]) .s-night{--night-ink:var(--ink);--night-mute:var(--mute);--night-line:var(--line);--chart-ink:#6a7370;--chart-grid:rgba(12,16,15,.07);--chart-surface:#ffffff;--chart-strong:#191f1d;--chart-mark:#a8b0ad;--tip-bg:#0c100f;--tip-ink:#f3f7f5;--accent:#008a60;--help:#0b9a7d;--hurt:#d9553f;
+  --sn-bg:radial-gradient(70% 90% at 88% -12%,color-mix(in srgb,var(--hue) 19%,transparent),transparent 62%),radial-gradient(46% 70% at 6% 6%,color-mix(in srgb,var(--hue) 9%,transparent),transparent 66%),var(--page);
+  --gz-ink2:color-mix(in srgb,var(--hue) 86%,var(--ink));--gz-tile:radial-gradient(95% 85% at 100% 0%,color-mix(in srgb,var(--hue) 12%,transparent),transparent 64%),var(--surface);--gz-edge:0 0 0 1px var(--line),0 1px 2px rgba(12,16,15,.04),0 16px 36px -18px rgba(12,16,15,.16);--gz-edge-on:0 0 0 1px color-mix(in srgb,var(--hue) 55%,transparent),0 1px 2px rgba(12,16,15,.04),0 16px 36px -18px rgba(12,16,15,.16);
+  --gz-num:linear-gradient(180deg,var(--ink) 30%,color-mix(in srgb,var(--hue) 62%,var(--ink)));--gz-ring:var(--surface)}
+:root:not([data-theme="dark"]) .s-night .s-sig{--surface:#ffffff;--ink:#0c100f;--mute:#59625f;--line:rgba(12,16,15,.09);--soft:#f1f3f2;--chart-ink:#6a7370;--chart-grid:rgba(12,16,15,.07);--chart-surface:#ffffff;--chart-strong:#191f1d;--chart-mark:#a8b0ad;--chart-mute:#cfd5d2;--cal-bg:#f4f8f6;--cal-low:#e3f2ea;--cal-mid:#5cc59c;--cal-high:#00704a;--cal-ink:#59625f;--cal-mark:#0c100f}
+}
+
+/* The questions a page answers: the same cells, a little lower. The number is a small ring, as the links of the case
+   are on the home page, the answer is a size down, and no cell is held to a fixed height. Under the pointer the
+   ring takes the subject's colour. */
+.qcard{gap:6px;min-height:0;padding:13px 18px 15px}
+.qcard-top{align-items:center;min-height:24px}
+.qcard .qno{display:grid;place-items:center;width:24px;height:24px;border-radius:50%;box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--ink) 22%,var(--surface));font-size:12.5px;font-weight:600;line-height:1;letter-spacing:0;color:var(--mute);transition:color .16s,background .16s,box-shadow .16s}
+.qcard:hover .qno,.qcard:focus-visible .qno{background:color-mix(in srgb,var(--hue,var(--accent)) 14%,var(--surface));box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--hue,var(--accent)) 62%,var(--surface));color:color-mix(in srgb,var(--hue,var(--accent)) 78%,var(--ink))}
+.qcard .qr{gap:7px}
+.qcard .qr small{font-size:12px}
+.qcard-top svg{width:17px;height:17px}
+.qcard h3{margin-top:3px;font-size:15px;line-height:1.3}
+.qcard .ans{padding-top:4px;font-size:clamp(22px,2.05vw,28px);line-height:1.08;letter-spacing:-.03em}
+.qcard>small{font-size:13px;line-height:1.36}
+@media (min-width:561px){.qgrid .qcard>small{min-height:0}}
+@media (max-width:560px){.qcard{padding:11px 14px}.qcard .qno{width:22px;height:22px;min-width:22px;font-size:12px}.qcard>.ans{font-size:23px}}
+@media (prefers-reduced-motion:reduce){.qcard .qno{transition:none}}
+
+/* The way back to the overview at the foot of the first and last subject is not a subject, so it carries no subject's
+   colour. With no hue of its own the card would take the page's (Intents' blue on Intents, the Checks' grey on
+   Checks), so it sets a neutral one: its wash, its edge under the pointer and its arrow are the ink's, and it has
+   no dot. */
+.pg.solo{--hue:color-mix(in srgb,var(--ink) 52%,var(--surface))}
+.pg.solo b::before{display:none}
+
+/* 7. Day mode is day throughout. In day mode no part of a page is night: the header is a bar of light glass, the
+   hero stands on the page's own ground with its two amounts, its bar and its chart in day strengths of their
+   colours, and the footer is light under one rule, so no dark part meets the light page. Night mode keeps the night
+   surface. Each rule below reads its paint from a variable whose fallback is the night value, and day mode sets the
+   variables, so no rule is written twice. */
+:root{--hd-rgb:255,255,255;--nt-rgb:255,255,255;--nt-ink-rgb:243,247,245;--h-iss:#ff9b54;--h-kept:#00ec97}
+/* Header */
+.head{background:var(--hd-bg,rgba(9,14,13,.94))}
+.head :focus-visible,.end :focus-visible{outline-color:var(--hd-focus,var(--mint))}
+.head .tabs{background:rgba(var(--hd-rgb),.045);box-shadow:inset 0 0 0 1px rgba(var(--hd-rgb),.06)}
+.tab-glide{background:var(--hd-glide,color-mix(in srgb,var(--tab-hue,#00ec97) 20%,rgba(255,255,255,.1)));box-shadow:var(--hd-glide-edge,inset 0 0 0 1px color-mix(in srgb,var(--tab-hue,#00ec97) 36%,rgba(255,255,255,.1)),0 6px 18px -6px color-mix(in srgb,var(--tab-hue,#00ec97) 72%,transparent))}
+.tab-hov{background:rgba(var(--hd-rgb),.07)}
+.tools a:hover{background:rgba(var(--hd-rgb),.07)}
+.tools a[aria-current]{background:rgba(var(--hd-rgb),.13);box-shadow:inset 0 0 0 1px rgba(var(--hd-rgb),.08)}
+.findbtn,.icon,.end-data,.end-up{background:rgba(var(--hd-rgb),.05);box-shadow:inset 0 0 0 1px rgba(var(--hd-rgb),.09)}
+.findbtn:hover,.icon:hover,.end-data:hover,.end-up:hover{background:rgba(var(--hd-rgb),.08);box-shadow:inset 0 0 0 1px rgba(var(--hd-rgb),.2)}
+.findbtn kbd{background:rgba(var(--hd-rgb),.09)}
+.head[data-fit="3"] .tools a{background:rgba(var(--hd-rgb),.05);box-shadow:inset 0 0 0 1px rgba(var(--hd-rgb),.09)}
+.head[data-fit="3"] .tools a:hover{background:rgba(var(--hd-rgb),.09);box-shadow:inset 0 0 0 1px rgba(var(--hd-rgb),.2)}
+.head[data-fit="3"] .tools a[aria-current]{background:rgba(var(--hd-rgb),.15)}
+/* Home hero */
+.night:not(.s-night){background:var(--hn-bg,radial-gradient(70% 90% at 88% -12%,rgba(0,236,151,.17),transparent 62%),radial-gradient(50% 70% at 8% 8%,rgba(63,111,232,.13),transparent 66%),var(--night))}
+.hero :focus-visible{outline-color:var(--hd-focus,var(--mint))}
+.hero-kick b{background:var(--kick-bg,rgba(0,236,151,.09));box-shadow:var(--kick-edge,inset 0 0 0 1px rgba(0,236,151,.28))}
+.hero h1 .h-iss{color:var(--h-iss);background-image:var(--h-iss-grad,linear-gradient(180deg,#ffc191,#ff9b54 52%,#f5852f));filter:drop-shadow(0 0 26px rgba(255,155,84,var(--h-glow,.3)))}
+.hero h1 .h-kept{color:var(--h-kept);background-image:var(--h-kept-grad,linear-gradient(180deg,#7dfbd0,#00ec97 52%,#00cf85));filter:drop-shadow(0 0 26px rgba(0,236,151,var(--h-glow,.32)))}
+.gb-track{background:var(--gb-track,linear-gradient(90deg,rgba(255,155,84,.74),rgba(255,155,84,.5) 50%,rgba(255,155,84,.38)))}
+.gb-track i{background:var(--gb-fill,linear-gradient(90deg,#00b87a,#00ec97 58%,#a8ffe2));box-shadow:var(--gb-glow,inset 0 1px 0 rgba(255,255,255,.45),0 0 16px rgba(0,236,151,.5),0 0 3px rgba(0,236,151,.7))}
+.gb-track i::after{background:linear-gradient(90deg,var(--gb-cast,rgba(6,10,9,.62)),rgba(6,10,9,0))}
+.gb-key .k{color:var(--gb-k,var(--mint))}
+.gb-key .g{color:var(--gb-g,#ff9b54)}
+.hbtn.alt{background:rgba(var(--nt-rgb),.05);box-shadow:inset 0 0 0 1px rgba(var(--nt-rgb),.11)}
+.hbtn.alt:hover{background:rgba(var(--nt-rgb),.09);box-shadow:inset 0 0 0 1px rgba(var(--nt-rgb),.22)}
+.hfig,.hero-chart{background:var(--glass,linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.022)));box-shadow:var(--glass-edge,inset 0 0 0 1px rgba(255,255,255,.08),inset 0 1px 0 rgba(255,255,255,.1),0 34px 70px -34px rgba(0,0,0,.7))}
+.stat:hover b{color:var(--hd-focus,var(--mint))}
+.hfig .stat::after{color:rgba(var(--nt-ink-rgb),.26)}
+.hfig .stat:hover::after,.hfig .stat:focus-visible::after{color:var(--hd-focus,var(--mint))}
+.hfig .stat span b.n,.hfig .stat:hover span b.n{color:rgba(var(--nt-ink-rgb),.92)}
+.hfig-sc .sc-bar .sc-for{background:var(--help,#19c99a);box-shadow:0 0 10px color-mix(in srgb,var(--help,#19c99a) 45%,transparent)}
+.hfig-sc .sc-bar .sc-con{box-shadow:inset 0 0 0 1.5px var(--hurt,#ff7d66)}
+.seg,.hero-chart .seg{background:rgba(var(--nt-rgb),.07)}
+.seg button[aria-pressed="true"]{background:rgba(var(--nt-rgb),.16)}
+.bk:not(.bk-btns),.bk-btns i,.bk-panel{background:linear-gradient(100deg,rgba(var(--nt-ink-rgb),.055) 40%,rgba(var(--nt-ink-rgb),.12) 50%,rgba(var(--nt-ink-rgb),.055) 60%) 0 0/300% 100%}
+/* Footer, and the heroes above the sheet: by day and by night they stand on the page's own colour, so the page runs
+   from the header to the foot as one ground. The footer starts under a straight hairline, with no cap of the page
+   rounded into it, and the sheet's round shoulders do not show against the hero. */
+.night,.end{--night:var(--page)}
+.end::before{height:1px;border-radius:0;background:var(--line)}
+.end-nav a,.end-copy{color:rgba(var(--nt-ink-rgb),.72)}
+.end-nav a:hover,.end-nav a[aria-current],.end-copy:hover{color:var(--night-ink)}
+.end-copy.done,.end-copy.done svg{color:var(--hd-focus,var(--mint))}
+:root[data-theme="light"] .head,:root[data-theme="light"] .night,:root[data-theme="light"] .end{--night-ink:var(--ink);--night-mute:var(--mute);--night-line:var(--line);--hd-rgb:12,16,15;--nt-rgb:12,16,15;--nt-ink-rgb:12,16,15;--hd-focus:#008a60}
+:root[data-theme="light"] .head{--hd-bg:rgba(249,250,250,.86);--hd-glide:color-mix(in srgb,var(--tab-hue,#00a874) 13%,#fff);--hd-glide-edge:inset 0 0 0 1px color-mix(in srgb,var(--tab-hue,#00a874) 44%,transparent),0 6px 16px -8px color-mix(in srgb,var(--tab-hue,#00a874) 52%,transparent)}
+:root[data-theme="light"] .night{--chart-ink:#6a7370;--chart-grid:rgba(12,16,15,.07);--chart-surface:#ffffff;--chart-strong:#191f1d;--chart-mark:#a8b0ad;--tip-bg:#0c100f;--tip-ink:#f3f7f5;--accent:#008a60;--help:#0b9a7d;--hurt:#d9553f;--hn-bg:radial-gradient(70% 90% at 88% -12%,rgba(0,168,116,.15),transparent 62%),radial-gradient(50% 70% at 8% 8%,rgba(63,111,232,.09),transparent 66%),var(--page);--h-iss:#dd7620;--h-kept:#00a36c;--h-iss-grad:linear-gradient(180deg,#f29448,#e07a22 52%,#c9650f);--h-kept-grad:linear-gradient(180deg,#19b98a,#00a36c 52%,#008a5a);--h-glow:.16;--glass:var(--surface);--glass-edge:0 0 0 1px var(--line),0 1px 2px rgba(12,16,15,.04),0 18px 44px -22px rgba(12,16,15,.18);--gb-fill:linear-gradient(90deg,#00a36c,#00c483 58%,#3fe0a8);--gb-glow:inset 0 1px 0 rgba(255,255,255,.4),0 0 14px rgba(0,163,108,.35);--gb-cast:rgba(6,10,9,.2);--gb-track:linear-gradient(90deg,rgba(224,122,34,.5),rgba(224,122,34,.3) 50%,rgba(224,122,34,.22));--gb-k:#008a60;--gb-g:#b05a12;--kick-bg:rgba(0,138,96,.08);--kick-edge:inset 0 0 0 1px rgba(0,138,96,.3)}
+@media (prefers-color-scheme:light){
+:root:not([data-theme="dark"]) .head,:root:not([data-theme="dark"]) .night,:root:not([data-theme="dark"]) .end{--night-ink:var(--ink);--night-mute:var(--mute);--night-line:var(--line);--hd-rgb:12,16,15;--nt-rgb:12,16,15;--nt-ink-rgb:12,16,15;--hd-focus:#008a60}
+:root:not([data-theme="dark"]) .head{--hd-bg:rgba(249,250,250,.86);--hd-glide:color-mix(in srgb,var(--tab-hue,#00a874) 13%,#fff);--hd-glide-edge:inset 0 0 0 1px color-mix(in srgb,var(--tab-hue,#00a874) 44%,transparent),0 6px 16px -8px color-mix(in srgb,var(--tab-hue,#00a874) 52%,transparent)}
+:root:not([data-theme="dark"]) .night{--chart-ink:#6a7370;--chart-grid:rgba(12,16,15,.07);--chart-surface:#ffffff;--chart-strong:#191f1d;--chart-mark:#a8b0ad;--tip-bg:#0c100f;--tip-ink:#f3f7f5;--accent:#008a60;--help:#0b9a7d;--hurt:#d9553f;--hn-bg:radial-gradient(70% 90% at 88% -12%,rgba(0,168,116,.15),transparent 62%),radial-gradient(50% 70% at 8% 8%,rgba(63,111,232,.09),transparent 66%),var(--page);--h-iss:#dd7620;--h-kept:#00a36c;--h-iss-grad:linear-gradient(180deg,#f29448,#e07a22 52%,#c9650f);--h-kept-grad:linear-gradient(180deg,#19b98a,#00a36c 52%,#008a5a);--h-glow:.16;--glass:var(--surface);--glass-edge:0 0 0 1px var(--line),0 1px 2px rgba(12,16,15,.04),0 18px 44px -22px rgba(12,16,15,.18);--gb-fill:linear-gradient(90deg,#00a36c,#00c483 58%,#3fe0a8);--gb-glow:inset 0 1px 0 rgba(255,255,255,.4),0 0 14px rgba(0,163,108,.35);--gb-cast:rgba(6,10,9,.2);--gb-track:linear-gradient(90deg,rgba(224,122,34,.5),rgba(224,122,34,.3) 50%,rgba(224,122,34,.22));--gb-k:#008a60;--gb-g:#b05a12;--kick-bg:rgba(0,138,96,.08);--kick-edge:inset 0 0 0 1px rgba(0,138,96,.3)}
+}
+
+/* The home page ends as the other pages do, 64px above the footer. "What is next" carries that space when it is
+   drawn; with no question planned the subjects' tiles are the last block, and they carry none of their own. */
+.sheet>.wrap>.bento:last-child{margin-bottom:64px}
+
+/* The ground under the chain: by day a clean neutral grey with no colour in it (--cz-tint), a shade deeper at the
+   head of the column and fading down it, so the white tab stands out from it and the green and red marks are the
+   only colour on it. The counts' column under it, and the rail and the band where they fold on a tablet, stand on
+   the same ground. Night keeps the night ground. */
+.cz{--cz-tint:#59625f;--cz-ground:color-mix(in srgb,var(--cz-tint) 4.5%,var(--surface));--cz-ground-2:color-mix(in srgb,var(--cz-tint) 10%,var(--surface))}
+.cz .czb{--czg:var(--cz-ground)}
+@media (min-width:1001px){
+  .cz-side{background:radial-gradient(140% 38% at 0% 0%,color-mix(in srgb,var(--cz-tint) 9%,transparent),transparent 72%),linear-gradient(180deg,var(--cz-ground-2),var(--cz-ground) 62%)}
+  .czb-side{background:radial-gradient(120% 90% at 0% 100%,color-mix(in srgb,var(--cz-tint) 8%,transparent),transparent 64%),var(--cz-ground)}}
+@media (max-width:1000px){
+  .cz .cz-rail{background:radial-gradient(70% 150% at 100% -30%,color-mix(in srgb,var(--cz-tint) 11%,transparent),transparent 62%),linear-gradient(180deg,var(--cz-ground-2),var(--cz-ground))}}
 .view-err{margin:0;padding:28px 18px;border:1px dashed var(--line);border-radius:var(--r);font-size:14px;color:var(--mute);text-align:center}
 /* The pool's month ends: the dashboard's figure sits quieter beside the chain's, and each gap is small type */
 .ph td,.ph th{white-space:nowrap}.ph-d{color:var(--mute);font-weight:400}.ph-g{font-size:13px;color:var(--mute)}
@@ -1406,8 +1823,8 @@ table.corr{--trk:clamp(52px,9.5vw,136px);--val:52px;--gap:12px;font-size:15px}
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
 <!-- ECharts is fetched once the page has drawn: see the end of the script below -->
-<script src="shared/catalog.js?v=4ef13cb4"></script>
-<script src="shared/data.js?v=8b0d34a9"></script>
+<script src="shared/catalog.js?v=f3c3e8af"></script>
+<script src="shared/data.js?v=283bd1e7"></script>
 <script src="shared/charts.js?v=9d74e7aa"></script>
 <script src="shared/viz.js?v=6238b9d1"></script>
 <script>
@@ -3594,8 +4011,9 @@ const CZH=(()=>{
       if(worst){const a=worst[0].a,b=lastOf(worst).b;rows.push({k:'worst',label:showBest?'Worst since':'Worst stretch',i:a,when:period(a,b)});marks.push({k:'worst',a,b,label:'Worst'})}}
     rows.push({k:'now',label:'Now',i:i1,when:dY(dayAt(i1))+(U[i1]?`, ${word(U[i1])} not yet testable`:'')});
     return{rows,marks}};
-  /* A count in the card's own marks: solid for the case, hollow against it */
-  const pair=i=>`<span class="czn"><i class="cz-m is-for" aria-hidden="true"></i><b>${F[i]}</b><span class="sx-vh"> for, </span><i class="cz-m is-against" aria-hidden="true"></i><b>${A[i]}</b><span class="sx-vh"> against</span></span>`;
+  /* A count as a meter in the card's own marks: the number for the case at the solid end, the number against it at
+     the hollow end, and a dotted gap for the tests that could not run yet */
+  const pair=i=>`<span class="czn"><b class="czn-f">${F[i]}</b><span class="sx-vh"> for, </span><span class="czn-bar" aria-hidden="true"><i class="is-for" style="flex:${F[i]}"></i>${U[i]?`<i class="is-wait" style="flex:${U[i]}"></i>`:''}<i class="is-against" style="flex:${A[i]}"></i></span><b class="czn-a">${A[i]}</b><span class="sx-vh"> against</span></span>`;
   const turnsOf=(k,i0,i1)=>TURNS.filter(t=>t.k===k&&t.i>i0&&t.i<=i1&&t.from!=='.').length;
   /* What changed over a stretch, for the finding and the answer card */
   const changes=(i0,i1)=>{let days=0;for(let i=i0+1;i<=i1;i++)if(F[i]!==F[i-1]||A[i]!==A[i-1])days++;
@@ -3616,7 +4034,7 @@ const CZH=(()=>{
   let uid=0;
   const draw=(box,tip,i0,i1,o={})=>{
     box.textContent='';const w=box.clientWidth;if(!w)return;
-    const compact=!!o.compact,marks=o.marks||[],narrow=w<560,h=compact?(narrow?168:176):(narrow?214:254),m={l:24,r:narrow?76:88,t:22,b:compact?24:28},iw=w-m.l-m.r,ih=h-m.t-m.b;
+    const compact=!!o.compact,marks=o.marks||[],narrow=w<560,h=o.h||(compact?(narrow?168:176):(narrow?214:254)),m={l:24,r:narrow?76:88,t:22,b:compact?24:28},iw=w-m.l-m.r,ih=h-m.t-m.b;
     let M=0;for(let i=i0;i<=i1;i++)M=Math.max(M,F[i],A[i]);M=Math.max(6,M+1);
     const x=d3.scaleUtc().domain([new Date(T0+i0*DAY),new Date(T0+i1*DAY)]).range([0,iw]),y=d3.scaleLinear().domain([-M,M]).range([ih,0]);
     const X=i=>x(new Date(T0+Math.min(i,i1)*DAY)),id='czg'+(++uid);
@@ -3683,16 +4101,16 @@ const CZH=(()=>{
   /* The base of the case card on the home page */
   const S12=story(W12,N-1);
   const band=()=>`<section class="czb" id="czb" aria-labelledby="czb-h">
-      <div class="czb-top"><h3 id="czb-h">How the count has moved</h3><p>The same ${TOTAL} tests, run on the data up to each day</p></div>
-      <div class="czb-main">
-        <ol class="czb-rows" id="czb-rows">${S12.rows.map(r=>`<li class="czb-row" data-k="${r.k}"${r.k==='now'?'':' tabindex="0"'}><span class="czb-l"><b>${r.label}</b><small>${r.when}</small></span>${pair(r.i)}</li>`).join('')}</ol>
+      <div class="czb-side">
+        <ol class="czb-rows" id="czb-rows"><li class="czb-hd" aria-hidden="true"><span></span><span class="czn"><b class="czn-f"></b><span class="czn-k"><span>For</span><span>Against</span></span><b class="czn-a"></b></span></li>${S12.rows.map(r=>`<li class="czb-row" data-k="${r.k}"${r.k==='now'?'':' tabindex="0"'}><span class="czb-l"><b>${r.label}</b><small>${r.when}</small></span>${pair(r.i)}</li>`).join('')}</ol>
+      </div>
+      <div class="czb-body"><div class="czb-head"><h3 id="czb-h">How the count has moved</h3><p>The same ${TOTAL} tests, run on the data up to each day</p><a class="czb-go" href="#a-steady--tests">Each test, day by day${ARROW}</a></div>
         <div class="czb-plot" id="czb-plot"></div>
       </div>
-      <a class="czb-go" href="#a-steady--tests">Each test, day by day${ARROW}</a>
       <div class="czh-tip" id="czb-tip" hidden></div>
     </section>`;
   const wire=()=>{const plot=$('#czb-plot'),tip=$('#czb-tip'),list=$('#czb-rows');if(!plot||!tip||!list)return;
-    cleanup.push(keep(plot,()=>draw(plot,tip,W12,N-1,{compact:true,marks:S12.marks})));wireStory(list,plot)};
+    cleanup.push(keep(plot,()=>draw(plot,tip,W12,N-1,{compact:true,h:146,marks:S12.marks})));wireStory(list,plot)};
 
   /* The latest changes, newest first: when, which way, the claim, its bar, and the value before and after */
   const turnsHtml=(i0,i1,n=5)=>{const list=TURNS.filter(t=>t.i>i0&&t.i<=i1).slice(-n).reverse(),yNow=dayAt(i1).slice(0,4);
@@ -5158,7 +5576,7 @@ const czVerdict=P=>{const s=[],off=DN.offset_share,closed=off>=1,x0=scen('curren
     else if(g<=0)s.push(`${grew}. At the yearly pace volume is not growing, so the gap does not close.`);
     else if(y(HZ.m0))s.push(`${grew}. At the yearly pace, with the price and NEAR's share of fees unchanged, matching it is about ${y(HZ.m0)} years away${m1!=null&&m1>1&&y(HZ.m1)?`, or ${y(HZ.m1)} after the cut`:m1!=null&&m1<=1?', or as soon as the cut is in force':''}. That is arithmetic, not a forecast.`)}
   s.push('The count of results is not a vote: they do not weigh the same.');
-  return s.join(' ')};
+  return s};
 /* The objection a staker raises first: new NEAR is paid to stakers, so it dilutes only NEAR that is not staked. The
    staked share is the mean over the same 30 days as the yields, so it can differ by a point from the newest epoch's. */
 const czStake=()=>{const k=DN.staked_share,n=DN.nominal_staking_yield_rate,r=DN.real_staking_yield_rate;if(k==null||n==null||r==null)return '';
@@ -5269,29 +5687,49 @@ const CLAIM_SPAN={
   ten_pools_hold_a_third:d=>`The epoch of ${dm(d)}`,
 };
 const czSpan=c=>c.as_of_date?(CLAIM_SPAN[c.claim_id]||(d=>`On ${dm(d)}`))(c.as_of_date):'';
-/* A result as one row: its mark, the claim, how it came out and over what time, its trend and its number */
+/* A result as one row of its link's table: the claim with the time its test reads, how it came out, its trend, and
+   its number over the bar it is read against */
 const czCls=c=>c.stands==='for'?'is-for':'is-against';
-const czIn=c=>`<i class="cz-m ${czCls(c)}" aria-hidden="true"></i><strong>${czRisk(c)}${c.claim}</strong><small><b>${czLabel(c)}</b> · ${czBar(c)}${csNear(c)?(c.side==='bear'?`, by ${csNearWords(c).replace(/ (below|above) its bar$/,'')}`:`, ${csNearWords(c)}`):''}${MKT.claimNote[c.claim_id]?`: ${MKT.claimNote[c.claim_id]}`:''}${c.pillar==='watch'?'<em class="cz-tag">tripwire</em>':''}${czSpan(c)?`<span class="cz-w">${czSpan(c)}</span>`:''}${CLAIM_NOTE[c.claim_id]&&czTry(CLAIM_NOTE[c.claim_id],c)?`<span class="cz-n">${czTry(CLAIM_NOTE[c.claim_id],c)}</span>`:''}</small>${czSpark(c)}<span class="cz-v">${scNum(c.value,c.unit)}</span>`;
-const czRow=c=>`<li><a class="cz-r ${czCls(c)}" href="#${CLAIM_AT[c.claim_id]||'library'}" data-i="${c.claim_id}">${czIn(c)}</a></li>`;
+const czBarLine=c=>`${czBar(c)}${csNear(c)?(c.side==='bear'?`, by ${csNearWords(c).replace(/ (below|above) its bar$/,'')}`:`, ${csNearWords(c)}`):''}`;
+const czRow=c=>{const note=CLAIM_NOTE[c.claim_id]?czTry(CLAIM_NOTE[c.claim_id],c):'',mk=MKT.claimNote[c.claim_id];
+  return `<li><a class="cz-r ${czCls(c)}" href="#${CLAIM_AT[c.claim_id]||'library'}" data-i="${c.claim_id}"><span class="czr-t"><i class="cz-m ${czCls(c)}" aria-hidden="true"></i><strong>${czRisk(c)}${c.claim}${c.pillar==='watch'?'<em class="cz-tag">tripwire</em>':''}</strong>${czSpan(c)?`<span class="cz-w">${czSpan(c)}</span>`:''}${mk?`<span class="cz-n">${mk}.</span>`:''}${note?`<span class="cz-n">${note}</span>`:''}</span><span class="czr-o"><b>${czResult(c)}</b><span class="sx-vh">, </span><span>so it ${czState(c).toLowerCase()}</span></span><span class="czr-p">${czSpark(c)}</span><span class="czr-v"><b>${scNum(c.value,c.unit)}</b><span>${czBarLine(c)}</span></span></a></li>`};
+/* The answer in three parts: the verdict and what the case needs, the arithmetic with its figures set in ink, and
+   the two cautions on how to read it */
+const czAnswer=P=>{const s=czVerdict(P),ARI=' That is arithmetic, not a forecast.',tail=[];
+  const body=s.slice(1,-1).map(x=>x.includes(ARI)?(tail.push(ARI.trim()),x.replace(ARI,'')):x);tail.push(lastOf(s));
+  const figs=t=>figHtml(t).replace(/(?<![\w.>])(\d+\.\d+)(?= years| after the cut)/g,'<b class="n">$1</b>');
+  return `<p class="czv-a">${s[0]}</p>${body.length?`<p class="czv-b">${figs(body.join(' '))}</p>`:''}<p class="czv-c">${tail.join(' ')}</p>`};
+/* A side note opens on its own claim, set in ink: the words up to its first colon, or else its first sentence */
+const czNote=(t,plain)=>{if(!t)return '';if(plain)return `<p>${t}</p>`;const c=t.indexOf(': '),d=t.indexOf('. '),k=c>0&&(d<0||c<d)?c+1:d>=0?d+1:t.length;return `<p><b>${t.slice(0,k)}</b>${t.slice(k)}</p>`};
+/* Which link is in view, and whether every link is open. Kept here so the card comes back as the reader left it. */
+let CZ_SEL=null,CZ_ALL=false;
 const czSection=T=>{
   const P=czParts(T),nF=T.filter(c=>c.stands==='for').length,nA=T.length-nF;
   const dOf=f=>lastOf(T.filter(f).map(c=>c.as_of_date).filter(Boolean).sort()),mEnd=dOf(c=>CZ_MONTHLY.includes(c.claim_id)),dEnd=dOf(c=>!CZ_MONTHLY.includes(c.claim_id));
   const when=`${mEnd?`Tests on complete months read the three months to ${dm(mEnd)}. `:''}${dEnd?`${mEnd?'Each of the other tests':'Each test'} reads to its newest day, ${dm(dEnd)} at the latest. `:''}`;
   const mark=p=>p.no||'+';
   const lastLink=P.filter(p=>p.no).pop();
-  const rail=P.map(p=>`<li class="${p.no?'':'cz-base'}${p===lastLink||!p.no?' cz-end':''}"><button class="cz-p" type="button" data-p="${p.key}"><span class="cz-no" aria-hidden="true">${mark(p)}</span><span class="cz-t">${p.title}</span><span class="cz-s" aria-hidden="true">${p.list.map(c=>`<i class="${c.stands==='for'?'is-for':'is-against'}" data-i="${c.claim_id}"></i>`).join('')}</span><span class="cz-vd">${czVd(p)}</span></button></li>`).join('');
-  const groups=P.map(p=>`<section class="cz-g" id="cz-g-${p.key}" aria-labelledby="cz-h-${p.key}"><header class="cz-gh"><span class="cz-gn" aria-hidden="true">${mark(p)}</span><h3 id="cz-h-${p.key}">${p.title}</h3><span class="cz-gv">${czVd(p)}</span></header>${GROUP_NOTE[p.key]&&czTry(GROUP_NOTE[p.key])?`<p class="cz-gnote">${czTry(GROUP_NOTE[p.key])}</p>`:''}<ul>${p.list.map(czRow).join('')}</ul></section>`).join('');
+  const rail=P.map(p=>`<li class="${p.no?'':'cz-base'}${p===lastLink||!p.no?' cz-end':''}"><button class="cz-p" type="button" data-p="${p.key}" aria-expanded="false" aria-controls="cz-g-${p.key}"><span class="cz-no" aria-hidden="true">${mark(p)}</span><span class="cz-t">${p.title}</span><span class="cz-s" aria-hidden="true">${p.list.map(c=>`<i class="${c.stands==='for'?'is-for':'is-against'}" data-i="${c.claim_id}"></i>`).join('')}</span><span class="cz-vd">${czVd(p)}</span>${svg('<path d="M6 9l6 6 6-6"/>',18).replace('<svg ','<svg class="cz-chev" ')}</button></li>`).join('')+'<li class="cz-glide" role="presentation" aria-hidden="true"></li>';
+  const heads='<div class="czr-h" aria-hidden="true"><span>Test</span><span>Result</span><span>Trend</span><span>Reading, and its bar</span></div>';
+  const panels=P.map(p=>`<section class="czp" id="cz-g-${p.key}" data-p="${p.key}" aria-labelledby="cz-h-${p.key}" hidden><header class="czp-h"><span class="czp-nu" aria-hidden="true">${mark(p)}</span><h3 id="cz-h-${p.key}">${p.title}</h3></header><p class="czp-sub"><b>${czVd(p)}.</b>${GROUP_NOTE[p.key]&&czTry(GROUP_NOTE[p.key])?` ${czTry(GROUP_NOTE[p.key])}`:''}</p>${heads}<ul>${p.list.map(czRow).join('')}</ul></section>`).join('');
   return `<section class="case-sec" aria-labelledby="case-h">
     <div class="sec-head"><h2 id="case-h">The case so far</h2><span class="cz-tally"><span><i class="cz-m is-for" aria-hidden="true"></i><b>${nF}</b> ${nF===1?'result supports':'results support'} the long case</span><span><i class="cz-m is-against" aria-hidden="true"></i><b>${nA}</b> ${nA===1?'counts':'count'} against it</span></span></div>
-    <p class="cz-lede">${czVerdict(P)}</p>
-    ${czTry(czStake)?`<p class="cz-sub cz-stake">${czTry(czStake)}</p>`:''}
-    <p class="cz-sub">${czLede(P)}${czWays(T)?` ${czWays(T)}`:''}</p>
+    <div class="czv">
+      <div class="czv-main">${czAnswer(P)}</div>
+      <div class="czv-side">${czNote(czTry(czStake))}${czNote(czLede(P))}${czNote(czWays(T),true)}</div>
+    </div>
     <div class="card cz" id="cz">
-      <ol class="cz-rail" style="--n:${P.length}" aria-label="The parts of the long case, in order">${rail}</ol>
       <div class="cz-tip" id="cz-tip" hidden></div>
-      <p class="cz-leg">Each row is one test with a stated bar.${T.some(c=>c.pillar==='watch')?' A tripwire is a result that would change the author\'s mind if it stopped holding.':''} Select a row to see its chart and query.</p>
-      <div class="cz-led">${groups}</div>
-      <p class="cz-foot">${when}Each row states its own period. <a href="#a-method">How the claims were chosen</a></p>
+      <div class="cz-main">
+      <div class="cz-side"><ol class="cz-rail" style="--n:${P.length}" aria-label="The parts of the long case, in order">${rail}</ol></div>
+      <div class="cz-body">
+        <div class="cz-bar">
+          <div class="cz-ctl"><span class="cz-seg" role="group" aria-label="How much of the case to show"><button type="button" data-view="one" aria-pressed="true">One link</button><button type="button" data-view="all" aria-pressed="false">All ${T.length} tests</button></span><span class="cz-nav"><button type="button" data-step="-1" aria-label="Previous link">${svg('<path d="M15 6l-6 6 6 6"/>',18)}</button><button type="button" data-step="1" aria-label="Next link">${svg('<path d="M9 6l6 6-6 6"/>',18)}</button></span></div>
+        </div>
+        <div class="cz-panels">${panels}</div>
+      <div class="cz-foot"><p>Each row is one test with a stated bar.${T.some(c=>c.pillar==='watch')?' A tripwire is a result that would change the author\'s mind if it stopped holding.':''} Select a row to see its chart and query.</p><p>${when}Each row states its own period. <a href="#a-method">How the claims were chosen</a></p></div>
+      </div>
+      </div>
       ${CZH?CZH.band():''}
     </div>
   </section>`};
@@ -5310,28 +5748,78 @@ const czFinds=()=>{const yr=LC.asOf.slice(0,4),live=id=>ANALYSES.some(a=>a.id===
       return[`${fmt.compact(t.paid,1)} NEAR`,`was paid out by treasury.near ${one?'this year':`on ${t.when}`}, ${fmt.pct(t.ofSupply,1)} of supply; no House of Stake proposal covers these payouts.`]}],
   ].map(([id,f])=>{if(!live(id))return null;try{const r=f();return r&&r[0]&&r[1]?{id,v:r[0],t:r[1]}:null}catch(e){return null}}).filter(Boolean);
   if(L.length<2)return '';
-  return `<div class="sec-head"><h2>${cap(czWord(L.length))} findings from the evidence</h2></div>
-    <ul class="cz-finds">${L.map(r=>`<li><a href="#a-${r.id}"><b>${r.v}</b> ${r.t}</a></li>`).join('')}</ul>`};
-/* The rail and the ledger point at each other: a mark lights its row and a row its mark; a part of the rail opens its rows */
+  const an=id=>ANALYSES.find(x=>x.id===id),sub=id=>{const a=an(id);return a?subj(a.subject):null};
+  /* A unit in words after the figure is set small, so the figure itself leads */
+  const fig=v=>{const m=/^(.*\d\S*)\s+([A-Za-z]+)$/.exec(v);return m?`${m[1]}<small>${m[2]}</small>`:v};
+  return `<section class="czf" aria-labelledby="czf-h"><div class="sec-head"><h2 id="czf-h">${cap(czWord(L.length))} findings from the evidence</h2></div>
+    <ul class="czf-l card">${L.map(r=>{const s=sub(r.id);return `<li><a class="czf-r" href="#a-${r.id}"${s?` style="--hue:${s.hue}"`:''}><span class="czf-n"><b class="czf-v">${fig(r.v)}</b>${s?`<span class="czf-k"><i aria-hidden="true"></i>${s.short}</span>`:''}</span><span class="czf-x">${r.t}</span>${svg('<path d="M9 6l6 6-6 6"/>',16)}</a></li>`}).join('')}</ul></section>`};
+/* The rail steps through the case: a link opens its tests, the arrows go to the link before and after, and the switch
+   opens every link at once. A mark still lights its row and a row its mark; a mark of another link opens that link
+   first. On a phone the rail is a list, so each link's tests open under its own line. */
 const czWire=()=>{
   const box=$('#cz'),tip=$('#cz-tip');if(!box||!tip)return;
-  const rail=box.querySelector('.cz-rail'),led=box.querySelector('.cz-led');
-  const all=new Map(TH.scorecard.map(c=>[c.claim_id,c])),still=matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const rowOf=id=>led.querySelector(`.cz-r[data-i="${id}"]`),markOf=id=>rail.querySelector(`i[data-i="${id}"]`);
+  const rail=box.querySelector('.cz-rail'),host=box.querySelector('.cz-panels');
+  const tabs=[...rail.querySelectorAll('.cz-p')],keys=tabs.map(t=>t.dataset.p),panel=new Map([...box.querySelectorAll('.czp')].map(p=>[p.dataset.p,p]));
+  const all=new Map(TH.scorecard.map(c=>[c.claim_id,c])),still=matchMedia('(prefers-reduced-motion: reduce)').matches,phone=matchMedia('(max-width:600px)');
+  const steps=[...box.querySelectorAll('[data-step]')],views=[...box.querySelectorAll('[data-view]')];
+  if(CZ_SEL!==''&&!keys.includes(CZ_SEL))CZ_SEL=keys[0];
+  /* The tab behind the part in view glides to the next one. It is placed from that part's own box, so it holds where
+     the parts stand in a column, in rows of three, or in one row, and it is placed again when the rail changes size. */
+  const glide=rail.querySelector('.cz-glide'),lis=tabs.map(t=>t.parentNode),wide=matchMedia('(min-width:1001px)');
+  /* With every part open on a wide window the chain follows the reader, and marks the part being read */
+  let spy=keys[0];
+  const inView=()=>CZ_ALL?(wide.matches?spy:null):CZ_SEL;
+  const place=()=>{const li=lis[keys.indexOf(inView())];if(!glide)return;if(!li||phone.matches){glide.classList.remove('on');return}
+    const one=lis.every(l=>l.offsetTop===lis[0].offsetTop),col=!one&&lis.every(l=>l.offsetLeft===lis[0].offsetLeft);let x,y,w,h;
+    if(col){const b=li.firstElementChild;x=li.offsetLeft-6;y=li.offsetTop+b.offsetTop-1;w=rail.clientWidth-x+1;h=b.offsetHeight+2}
+    else{const cs=getComputedStyle(rail),g=parseFloat(cs.columnGap)||0,pt=parseFloat(cs.paddingTop)||0;x=li.offsetLeft-g/2;w=li.offsetWidth+g;y=one?pt/2:li.offsetTop-10;h=one?rail.offsetHeight-pt/2+1:li.offsetHeight+20}
+    glide.style.transform=`translate(${x}px,${y}px)`;glide.style.width=w+'px';glide.style.height=h+'px';
+    glide.classList.toggle('col',col);glide.classList.toggle('free',!one&&!col);glide.classList.add('on')};
+  const ro=new ResizeObserver(()=>{if(!document.contains(rail)){ro.disconnect();return}glide.classList.remove('ready');place();void glide.offsetWidth;glide.classList.add('ready')});
+  const rowOf=id=>box.querySelector(`.cz-r[data-i="${id}"]`),markOf=id=>rail.querySelector(`i[data-i="${id}"]`);
+  const paint=()=>{const k=keys.indexOf(CZ_SEL);
+    box.classList.toggle('all',CZ_ALL);
+    tabs.forEach(t=>{t.setAttribute('aria-expanded',String(CZ_ALL||t.dataset.p===CZ_SEL));t.parentNode.classList.toggle('on',t.dataset.p===inView())});
+    keys.forEach((key,i)=>{const p=panel.get(key),home=phone.matches?tabs[i].parentNode:host;p.hidden=!(CZ_ALL||key===CZ_SEL);if(p.parentNode!==home)home.appendChild(p)});
+    steps.forEach(b=>{b.disabled=CZ_ALL||k+ +b.dataset.step<0||k+ +b.dataset.step>=keys.length});
+    views.forEach(b=>b.setAttribute('aria-pressed',String((b.dataset.view==='all')===CZ_ALL)));place()};
+  const pick=key=>{CZ_SEL=key;paint()};
   let cur=null;
   const lite=id=>{if(id===cur)return;[cur,id].forEach((x,k)=>{if(!x)return;const r=rowOf(x),m=markOf(x);if(r)r.classList.toggle('lit',!!k);if(m)m.classList.toggle('lit',!!k)});cur=id};
   const say=m=>{const c=all.get(m.dataset.i);if(!c){tip.hidden=true;return}
     tip.innerHTML=`<b>${czRisk(c)}${c.claim}</b><span>${scNum(c.value,c.unit)}: ${czLabel(c).toLowerCase()}, ${czBar(c)}</span>`;
     tip.hidden=false;const fb=box.getBoundingClientRect(),mb=m.getBoundingClientRect(),w=tip.offsetWidth;
     tip.style.left=Math.max(w/2+8,Math.min(fb.width-w/2-8,mb.left+mb.width/2-fb.left))+'px';tip.style.top=(mb.top-fb.top)+'px'};
-  const open=el=>{el.scrollIntoView({behavior:still?'auto':'smooth',block:'nearest'});el.classList.remove('flash');void el.offsetWidth;el.classList.add('flash')};
+  const show=(el,start)=>{el.scrollIntoView({behavior:still?'auto':'smooth',block:start?'start':'nearest'});el.classList.remove('flash');void el.offsetWidth;el.classList.add('flash')};
   rail.addEventListener('pointerover',e=>{const m=e.target.closest('i[data-i]');lite(m?m.dataset.i:null);if(m&&e.pointerType==='mouse')say(m);else tip.hidden=true});
   rail.addEventListener('pointerleave',()=>{lite(null);tip.hidden=true});
-  rail.addEventListener('click',e=>{const m=e.target.closest('i[data-i]'),p=e.target.closest('.cz-p');tip.hidden=true;
-    const to=m?rowOf(m.dataset.i):p&&box.querySelector('#cz-g-'+p.dataset.p);if(to)open(to)});
+  rail.addEventListener('click',e=>{const m=e.target.closest('i[data-i]'),p=e.target.closest('.cz-p');if(!p)return;tip.hidden=true;
+    const key=p.dataset.p;
+    if(CZ_ALL){if(m)show(rowOf(m.dataset.i));else show(panel.get(key),true);return}
+    /* On a phone a second touch on the open link closes it */
+    if(phone.matches&&!m&&key===CZ_SEL){pick('');return}
+    pick(key);if(m)show(rowOf(m.dataset.i))});
+  rail.addEventListener('keydown',e=>{const d=e.key==='ArrowRight'||e.key==='ArrowDown'?1:e.key==='ArrowLeft'||e.key==='ArrowUp'?-1:0,i=tabs.indexOf(e.target.closest('.cz-p'));
+    if(!d||i<0||!tabs[i+d])return;e.preventDefault();tabs[i+d].focus();if(!CZ_ALL)pick(keys[i+d])});
+  steps.forEach(b=>b.addEventListener('click',()=>{const k=keys[keys.indexOf(CZ_SEL)+ +b.dataset.step];if(k)pick(k)}));
+  /* Which part is under the reading line, a little below the header */
+  const watch=()=>{if(!document.contains(box)){removeEventListener('scroll',watch);return}if(!CZ_ALL||!wide.matches)return;
+    const line=(parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--head-h'))||58)+150;let k=keys[0];
+    keys.forEach(key=>{if(panel.get(key).getBoundingClientRect().top<=line)k=key});
+    if(k!==spy){spy=k;paint()}};
+  addEventListener('scroll',watch,{passive:true});
+  /* Opening every part starts from the one in view; going back to one part keeps the one being read, and brings the
+     card's head back into the window if it had scrolled away */
+  views.forEach(b=>b.addEventListener('click',()=>{const all=b.dataset.view==='all';if(all===CZ_ALL)return;CZ_ALL=all;
+    if(all){spy=CZ_SEL||keys[0];paint();watch()}
+    else{CZ_SEL=wide.matches?spy:(CZ_SEL||keys[0]);paint();const hd=$('.head'),top=box.getBoundingClientRect().top,min=(hd?hd.getBoundingClientRect().bottom:0)+12;if(top<min)scrollBy({top:top-min,behavior:'instant'})}}));
+  wide.addEventListener('change',()=>{if(main.contains(box))paint()});
+  phone.addEventListener('change',()=>{if(!main.contains(box))return;if(!phone.matches&&!CZ_SEL)CZ_SEL=keys[0];paint()});
   const fromRow=e=>{const r=e.target.closest('.cz-r[data-i]');lite(r?r.dataset.i:null)};
-  led.addEventListener('pointerover',fromRow);led.addEventListener('pointerleave',()=>lite(null));
-  led.addEventListener('focusin',fromRow);led.addEventListener('focusout',()=>lite(null));
+  box.addEventListener('pointerover',e=>{if(!e.target.closest('.cz-rail'))fromRow(e)});
+  host.addEventListener('pointerleave',()=>lite(null));
+  box.addEventListener('focusin',fromRow);box.addEventListener('focusout',()=>lite(null));
+  paint();if(glide)ro.observe(rail);
 };
 /* ============================================================================================
    THE SUBJECT'S READING. Each subject page opens with up to three gauges: a number, how it compares,
@@ -5432,7 +5920,7 @@ const gaugeHtml=(g,i)=>`<div class="gz-i" data-g="${i}"><div class="gz-w"><p cla
   ?`<div class="gz-f"><div class="gz-bar" role="img" aria-label="${esc(g.parts.map(p=>`${p[0]}: ${p[1]}`).join(', '))}">${g.parts.filter(p=>p[1]>0).map(p=>`<i style="flex:${p[1]};background:${p[2]}"></i>`).join('')}</div><div class="gz-key">${g.parts.filter(p=>p[1]>0).map(p=>`<span><i style="background:${p[2]}"></i>${p[0]} ${fmt.int(p[1])}</span>`).join('')}</div></div>`
   :`<div class="gz-f"><div class="gz-c" role="img" aria-label="${esc(`${g.t}: ${g.v}, ${g.s}. ${g.y.length} points, ${g.ends[0]} to ${g.ends[1]}.`)}"></div><div class="gz-e"><span>${g.ends[0]}</span><span>${g.ends[1]}</span></div></div>`}</div>`;
 const readingHtml=(s,kp)=>{const gs=gaugesOf(s.id),c=caseOf(s.id);
-  return `${gs.length?`<div class="gz" style="--n:${gs.length}">${gs.map(gaugeHtml).join('')}</div>`:''}${kp.length||c.all?`<div class="gz-also">${kp.length?`<dl>${kp.map(k=>`<div><dt>${k[0]}</dt><dd>${k[1]}</dd></div>`).join('')}</dl>`:''}${c.all?`<a class="gz-case" href="#overview"><span>On the scorecard</span>${c.for?`<b class="for">${c.for} for</b>`:''}${c.against?`<b class="against">${c.against} against</b>`:''}${c.open?`<b class="open">${c.open} not testable</b>`:''}</a>`:''}</div>`:''}`};
+  return `${gs.length||kp.length||c.all?'<div class="gz-box">':''}${gs.length?`<div class="gz" style="--n:${gs.length}">${gs.map(gaugeHtml).join('')}</div>`:''}${kp.length||c.all?`<div class="gz-also">${kp.length?`<dl>${kp.map(k=>`<div><dt>${k[0]}</dt><dd>${k[1]}</dd></div>`).join('')}</dl>`:''}${c.all?`<a class="gz-case" href="#overview"><span>On the scorecard</span>${c.for?`<b class="for">${c.for} for</b>`:''}${c.against?`<b class="against">${c.against} against</b>`:''}${c.open?`<b class="open">${c.open} not testable</b>`:''}</a>`:''}</div>`:''}${gs.length||kp.length||c.all?'</div>':''}`};
 let gzId=0;
 /* One gauge's chart. A series that starts near zero is drawn from zero with its area filled; one that does not is a line alone,
    so a filled area never suggests a baseline the chart does not have. */
@@ -5543,7 +6031,7 @@ const ICON_OUT=svg('<path d="M14 5h5v5"/><path d="M19 5l-8 8"/><path d="M18 14v4
 const ICON_TERMS=svg('<path d="M7 3.5h7l4 4V20a.5.5 0 0 1-.5.5h-10A.5.5 0 0 1 7 20z"/><path d="M14 3.5V8h4"/><path d="M9.5 12.5h5M9.5 16h5"/>',15);
 /* A gauge whose chart is a bar in parts. With key:false the parts are named only on hover, for a bar of many parts. */
 const mtGauge=g=>`<div class="gz-i"><div class="gz-w"><p class="gz-t">${g.to?`<a href="#${g.to}">${g.t}</a>`:g.t}</p><span class="gz-v">${g.v}</span><p class="gz-s">${g.s}</p></div><div class="gz-f"><div class="gz-bar" role="img" aria-label="${esc(g.parts.map(p=>`${p[0]}: ${p[1]}`).join(', '))}">${g.parts.filter(p=>p[1]>0).map(p=>`<i style="flex:${p[1]};background:${p[2]}" title="${esc(`${p[0]}: ${p[1]}`)}"></i>`).join('')}</div><div class="gz-key">${g.key===false?'':g.parts.filter(p=>p[1]>0).map(p=>`<span><i style="background:${p[2]}"></i>${p[0]} ${fmt.int(p[1])}</span>`).join('')}</div></div></div>`;
-const mtHero=(title,lede,gs,also)=>`<section class="night s-night mt-hero"><div class="wrap s-hero"><nav class="s-top" aria-label="Page"><a class="crumb" href="#overview">Overview</a></nav><div class="s-head mt-head"><div><h1>${title}</h1><p>${lede}</p><p class="s-asof">${ASOF_LINE}</p></div></div><div class="gz" style="--n:${gs.length}">${gs.map(mtGauge).join('')}</div>${also?`<div class="gz-also">${also}</div>`:''}</div></section>`;
+const mtHero=(title,lede,gs,also)=>`<section class="night s-night mt-hero"><div class="wrap s-hero"><nav class="s-top" aria-label="Page"><a class="crumb" href="#overview">Overview</a></nav><div class="s-head mt-head"><div><h1>${title}</h1><p>${lede}</p><p class="s-asof">${ASOF_LINE}</p></div></div><div class="gz-box"><div class="gz" style="--n:${gs.length}">${gs.map(mtGauge).join('')}</div>${also?`<div class="gz-also">${also}</div>`:''}</div></div></section>`;
 /* How a source is read, from the access note kept for it: every night, on request or by hand */
 const srcAccess=id=>(LC.lineage.sources[id]||{}).access||'';
 const srcRead=id=>id==='registry'||/^by hand/i.test(srcAccess(id))?'hand':/on request/i.test((VZ.sourceInfo(id)||{}).how||'')?'request':'script';
@@ -5563,7 +6051,7 @@ const V={
   let hStep='week',hFrom=null;
   /* Where the case stands on the scorecard, for the foot of the figures panel */
   const hTested=csTested(),hFor=hTested.filter(c=>c.stands==='for').length,hAgainst=hTested.filter(c=>c.stands==='against').length;
-  const iss=(from)=>{const i0=HD.d.findIndex(d=>d>=(from||'2024-12-09')),i1=HD.d.findIndex(d=>d>hEnd),cut=a=>a.slice(i0,i1<0?undefined:i1);const r=rollUp(cut(HD.d),[{name:'Value of NEAR created',values:cut(hIssued),how:'sum',color:'#ff9b54',label:'Created',area:true,width:2.5},{name:'Revenue received',values:cut(hKept),how:'sum',color:'#00ec97',label:'Received',area:true,width:2.5}],hStep);return{...r,tipDate:stepTip(hStep)}};
+  const iss=(from)=>{const i0=HD.d.findIndex(d=>d>=(from||'2024-12-09')),i1=HD.d.findIndex(d=>d>hEnd),cut=a=>a.slice(i0,i1<0?undefined:i1);const r=rollUp(cut(HD.d),[{name:'Value of NEAR created',values:cut(hIssued),how:'sum',color:'--h-iss',label:'Created',area:true,width:2.5},{name:'Revenue received',values:cut(hKept),how:'sum',color:'--h-kept',label:'Received',area:true,width:2.5}],hStep);return{...r,tipDate:stepTip(hStep)}};
   main.innerHTML=`<section class="night"><div class="wrap hero">
     <div class="hero-top">
       <div>
@@ -5585,7 +6073,7 @@ const V={
       </aside>
     </div>
     <div class="hero-chart">
-      <div class="hc-top"><span class="hc-key"><span data-each="Value of NEAR created each "><i style="background:#ff9b54"></i>Value of NEAR created each week</span><span data-each="Revenue received each "><i style="background:#00ec97"></i>Revenue received each week</span></span><span style="display:inline-flex;flex-wrap:wrap;align-items:center;gap:6px 12px">${VZ.sources(['defillama','rpc','coinmetrics'])}<span class="seg" id="hg" role="group" aria-label="Time step"></span><span class="seg" id="hr" role="group" aria-label="Time range"></span></span></div>
+      <div class="hc-top"><span class="hc-key"><span data-each="Value of NEAR created each "><i style="background:var(--h-iss)"></i>Value of NEAR created each week</span><span data-each="Revenue received each "><i style="background:var(--h-kept)"></i>Revenue received each week</span></span><span style="display:inline-flex;flex-wrap:wrap;align-items:center;gap:6px 12px">${VZ.sources(['defillama','rpc','coinmetrics'])}<span class="seg" id="hg" role="group" aria-label="Time step"></span><span class="seg" id="hr" role="group" aria-label="Time range"></span></span></div>
       <div id="ov-main"></div>
     </div>
   </div></section>
@@ -5600,9 +6088,10 @@ const V={
     </section>`:''}
   </div></div>`;
   czWire();if(CZH)CZH.wire();
+  main.querySelectorAll('.hfig .stat>span').forEach(s=>{const st=s.querySelector('strong');if(!st)return;const h=st.outerHTML;s.innerHTML=h+figHtml(s.innerHTML.slice(h.length))});
   /* The hero's two ways to the case scroll to it, clear of the header */
   main.querySelectorAll('[data-go="case"]').forEach(b=>b.addEventListener('click',()=>{const el=main.querySelector('.case-sec');if(el)scrollTo({top:el.getBoundingClientRect().top+scrollY-$('.head').offsetHeight-18,behavior:LCC.reduce()?'auto':'smooth'})}));
-  const hChart=timeChart($('#ov-main'),{type:'line',...iss(),endLabels:true,noLegend:true,yFmt:v=>fmt.usd(v,0),tipFmt:fmt.usd,height:Math.max(250,Math.min(350,innerHeight-510)),marks:[{d:'2026-02-23',label:'Fee switch'}]});
+  const hChart=timeChart($('#ov-main'),{type:'line',...iss(),endLabels:true,noLegend:true,yFmt:v=>fmt.usd(v,0),tipFmt:fmt.usd,height:Math.max(188,Math.min(232,innerHeight-680)),marks:[{d:'2026-02-23',label:'Fee switch'}]});
   track(hChart);
   const hr=$('#hr');const paintR=cur=>{hr.innerHTML=Object.keys(HERO_RANGES).map(k=>`<button aria-pressed="${k===cur}" data-k="${k}">${k}</button>`).join('')};paintR('All');
   hr.addEventListener('click',e=>{const k=e.target.dataset.k;if(!k)return;paintR(k);hFrom=LCC.rangeFrom(HERO_RANGES[k]);hChart.update(iss(hFrom))});
@@ -5951,6 +6440,39 @@ function openFind(){
 }
 $('#find').onclick=openFind;
 addEventListener('keydown',e=>{if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='k'){e.preventDefault();openFind()}const typing=/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)||document.querySelector('.cmdk');if(e.key==='/'&&!typing){e.preventDefault();openFind()}if(qNav&&!typing&&!e.metaKey&&!e.ctrlKey&&!e.altKey){if(e.key==='j'){e.preventDefault();qNav(1)}if(e.key==='k'){e.preventDefault();qNav(-1)}}});
+/* The reading place holds while the window changes width. The browser keeps its scroll offset through a resize, and
+   its own scroll anchoring gives up whenever a padding that depends on the width changes above the anchor, which here
+   is every step. Everything above the reader reflows, so the page seemed to scroll away by itself. The page keeps its
+   own anchor instead: when scrolling stops it notes the first block that starts under the top of the window, with the blocks
+   around it in case a redraw replaces that one, and after each change of width, and each late change of the page's height, it
+   puts that block back where it stood. A change of height alone is left to the browser, so a phone's bars sliding in
+   and out never fight a scroll. */
+(()=>{
+  const STABLE='p,li,h1,h2,h3,h4,figure,section,article,header,tr,a.st,a.stat,.a,.cap,.hero-chart';
+  let marks=[],busy=false,wPrev=innerWidth,tNote=0,tEnd=0;
+  /* The anchor is the first block that starts in view, looking down from under the header: what the reader is on.
+     Holding the top of a tall block whose end is in view would let that end, and everything after it, slide. With
+     nothing starting in view the block that fills the window is held by its top. */
+  const chain=e=>{const out=[];while(e&&e!==main&&main.contains(e)&&out.length<6){if(e.matches(STABLE))out.push({e,top:e.getBoundingClientRect().top});e=e.parentElement}return out};
+  /* A bar that sticks under the header never moves, so it cannot be the anchor: the reading line starts under it */
+  const stuck=e=>{for(;e&&e!==main&&main.contains(e);e=e.parentElement){const p=getComputedStyle(e).position;if(p==='sticky'||p==='fixed')return e}return null};
+  const note=()=>{marks=[];if(busy||scrollY<4)return;
+    const head=$('.head');let hb=head?head.getBoundingClientRect().bottom:0,first=null;
+    for(let i=0;i<3;i++){const s=stuck(document.elementFromPoint(innerWidth*.5,hb+6));if(!s)break;hb=Math.max(hb+1,s.getBoundingClientRect().bottom)}
+    for(const dy of [28,90,160,240,340])for(const fx of [.5,.25,.75]){const e=document.elementFromPoint(innerWidth*fx,hb+dy);if(stuck(e))continue;
+      const c=chain(e);if(!c.length)continue;
+      first=first||c;const k=c.findIndex(m=>m.top>=hb-4);if(k>=0){marks=c.slice(k).concat(c.slice(0,k));return}}
+    marks=first||[]};
+  const hold=()=>{const m=marks.find(x=>document.contains(x.e));if(!m)return;
+    const d=m.e.getBoundingClientRect().top-m.top;if(Math.abs(d)>1)scrollBy({top:d,behavior:'instant'})};
+  const end=()=>{busy=false;note()};
+  addEventListener('scroll',()=>{if(busy)return;clearTimeout(tNote);tNote=setTimeout(note,120)},{passive:true});
+  addEventListener('resize',()=>{if(innerWidth===wPrev)return;wPrev=innerWidth;busy=true;hold();clearTimeout(tEnd);tEnd=setTimeout(end,320)});
+  /* Charts and tiles redraw a frame or two after the width changes, and can change the page's height when they do */
+  new ResizeObserver(()=>{if(busy)hold()}).observe(main);
+  /* The reader's own scroll ends the hold at once */
+  ['wheel','touchstart','keydown'].forEach(k=>addEventListener(k,()=>{if(busy){clearTimeout(tEnd);end()}},{passive:true}));
+})();
 /* Sticky elements sit under the header, whose height changes when the tabs wrap */
 new ResizeObserver(([e])=>document.documentElement.style.setProperty('--head-h',e.target.offsetHeight+'px')).observe($('.head'));
 
