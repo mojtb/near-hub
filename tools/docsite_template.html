@@ -442,8 +442,8 @@ footer.foot .wrap{padding-block:30px 40px;display:grid;grid-template-columns:min
 /* ---------- day mode, figures in the open, and small things ---------- */
 
 /* Day mode is day throughout, as on the Hub. The header and the footer read their paint from the night's tokens and
-   three variables; by day the tokens point at the page's own colours, so the bar is light glass and the footer is
-   the page under one rule. Night keeps the night surface. */
+   two variables; by day the tokens point at the page's own colours, so the bar is light glass. The footer is the
+   page under one rule by day and by night, as the Hub's is; by night the bar keeps the night surface. */
 :root{--hd-rgb:243,247,245;--hd-bg:rgba(9,14,13,.94)}
 .head{background:var(--hd-bg)}
 .head-a,.head-b,.menu{background:rgba(var(--hd-rgb),.045)}
@@ -451,10 +451,10 @@ footer.foot .wrap{padding-block:30px 40px;display:grid;grid-template-columns:min
 .docs-tag{background:var(--tag-bg,rgba(0,236,151,.1));box-shadow:var(--tag-edge,inset 0 0 0 1px rgba(0,236,151,.22))}
 .docs-tag:hover{background:var(--tag-bg-h,rgba(0,236,151,.16))}
 .foot-l a:hover{color:var(--hd-accent,var(--mint))}
-footer.foot{border-top:var(--foot-rule,0)}
-:root[data-theme="light"]{--night:var(--page);--night-2:var(--surface);--night-ink:var(--ink);--night-mute:var(--mute);--night-faint:var(--faint);--night-line:var(--line);--hd-rgb:12,16,15;--hd-bg:rgba(249,250,250,.86);--hd-accent:var(--accent);--tag-bg:rgba(0,138,96,.08);--tag-edge:inset 0 0 0 1px rgba(0,138,96,.3);--tag-bg-h:rgba(0,138,96,.14);--foot-rule:1px solid var(--line)}
+footer.foot{background:var(--page);border-top:1px solid var(--line)}
+:root[data-theme="light"]{--night:var(--page);--night-2:var(--surface);--night-ink:var(--ink);--night-mute:var(--mute);--night-faint:var(--faint);--night-line:var(--line);--hd-rgb:12,16,15;--hd-bg:rgba(249,250,250,.86);--hd-accent:var(--accent);--tag-bg:rgba(0,138,96,.08);--tag-edge:inset 0 0 0 1px rgba(0,138,96,.3);--tag-bg-h:rgba(0,138,96,.14)}
 @media (prefers-color-scheme:light){
-:root:not([data-theme="dark"]){--night:var(--page);--night-2:var(--surface);--night-ink:var(--ink);--night-mute:var(--mute);--night-faint:var(--faint);--night-line:var(--line);--hd-rgb:12,16,15;--hd-bg:rgba(249,250,250,.86);--hd-accent:var(--accent);--tag-bg:rgba(0,138,96,.08);--tag-edge:inset 0 0 0 1px rgba(0,138,96,.3);--tag-bg-h:rgba(0,138,96,.14);--foot-rule:1px solid var(--line)}}
+:root:not([data-theme="dark"]){--night:var(--page);--night-2:var(--surface);--night-ink:var(--ink);--night-mute:var(--mute);--night-faint:var(--faint);--night-line:var(--line);--hd-rgb:12,16,15;--hd-bg:rgba(249,250,250,.86);--hd-accent:var(--accent);--tag-bg:rgba(0,138,96,.08);--tag-edge:inset 0 0 0 1px rgba(0,138,96,.3);--tag-bg-h:rgba(0,138,96,.14)}}
 
 /* Figures in the open. Each figure stands under its name, a rule in the gap before it; the first of a row has
    none, because its gap falls outside the row. The longest entry of a table's strip (its sources) takes the room
