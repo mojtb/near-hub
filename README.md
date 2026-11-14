@@ -48,8 +48,11 @@ case, where it stands, and what would change the author's mind. A claim that fai
   <a href="https://nearhub.tech"><img src="docs/images/hub-tour.gif" width="640" alt="A tour of NEAR Hub in night mode: the case so far, its links opened one at a time with a result for each test, how the count has moved and the findings, the subjects at a glance, one question about NEAR Intents with its chart, reading and query, the guide to every table, and the home page."></a>
 </p>
 
-The pictures on this page show the snapshot of 12 November 2026, and they and the demo video were made on
-13 November, before the BigQuery tables and the questions drawn from them were added. The site moves with the data.
+The pictures on this page show the snapshot of 14 November 2026. The demo video was made on 13 November from the
+snapshot of 12 November, before the BigQuery tables and the questions drawn from them were added: it shows 10 results
+for the case and 9 against, 66 questions and 82 tables. The count, the questions and the tables have moved on since,
+and the Limits in [THESIS.md](THESIS.md#limits) say what changed in the claims on 14 November. The site moves with the
+data.
 
 ## What is in this repository
 
@@ -117,7 +120,7 @@ You need Python 3.11, 3.12 or 3.13 and `make`, on macOS or Linux. `make` uses th
 with a plain message if it finds none; to name one yourself, add `PYTHON=/path/to/python` to the command. No keys and
 no API calls are needed: everything is rebuilt from the responses committed in `data/bronze/`. Only `make setup` uses
 the network, to download the pinned Python packages.
-The command below fetches `main` alone, with its full history: about 140 MB, because every stored response is in it.
+The command below fetches `main` alone, with its full history: about 180 MB, because every stored response is in it.
 A plain `git clone` also fetches every nightly snapshot, which is larger and grows each night.
 
 ```bash
@@ -264,7 +267,7 @@ which was fetched on the owner's machine with the job's own command. The nightly
 | [`data/gold/`](data/gold) | The finished tables as Parquet and CSV, with their fingerprints and catalog |
 | [`data/state/`](data/state) | Where the long history jobs resume from |
 | [`data/PINNED`](data/PINNED) | The snapshot date `main` is built at |
-| [`registry/`](registry) | Reviewed CSVs: wallets, tokens, peers, events, the claims and their bars, each source's terms. `claims.csv.ots` is an [OpenTimestamps](https://opentimestamps.org) proof of the claims file as submitted, so a later change to a bar can be seen: `ots verify registry/claims.csv.ots` |
+| [`registry/`](registry) | Reviewed CSVs: wallets, tokens, peers, events, the claims and their bars, each source's terms. `claims.csv.ots` is an [OpenTimestamps](https://opentimestamps.org) proof of the claims file as it has stood since its change of 14 November, so a later change to a bar can be seen: `ots verify registry/claims.csv.ots`. The tag `submission-2026-11-14` holds the file as it was before that change |
 | [`ingest/`](ingest) | One fetcher per source, run by `make ingest`; the BigQuery queries are in [`ingest/sql/bigquery/`](ingest/sql/bigquery) |
 | [`warehouse/`](warehouse) | The dbt models: silver types each response, gold holds the tables a reader should use, and the data tests |
 | [`tools/`](tools) | The build steps: export, verify, catalog, thesis, the site's data and the table guide |
