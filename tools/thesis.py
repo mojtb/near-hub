@@ -497,7 +497,7 @@ md: list[str] = [
     *([staking, ""] if staking else []),
     "## The claim",
     "",
-    f"Over the 30 days to {day(settled)}, NEAR minted {near(dilution['minted_30d_near'])}, which is "
+    f"Over the 30 days to {day(settled)}, NEAR created {near(dilution['minted_30d_near'])}, which is "
     f"{pct(dilution['gross_inflation_rate'], 2)} of supply a year. Gas burned and the NEAR its revenue wallets received "
     f"came to {pct(dilution['offset_share'])} of that: {received_points:.1f}% received and held by the wallets, "
     f"{share_points - received_points:.1f}% burned. **The long case is that this gap closes:** NEAR Intents keeps "
@@ -508,7 +508,7 @@ md: list[str] = [
     f"At the fee rate and the share of fees measured over those 30 days, and at NEAR's close of "
     f"${scenario['current']['price_usd']:.2f} on {day(price_day)}, Intents volume would have to be "
     f"{scenario['current']['breakeven_volume_multiple']:.1f}× what it is for the wallets to receive as much NEAR as is "
-    f"minted net of burn, or {scenario['hsp029_end_state']['breakeven_volume_multiple']:.1f}× once issuance is {CUT}. " +
+    f"created net of burn, or {scenario['hsp029_end_state']['breakeven_volume_multiple']:.1f}× once issuance is {CUT}. " +
     (f"Counted on the NEAR the wallets actually received over the 30 days, at each day's price (${received_price:.2f} a NEAR "
      f"on average), the multiple today is {received_multiple:.1f}× (NEAR created less burned, over NEAR received): NEAR "
      f"closed {'below' if received_price > scenario['current']['price_usd'] else 'above'} that average, so at the close the "
