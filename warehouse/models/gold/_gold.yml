@@ -197,8 +197,8 @@ models:
       - {name: gas_price_yocto, description: "Gas price per NearBlocks /v3/block-stats. Last 365 days of reads only. It has sat at the protocol's minimum all year; dim_block_day holds the price in one block a day.", meta: {unit: "yoctoNEAR per gas"}}
       - {name: active_signers, description: "Active accounts per /v1/charts. NearBlocks does not document it, but it matches Nansen's published distinct signers, so it leaves out users whose transactions a relayer signs. Ends on 2026-11-22, when /v1 is switched off.", meta: {unit: "count"}}
       - {name: active_accounts_with_relayed, description: "Active accounts per /v3/address-stats. NearBlocks does not document it, but it stays within 2% of active_signers plus meta_accounts, so it also counts users whose transactions a relayer signs. About 2x active_signers in the latest 30 days, and 9x to 18x in monthly averages before 2026-04-02.", meta: {unit: "count"}}
-      - {name: distinct_signers, description: "Accounts that signed a transaction that day, by one rule: active_signers minus deleted_accounts on a day /v1/charts holds, and active_accounts_with_relayed minus meta_accounts on a day it does not. An account signs its own deletion, so active_signers rises by one for every account deleted that day (3.4M accounts in February 2026 and 562K in October 2026), and this column leaves them out. On ordinary days from April to November 2026 the two forms differ by -3.2% to +1.7%. Deletion days cannot be taken out of the second form. Not people: about 60% of active accounts call one game.", meta: {unit: "count"}, data_tests: [{in_range: {arguments: {low: 0, high: 100000000}}}]}
-      - {name: distinct_signers_basis, description: "Which form distinct_signers takes on the day: v1_signers_less_deletions while /v1/charts holds the day (it is switched off on 2026-11-22), v3_active_less_relayed after.", meta: {unit: "label"}, data_tests: [{accepted_values: {arguments: {values: ["v1_signers_less_deletions", "v3_active_less_relayed"]}}}]}
+      - {name: distinct_signers, description: "Accounts that signed a transaction that day, by one rule: active_signers minus deleted_accounts on a day /v1/charts holds; on a day it does not, the signers counted in NEAR's public BigQuery dataset minus the signers of an account deletion (0.07% from the first form on average over the 225 days both held); and where BigQuery was not read either, active_accounts_with_relayed minus meta_accounts. An account signs its own deletion, so active_signers rises by one for every account deleted that day (3.4M accounts in February 2026 and 562K in October 2026), and this column leaves them out. On ordinary days from April to November 2026 the first and the last form differ by -3.2% to +1.7%. Deletion days cannot be taken out of the last form. Not people: about 60% of active accounts call one game.", meta: {unit: "count"}, data_tests: [{in_range: {arguments: {low: 0, high: 100000000}}}]}
+      - {name: distinct_signers_basis, description: "Which form distinct_signers takes on the day: v1_signers_less_deletions while /v1/charts holds the day (it is switched off on 2026-11-22), bigquery_signers_less_deletions on a later day that BigQuery was read for, v3_active_less_relayed on any other.", meta: {unit: "label"}, data_tests: [{accepted_values: {arguments: {values: ["v1_signers_less_deletions", "bigquery_signers_less_deletions", "v3_active_less_relayed"]}}}]}
       - {name: active_contracts, description: "Active contracts: /v3/address-stats, else /v1/charts. The two agree except on 2026-04-15 and by one contract on three days. Not a count of applications in use: it follows the scripted streams, averaging 721 a day in May 2024, 2.19 million in March 2026 and 95,000 in May 2026, after they stopped.", meta: {unit: "count"}}
       - {name: new_accounts, description: "Accounts created, per /v1/charts. Ends on 2026-11-22.", meta: {unit: "count"}}
       - {name: deleted_accounts, description: "Accounts deleted, per /v1/charts. Ends on 2026-11-22.", meta: {unit: "count"}}
@@ -1291,6 +1291,76 @@ models:
       - {name: transactions_table_rows, description: "Rows in the transactions table's partition for the day, from BigQuery's partition records. Equal to txns where both exist unless the table holds a transaction twice.", meta: {unit: "count"}}
       - {name: receipt_details_table_rows, description: "Rows in the receipt_details table's partition for the day: action receipts and data receipts together.", meta: {unit: "count"}}
       - {name: receipt_actions_table_rows, description: "Rows in the receipt_actions table's partition for the day: one per action inside an action receipt.", meta: {unit: "count"}}
+  - name: fct_bigquery_signer_daily
+    description: "Who signed the day's transactions, counted over every transaction in NEAR's public BigQuery dataset: each account among the day's 25 largest signers by transactions, or among the 25 largest signers of the transactions sent to NEAR Intents' contract. A signer is the account that signed and paid for a transaction, so a relayer or a batch job is one row however many accounts it writes to; fct_bigquery_receiver_daily counts the same transactions by who received them, and a job that writes to two million accounts cannot be seen there."
+    config:
+      meta: {grain: "date_day, signer_account_id", sources: "BigQuery public dataset crypto_near_mainnet_us: transactions"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["date_day", "signer_account_id"]}}
+      - no_missing_days: {arguments: {day_column: date_day}}
+      - min_rows: {arguments: {n: 20000}}
+    columns:
+      - {name: date_day, description: "UTC calendar day.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: signer_account_id, description: "Account that signed and paid for the transactions. For a relayed transaction that is the relayer.", meta: {unit: "account id"}, data_tests: [not_null]}
+      - {name: entity, description: "Organization that runs the account, from the registry. Empty means not established.", meta: {unit: "text"}}
+      - {name: category, description: "Functional group, from the registry.", meta: {unit: "text"}}
+      - {name: txns, description: "Transactions this account signed that day.", meta: {unit: "count"}, data_tests: [{in_range: {arguments: {low: 1, high: 100000000}}}]}
+      - {name: receivers, description: "Distinct accounts it sent them to. A batch job or a relayer has very many; a contract that calls itself has one.", meta: {unit: "count"}}
+      - {name: txn_share, description: "txns divided by the day's transactions.", meta: {unit: "fraction"}, data_tests: [{in_range: {arguments: {low: 0, high: 1}}}]}
+      - {name: rank_by_txns, description: "Place among the day's signers by transactions, 1 to 25. Empty for an account listed only as a sender to NEAR Intents' contract.", meta: {unit: "rank"}}
+      - {name: intents_txns, description: "Those of its transactions that were sent to intents.near.", meta: {unit: "count"}}
+      - {name: intents_txn_share, description: "intents_txns divided by all the transactions sent to intents.near that day. The contract's own account signs most of them, so this does not show who fills the swaps.", meta: {unit: "fraction"}}
+      - {name: rank_by_intents_txns, description: "Place among the day's signers of transactions sent to intents.near, 1 to 25. Empty for an account that sent it none.", meta: {unit: "rank"}}
+      - {name: day_txns, description: "All transactions that day, the same on every row of the day.", meta: {unit: "count"}}
+      - {name: day_intents_txns, description: "All transactions sent to intents.near that day, the same on every row of the day.", meta: {unit: "count"}}
+      - {name: day_intents_signers, description: "Distinct accounts that signed a transaction sent to intents.near that day, the same on every row of the day.", meta: {unit: "count"}}
+
+  - name: fct_bigquery_caller_daily
+    description: "Who called two contracts, counted over every function call in NEAR's public BigQuery dataset: each account among the day's 25 largest callers of the Chain Signatures contract, v1.signer, and of NEAR Intents' contract, intents.near. A caller is the account that sent the receipt: a user's own account, the user a relayer signed for, or another contract. A contract also calls itself to finish work it started, and those calls are a row of their own (is_self_call)."
+    config:
+      meta: {grain: "date_day, contract_id, caller_account_id", sources: "BigQuery public dataset crypto_near_mainnet_us: receipt_actions"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["date_day", "contract_id", "caller_account_id"]}}
+      - no_missing_days: {arguments: {day_column: date_day}}
+      - min_rows: {arguments: {n: 5000}}
+    columns:
+      - {name: date_day, description: "UTC calendar day.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: contract_id, description: "The contract called: v1.signer or intents.near.", meta: {unit: "account id"}, data_tests: [not_null, {accepted_values: {arguments: {values: ["v1.signer", "intents.near"]}}}]}
+      - {name: caller_account_id, description: "Account that sent the receipt carrying the call.", meta: {unit: "account id"}, data_tests: [not_null]}
+      - {name: entity, description: "Organization that runs the calling account, from the registry. Empty means not established.", meta: {unit: "text"}}
+      - {name: category, description: "Functional group of the calling account, from the registry.", meta: {unit: "text"}}
+      - {name: calls, description: "Function calls this account made to the contract that day.", meta: {unit: "count"}, data_tests: [{in_range: {arguments: {low: 1, high: 100000000}}}]}
+      - {name: call_share, description: "calls divided by all the function calls the contract received that day.", meta: {unit: "fraction"}, data_tests: [{in_range: {arguments: {low: 0, high: 1}}}]}
+      - {name: rank_by_calls, description: "Place among the contract's callers of the day by function calls, 1 to 25.", meta: {unit: "rank"}}
+      - {name: is_self_call, description: "True when the caller is the contract itself: calls it makes to finish work it started.", meta: {unit: "flag"}}
+      - {name: contract_calls, description: "All function calls the contract received that day, the same on every row of the contract and day.", meta: {unit: "count"}}
+      - {name: contract_callers, description: "Distinct accounts that called the contract that day, the same on every row of the contract and day.", meta: {unit: "count"}}
+
+  - name: fct_bigquery_staking_balance_daily
+    description: "Staked NEAR by day and how much of it the largest holders have, from the table of staking balances in NEAR's public BigQuery dataset. The dataset names that table ft_balances_daily, but it holds NEAR, not tokens: one row for each account it follows, with the account's own stake and its lockup account's. Read it with care: the table follows more accounts each year (8,848 on its first day, 30,511 on 2026-11-13), so a rise over time is partly the list growing. listed_share_of_stake says how much of all staked NEAR the day's list holds. The table's liquid, unstaked and reward columns sum to more than the supply, so they stay in bronze."
+    config:
+      meta: {grain: "date_day", sources: "BigQuery public dataset crypto_near_mainnet_us: ft_balances_daily; RPC validators for all staked NEAR"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["date_day"]}}
+      - min_rows: {arguments: {n: 1000}}
+    columns:
+      - {name: date_day, description: "UTC calendar day: the date of the day's last epoch in the table.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: accounts, description: "Accounts the table lists that day.", meta: {unit: "count"}}
+      - {name: accounts_with_stake, description: "Of those, the accounts with staked NEAR of their own or in their lockup account.", meta: {unit: "count"}}
+      - {name: accounts_with_lockup, description: "Of those, the accounts the table gives a lockup account for.", meta: {unit: "count"}}
+      - {name: staked_near, description: "Staked NEAR of the listed accounts themselves.", meta: {unit: "NEAR"}}
+      - {name: lockup_staked_near, description: "Staked NEAR of their lockup accounts.", meta: {unit: "NEAR"}}
+      - {name: listed_stake_near, description: "staked_near plus lockup_staked_near: all the stake the table lists that day.", meta: {unit: "NEAR"}}
+      - {name: total_stake_near, description: "All staked NEAR in the validator set, from the newest epoch read in the seven days to that day. Empty where no epoch was read.", meta: {unit: "NEAR"}}
+      - {name: listed_share_of_stake, description: "listed_stake_near divided by total_stake_near. Near 1 the list holds almost all stake; well under 1 it is a part, and its figures say nothing about the whole.", meta: {unit: "fraction"}}
+      - {name: largest_stake_near, description: "Stake of the listed account with the most, its own and its lockup account's together.", meta: {unit: "NEAR"}}
+      - {name: stake_top_10_near, description: "Stake of the ten listed accounts with the most.", meta: {unit: "NEAR"}}
+      - {name: stake_top_100_near, description: "Stake of the 100 listed accounts with the most.", meta: {unit: "NEAR"}}
+      - {name: stake_top_1000_near, description: "Stake of the 1,000 listed accounts with the most.", meta: {unit: "NEAR"}}
+      - {name: top_10_share, description: "stake_top_10_near divided by listed_stake_near.", meta: {unit: "fraction"}}
+      - {name: top_100_share, description: "stake_top_100_near divided by listed_stake_near.", meta: {unit: "fraction"}}
+      - {name: top_1000_share, description: "stake_top_1000_near divided by listed_stake_near.", meta: {unit: "fraction"}}
+
   - name: fct_bigquery_receiver_daily
     description: "Who the day's transactions were sent to, counted over every transaction in NEAR's public BigQuery dataset: each account among the day's 25 largest receivers by transactions or by distinct signers. fct_receiver_sample_daily estimates the same split from about one block in a thousand; this is the full count. A receiver is the account a transaction is addressed to, and a relayed transaction is addressed to the user's own account, so an application reached through a relayer does not appear here as one contract: fct_bigquery_contract_daily counts by the contract called. Accounts outside a day's top 25 never leave BigQuery."
     config:

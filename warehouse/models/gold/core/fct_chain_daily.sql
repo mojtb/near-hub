@@ -3,10 +3,20 @@
 -- 2026-11-22. Where both count the same thing they agree day for day, so the measure takes /v3 and falls back to /v1 for
 -- older days, and dq_reconciliation holds the two to each other. Where they count different things both stay, under names
 -- that say what each counts: active_signers (/v1) and active_accounts_with_relayed (/v3), new_contracts_v1 and _v3.
+-- NEAR's public BigQuery dataset counts the day's signers too, and equals /v1's count on every day both hold, so it
+-- carries distinct_signers on a day /v1 does not hold.
 with v1 as (select * from {{ ref('stg_nearblocks__charts_v1') }} where is_latest),
      txn as (select * from {{ ref('stg_nearblocks__txn_stats') }} where is_latest),
      adr as (select * from {{ ref('stg_nearblocks__address_stats') }} where is_latest),
-     blk as (select * from {{ ref('stg_nearblocks__block_stats') }} where is_latest)
+     blk as (select * from {{ ref('stg_nearblocks__block_stats') }} where is_latest),
+     -- BigQuery: the day's distinct signers, and the signers of an account deletion on a day its actions were read
+     bq as (select date_day, signers from {{ ref('stg_bigquery__transactions_daily') }} where is_latest and is_day_total),
+     bq_actions as (
+        select date_day, coalesce(max(signers) filter (where action_kind = 'DELETE_ACCOUNT'), 0) as deletion_signers
+        from {{ ref('stg_bigquery__actions_daily') }}
+        where is_latest and is_kind_total
+        group by 1
+     )
 
 select
     d.date_day,
@@ -22,11 +32,16 @@ select
     adr.active_accounts as active_accounts_with_relayed,
     -- One count of the accounts that signed a transaction. An account signs its own deletion, so /v1's count rises by
     -- one for each account deleted that day (3.4M in February 2026, 562K in October 2026), and the day's deletions are
-    -- taken out. /v1 is switched off on 2026-11-22; on a day it does not hold, /v3's active accounts less the accounts a
-    -- relayer signed for stand in. Deletion days cannot be taken out of that form.
-    coalesce(v1.active_accounts - coalesce(v1.deleted_accounts, 0), adr.active_accounts - adr.meta_accounts) as distinct_signers,
+    -- taken out. /v1 is switched off on 2026-11-22. On a day it does not hold, BigQuery's signers less the signers of
+    -- a deletion stand in: over the 225 days both held to 2026-11-13 that form was 0.07% from this one on average.
+    -- Where BigQuery was not read either, /v3's active accounts less the accounts a relayer signed for stand in, which
+    -- was 5.9% away on average; deletion days cannot be taken out of that form.
+    coalesce(v1.active_accounts - coalesce(v1.deleted_accounts, 0),
+             bq.signers - bq_actions.deletion_signers,
+             adr.active_accounts - adr.meta_accounts) as distinct_signers,
     case
         when v1.active_accounts is not null then 'v1_signers_less_deletions'
+        when bq.signers - bq_actions.deletion_signers is not null then 'bigquery_signers_less_deletions'
         when adr.active_accounts - adr.meta_accounts is not null then 'v3_active_less_relayed'
     end as distinct_signers_basis,
     coalesce(adr.active_contracts, v1.active_contracts) as active_contracts,
@@ -46,4 +61,6 @@ left join v1 using (date_day)
 left join txn using (date_day)
 left join adr using (date_day)
 left join blk using (date_day)
+left join bq using (date_day)
+left join bq_actions using (date_day)
 where v1.date_day is not null or txn.date_day is not null or adr.date_day is not null or blk.date_day is not null

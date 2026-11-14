@@ -2145,25 +2145,56 @@ where c.is_day_complete and c.txns is not null
                      where claim_id = 'intents_share_of_transactions_is_rising')
   and c.date_day <= {LAST}
 order by 1;"""
-bigquery = {"contracts": None, "days": None, "cohorts": None, "traffic": None, "game": None}
+bigquery = {"contracts": None, "days": None, "cohorts": None, "traffic": None, "game": None, "deploys": None, "blocks": None,
+            "inUse": None, "receivers": None, "firstSigners": None, "stableSenders": None, "rheaUse": None,
+            "senders": None, "split": None, "sigCallers": None, "stakeOwners": None}
+# For the table of what an outsider can still count: the transactions the Intents contract received, counted from
+# the public chain, over the same two months as the other counts
+if "fct_bigquery_receiver_daily" in BQ_HAVE:
+    chain_txns = {r["m"]: r["chain_txns"] for r in table(f"""
+      select cast(date_trunc('month', date_day) as date) m, avg(txns) chain_txns
+      from gold.fct_bigquery_receiver_daily
+      where receiver_account_id = 'intents.near'
+        and date_day <= {LAST} and date_day >= date_trunc('month', {LAST} - interval 1 month)
+      group by 1""", 4)}
+    for r in outside_counts:
+        r["chain_txns"] = chain_txns.get(r["m"])
 if {"fct_bigquery_contract_daily", "fct_bigquery_action_daily"} <= BQ_HAVE:
     bigquery["contracts"] = {"sql": BQ_CONTRACTS_SQL, "rows": table(BQ_CONTRACTS_SQL.rstrip(";"), 6)}
     bigquery["days"] = {"sql": BQ_DAYS_SQL, "cols": columns(BQ_DAYS_SQL.rstrip(";"), 6)}
-if "fct_bigquery_signer_cohort_monthly" in BQ_HAVE:
+if {"fct_bigquery_signer_cohort_monthly", "fct_bigquery_action_daily"} <= BQ_HAVE:
     bigquery["cohorts"] = {
         "sql": BQ_COHORTS_SQL,
         "rows": table(BQ_COHORTS_SQL.rstrip(";"), 6),
-        # How many accounts ever signed, and the newest complete month's signers by whether they first signed before
-        # that month's year
+        # How many accounts ever signed, and one complete month's signers by whether they first signed before that
+        # month's year. An account signs its own deletion, so a month in which accounts are deleted in bulk counts
+        # them as signers (579,000 of October 2026's 827,000). The month read is the newest complete one in which
+        # the signers of a deletion are under a tenth of all signers; a newer month passed over is named with its
+        # counts, so the page can say why. Deletions are counted from the day the actions are read.
         "facts": {k: clean(v, 6) for k, v in one("""
-          with m as (select max(active_month) as last_month from gold.fct_bigquery_signer_cohort_monthly
-                     where is_active_month_complete)
+          with months as (
+            select active_month, sum(signers) as signed,
+                   sum(signers) filter (where year(cohort_month) < year(active_month)) as older
+            from gold.fct_bigquery_signer_cohort_monthly where is_active_month_complete group by 1),
+          gone as (
+            select cast(date_trunc('month', date_day) as date) as active_month, sum(signers) as deleted
+            from gold.fct_bigquery_action_daily where action_kind = 'DELETE_ACCOUNT' group by 1),
+          m as (
+            select months.*, coalesce(gone.deleted, 0) as deleted,
+                   row_number() over (order by months.active_month desc) as back
+            from months left join gone using (active_month)),
+          pick as (
+            select * from m where deleted < 0.1 * signed or back = (select max(back) from m)
+            order by back limit 1)
           select (select sum(cohort_signers) from gold.fct_bigquery_signer_cohort_monthly
                   where months_since_first = 0) as accounts_ever,
-                 max(m.last_month) as last_month,
-                 sum(r.signers) as signed_last_month,
-                 sum(r.signers) filter (where year(r.cohort_month) < year(m.last_month)) as signed_last_month_older
-          from gold.fct_bigquery_signer_cohort_monthly r join m on r.active_month = m.last_month""").items()},
+                 pick.active_month as last_month,
+                 pick.signed as signed_last_month,
+                 pick.older as signed_last_month_older,
+                 newest.active_month as skipped_month,
+                 newest.signed as skipped_signed,
+                 newest.deleted as skipped_deleted
+          from pick left join m as newest on newest.back = 1 and pick.back > 1""").items()},
     }
 
 # The claim on Intents' share of the chain's transactions: the two quarters it reads, the days since, and the same
@@ -2190,8 +2221,29 @@ if share_claim and {"fct_bigquery_receiver_daily", "fct_bigquery_chain_daily"} <
              sum(intents_txns) filter (where since) / sum(all_txns) filter (where since) as share_since,
              count(*) filter (where since) as days_since,
              count(*) filter (where since and rank_by_txns = 1) as days_first_since,
+             avg(intents_txns) filter (where since)
+               / avg(intents_txns) filter (where date_day >= (select last_month from q) and not since) - 1 as txns_since_change,
              max(date_day) as newest_day
       from d""")
+    # The same days of the volume NEAR reports: the days since the last complete month against that month, by day
+    traffic_facts["volume_since_change"] = one(f"""
+      with q as (select as_of_date as end_day, cast(date_trunc('month', as_of_date) as date) as last_month
+                 from gold.fct_thesis_scorecard where claim_id = 'intents_share_of_transactions_is_rising')
+      select avg(volume_usd) filter (where date_day > q.end_day)
+               / avg(volume_usd) filter (where date_day <= q.end_day) - 1 as v
+      from gold.fct_intents_daily, q
+      where date_day >= q.last_month and date_day <= {LAST} and volume_usd is not null""")["v"]
+    # Two counts of the contract's place over the same 30 days: transactions sent to it, as BigQuery counts them, and
+    # transactions that touch it, as NearBlocks counts them (the count the rest of the Usage page uses)
+    traffic_facts["sent_30d"] = one(f"""
+      select sum(coalesce(r.txns, 0)) / sum(c.txns) as v
+      from gold.fct_bigquery_chain_daily c
+      left join gold.fct_bigquery_receiver_daily r
+        on r.date_day = c.date_day and r.receiver_account_id = 'intents.near'
+      where c.is_day_complete and c.txns is not null and {D30.replace('date_day', 'c.date_day')}""")["v"]
+    traffic_facts["touch_30d"] = one(f"""
+      select sum(intents_txns) / sum(txns_ex_batch_streams) as v
+      from gold.fct_usage_quality_daily where {D30}""")["v"]
     traffic_facts["volume_change"] = one("""
       with q as (select cast(date_trunc('month', as_of_date) as date) as last_month from gold.fct_thesis_scorecard
                  where claim_id = 'intents_share_of_transactions_is_rising')
@@ -2225,6 +2277,407 @@ if {"fct_bigquery_contract_daily", "fct_bigquery_chain_daily"} <= BQ_HAVE:
       from d""")
     if game_facts["days_now"] == 30 and game_facts["days_before"] == 30:
         bigquery["game"] = {k: clean(v, 6) for k, v in game_facts.items()}
+
+# A query the page shows, without its closing "order by", so that the facts can be read from the same rows
+unordered = lambda sql: sql.rstrip().rstrip(";").rsplit("order by", 1)[0]
+
+# CODE PUT ON CHAIN, for the Developers page. BigQuery counts each deploy action, the accounts that received code and
+# the accounts that signed a deploy, so the count is documented and says how many accounts are behind it. An account
+# that takes up code already on chain (a global contract) is a copy of one program and is counted apart. The facts
+# set the newest 30 days read against the first 30.
+BQ_DEPLOYS_SQL = f"""-- Code put on chain each day, as NEAR's public BigQuery dataset counts it: the deploys, the accounts that received
+-- code, the accounts that signed a deploy, and the accounts that took up code already on chain (a global contract),
+-- which copies one program and is not a deploy. A day with no deploy counts as zero.
+select date_day,
+       coalesce(max(actions) filter (where action_kind = 'DEPLOY_CONTRACT'), 0) as deploys,
+       coalesce(max(receivers) filter (where action_kind = 'DEPLOY_CONTRACT'), 0) as accounts_given_code,
+       coalesce(max(signers) filter (where action_kind = 'DEPLOY_CONTRACT'), 0) as accounts_signing,
+       coalesce(max(receivers) filter (where action_kind = 'USE_GLOBAL_CONTRACT'), 0) as accounts_taking_shared_code
+from gold.fct_bigquery_action_daily
+where date_day <= {LAST}
+group by 1
+order by 1;"""
+if "fct_bigquery_action_daily" in BQ_HAVE:
+    deploy_cols = columns(BQ_DEPLOYS_SQL.rstrip(";"), 0)
+    if deploy_cols and len(deploy_cols["date_day"]) >= 60:
+        deploy_facts = one(f"""
+          with d as ({unordered(BQ_DEPLOYS_SQL)}),
+               e as (select min(date_day) as first_day, max(date_day) as last_day from d)
+          select e.first_day, e.last_day,
+                 count(*) filter (where d.date_day > e.last_day - 30) as days_now,
+                 count(*) filter (where d.date_day < e.first_day + 30) as days_first,
+                 avg(deploys) filter (where d.date_day > e.last_day - 30) as deploys_now,
+                 avg(deploys) filter (where d.date_day < e.first_day + 30) as deploys_first,
+                 avg(accounts_given_code) filter (where d.date_day > e.last_day - 30) as given_now,
+                 avg(accounts_given_code) filter (where d.date_day < e.first_day + 30) as given_first,
+                 avg(accounts_signing) filter (where d.date_day > e.last_day - 30) as signers_now,
+                 avg(accounts_signing) filter (where d.date_day < e.first_day + 30) as signers_first,
+                 avg(accounts_taking_shared_code) filter (where d.date_day > e.last_day - 30) as shared_now,
+                 avg(accounts_taking_shared_code) filter (where d.date_day < e.first_day + 30) as shared_first
+          from d cross join e group by 1, 2""")
+        bigquery["deploys"] = {"sql": BQ_DEPLOYS_SQL, "cols": deploy_cols,
+                               "facts": {k: clean(v, 2) for k, v in deploy_facts.items()}}
+
+# HOW MANY CONTRACTS ARE IN USE, for the Developers page: the contracts that received a function call each day. The
+# facts set the newest 30 days read against the first 30, and name the lowest complete month.
+BQ_IN_USE_SQL = f"""-- Contracts that received a function call each day, as NEAR's public BigQuery dataset counts them
+select date_day, receivers as contracts_called
+from gold.fct_bigquery_action_daily
+where action_kind = 'FUNCTION_CALL' and date_day <= {LAST}
+order by 1;"""
+if "fct_bigquery_action_daily" in BQ_HAVE:
+    in_use_cols = columns(BQ_IN_USE_SQL.rstrip(";"), 0)
+    if in_use_cols and len(in_use_cols["date_day"]) >= 60:
+        in_use_facts = one(f"""
+          with d as ({unordered(BQ_IN_USE_SQL)}),
+               e as (select min(date_day) as first_day, max(date_day) as last_day from d)
+          select e.first_day, e.last_day,
+                 count(*) filter (where d.date_day > e.last_day - 30) as days_now,
+                 count(*) filter (where d.date_day < e.first_day + 30) as days_first,
+                 avg(contracts_called) filter (where d.date_day > e.last_day - 30) as called_now,
+                 avg(contracts_called) filter (where d.date_day < e.first_day + 30) as called_first
+          from d cross join e group by 1, 2""")
+        in_use_low = one(f"""
+          with m as (select cast(date_trunc('month', date_day) as date) as mth, avg(contracts_called) as called
+                     from ({unordered(BQ_IN_USE_SQL)}) group by 1 having count(*) = day(last_day(min(date_day))))
+          select mth as low_month, called as low_called from m order by 2, 1 limit 1""")
+        bigquery["inUse"] = {"sql": BQ_IN_USE_SQL, "cols": in_use_cols,
+                             "facts": {**{k: clean(v, 1) for k, v in in_use_facts.items()},
+                                       **{k: clean(v, 1) for k, v in in_use_low.items()}}}
+
+# WHO RECEIVES THE TRANSACTIONS, COUNTED EXACTLY, for the Usage page. BigQuery is read for each day's 25 largest
+# receivers. Each transaction has one receiver, so a group's share can be ranked, which the block sample cannot do.
+BQ_RECEIVERS_SQL = f"""-- The last 30 days' transactions by who received them, for each day's 25 largest receivers, as NEAR's public
+-- BigQuery dataset counts them. Each transaction has one receiver, so the shares can be added; what is left of 100%
+-- went to smaller accounts, among them the users' own accounts that a relayer sends to.
+with days as (
+  select sum(txns) as all_txns
+  from gold.fct_bigquery_chain_daily
+  where is_day_complete and {D30}
+)
+select coalesce(nullif(nullif(entity, ''), 'Unlabelled'), 'No label') as receiver_group,
+       count(distinct receiver_account_id) as accounts,
+       sum(txns) as txns,
+       sum(txns) / (select all_txns from days) as share
+from gold.fct_bigquery_receiver_daily
+where rank_by_txns <= 25 and {D30}
+group by 1
+order by 3 desc, 1;"""
+if {"fct_bigquery_receiver_daily", "fct_bigquery_chain_daily"} <= BQ_HAVE:
+    receiver_rows = table(BQ_RECEIVERS_SQL.rstrip(";"), 6)
+    receiver_days = one(f"select count(distinct date_day) as n from gold.fct_bigquery_receiver_daily where {D30}")["n"]
+    if receiver_rows and receiver_days == 30:
+        bigquery["receivers"] = {"sql": BQ_RECEIVERS_SQL, "rows": receiver_rows,
+                                 "facts": {"covered": clean(sum(r["share"] for r in receiver_rows), 6)}}
+
+# IS NEAR ADDING ACCOUNTS, for the Usage page: the accounts that signed their first transaction, by month, over the
+# newest 18 complete months and the month in progress. read_through is the last day the month in progress was read to.
+BQ_FIRST_SQL = f"""-- Accounts that signed their first transaction, by month, as NEAR's public BigQuery dataset places them. The
+-- newest month is not complete: read_through is the last day it was read to.
+select cohort_month as month, cohort_signers as first_time_signers,
+       is_active_month_complete as is_month_complete, read_through
+from gold.fct_bigquery_signer_cohort_monthly
+where months_since_first = 0
+  and cohort_month >= date_trunc('month', {LAST}) - interval 18 month
+order by 1;"""
+if "fct_bigquery_signer_cohort_monthly" in BQ_HAVE:
+    first_cols = columns(BQ_FIRST_SQL.rstrip(";"), 0)
+    if first_cols and len(first_cols["month"]) >= 13:
+        first_facts = one(f"""
+          with d as ({unordered(BQ_FIRST_SQL)}),
+               c as (select * from d where is_month_complete),
+               n as (select max(month) as last_month from c)
+          select n.last_month,
+                 max(first_time_signers) filter (where c.month = n.last_month) as last_signers,
+                 max(first_time_signers) filter (where c.month = n.last_month - interval 12 month) as year_ago_signers,
+                 arg_min(c.month, first_time_signers) filter (where c.month > n.last_month - interval 12 month) as low_month,
+                 min(first_time_signers) filter (where c.month > n.last_month - interval 12 month) as low_signers
+          from c cross join n group by 1""")
+        first_open = rows(f"""
+          select month, first_time_signers, read_through, datediff('day', month, read_through) + 1 as days_read
+          from ({unordered(BQ_FIRST_SQL)}) where not is_month_complete order by 1 desc limit 1""")
+        bigquery["firstSigners"] = {"sql": BQ_FIRST_SQL, "cols": first_cols,
+                                    "facts": {**{k: clean(v, 0) for k, v in first_facts.items()},
+                                              "open": {k: clean(v, 0) for k, v in first_open[0].items()} if first_open else None}}
+
+# WHO USES THE STABLECOINS ON NEAR, for the Capital page: the accounts a day that signed a transaction sent to
+# Tether's and Circle's token contracts, and the transactions those contracts received. The facts set the newest 30
+# days against the same 30 days a year earlier.
+BQ_STABLE_SQL = f"""-- Accounts a day that signed a transaction sent to Tether's and Circle's token contracts on NEAR, and the
+-- transactions those contracts received, as NEAR's public BigQuery dataset counts them
+select date_day,
+       max(signers) filter (where entity = 'Tether') as tether_accounts,
+       max(signers) filter (where entity = 'Circle') as circle_accounts,
+       max(txns) filter (where entity = 'Tether') as tether_txns,
+       max(txns) filter (where entity = 'Circle') as circle_txns
+from gold.fct_bigquery_receiver_daily
+where category = 'stablecoin' and date_day <= {LAST}
+group by 1
+order by 1;"""
+if "fct_bigquery_receiver_daily" in BQ_HAVE:
+    stable_cols = columns(BQ_STABLE_SQL.rstrip(";"), 0)
+    stable_one = one("""select count(distinct receiver_account_id) filter (where entity = 'Tether') as t,
+                               count(distinct receiver_account_id) filter (where entity = 'Circle') as c
+                        from gold.fct_bigquery_receiver_daily where category = 'stablecoin'""")
+    if stable_cols and len(stable_cols["date_day"]) >= 400 and stable_one["t"] == 1 and stable_one["c"] == 1:
+        stable_facts = one(f"""
+          with d as ({unordered(BQ_STABLE_SQL)}),
+               e as (select max(date_day) as last_day from d),
+               w as (select d.*, d.date_day > e.last_day - 30 as now,
+                            d.date_day > e.last_day - 395 and d.date_day <= e.last_day - 365 as ago
+                     from d cross join e)
+          select count(tether_accounts) filter (where now) as tether_days_now, count(circle_accounts) filter (where now) as circle_days_now,
+                 count(tether_accounts) filter (where ago) as tether_days_ago, count(circle_accounts) filter (where ago) as circle_days_ago,
+                 avg(tether_accounts) filter (where now) as tether_now, avg(tether_accounts) filter (where ago) as tether_ago,
+                 avg(circle_accounts) filter (where now) as circle_now, avg(circle_accounts) filter (where ago) as circle_ago,
+                 avg(tether_txns) filter (where now) as tether_txns_now, avg(tether_txns) filter (where ago) as tether_txns_ago,
+                 avg(circle_txns) filter (where now) as circle_txns_now, avg(circle_txns) filter (where ago) as circle_txns_ago
+          from w""")
+        if min(stable_facts[k] for k in ("tether_days_now", "circle_days_now", "tether_days_ago", "circle_days_ago")) == 30:
+            bigquery["stableSenders"] = {"sql": BQ_STABLE_SQL, "cols": stable_cols,
+                                         "facts": {k: clean(v, 1) for k, v in stable_facts.items()}}
+
+# HOW MUCH RHEA'S EXCHANGE IS USED, for the Capital page: the accounts a day that signed a call to its exchange
+# contract, and the calls it received. The facts: the newest 30 days read, the first 30, and the highest complete month.
+BQ_RHEA_SQL = f"""-- Accounts a day that signed a call to Rhea's exchange contract, v2.ref-finance.near, and the calls it received,
+-- as NEAR's public BigQuery dataset counts them
+select date_day, signers as accounts, function_calls as calls
+from gold.fct_bigquery_contract_daily
+where contract_id = 'v2.ref-finance.near' and date_day <= {LAST}
+order by 1;"""
+if "fct_bigquery_contract_daily" in BQ_HAVE:
+    rhea_cols = columns(BQ_RHEA_SQL.rstrip(";"), 0)
+    if rhea_cols and len(rhea_cols["date_day"]) >= 60:
+        rhea_facts = one(f"""
+          with d as ({unordered(BQ_RHEA_SQL)}),
+               e as (select min(date_day) as first_day, max(date_day) as last_day from d)
+          select e.first_day, e.last_day,
+                 count(*) filter (where d.date_day > e.last_day - 30) as days_now,
+                 count(*) filter (where d.date_day < e.first_day + 30) as days_first,
+                 avg(accounts) filter (where d.date_day > e.last_day - 30) as accounts_now,
+                 avg(accounts) filter (where d.date_day < e.first_day + 30) as accounts_first,
+                 avg(calls) filter (where d.date_day > e.last_day - 30) as calls_now,
+                 avg(calls) filter (where d.date_day < e.first_day + 30) as calls_first
+          from d cross join e group by 1, 2""")
+        rhea_peak = one(f"""
+          with m as (select cast(date_trunc('month', date_day) as date) as mth, avg(accounts) as accounts
+                     from ({unordered(BQ_RHEA_SQL)}) group by 1 having count(*) = day(last_day(min(date_day))))
+          select mth as peak_month, accounts as peak_accounts from m order by 2 desc, 1 limit 1""")
+        if rhea_facts["days_now"] >= 28 and rhea_facts["days_first"] >= 28:
+            bigquery["rheaUse"] = {"sql": BQ_RHEA_SQL, "cols": rhea_cols,
+                                   "facts": {**{k: clean(v, 1) for k, v in rhea_facts.items()},
+                                             **{k: clean(v, 1) for k, v in rhea_peak.items()}}}
+
+# WHO SENDS NEAR INTENTS' CONTRACT ITS TRANSACTIONS, for the Usage page. BigQuery counts each day's largest signers of
+# the transactions the contract received. The two largest over the newest 30 days are drawn against all the others.
+if "fct_bigquery_signer_daily" in BQ_HAVE:
+    sender_top = table(f"""
+      with t as (select sum(day_intents_txns) as total from (select distinct date_day, day_intents_txns
+                 from gold.fct_bigquery_signer_daily where {D30}))
+      select signer_account_id, max(entity) as entity, sum(intents_txns) / (select total from t) as share
+      from gold.fct_bigquery_signer_daily where intents_txns > 0 and {D30}
+      group by 1 order by 3 desc, 1 limit 2""", 6)
+    if len(sender_top) == 2 and sender_top[0]["signer_account_id"] == "intents.near":
+        SECOND = sender_top[1]["signer_account_id"]
+        BQ_SENDERS_SQL = f"""-- Who signed the transactions NEAR Intents' contract received each day, as NEAR's public BigQuery dataset counts
+-- them: the contract's own account, the largest other sender over the last 30 days, and everyone else
+select date_day,
+       max(day_intents_txns) as intents_txns,
+       max(day_intents_signers) as signers,
+       coalesce(sum(intents_txns) filter (where signer_account_id = 'intents.near'), 0)
+         / max(day_intents_txns) as own_account_share,
+       coalesce(sum(intents_txns) filter (where signer_account_id = '{SECOND}'), 0)
+         / max(day_intents_txns) as second_sender_share
+from gold.fct_bigquery_signer_daily
+where day_intents_txns > 0 and date_day <= {LAST}
+group by 1
+order by 1;"""
+        sender_facts = one(f"""
+          select (select min(date_day) from gold.fct_bigquery_signer_daily
+                  where signer_account_id = '{SECOND}' and intents_txn_share >= 0.01) as second_first_day,
+                 (select avg(n) from (select distinct date_day, day_intents_signers as n
+                  from gold.fct_bigquery_signer_daily where {D30})) as signers_30d,
+                 (select count(distinct date_day) from gold.fct_bigquery_signer_daily where {D30}) as days_30d""")
+        if sender_facts["days_30d"] == 30:
+            bigquery["senders"] = {"sql": BQ_SENDERS_SQL, "cols": columns(BQ_SENDERS_SQL.rstrip(";"), 6),
+                                   "facts": {"own_30d": sender_top[0]["share"], "second_id": SECOND,
+                                             "second_entity": sender_top[1]["entity"], "second_30d": sender_top[1]["share"],
+                                             **{k: clean(v, 1) for k, v in sender_facts.items()}}}
+
+# TRANSACTIONS BY WHO SIGNED THEM, for the Usage page. By signer the two batch streams are three accounts, so they
+# can be read back to the first day BigQuery was read, before NearBlocks' per-account statistics begin. An account
+# outside a day's 25 largest signers falls under all others. The facts: the streams' share over the first and the last
+# full quarter they ran, everything else over the first and the newest 30 days, and how far this count of the streams
+# is from NearBlocks' over the days both hold.
+BQ_SPLIT_SQL = f"""-- Transactions a day by who signed them, as NEAR's public BigQuery dataset counts them: the two batch streams
+-- (three accounts), Sweat's relayer, and every other signer. An account outside a day's 25 largest signers is
+-- counted under all others.
+with days as (
+  select date_day, max(day_txns) as all_txns,
+         coalesce(sum(txns) filter (where signer_account_id in ('hotwallet.kaiching', 'users.kaiching', 'sweat-migration.near')), 0) as batch_stream_txns,
+         coalesce(sum(txns) filter (where signer_account_id = 'sweat-relayer.near'), 0) as sweat_relayer_txns
+  from gold.fct_bigquery_signer_daily
+  where date_day <= {LAST}
+  group by 1
+)
+select date_day, batch_stream_txns, sweat_relayer_txns,
+       all_txns - batch_stream_txns - sweat_relayer_txns as other_txns
+from days
+order by 1;"""
+if "fct_bigquery_signer_daily" in BQ_HAVE:
+    split_cols = columns(BQ_SPLIT_SQL.rstrip(";"), 0)
+    if split_cols and len(split_cols["date_day"]) >= 400:
+        split_facts = one(f"""
+          with d as ({unordered(BQ_SPLIT_SQL)}),
+               e as (select min(date_day) as first_day, max(date_day) as last_day,
+                            max(date_day) filter (where batch_stream_txns > 0.01 * (batch_stream_txns + sweat_relayer_txns + other_txns)) as stop_day from d),
+               q as (select cast(date_trunc('quarter', d.date_day) as date) as qtr,
+                            sum(batch_stream_txns) / sum(batch_stream_txns + sweat_relayer_txns + other_txns) as share, count(*) as n
+                     from d cross join e where d.date_day <= e.stop_day group by 1
+                     having count(*) >= 89)
+          select e.first_day, e.last_day, e.stop_day,
+                 (select min(qtr) from q) as first_quarter, (select share from q order by qtr limit 1) as first_quarter_share,
+                 (select max(qtr) from q) as last_quarter, (select share from q order by qtr desc limit 1) as last_quarter_share,
+                 avg(sweat_relayer_txns + other_txns) filter (where d.date_day < e.first_day + 30) as outside_first,
+                 avg(sweat_relayer_txns + other_txns) filter (where d.date_day > e.last_day - 30) as outside_now
+          from d cross join e group by all""")
+        split_check = one(f"""
+          select count(*) as days_both, sum(d.batch_stream_txns) / sum(u.batch_stream_txns) - 1 as apart
+          from ({unordered(BQ_SPLIT_SQL)}) d join gold.fct_usage_quality_daily u using (date_day)
+          where u.batch_stream_txns > 0""")
+        bigquery["split"] = {"sql": BQ_SPLIT_SQL, "cols": split_cols,
+                             "facts": {**{k: clean(v, 6) for k, v in split_facts.items()},
+                                       **{k: clean(v, 6) for k, v in split_check.items()}}}
+
+# WHO CALLS THE CHAIN SIGNATURES CONTRACT, for the Usage page: the last 30 days' function calls to v1.signer by who
+# made them. The contract calls itself to finish a request, and its signing nodes call it with their answers, so those
+# two are named apart from the accounts that ask for a signature.
+BQ_SIG_SQL = f"""-- Who called the Chain Signatures contract over the last 30 days, as NEAR's public BigQuery dataset counts it, for
+-- each day's 25 largest callers. The contract's own calls and its signing nodes' calls are named apart from the
+-- accounts that ask for a signature; what is left of 100% came from smaller callers.
+with total as (
+  select sum(contract_calls) as calls
+  from (select distinct date_day, contract_calls from gold.fct_bigquery_caller_daily
+        where contract_id = 'v1.signer' and {D30})
+), nodes as (
+  select distinct operator_account_id as account_id from gold.fct_mpc_participants
+)
+select case when c.is_self_call then 'The contract itself'
+            when n.account_id is not null then 'Its signing nodes'
+            when c.entity is not null and c.entity not in ('', 'Unlabelled') then c.entity
+            else 'Other callers' end as caller_group,
+       case when c.is_self_call then 'itself' when n.account_id is not null then 'nodes' else 'asks' end as kind,
+       count(distinct c.caller_account_id) as accounts,
+       sum(c.calls) as calls,
+       sum(c.calls) / (select calls from total) as share
+from gold.fct_bigquery_caller_daily c
+left join nodes n on n.account_id = c.caller_account_id
+where c.contract_id = 'v1.signer' and {D30.replace('date_day', 'c.date_day')}
+group by 1, 2
+order by 4 desc, 1;"""
+if {"fct_bigquery_caller_daily", "fct_mpc_participants"} <= BQ_HAVE:
+    sig_rows = table(BQ_SIG_SQL.rstrip(";"), 6)
+    sig_days = one(f"""select count(distinct date_day) as n, avg(contract_calls) as calls_a_day, avg(contract_callers) as callers_a_day
+                       from (select distinct date_day, contract_calls, contract_callers from gold.fct_bigquery_caller_daily
+                             where contract_id = 'v1.signer' and {D30})""")
+    if sig_rows and sig_days["n"] == 30:
+        bigquery["sigCallers"] = {"sql": BQ_SIG_SQL, "rows": sig_rows,
+                                  "facts": {"calls_a_day": clean(sig_days["calls_a_day"], 0), "callers_a_day": clean(sig_days["callers_a_day"], 0)}}
+
+# WHO OWNS THE STAKE, for the Security page: the share of the listed staked NEAR owned by the largest account, the ten
+# largest and the hundred largest. The table of staking balances follows more accounts each year, so the days read
+# start after the last one on which its list held under 85% of all staked NEAR. The facts set the newest 30 days
+# against the first 30, beside the ten largest pools' share of stake in the newest epoch.
+BQ_OWNERS_SQL = f"""-- Who owns the staked NEAR, as the table of staking balances in NEAR's public BigQuery dataset lists it: the share
+-- of the listed stake owned by the largest account, the ten largest and the hundred largest. An account's stake is
+-- its own and its lockup account's. The days start after the last one on which the list held under 85% of all
+-- staked NEAR (listed_share_of_stake), because before that it follows too few accounts to stand for the whole.
+select date_day, accounts_with_stake, listed_share_of_stake,
+       largest_stake_near / listed_stake_near as largest_share,
+       top_10_share, top_100_share
+from gold.fct_bigquery_staking_balance_daily
+where date_day > (select max(date_day) from gold.fct_bigquery_staking_balance_daily
+                  where listed_share_of_stake < 0.85)
+  and date_day <= {LAST}
+order by 1;"""
+if {"fct_bigquery_staking_balance_daily", "fct_validator_summary"} <= BQ_HAVE:
+    owner_cols = columns(BQ_OWNERS_SQL.rstrip(";"), 6)
+    if owner_cols and len(owner_cols["date_day"]) >= 90:
+        owner_facts = one(f"""
+          with d as ({unordered(BQ_OWNERS_SQL)}),
+               e as (select min(date_day) as first_day, max(date_day) as last_day from d)
+          select e.first_day, e.last_day,
+                 count(*) filter (where d.date_day > e.last_day - 30) as days_now,
+                 avg(top_10_share) filter (where d.date_day < e.first_day + 30) as t10_first,
+                 avg(top_10_share) filter (where d.date_day > e.last_day - 30) as t10_now,
+                 avg(top_100_share) filter (where d.date_day < e.first_day + 30) as t100_first,
+                 avg(top_100_share) filter (where d.date_day > e.last_day - 30) as t100_now,
+                 avg(largest_share) filter (where d.date_day < e.first_day + 30) as big_first,
+                 avg(largest_share) filter (where d.date_day > e.last_day - 30) as big_now,
+                 avg(accounts_with_stake) filter (where d.date_day > e.last_day - 30) as holders_now,
+                 avg(listed_share_of_stake) filter (where d.date_day > e.last_day - 30) as listed_now
+          from d cross join e group by 1, 2""")
+        owner_facts["pool_top_10"] = one(f"""
+          select top_10_share as v from gold.fct_validator_summary
+          where approx_date_day <= {LAST} and is_epoch_complete order by epoch_height desc limit 1""")["v"]
+        if owner_facts["days_now"] >= 25:
+            bigquery["stakeOwners"] = {"sql": BQ_OWNERS_SQL, "cols": owner_cols,
+                                       "facts": {k: clean(v, 6) for k, v in owner_facts.items()}}
+
+# WHETHER THE CHAIN HAS EVER STOPPED, for the Security page. Blocks made on every day since launch, and the accounts
+# that produced them. A slow day is read against the median of the 30 days before it. The facts: the days since
+# launch and how many of them have a block, the three slowest days, the slowest of the last 365, the block time over
+# the newest 30 days and over the same 30 days two years earlier, and the month in which blocks sped up most.
+BQ_BLOCKS_SQL = f"""-- Blocks made on each day since launch, as NEAR's public BigQuery dataset counts them, and the accounts that
+-- produced a block that day. On a few days the dataset holds some blocks twice, so a day's count is capped at the
+-- block heights it spans. usual_blocks is the median of the 30 days before, so blocks / usual_blocks shows a slow
+-- day; it is empty for the first 30 days.
+with days as (
+  select date_day, least(blocks, last_block_height - first_block_height + 1) as blocks, block_producers
+  from gold.fct_bigquery_chain_daily
+  where is_day_complete and blocks is not null and date_day <= {LAST}
+)
+select date_day, blocks, block_producers,
+       case when row_number() over (order by date_day) > 30
+            then median(blocks) over (order by date_day rows between 30 preceding and 1 preceding) end as usual_blocks
+from days
+order by 1;"""
+if "fct_bigquery_chain_daily" in BQ_HAVE:
+    block_cols = columns(BQ_BLOCKS_SQL.rstrip(";"), 0)
+    if block_cols and len(block_cols["date_day"]) >= 400:
+        BLOCK_DAYS = f"({unordered(BQ_BLOCKS_SQL)})"
+        block_facts = one(f"""
+          with d as {BLOCK_DAYS},
+               e as (select min(date_day) as first_day, max(date_day) as last_day from d)
+          select e.first_day, e.last_day,
+                 datediff('day', e.first_day, e.last_day) + 1 as days,
+                 count(*) filter (where blocks > 0) as days_with_blocks,
+                 86400 / avg(blocks) filter (where d.date_day > e.last_day - 30) as seconds_now,
+                 86400 / avg(blocks) filter (where d.date_day > e.last_day - 760 and d.date_day <= e.last_day - 730) as seconds_two_years_ago,
+                 min(block_producers) filter (where d.date_day > e.last_day - 365) as producers_low,
+                 max(block_producers) filter (where d.date_day > e.last_day - 365) as producers_high
+          from d cross join e group by 1, 2""")
+        block_slow = table(f"""
+          select date_day, blocks, usual_blocks, blocks / usual_blocks as share_of_usual
+          from {BLOCK_DAYS} where usual_blocks is not null
+          order by 4, 1 limit 3""", 4)
+        block_year = one(f"""
+          select date_day, blocks / usual_blocks as share_of_usual
+          from {BLOCK_DAYS}
+          where usual_blocks is not null and date_day > (select max(date_day) from {BLOCK_DAYS}) - 365
+          order by 2, 1 limit 1""")
+        block_step = one(f"""
+          with m as (select date_trunc('month', date_day) as mth, avg(blocks) as blocks, count(*) as n
+                     from {BLOCK_DAYS} group by 1 having count(*) = day(last_day(min(date_day)))),
+               r as (select mth, blocks / lag(blocks) over (order by mth) as rise from m)
+          select cast(mth as date) as step_month, rise from r where rise is not null order by rise desc, mth limit 1""")
+        bigquery["blocks"] = {"sql": BQ_BLOCKS_SQL, "cols": block_cols,
+                              "facts": {**{k: clean(v, 4) for k, v in block_facts.items()},
+                                        "slow": block_slow,
+                                        "year_low_day": clean(block_year["date_day"]),
+                                        "year_low_share": clean(block_year["share_of_usual"], 4),
+                                        "step_month": clean(block_step["step_month"]),
+                                        "step_rise": clean(block_step["rise"], 4)}}
 
 more = {
     "horizon": horizon,

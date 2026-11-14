@@ -1,6 +1,6 @@
 -- One row per page BigQuery returned: which query ran, with which parameters, what it read and what Google billed for it.
--- Each of the seven datasets saves the same head on every page, so this is where a result's cost and its exact SQL are found.
-{% set datasets = ['tables', 'partitions', 'circulating_supply', 'blocks_daily', 'transactions_daily', 'actions_daily', 'signer_cohorts'] %}
+-- Each of the ten datasets saves the same head on every page, so this is where a result's cost and its exact SQL are found.
+{% set datasets = ['tables', 'partitions', 'circulating_supply', 'blocks_daily', 'transactions_daily', 'actions_daily', 'signer_cohorts', 'signers_daily', 'callers_daily', 'staking_balances_daily'] %}
 
 with files as (
     {% for name in datasets %}

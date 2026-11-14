@@ -1,5 +1,8 @@
 # Captures a snapshot every night on the data/nightly branch, so point-in-time data keeps building up.
 # Keys are optional repository secrets; a source without its key is skipped with a clear message.
+# BigQuery's key is a file, not a word: the secret GOOGLE_APPLICATION_CREDENTIALS_JSON holds the whole key file of a
+# service account with the role BigQuery Job User. One step writes it outside the checkout, so it cannot be committed,
+# and only the fetch that follows is told where it is. Without the secret the BigQuery datasets are skipped.
 # main stays on its pinned snapshot, so the README's expected numbers do not drift.
 # The dashboard's data (site/) and THESIS.md are rebuilt from each night's snapshot and committed with it, so the
 # data/nightly branch always holds a site that matches its data. A failed site build never blocks the data commit.
@@ -51,6 +54,19 @@ jobs:
       - name: Bring in the data collected so far
         run: python -m tools.bring_in_nightly
       - run: make setup PYTHON=python
+      - name: Let the fetch read BigQuery, if the repository holds a Google key
+        if: inputs.profile != 'none'
+        env:
+          GOOGLE_KEY_JSON: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON }}
+        run: |
+          if [ -n "$GOOGLE_KEY_JSON" ]; then
+            printf '%s' "$GOOGLE_KEY_JSON" > "$RUNNER_TEMP/bigquery.json"
+            chmod 600 "$RUNNER_TEMP/bigquery.json"
+            echo "GOOGLE_APPLICATION_CREDENTIALS=$RUNNER_TEMP/bigquery.json" >> "$GITHUB_ENV"
+            .venv/bin/python -m pip install -q --disable-pip-version-check -r requirements-bigquery.txt
+          else
+            echo "No Google key in this repository's secrets: the BigQuery datasets will be skipped"
+          fi
       - name: Fetch
         if: inputs.profile != 'none'
         env:

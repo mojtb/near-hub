@@ -11,6 +11,12 @@
   "seconds": 2.9,
   "status": "ok"
  },
+ "bigquery/callers_daily": {
+  "detail": "",
+  "files": 1,
+  "seconds": 5.1,
+  "status": "ok"
+ },
  "bigquery/circulating_supply": {
   "detail": "",
   "files": 1,
@@ -21,6 +27,18 @@
   "detail": "",
   "files": 2,
   "seconds": 6.9,
+  "status": "ok"
+ },
+ "bigquery/signers_daily": {
+  "detail": "",
+  "files": 2,
+  "seconds": 42.5,
+  "status": "ok"
+ },
+ "bigquery/staking_balances_daily": {
+  "detail": "",
+  "files": 1,
+  "seconds": 6.6,
   "status": "ok"
  },
  "bigquery/tables": {

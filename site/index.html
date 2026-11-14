@@ -1406,8 +1406,8 @@ table.corr{--trk:clamp(52px,9.5vw,136px);--val:52px;--gap:12px;font-size:15px}
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
 <!-- ECharts is fetched once the page has drawn: see the end of the script below -->
-<script src="shared/catalog.js?v=ea2cd22b"></script>
-<script src="shared/data.js?v=0d6ff80a"></script>
+<script src="shared/catalog.js?v=df55c23d"></script>
+<script src="shared/data.js?v=b1b32bec"></script>
 <script src="shared/charts.js?v=9d74e7aa"></script>
 <script src="shared/viz.js?v=6238b9d1"></script>
 <script>
@@ -1600,6 +1600,7 @@ const outsideRows=()=>{const sum=chk('intents_volume_30d_dune_assets_vs_tile'),a
   ['Volume, all routes','risk',"NEAR's own figure",`Its page and its dashboard share one source. NearBlocks' count of public routes covered ${fmt.pct(pubWeek,0)} of the seven days to ${dm(LC.windows.dune)}.`],
   ['Volume by chain and asset','risk',"NEAR's dashboard only",`It splits all routes, confidential included${sum.status==='agree'?`, and on the reading of ${dm(LC.windows.duneRead)} its assets added up to its all-route total`:''}.`],
   ['Swaps','pending','Public routes only',`NearBlocks counted ${fmt.compact(oNow.swaps)} a day ${now}, against ${fmt.compact(oPrev.swaps)} ${ago}.`],
+  ...(oNow.chain_txns!=null&&oPrev.chain_txns!=null?[['Transactions','holds','On chain',`The public chain counted ${fmt.compact(oNow.chain_txns)} transactions a day sent to the Intents contract ${now}, against ${fmt.compact(oPrev.chain_txns)} ${ago}. ${oNow.chain_txns>=oPrev.chain_txns?'This count did not fall with the switch; it':'It'} measures activity, not dollars.`]]:[]),
   ['Users','pending','1Click only',`The Explorer counted ${fmt.compact(oNow.senders)} senders a day ${now}, against ${fmt.compact(oPrev.senders)} ${ago}. NearBlocks' accounts went from ${fmt.compact(oPrev.accounts)} a day to ${fmt.compact(oNow.accounts)}.`]]};
 const chk=id=>LC.recon.find(r=>r.check_id===id)||{};
 /* Value held in Intents, as NEAR's dashboard reports it: public and confidential balances by day, and from 2026 the
@@ -1707,20 +1708,35 @@ const DEVS=(()=>{
   const Dp=V.deploys,ch=V.chain,rec=V.record,daysIn=(a,b)=>Math.round((Date.parse(b)-Date.parse(a))/864e5)+1;
   const summerText=`in the ${daysIn(V.summer[0],V.summer[1])} days to ${dm(V.summer[1])}`,baseText=`from ${fmt.month(V.base[0])} to ${fmt.month(V.base[1])}`,stayed=ch.last30>2*ch.base;
   D.chain={Dp,ch,sub:`${one(ch.summer)} ${summerText}; ${one(ch.base)} ${baseText}`,marks:[{d:V.step,label:'Step'},...(rebate?[{d:rebate.event_date,label:'Rebate ends'}]:[])]};
+  D.sql.chainNb='select date_day, new_contracts_v3 as contracts_deployed\nfrom gold.fct_chain_daily\nwhere new_contracts_v3 is not null order by 1;';
   D.f.chain=`Contracts deployed on NEAR ran at ${whole(ch.last30)} a day over the last 30 days, against ${one(ch.summer)} ${summerText}.`;
   D.ans.chain=[whole(ch.last30),'contracts deployed a day, last 30 days'];
   D.read.chain=`NearBlocks' count of contracts deployed, which it does not document. It rose in the week of ${dm(V.step)}${stayed?' and stayed up':' and has since fallen back'}${ch.accounts_after<=1.1*ch.accounts_before?'; new accounts did not':''}. ${cap(baseText)} it ran at ${one(ch.base)} a day. ${ch.code_per_contract>=0.95?'Nearly every deployment is different code, so this is not one program copied, but one tool making fresh builds would look the same. ':''}On NearBlocks' older counts ${monthName(rec.month)} was ${rec.rank_code===1?'the highest':`the ${ord(rec.rank_code)} highest`} of ${rec.months} months for distinct code and the ${ord(rec.rank_new)} for new contracts.`;
   D.spec.chain=()=>({type:'bar',x:Dp.d,series:[{name:'Contracts deployed',values:Dp.n,color:HUE}],yFmt:v=>fmt.compact(v,0),tipFmt:v=>fmt.int(v),height:320});
+  /* The same question from NEAR's public BigQuery dataset, when the warehouse holds it: each deploy, the accounts
+     given code and the accounts that signed for it, so the count is documented and says how many accounts are
+     behind it. An account that takes up code already on chain copies one program and is counted apart.
+     NearBlocks' count then becomes the second chart, kept for its longer history. */
+  const BD=(LC.more.bigquery||{}).deploys,bf=BD&&BD.facts,bq=bf&&bf.days_now===30&&bf.days_first===30&&bf.deploys_first>0?bf:null;
+  if(bq){const Bc=BD.cols,rose=bq.signers_now>=2*bq.signers_first&&bq.signers_now>=5,ks=Object.keys(Bc);
+    D.chain.bq={sql:BD.sql,cols:Bc,facts:bq};
+    D.read.chainNb=D.read.chain;D.key.chainNb=`${whole(ch.last30)} a day over the last 30 days, ${one(ch.summer)} ${summerText}`;
+    D.f.chain=`Code was deployed ${whole(bq.deploys_now)} times a day over the last 30 days, by ${whole(bq.signers_now)} accounts a day; in the 30 days from ${dm(bq.first_day)} it was ${one(bq.deploys_first)} times, by ${one(bq.signers_first)}.`;
+    D.ans.chain=[whole(bq.deploys_now),`deploys a day over the last 30 days, signed by ${whole(bq.signers_now)} accounts a day`];
+    D.key.chain=`${whole(bq.deploys_now)} deploys a day, signed by ${whole(bq.signers_now)} accounts`;
+    D.read.chain=`Deploys a day, the accounts that signed one and the accounts that took up code already on chain; the week and month views average them. Over the last 30 days ${whole(bq.deploys_now)} deploys a day put code on ${whole(bq.given_now)} accounts and were signed by ${whole(bq.signers_now)}; in the 30 days from ${dm(bq.first_day)} it was ${one(bq.deploys_first)}, ${one(bq.given_first)} and ${one(bq.signers_first)}. ${rose?'So the rise is not one account at work, though a launchpad whose users sign for themselves would look the same.':'Few accounts are behind them.'}${bq.shared_now>=1?` Another ${whole(bq.shared_now)} accounts a day took up code already on chain, against ${whole(bq.shared_first)}: those copy one program and are not counted as deploys.`:''}`;
+    D.spec.chainBq=()=>({type:'line',x:Bc.date_day,series:[{name:'Deploys',values:Bc.deploys,color:HUE},{name:'Accounts that signed a deploy',values:Bc.accounts_signing,color:HUE2},{name:'Accounts that took up code already on chain',values:Bc.accounts_taking_shared_code,color:'#8b918f'}],yFmt:v=>fmt.compact(v,0),tipFmt:v=>fmt.int(v),height:320});
+    D.rows.chainBq=()=>({cols:ks,rows:Bc.date_day.map((d,i)=>ks.map(k=>Bc[k][i]))});}
   /* ---- The header, the home tile and the closing note: each names only what the page now shows ---- */
   D.blurb=`Who works on NEAR's core software, how that compares with ${numWord(others.length)} other chains, and whether new code is reaching the chain. These are counts of GitHub accounts and of contracts, not revenue: a weak signal, so no claim rests on this page. An author is a GitHub account with a commit that week.`;
   D.tile=`${level?'Level with':core.chg<0?`${pct(core.chg)} fewer than in`:`${pct(core.chg)} more than in`} the half-year before; ${numWord(lost.length)} of ${numWord(others.length)} other chains' core clients lost a fifth or more.`;
-  D.kp=[['Core client, authors a week',one(core.now)],['Chain Signatures, authors a week',one(mpc.now)],['Contracts deployed a day',whole(ch.last30)]];
+  D.kp=[['Core client, authors a week',one(core.now)],['Chain Signatures, authors a week',one(mpc.now)],bq?['Deploys a day',whole(bq.deploys_now)]:['Contracts deployed a day',whole(ch.last30)]];
   D.limits=[
    "This page does not count NEAR's developers. The standard count is Electric Capital's, which counts each developer once across an ecosystem; it is not in the data here.",
    "It tracks NEAR's core client and the Chain Signatures node, and one repository for each other chain, so it compares node software, not ecosystems.",
    'An author is an account in one repository in one week. Bots are not removed, and a person in two repositories counts twice.',
    "The code behind NEAR Intents' swap service is not in a tracked repository.",
-   'Who deploys the contracts counted on chain is not recorded here.',
+   bq?'The accounts that sign deploys are counted here and not named, so who they are cannot be told.':'Who deploys the contracts counted on chain is not recorded here.',
   ];
   return D;
 })();
@@ -2195,7 +2211,7 @@ const USE=(()=>{
     table:`Exact counts over the 30 days to ${dm(LC.asOf)}. A transaction that touches two of these contracts counts under both, so the rows do not add up.${outside?` The largest contract outside the three apps is ${what(outside)}, at ${fmt.pct(outside.share_of_all_txns,1)}.`:''} Callers are the distinct accounts calling a contract each day; an account with three or fewer is a relayer, an oracle or a bot. Owners are named from account names and public labels, and are not confirmed.`,
     families:`Each bar splits a month's transactions by who they are for, from a sample of blocks in which each transaction counts once${famPartial?`; the last bar is ${monthName(famNow)} so far`:''}. Over the 30 days to ${dm(LC.asOf)}: ${famTop.map(r=>`${famShort(r.family)} ${fmt.pct(r.share,1)}${r.family===HOT_ALL?` (its contracts ${fmt.pct(fam30('HOT contracts').share,1)}, its players' own accounts ${fmt.pct(fam30('HOT players').share,1)})`:''}`).join(', ')}, each good to between ±${(d3.min(famTop,r=>r.plus_minus)*100).toFixed(1)} and ±${(d3.max(famTop,r=>r.plus_minus)*100).toFixed(1)} points${famTied?', so the sample cannot rank neighbours in that list':''}.`,
     lines:`Accounts a day on a log scale. Signers leave out accounts that only signed their own deletion.${step?` From ${dm(step.from)} to ${dm(step.to)} HOT's callers rose by ${fmt.compact(step.callers)} and signers by ${fmt.compact(step.signers)}: the signer count follows that game.`:''}${gap?` In the week of ${dm(gap.week)}, the widest gap since ${monthName(B.relay_day)}, at least ${fmt.compact(gap.v)} signers a day did not call it.`:''}`,
-    long:`Distinct signers a day since ${fmt.month(D.d[Math.max(0,D.signers.findIndex(v=>v!=null))])}, on a log scale. They stood at ${fmt.compact(baseLo)} to ${fmt.compact(baseHi)} a day from late 2022 to mid-2023, before the consumer programs took them to ${cm(peak.v)} in ${qName(peak.q)}; the 30-day average is now ${fmt.compact(sig)}. NearBlocks has announced the end of this count for 22 November 2026. From then the line continues as active accounts less the accounts a relayer signed for, which has stayed within a few percent of it.`,
+    long:`Distinct signers a day since ${fmt.month(D.d[Math.max(0,D.signers.findIndex(v=>v!=null))])}, on a log scale. They stood at ${fmt.compact(baseLo)} to ${fmt.compact(baseHi)} a day from late 2022 to mid-2023, before the consumer programs took them to ${cm(peak.v)} in ${qName(peak.q)}; the 30-day average is now ${fmt.compact(sig)}. NearBlocks has announced the end of this count for 22 November 2026. ${(r=>r&&r.status==='agree'&&r.value_a===r.value_b)(LC.recon.find(r=>r.check_id==='chain_signers_days_equal_bigquery_vs_nearblocks'))?`From then the line continues from NEAR's public BigQuery dataset, whose count of signers equals this one on every day both hold.`:'From then the line continues as active accounts less the accounts a relayer signed for, which has stayed within a few percent of it.'}`,
     lags:`A common claim is that volume through NEAR Intents leads network usage better than the token price does. Each number is the correlation of weekly changes over ${weeks} weeks, from −1 to +1. In the same week ${both('transactions',v=>v>bound)?`both move with transactions (${r2(same('intents_volume','transactions'))} and ${r2(same('near_price','transactions'))})`:`volume's link with transactions is ${r2(same('intents_volume','transactions'))} and the price's ${r2(same('near_price','transactions'))}`}. One or two weeks ahead, volume's largest link is ${r2(vBest.r)} and the price's ${r2(pBest.r)}${priceLeads&&!priceFirm?', which depends on the weekday the weeks start':''}. Chance alone gives up to ${bar.toFixed(2)} on so few weeks, and a link under that cannot be told from it, so this stays among the <a href="#a-untestable">claims the data cannot settle</a>.${!volLeads&&vSeen>=.05?` About ${weeksToSee(vSeen)} weeks would be needed to see a link of ${vSeen.toFixed(2)}.`:''}`,
     footprint:`Transactions a day that touch intents.near, beside the swaps a day that NEAR's dashboard counts on every route. Intents is ${fmt.pct(IN.share,1)} of NEAR's transactions outside the batch streams, ${IN.share>IN.share6?'up from':'against'} ${fmt.pct(IN.share6,1)} six months ago, on ${IN.swaps<IN.swaps6?'fewer':'more'} swaps (${fmt.compact(IN.swaps)} a day against ${fmt.compact(IN.swaps6)}). About ${fmt.int(IN.callers)} NEAR accounts a day call the contract, because its users sign on other chains.${IN.through<X.d[n]?` The swap count stops at ${dm(IN.through)}, the dashboard's last reading.`:''} More on the <a href="#s-intents">Intents</a> page.`,
     sigTx:`Transactions a day to the signer contract; the week and month views average them.${CS.times?` The last full week ran ${CS.times.toFixed(1)} times the same week a year earlier, and ${fmt.pct(1-CS.tx/CS.peakTx,0)} below the peak week, which began on ${fmt.date(CS.peakWeek)}, when ${fmt.int(CS.peakCallers)} accounts sent ${fmt.compact(CS.peakTx)} a day.`:''} The marks are the days the contract began to support one more signature scheme. Who holds its keys is on the <a href="#a-mpc">Security</a> page.`,
@@ -2218,7 +2234,7 @@ const USE=(()=>{
   const limits=['How many people use NEAR. A signer and an active account are accounts, and one person can hold many.',
    'Who is behind an account. HOT, Sweat and Kai-Ching are named from their account names, and other owners from public labels.',
    (LC.more.bigquery||{}).days&&LC.more.bigquery.days.cols.date_day.length?`Which application a signer used before ${fmt.date(LC.more.bigquery.days.cols.date_day[0])}. Signers by contract start that day, and cover each day's largest contracts only.`:'Which application a signer used. The data here counts signers for the whole chain and callers for single contracts.',
-   'Who asks Chain Signatures for signatures.',
+   (LC.more.bigquery||{}).sigCallers?'How many signatures each caller of Chain Signatures asked for. Calls are counted by who made them, and one request can take several.':'Who asks Chain Signatures for signatures.',
    'Deletion days once NearBlocks ends its signer count, announced for 22 November 2026: accounts that only signed their own deletion can then no longer be taken out.'];
   return{U,X,B,T,T6,apps,apps6,cm,cleanYear,sig,sigYear,sigRoll,active,atBase,appsDown,CS,L,FAM,CT,marks,f,ans,key,read,view,lagsSql,contractsSql,limits,lead:{r:vBest.r,bar,weeks,volLeads},monthYear,
     q:{stripes:`What happened to NEAR's transactions on ${longDay(B.day)}?`},
@@ -3224,6 +3240,7 @@ const SEC=(()=>{
   S.tile=`The ten largest pools hold ${p0(T10.now)} of the stake, and the ${L.pools} pools that left in 60 days held ${p1(L.share)}.`;
   S.kp=[['Pools seated',String(N.pools)],["Block producers' share of stake",p0(N.producers_share)],['Staking pays, a year',p1(PAY.yield)],['NEAR staked',k1(N.stake)]];
   S.limits=['Who runs each pool. Pools that share a name are counted once only inside a reading, from the account names; the data here has no register of who runs a pool.',
+   ...((LC.more.bigquery||{}).stakeOwners?['Who the largest owners of stake are. Their balances are read as sums, and no account is named.']:[]),
    'Why a pool leaves, and whether the count will return. The day a protocol version first shows is a date, not a cause.',
    `Who unstaked in ${longMonth(sd.start)}, or why, and whether the stake would stay through a second cut in pay. One cut is one observation.`,
    'Whether the Chain Signatures signers run in secure enclaves, and how much value their keys guard.',
@@ -3370,7 +3387,8 @@ const BQ=(()=>{const B=LC.more.bigquery||{},HUE='#7f62e0',ord=n=>{const s=['th',
     return{
       f:`${fmt.pct(big.retained_share,1)} of the accounts that first signed in ${big.first_signed_year} signed again the next month${big===now?'':`; of those that first signed in ${now.first_signed_year}, ${fmt.pct(now.retained_share,1)} did`}`,
       ans:[fmt.pct(now.retained_share,1),`of the accounts that first signed in ${now.first_signed_year} signed again the next month${big===now?'':`, against ${fmt.pct(big.retained_share,1)} for ${big.first_signed_year}`}`],
-      read:`Each row is the year accounts first signed a transaction; each cell is the share that signed again that many months later, blank until its month is complete.${F.accounts_ever?` Of the ${fmt.compact(F.accounts_ever)} accounts that ever signed, ${fmt.compact(big.accounts)} first signed in ${big.first_signed_year}.`:''}${old!=null?` Of the ${fmt.compact(F.signed_last_month)} that signed in ${monthName(F.last_month)}, ${fmt.pct(old,0)} first signed before ${yr}.`:''}${now.retained_share<big.retained_share?` This year's new accounts rarely return${falls?', so they do little against the fall in signers on the <a href="#overview">scorecard</a>':''}.`:''} A batch of accounts made for one use pulls a year's share down.`,
+      key:`${fmt.pct(now.retained_share,1)} of ${now.first_signed_year}'s accounts signed again the next month`,
+      read:`Each row is the year accounts first signed a transaction; each cell is the share that signed again that many months later, blank until its month is complete.${F.accounts_ever?` Of the ${fmt.compact(F.accounts_ever)} accounts that ever signed, ${fmt.compact(big.accounts)} first signed in ${big.first_signed_year}.`:''}${old!=null?` Of the ${fmt.compact(F.signed_last_month)} that signed in ${monthName(F.last_month)}, ${fmt.pct(old,0)} first signed before ${yr}${F.skipped_month?`; ${monthName(F.skipped_month)} is left out, because ${fmt.compact(F.skipped_deleted)} of its ${fmt.compact(F.skipped_signed)} signers signed their own deletion`:''}.`:''}${now.retained_share<big.retained_share?` This year's new accounts rarely return${falls?', so they do little against the fall in signers on the <a href="#overview">scorecard</a>':''}.`:''} A batch of accounts made for one use pulls a year's share down.`,
       sql:B.cohorts.sql,
       rows:()=>({cols:['first_signed_year','months_later','cohort_months','accounts','signed_again','retained_share'],rows:H.map(r=>[r.first_signed_year,r.months_later,r.cohort_months,r.accounts,r.signed_again,r.retained_share])}),
       view:el=>{const max=d3.max(H,r=>r.retained_share)||1,a=v=>.1+.85*Math.sqrt(v/max),wide=el.clientWidth>=560;
@@ -3389,7 +3407,7 @@ const BQ=(()=>{const B=LC.more.bigquery||{},HUE='#7f62e0',ord=n=>{const s=['th',
     return{
       f:`${agree} of the ${K.length} comparisons with a second count of the chain agree${sig?`; distinct signers equal NearBlocks' on ${days(sig)}`:''}`,
       ans:[`${agree} of ${K.length}`,'comparisons with a second count of the chain agree'],
-      read:`Each row sets a figure counted in NEAR's public BigQuery dataset beside the same figure from NearBlocks, an archival node or the lockup contracts.${sig&&tx?` Distinct signers are equal on ${days(sig)} and transactions on ${days(tx)}, so the two count the same chain.`:''}${D.length?` The ${D.length===1?'one that differs comes':`${numWord(D.length)} that differ come`} first, each with its reason.`:''} The chain counts on this site are NearBlocks', and this is the check on them.`,
+      read:`Each row sets a figure counted in NEAR's public BigQuery dataset beside the same figure from NearBlocks, an archival node or the lockup contracts.${sig&&tx?` Distinct signers are equal on ${days(sig)} and transactions on ${days(tx)}, so the two count the same chain.`:''}${D.length?` The ${D.length===1?'one that differs comes':`${numWord(D.length)} that differ come`} first, each with its reason.`:''} The transaction and signer counts on this site are NearBlocks', and this is the check on them; when NearBlocks stops serving its signer count on 22 November, BigQuery's carries it.`,
       sql:`-- Every comparison of a figure counted in NEAR's public BigQuery dataset with the same figure from another source,\n-- the ones that differ first\nselect check_id, metric, source_a, value_a, source_b, value_b, diff_pct, tolerance_pct, independence, status, gap_kind\nfrom gold.dq_reconciliation\nwhere check_id like '%bigquery%'\norder by case status when 'differs' then 0 else 1 end, diff_pct desc, check_id;`,
       rows:()=>({cols:['check_id','metric','source_a','value_a','source_b','value_b','diff_pct','tolerance_pct','independence','status','gap_kind'],rows:K.map(r=>[r.check_id,r.metric,r.source_a,r.value_a,r.source_b,r.value_b,r.diff_pct,r.tolerance_pct,r.independence,r.status,r.gap_kind||null])}),
       view:el=>{const narrow=(el.clientWidth||innerWidth)<560,src=s=>String(s||'').replace(/\b[Tt]his warehouse\b/,'this site');
@@ -3404,17 +3422,123 @@ const BQ=(()=>{const B=LC.more.bigquery||{},HUE='#7f62e0',ord=n=>{const s=['th',
     const sum7=(a,i)=>d3.sum(a.slice(i-6,i+1)),roll=Y.date_day.map((d,i)=>i<6?null:sum7(Y.intents_txns,i)/sum7(Y.all_txns,i)).slice(6),days=Y.date_day.slice(6);
     const mAt=k=>{const t=new Date(F.end_day+'T00:00:00Z');return new Date(Date.UTC(t.getUTCFullYear(),t.getUTCMonth()+k,1)).toISOString().slice(0,10)},span=k=>`${monthName(mAt(k-2))} to ${monthName(mAt(k))}`;
     const up=F.share_now>=F.share_before,since=F.days_since>=7&&F.share_since!=null,word=v=>v<0?'fell':'rose';
+    /* The days since the last complete month: when the contract's transactions rose far more than the volume NEAR reports, the share says more about how swaps settle than about trade */
+    const apart=since&&F.txns_since_change!=null&&F.volume_since_change!=null&&F.txns_since_change-F.volume_since_change>=0.2;
     return{roll,
+      two:F.sent_30d!=null&&F.touch_30d!=null?`A transaction is sent to one account and can touch others as it runs. Over the last 30 days ${fmt.pct(F.sent_30d,1)} of NEAR's transactions were sent to the Intents contract and ${fmt.pct(F.touch_30d,1)} touched it.`:'',
       f:`${fmt.pct(F.share_now,1)} of NEAR's transactions went to the Intents contract over ${span(0)}, against ${fmt.pct(F.share_before,1)} over the three months before`,
       ans:[fmt.pct(F.share_now,1),`of NEAR's transactions went to the Intents contract over ${span(0)}, ${fmt.pct(F.share_before,1)} over the three months before`],
-      read:`The line is the share of each day's transactions sent to the Intents contract, as a mean of the seven days to that day. It was ${fmt.pct(F.share_before,1)} over ${span(-3)} and ${fmt.pct(F.share_now,1)} over ${span(0)}${since?`, and ${fmt.pct(F.share_since,1)} over the ${F.days_since} days since${F.days_first_since===F.days_since?', on each of which the contract received more transactions than any other account':''}`:''}. ${up?'More':'Less'} of the chain's work is now the product the case rests on, which the <a href="#overview">scorecard</a> counts ${up?'for':'against'} it. Relayers and market makers send these transactions, so they measure activity and not users.`,
+      key:`${fmt.pct(F.share_now,1)} over ${span(0)}, ${fmt.pct(F.share_before,1)} over the three months before`,
+      read:`The line is the share of each day's transactions sent to the Intents contract, as a mean of the seven days to that day. It was ${fmt.pct(F.share_before,1)} over ${span(-3)} and ${fmt.pct(F.share_now,1)} over ${span(0)}${since?`, and ${fmt.pct(F.share_since,1)} over the ${F.days_since} days since${F.days_first_since===F.days_since?', on each of which the contract received more transactions than any other account':''}`:''}.${apart?` Over those days its transactions ran ${fmt.pct(Math.abs(F.txns_since_change),0)} ${F.txns_since_change<0?'below':'above'} ${monthName(mAt(0))}'s on ${fmt.pct(Math.abs(F.volume_since_change),0)} ${F.volume_since_change<0?'less':'more'} volume, so they show more transactions for each dollar swapped, not more trade.`:''} ${up?'More':'Less'} of the chain's work is now the product the case rests on, which the <a href="#overview">scorecard</a> counts ${up?'for':'against'} it. Relayers and market makers send these transactions, so they measure activity and not users.`,
       check:F.txns_change!=null&&F.volume_change!=null?`On the chain, transactions sent to the Intents contract ${word(F.txns_change)} ${fmt.pct(Math.abs(F.txns_change),1)} over the same months, and the volume NEAR reports ${word(F.volume_change)} ${fmt.pct(Math.abs(F.volume_change),1)}.`:'',
       sql:T.sql,
       rows:()=>({cols:['date_day','all_txns','intents_txns','share','rank_by_txns'],rows:Y.date_day.map((d,i)=>[d,Y.all_txns[i],Y.intents_txns[i],Y.share[i],Y.rank_by_txns[i]])}),
       view:chart(()=>({x:days,series:[{name:'Sent to the Intents contract, share of the seven days to each day',values:roll,color:'#3f6fe8'}],yFmt:v=>fmt.pct(v,0),tipFmt:v=>fmt.pct(v,1),height:320}))}})();
   /* What the count of signers is made of, for the note under the usage claim on the front page */
   const game=B.game&&B.game.share!=null?{...B.game,name:NAME[B.game.contract_id]||B.game.contract_id}:null;
-  return{who,back,check,traffic,game};
+  /* HAS THE CHAIN EVER STOPPED, for the Security page: blocks made on every day since launch. A slow day is read
+     against the median of the 30 days before it. It is a record and not a scorecard claim, because a test that has
+     never failed in the data tells the count nothing. */
+  const blocks=(()=>{const K=B.blocks,Y=K&&K.cols,F=K&&K.facts,S=F&&F.slow||[];if(!Y||!Y.date_day||!F||!F.days||!S.length)return null;
+    const all=F.days_with_blocks===F.days,low=S[0],p0=v=>fmt.pct(v,0),ks=Object.keys(Y);
+    const faster=F.seconds_now&&F.seconds_two_years_ago&&F.step_month&&F.seconds_now<0.8*F.seconds_two_years_ago;
+    const slowest=S.map((r,i)=>`${fmt.date(r.date_day)} at ${p0(r.share_of_usual)}${i?'':' of the median of the 30 days before'}`),list=a=>a.length<2?a.join(''):`${a.slice(0,-1).join(', ')} and ${a[a.length-1]}`;
+    return{
+      f:`NEAR has made blocks on ${all?`every one of its ${fmt.int(F.days)} days`:`${fmt.int(F.days_with_blocks)} of its ${fmt.int(F.days)} days`}; the slowest, ${fmt.date(low.date_day)}, made ${p0(low.share_of_usual)} of the usual`,
+      ans:[`${fmt.int(F.days_with_blocks)} of ${fmt.int(F.days)}`,`days since launch with blocks; the slowest made ${p0(low.share_of_usual)} of the usual`],
+      read:`Blocks made each day since ${fmt.date(F.first_day)}; the marks are the slowest days. ${all?'No day is without blocks':`${fmt.int(F.days-F.days_with_blocks)} days are without blocks`}. The slowest ${S.length>1?'were':'was'} ${list(slowest)}${F.year_low_share!=null?`; over the last 12 months the lowest was ${p0(F.year_low_share)}, on ${dm(F.year_low_day)}`:''}.${faster?` The step in ${fmt.month(F.step_month)} is blocks coming faster: one every ${F.seconds_now.toFixed(2)} seconds now, against ${F.seconds_two_years_ago.toFixed(2)} two years earlier.`:''} ${all?'So the chain has not lost a day, though a':'A'} stop of some hours shows here only as a slow day.`,
+      sql:K.sql,
+      rows:()=>({cols:ks,rows:Y.date_day.map((d,i)=>ks.map(k=>Y[k][i]))}),
+      view:chart(()=>({type:'line',x:Y.date_day,series:[{name:'Blocks a day',values:Y.blocks,color:'#5f7a8a'}],marks:S.map(r=>({d:r.date_day,label:p0(r.share_of_usual)})).sort((a,b)=>a.d<b.d?-1:1),yFmt:v=>fmt.compact(v,0),tipFmt:fmt.int,height:320,zoom:true}))}})();
+  const table=Y=>()=>{const ks=Object.keys(Y);return{cols:ks,rows:Y[ks[0]].map((d,i)=>ks.map(k=>Y[k][i]))}},daily='the week and month views average them';
+  /* HOW MANY CONTRACTS ARE IN USE, for the Developers page: the contracts that received a function call each day */
+  const inUse=(()=>{const K=B.inUse,Y=K&&K.cols,F=K&&K.facts;if(!Y||!F||F.days_now!==30||F.days_first!==30)return null;
+    const up=F.called_now>F.called_first,lowLast=F.low_month&&F.low_called<Math.min(F.called_now,F.called_first);
+    return{
+      f:`${fmt.int(F.called_now)} contracts a day received a call over the last 30 days, against ${fmt.int(F.called_first)} in the 30 days from ${dm(F.first_day)}`,
+      ans:[fmt.int(F.called_now),'contracts a day received a call over the last 30 days'],
+      read:`Contracts that received a function call each day; ${daily}. ${fmt.int(F.called_now)} a day were called over the last 30 days, against ${fmt.int(F.called_first)} in the 30 days from ${dm(F.first_day)}${lowLast?` and ${fmt.int(F.low_called)} in ${monthName(F.low_month)}, the lowest month`:''}. ${up?'More':'Less'} code is being called than in the spring${game&&game.share>=0.5?`, though ${game.name} still takes most of the accounts that sign (see <a href="#a-who-signs">Usage</a>)`:''}. A contract counts on a day when one account or one other contract called it once.`,
+      sql:K.sql,rows:table(Y),
+      view:chart(()=>({type:'line',x:Y.date_day,series:[{name:'Contracts called',values:Y.contracts_called,color:'#c9932a'}],yFmt:v=>fmt.compact(v,0),tipFmt:fmt.int,height:300}))}})();
+  /* WHO RECEIVES THE TRANSACTIONS, COUNTED EXACTLY, for the Usage page: each day's 25 largest receivers, by group */
+  const receivers=(()=>{const K=B.receivers,R=K&&K.rows||[],F=K&&K.facts;if(!R.length||!F||!F.covered)return null;
+    const named=R.filter(r=>r.receiver_group!=='No label'),top=named.slice(0,3),shown=R.filter(r=>r.share>=0.002),rest=1-F.covered,p1=v=>fmt.pct(v,1);
+    const label=r=>r.receiver_group==='No label'?'Accounts with no label':r.receiver_group,list=a=>a.length<2?a.join(''):`${a.slice(0,-1).join(', ')} and ${a[a.length-1]}`;
+    return{
+      key:top.map(r=>`${r.receiver_group} ${p1(r.share)}`).join(', '),
+      read:`Each bar is a group's share of the last 30 days' transactions, counted from those sent to its accounts among each day's 25 largest receivers, which took ${fmt.pct(F.covered,0)} of all transactions. ${list(top.map((r,i)=>`${r.receiver_group}${i?'':' received'} ${p1(r.share)}`))}. Each transaction counts once and none is sampled, so these can be ranked. A transaction that a relayer sends to a user's own account falls under smaller receivers, so the two consumer apps read lower here than in the sample.`,
+      sql:K.sql,
+      rows:()=>({cols:['receiver_group','accounts','txns','share'],rows:R.map(r=>[r.receiver_group,r.accounts,r.txns,r.share])}),
+      view:el=>{hbars(el,[...shown.map(r=>({label:label(r),value:r.share})),{label:'All smaller receivers',value:rest}],{fmtV:p1,color:HUE,labelWidth:190,emphasis:'NEAR Intents'});el.classList.add('rk-stack')}}})();
+  /* IS NEAR ADDING ACCOUNTS, for the Usage page: the accounts that signed their first transaction, by month */
+  const first=(()=>{const K=B.firstSigners,Y=K&&K.cols,F=K&&K.facts;if(!Y||!F||!F.last_month||F.last_signers==null)return null;
+    const O=F.open,n=Y.month.length,c=v=>fmt.compact(v,1);
+    return{
+      key:`${c(F.last_signers)} in ${monthName(F.last_month)}${F.year_ago_signers!=null?`, ${c(F.year_ago_signers)} a year earlier`:''}`,
+      read:`Accounts that signed their first transaction, by month${O?`; the lighter bar is ${monthName(O.month)} so far, to ${dm(O.read_through)}`:''}. ${c(F.last_signers)} did in ${monthName(F.last_month)}${F.year_ago_signers!=null?`, against ${c(F.year_ago_signers)} a year earlier`:''}${F.low_month&&F.low_month!==F.last_month?`, and the lowest of the last 12 months was ${c(F.low_signers)} in ${monthName(F.low_month)}`:''}.${O&&O.first_time_signers>F.last_signers?` ${monthName(O.month)}'s first ${O.days_read} days already hold ${c(O.first_time_signers)}.`:''} ${game&&game.share>=0.5?`Most accounts that sign call ${game.name}, so a month's first-time signers follow that game.`:'A first signature is a new account, not a new person.'}`,
+      sql:K.sql,rows:table(Y),
+      view:chart(()=>({type:'bar',x:Y.month,open:!!O,through:O?O.read_through:null,series:[{name:'Accounts signing for the first time',values:Y.first_time_signers,color:HUE,open:!!O}],yFmt:v=>fmt.compact(v,0),tipFmt:fmt.int,tipDate:fmt.month,height:300}))}})();
+  /* WHO MOVES THE STABLECOINS ON NEAR, for the Capital page: the accounts that signed a transaction sent to Tether's
+     and Circle's token contracts, the newest 30 days against the same 30 days a year earlier */
+  const stable=(()=>{const K=B.stableSenders,Y=K&&K.cols,F=K&&K.facts;if(!Y||!F||F.tether_now==null||F.circle_now==null)return null;
+    const fewerMore=F.circle_now<F.circle_ago&&F.circle_txns_now>F.circle_txns_ago;
+    return{
+      key:`${fmt.int(F.tether_now)} accounts a day send to Tether's contract, ${fmt.int(F.tether_ago)} a year earlier`,
+      read:`Accounts a day that signed a transaction sent to Tether's and Circle's token contracts on NEAR; ${daily}. Over the last 30 days ${fmt.int(F.tether_now)} a day sent to Tether's and ${fmt.int(F.circle_now)} to Circle's, against ${fmt.int(F.tether_ago)} and ${fmt.int(F.circle_ago)} a year earlier. Circle's contract received ${fmt.compact(F.circle_txns_now)} transactions a day against ${fmt.compact(F.circle_txns_ago)}${fewerMore?', so fewer accounts send more of them, which is what automated senders look like':''}. A stablecoin moved inside an exchange or a bridge call is not counted here.`,
+      sql:K.sql,rows:table(Y),
+      view:chart(()=>({type:'line',x:Y.date_day,series:[{name:"Accounts sending to Tether's contract",values:Y.tether_accounts,color:'#00a874'},{name:"Accounts sending to Circle's contract",values:Y.circle_accounts,color:'#3f6fe8'}],yFmt:v=>fmt.compact(v,0),tipFmt:fmt.int,height:300}))}})();
+  /* HOW MUCH RHEA'S EXCHANGE IS USED, for the Capital page: the accounts a day that signed a call to its contract */
+  const rhea=(()=>{const K=B.rheaUse,Y=K&&K.cols,F=K&&K.facts;if(!Y||!F||F.accounts_now==null||F.accounts_first==null)return null;
+    const up=F.accounts_now>F.accounts_first,peaked=F.peak_month&&F.peak_accounts>1.2*Math.max(F.accounts_now,F.accounts_first),gone=peaked?(F.peak_accounts-F.accounts_now)/(F.peak_accounts-F.accounts_first):null;
+    return{
+      key:`${fmt.int(F.accounts_now)} accounts a day${peaked?`, ${fmt.int(F.peak_accounts)} in ${monthName(F.peak_month)}`:''}`,
+      read:`Accounts a day that signed a call to Rhea's exchange contract; ${daily}. ${fmt.int(F.accounts_now)} a day did over the last 30 days, against ${fmt.int(F.accounts_first)} in the 30 days from ${dm(F.first_day)}${peaked?`; ${monthName(F.peak_month)}, the highest month, had ${fmt.int(F.peak_accounts)}`:''}. ${up?'More':'Fewer'} accounts use the exchange than in the spring${peaked&&gone>0.5?`, but most of ${monthName(F.peak_month)}'s rise has gone`:''}. An account here can be a bot, and one account can sign for many users.`,
+      sql:K.sql,rows:table(Y),
+      view:chart(()=>({type:'line',x:Y.date_day,series:[{name:"Accounts using Rhea's exchange",values:Y.accounts,color:'#3f6fe8'}],yFmt:v=>fmt.compact(v,0),tipFmt:fmt.int,height:300}))}})();
+  /* WHO SENDS THE INTENTS CONTRACT ITS TRANSACTIONS, for the Usage page: the contract's own account, the largest other
+     sender of the last 30 days, and everyone else, as shares of the transactions the contract received each day */
+  const senders=(()=>{const K=B.senders,Y=K&&K.cols,F=K&&K.facts;if(!Y||!F||F.own_30d==null||F.second_30d==null)return null;
+    const rest=Y.date_day.map((d,i)=>Math.max(0,1-Y.own_account_share[i]-Y.second_sender_share[i])),p1=v=>fmt.pct(v,1);
+    const whose=F.second_entity&&F.second_entity!=='Unlabelled'?`, by its name ${F.second_entity}'s,`:'',two=F.own_30d+F.second_30d;
+    return{
+      key:`The contract's own account ${fmt.pct(F.own_30d,0)}, ${F.second_id} ${fmt.pct(F.second_30d,0)}`,
+      read:`Each line is a sender's share of the transactions the Intents contract received that day; ${daily}. Over the last 30 days the contract's own account signed ${p1(F.own_30d)} of them and ${F.second_id}${whose} ${p1(F.second_30d)}${F.second_first_day?`, having first passed 1% on ${fmt.date(F.second_first_day)}`:''}; about ${fmt.int(F.signers_30d)} accounts a day sent the rest. ${two>=0.9?'Two accounts relay almost all of them':'They are relayed'}, so the chain does not show who fills the swaps, and the claim that a few market makers fill most volume stays among those the data <a href="#a-untestable">cannot settle</a>.`,
+      sql:K.sql,rows:table(Y),
+      view:chart(()=>({type:'line',x:Y.date_day,series:[{name:"The contract's own account",values:Y.own_account_share,color:'#3f6fe8'},{name:F.second_id,values:Y.second_sender_share,color:'#d97f2e'},{name:'All other senders',values:rest,color:'#8b918f'}],yFmt:v=>fmt.pct(v,0),tipFmt:v=>fmt.pct(v,1),height:300}))}})();
+  /* TRANSACTIONS BY WHO SIGNED THEM, for the Usage page. By signer the two batch streams are three accounts, so
+     they can be read back to the first day BigQuery was read */
+  const split=(()=>{const K=B.split,Y=K&&K.cols,F=K&&K.facts;if(!Y||!F||F.first_quarter_share==null||F.outside_now==null)return null;
+    const qn=d=>`the ${['first','second','third','fourth'][Math.round((+d.slice(5,7)-1)/3)]} quarter of ${d.slice(0,4)}`,p0=v=>fmt.pct(v,0),c=v=>fmt.compact(v,v>=1e6?2:1);
+    return{
+      key:`The two batch streams signed ${p0(F.last_quarter_share)} of transactions in ${qn(F.last_quarter)}`,
+      read:`Transactions a day since ${fmt.date(F.first_day)}, split by who signed them; ${daily}. The two batch streams signed ${p0(F.first_quarter_share)} of all transactions in ${qn(F.first_quarter)} and ${p0(F.last_quarter_share)} in ${qn(F.last_quarter)}. Without them NEAR ran ${c(F.outside_first)} transactions a day in the 30 days from ${fmt.date(F.first_day)} and runs ${c(F.outside_now)} now.${F.days_both?` Counted this way the streams are within ${fmt.pct(Math.max(Math.abs(F.apart),0.0001),2)} of NearBlocks' count over the ${fmt.int(F.days_both)} days both hold.`:''} An account outside a day's 25 largest signers is counted under all other signers.`,
+      sql:K.sql,rows:table(Y),
+      view:chart(()=>({type:'stack',x:Y.date_day,series:[{name:'The two batch streams',values:Y.batch_stream_txns,color:'#8b918f'},{name:"Sweat's relayer",values:Y.sweat_relayer_txns,color:'#d97f2e'},{name:'All other signers',values:Y.other_txns,color:HUE}],yFmt:v=>fmt.compact(v,0),tipFmt:fmt.int,height:320}))}})();
+  /* WHO CALLS THE CHAIN SIGNATURES CONTRACT, for the Usage page: the last 30 days' calls by who made them, with the
+     contract's own calls and its signing nodes' calls named apart from the accounts that ask for a signature */
+  const sig=(()=>{const K=B.sigCallers,R=K&&K.rows||[],F=K&&K.facts;if(!R.length||!F)return null;
+    const asks=R.filter(r=>r.kind==='asks'&&r.caller_group!=='Other callers'),own=R.find(r=>r.kind==='itself'),nodes=R.find(r=>r.kind==='nodes'),askAll=d3.sum(R.filter(r=>r.kind==='asks'),r=>r.share),p1=v=>fmt.pct(v,1);
+    if(!asks.length)return null;
+    const top=asks[0],second=asks[1],answering=[own?`the contract's own calls (${p1(own.share)})`:'',nodes?`its ${fmt.int(nodes.accounts)} signing nodes' (${p1(nodes.share)})`:''].filter(Boolean);
+    return{
+      key:asks.slice(0,2).map(r=>`${r.caller_group} ${p1(r.share)}`).join(', '),
+      read:`Each bar is a caller's share of the function calls the contract received over the last 30 days, for each day's 25 largest callers. ${top.caller_group} made ${p1(top.share)} of them${second?` and ${second.caller_group} ${p1(second.share)}`:''}.${answering.length?` ${answering.join(' and ').replace(/^t/,'T')} are the work of answering, so ${top.caller_group} makes ${fmt.pct(top.share/askAll,0)} of the calls that ask.`:''} One request can take several calls, so these are shares of calls, not of signatures.`,
+      sql:K.sql,
+      rows:()=>({cols:['caller_group','kind','accounts','calls','share'],rows:R.map(r=>[r.caller_group,r.kind,r.accounts,r.calls,r.share])}),
+      view:el=>{hbars(el,R.map(r=>({label:r.caller_group,value:r.share})),{fmtV:p1,color:'#3f6fe8',labelWidth:190});el.classList.add('rk-stack')}}})();
+  /* WHO OWNS THE STAKE, for the Security page: the share of the listed staked NEAR owned by the largest account, the
+     ten largest and the hundred largest, from the day the dataset's list holds most of the stake. The pools' ten
+     largest are set beside it: a pool is who runs the stake, an owner is who put it there. */
+  const owners=(()=>{const K=B.stakeOwners,Y=K&&K.cols,F=K&&K.facts;if(!Y||!F||F.t10_now==null||F.t100_now==null)return null;
+    const p1=v=>fmt.pct(v,1),up=F.t10_now>F.t10_first,pool=F.pool_top_10,gap=pool!=null?F.t10_now-pool:null;
+    const beside=pool==null?'':` It is ${Math.abs(gap)<0.05?'about as concentrated as':gap>0?'more concentrated than':'less concentrated than'} the pools, where the ten largest hold ${p1(pool)}.`;
+    return{
+      f:`The ten largest owners hold ${p1(F.t10_now)} of the staked NEAR on the list, which covers ${fmt.pct(F.listed_now,0)} of all stake; the hundred largest hold ${p1(F.t100_now)}`,
+      ans:[p1(F.t10_now),'of listed staked NEAR is owned by the ten accounts with the most, over the last 30 days'],
+      read:`Each line is the share of the listed staked NEAR owned by the accounts with the most: the largest, the ten largest and the hundred largest; ${daily}. Over the last 30 days the ten largest owned ${p1(F.t10_now)}, against ${p1(F.t10_first)} in the 30 days from ${fmt.date(F.first_day)}, and the largest alone ${p1(F.big_now)}, against ${p1(F.big_first)}. Ownership has ${up?'concentrated':'spread'} since then.${beside} An owner can be a liquid staking contract or an exchange holding many people's NEAR, and about ${fmt.int(F.holders_now)} accounts own all the stake listed.`,
+      sql:K.sql,rows:table(Y),
+      view:chart(()=>({type:'line',x:Y.date_day,series:[{name:'The hundred largest owners',values:Y.top_100_share,color:'#8b918f'},{name:'The ten largest',values:Y.top_10_share,color:'#5f7a8a'},{name:'The largest',values:Y.largest_share,color:'#d97f2e'}],yFmt:v=>fmt.pct(v,0),tipFmt:v=>fmt.pct(v,1),height:320}))}})();
+  return{who,back,check,traffic,game,blocks,inUse,receivers,first,stable,rhea,senders,split,sig,owners};
 })();
 /* ============================================================================================
    HOW THE COUNT HAS MOVED. The scorecard on every day, from gold.fct_thesis_scorecard_daily (TH.history): each
@@ -3721,7 +3845,8 @@ order by 1;`,view:chart(()=>({type:'stack',x:LINES.months,series:[{name:'Matched
  /* Developers */
  {id:'core-team',subject:'builders',form:'Line chart',q:"Is NEAR's core still being built?",f:DEVS.f.core,ans:DEVS.ans.core,src:['github','rpc'],read:DEVS.read.core(true),table:'gold.fct_dev_activity_weekly',sql:DEVS.sql.core(DEVS.C.d),view:chart(DEVS.spec.core)},
  {id:'core-vs-peers',subject:'builders',form:'Ranked bars',q:"How does NEAR's core team compare with other chains'?",f:DEVS.f.peers,ans:DEVS.ans.peers,src:['github'],read:DEVS.read.peers,table:'gold.fct_dev_activity_weekly',sql:DEVS.sql.peers,view:DEVS.view.peers},
- {id:'code-on-chain',subject:'builders',form:'Bars',q:'Is new code reaching the chain?',f:DEVS.f.chain,ans:DEVS.ans.chain,src:['nearblocks'],read:DEVS.read.chain,table:'gold.fct_chain_daily',sql:'select date_day, new_contracts_v3 as contracts_deployed\nfrom gold.fct_chain_daily\nwhere new_contracts_v3 is not null order by 1;',view:chart(DEVS.spec.chain)},
+ {id:'code-on-chain',subject:'builders',form:DEVS.chain.bq?'Line chart':'Bars',q:'Is new code reaching the chain?',f:DEVS.f.chain,ans:DEVS.ans.chain,src:[DEVS.chain.bq?'bigquery':'nearblocks'],read:DEVS.read.chain,table:DEVS.chain.bq?'gold.fct_bigquery_action_daily':'gold.fct_chain_daily',sql:DEVS.chain.bq?DEVS.chain.bq.sql:DEVS.sql.chainNb,view:chart(DEVS.chain.bq?DEVS.spec.chainBq:DEVS.spec.chain)},
+ ...(BQ.inUse?[{id:'contracts-in-use',isNew:true,subject:'builders',form:'Line chart',q:'How many contracts are in use?',f:BQ.inUse.f,ans:BQ.inUse.ans,src:['bigquery'],read:BQ.inUse.read,table:'gold.fct_bigquery_action_daily',sql:BQ.inUse.sql,exact:BQ.inUse.rows,view:BQ.inUse.view}]:[]),
  /* ETF, defined once in shared/viz.js */
  {id:'etf-absorption',isNew:true,subject:'etf',form:'Bars',q:'Is the fund still taking in more NEAR than the chain creates?',f:NRR.f.absorb,ans:NRR.ans.absorb,src:['bitwise','sosovalue','nearblocks','rpc'],read:NRR.read.weeks,table:'gold.fct_etf_nrr_daily, gold.fct_supply_daily',sql:NRR.sql.weeks,view:chart(NRR.spec.weeks)},
  {id:'etf-flows',subject:'etf',form:'Waterfall',q:'How much money came in, and is it still coming?',f:NRR.f.flows,ans:NRR.ans.flows,src:['bitwise','sosovalue','rpc'],read:NRR.read.flows,table:'gold.fct_etf_nrr_daily',sql:NRR.sql.flows,view:el=>VZ.flowWaterfall(el),data:()=>({x:ETF.flows.map(r=>r.d),series:[{name:'Net flow',values:ETF.flows.map(r=>r.flow)},{name:'Running total',values:ETF.flows.map(r=>r.cum)}],yFmt:v=>fmt.usd(v)})},
@@ -3739,7 +3864,9 @@ order by 1;`,view:chart(()=>({type:'stack',x:LINES.months,series:[{name:'Matched
  {id:'governance-tripwires',subject:'governance',form:'Table',q:'What would change this reading?',f:GOV.f.trip,ans:GOV.ans.trip,src:['hos','rpc','nearblocks'],read:GOV.read.trip,table:'gold.fct_governance_decisions, gold.fct_protocol_config, gold.fct_venear_snapshot, gold.fct_thesis_scorecard, gold.fct_governance_proposals',sql:GOV.sql.trip,exact:GOV.rows.trip,view:GOV.view.trip},
  /* Security */
  {id:'stake-map',subject:'security',form:'Treemap',q:'Who could halt the chain?',f:SEC.f.map,ans:SEC.ans.map,src:['rpc'],read:SEC.read.map,table:'gold.fct_validator_epoch, gold.fct_validator_summary',sql:SEC.sql.map,exact:SEC.rows.map,view:SEC.view.map},
+ ...(BQ.blocks?[{id:'block-record',isNew:true,subject:'security',form:'Line chart',q:'Has the chain ever stopped?',f:BQ.blocks.f,ans:BQ.blocks.ans,src:['bigquery'],read:BQ.blocks.read,table:'gold.fct_bigquery_chain_daily',sql:BQ.blocks.sql,exact:BQ.blocks.rows,view:BQ.blocks.view}]:[]),
  {id:'concentration',subject:'security',form:'Line chart',q:'Is control concentrating?',f:SEC.f.conc,ans:SEC.ans.conc,src:['rpc'],read:SEC.read.top10,table:'gold.fct_validator_summary',sql:'-- by step',view:null},
+ ...(BQ.owners?[{id:'stake-owners',isNew:true,subject:'security',form:'Line chart',q:'Who owns the stake?',f:BQ.owners.f,ans:BQ.owners.ans,src:['bigquery','rpc'],read:BQ.owners.read,table:'gold.fct_bigquery_staking_balance_daily',sql:BQ.owners.sql,exact:BQ.owners.rows,view:BQ.owners.view}]:[]),
  {id:'validator-count',isNew:true,subject:'security',form:'Line chart',q:'Is the validator set shrinking, and does it matter?',f:SEC.f.count,ans:SEC.ans.count,src:['rpc','registry'],read:SEC.read.count,table:'gold.fct_validator_summary, gold.fct_validator_epoch',sql:'-- by step',view:null},
  {id:'stake-stays',isNew:true,subject:'security',form:'Line chart',q:'Does the stake stay when the pay falls?',f:SEC.f.stays,ans:SEC.ans.stays,src:['rpc','nearblocks','registry'],read:SEC.read.stays,table:'gold.fct_validator_summary, gold.fct_net_dilution_daily',sql:'-- by step',view:null},
  {id:'mpc',isNew:true,subject:'security',form:'Step lines',q:'Who could sign for Chain Signatures?',f:SEC.f.mpc,ans:SEC.ans.mpc,src:['rpc'],read:SEC.read.set,table:'gold.fct_mpc_state',sql:'-- by step',view:null},
@@ -3790,7 +3917,12 @@ const MANY_CHARTS=(()=>{
      view:el=>VZ.bump(el,{x:bump.months,series:bump.series,count:bump.count,fmtTip:m=>new Date(m+'-01T00:00:00Z').toLocaleDateString('en-GB',{month:'short',year:'2-digit',timeZone:'UTC'}),height:380})},
     {id:'compare',label:'Any measure, by week',key:MKT.key.compare,form:'Compare tool',read:MKT.read.compare,table:'gold.fct_peer_daily',sql:'--',src:['defillama','coinmetrics','nearblocks','rpc'],view:el=>VZ.compare(el,{metric:'fees',indexed:true})}]},
    'who-uses':{layout:'stack',first:{id:'table',label:'The busiest contracts',key:USE.key.table},more:[
-    {id:'families',label:'Who the transactions are for',key:USE.key.families,form:'Stacked bars',read:USE.read.families,table:'gold.fct_receiver_sample_daily, gold.fct_chain_daily',sql:LC.usage.familiesSql,src:['neardata','nearblocks'],view:USE.view.families}]},
+    {id:'families',label:'Who the transactions are for',key:USE.key.families,form:'Stacked bars',read:USE.read.families,table:'gold.fct_receiver_sample_daily, gold.fct_chain_daily',sql:LC.usage.familiesSql,src:['neardata','nearblocks'],view:USE.view.families},
+    ...(BQ.receivers?[{id:'exact',label:'The largest receivers, counted exactly',key:BQ.receivers.key,form:'Ranked bars',read:BQ.receivers.read,table:'gold.fct_bigquery_receiver_daily, gold.fct_bigquery_chain_daily',sql:BQ.receivers.sql,src:['bigquery','registry'],exact:BQ.receivers.rows,view:BQ.receivers.view}]:[])]},
+   ...(BQ.traffic&&BQ.senders?{'intents-traffic':{layout:'stack',first:{id:'share',label:"Share of NEAR's transactions",key:BQ.traffic.key,exact:BQ.traffic.rows},more:[
+    {id:'senders',label:'Who sends them',key:BQ.senders.key,form:'Line chart',read:BQ.senders.read,table:'gold.fct_bigquery_signer_daily',sql:BQ.senders.sql,src:['bigquery','registry'],exact:BQ.senders.rows,view:BQ.senders.view}]}}:{}),
+   ...(BQ.back&&BQ.first?{'come-back':{layout:'stack',first:{id:'again',label:'The share that signed again',key:BQ.back.key,exact:BQ.back.rows},more:[
+    {id:'first-time',label:'Accounts signing for the first time',key:BQ.first.key,form:'Bars',read:BQ.first.read,table:'gold.fct_bigquery_signer_cohort_monthly',sql:BQ.first.sql,src:['bigquery'],exact:BQ.first.rows,view:BQ.first.view}]}}:{}),
    ...(BQ.who?{'who-signs':{layout:'stack',first:{id:'newest',label:'The newest day',key:BQ.who.key.newest,exact:BQ.who.rows.newest},more:[
     {id:'days',label:'Every day read',key:BQ.who.key.days,form:'Line chart',read:BQ.who.read.days,table:'gold.fct_bigquery_action_daily, gold.fct_bigquery_contract_daily',sql:BQ.who.sql.days,src:['bigquery'],exact:BQ.who.rows.days,view:BQ.who.view.days}]}}:{}),
    'accounts':{layout:'stack',first:{id:'lines',label:"Active accounts, signers and HOT's callers",key:USE.key.lines},more:[
@@ -3802,7 +3934,8 @@ const MANY_CHARTS=(()=>{
    'mpc':{layout:'stack',first:{id:'set',label:'Signers, and how many a signature needs',key:SEC.key.set},more:[
     {id:'who',label:'The signers today',key:SEC.key.who,form:'Table',read:SEC.read.who,table:'gold.fct_mpc_participants, gold.fct_mpc_operators',sql:SEC.sql.who,src:['rpc','nearblocks'],exact:SEC.rows.who,view:SEC.view.who}]},
    'chain-sigs':{layout:'stack',first:{id:'txns',label:'Transactions a day',key:USE.key.sigTx},more:[
-    {id:'callers',label:'Accounts asking for signatures',key:USE.key.sigCallers,form:'Line chart',read:USE.read.sigCallers,table:'gold.fct_chain_signatures_daily',sql:'',src:['nearblocks'],view:null}]},
+    {id:'callers',label:'Accounts asking for signatures',key:USE.key.sigCallers,form:'Line chart',read:BQ.sig?USE.read.sigCallers.replace('The data here does not show who the callers are.','Who they are is in the next chart.'):USE.read.sigCallers,table:'gold.fct_chain_signatures_daily',sql:'',src:['nearblocks'],view:null},
+    ...(BQ.sig?[{id:'who',label:'Who calls the contract',key:BQ.sig.key,form:'Ranked bars',read:BQ.sig.read,table:'gold.fct_bigquery_caller_daily, gold.fct_mpc_participants',sql:BQ.sig.sql,src:['bigquery','registry','rpc'],exact:BQ.sig.rows,view:BQ.sig.view}]:[])]},
    'market-share':{layout:'stack',first:{id:'quarter',label:'The last three months against the three before',key:`Intents ${sgnPct(msQ.i)}, the six chains ${sgnPct(msQ.p)}`,exact:()=>({cols:['from_month','to_month','intents_usd','peers_dex_usd','intents_over_peers'],rows:[MSQ.then,MSQ.now].map(q=>[q.m0,q.m1,q.i,q.p,q.s])})},more:[
     {id:'share',label:'Share of the market, by month',key:`${fmt.pct(MS.ratio[msN],1)} in ${monthName(MS.m[msN])}`,form:'Line chart',
      read:`Intents volume in each full month over the six chains' DEX volume. It is a yardstick, not a market definition: Intents swaps cross chains, and those venues mostly trade within one. ${msYearNote}`,table:'gold.fct_intents_daily, gold.fct_peer_daily',sql:`with i as (\n  select date_trunc('month', date_day) as month, sum(volume_usd) as intents_usd\n  from gold.fct_intents_daily group by 1\n), p as (\n  select date_trunc('month', date_day) as month, sum(dex_volume_usd) as peers_dex_usd\n  from gold.fct_peer_daily where chain_id <> 'near' group by 1\n)\nselect month, intents_usd / peers_dex_usd as share\nfrom i join p using (month)\nwhere month between date '${MS.m[0]}' and date '${MS.m[msN]}'\norder by 1;`,view:chart(()=>({type:'line',x:MS.m,series:[{name:"Share of six chains' DEX volume",values:MS.ratio,color:'--chart-2',area:true}],yFmt:v=>fmt.pct(v,1),tipFmt:v=>fmt.pct(v,2),tipDate:fmt.month,height:300})),src:['revenue','defillama']},
@@ -3817,7 +3950,7 @@ const MANY_CHARTS=(()=>{
      view:chart(()=>({type:'line',x:FE.d,series:[{name:'Fee per $10,000 swapped',values:FE.d.map((_,i)=>fePer([i])),color:'#00a874'}],marks:feMarks,yFmt:v=>'$'+v.toFixed(0),tipFmt:v=>'$'+v.toFixed(2),height:280}))},
     {id:'checks',label:'What can still be checked from outside',key:`Revenue on chain, within ${fmt.pct(walletGap,1)}`,form:'Table',
      read:`What an outsider can count without relying on a figure NEAR publishes about itself. NearBlocks reads the public chain, so it sees public routes only. The Explorer is NEAR's own service, but it lists every 1Click swap, public or confidential, so its senders are the one count of users that did not fall with the switch.`,
-     table:'gold.fct_intents_daily, gold.fct_intents_1click_daily, gold.fct_thesis_scorecard',sql:`-- What an outsider can still count, by month: NearBlocks sees public routes only, the Explorer sees 1Click only\nselect date_trunc('month', d.date_day) as month,\n       avg(d.public_swaps) as nearblocks_swaps_a_day,\n       avg(d.public_accounts) as nearblocks_accounts_a_day,\n       avg(o.senders) as oneclick_senders_a_day,\n       sum(least(d.public_volume_usd, d.volume_usd)) / sum(d.volume_usd) as public_part_of_volume\nfrom gold.fct_intents_daily d\nleft join gold.fct_intents_1click_daily o using (date_day)\nwhere d.date_day between date '${oPrev.m}' and date '${LC.asOf}'\ngroup by 1\norder by 1;\n\n-- The gap between the wallets' receipts and reported revenue\nselect value\nfrom gold.fct_thesis_scorecard\nwhere claim_id = 'revenue_reaches_the_wallets';`,src:['fastnear','nearblocks','explorer','dune'],
+     table:'gold.fct_intents_daily, gold.fct_intents_1click_daily, gold.fct_bigquery_receiver_daily, gold.fct_thesis_scorecard',sql:`-- What an outsider can still count, by month: NearBlocks sees public routes only, the Explorer sees 1Click only\nselect date_trunc('month', d.date_day) as month,\n       avg(d.public_swaps) as nearblocks_swaps_a_day,\n       avg(d.public_accounts) as nearblocks_accounts_a_day,\n       avg(o.senders) as oneclick_senders_a_day,\n       sum(least(d.public_volume_usd, d.volume_usd)) / sum(d.volume_usd) as public_part_of_volume\nfrom gold.fct_intents_daily d\nleft join gold.fct_intents_1click_daily o using (date_day)\nwhere d.date_day between date '${oPrev.m}' and date '${LC.asOf}'\ngroup by 1\norder by 1;\n\n-- Transactions the Intents contract received, counted from the public chain\nselect date_trunc('month', date_day) as month,\n       avg(txns) as transactions_a_day\nfrom gold.fct_bigquery_receiver_daily\nwhere receiver_account_id = 'intents.near'\n  and date_day between date '${oPrev.m}' and date '${LC.asOf}'\ngroup by 1\norder by 1;\n\n-- The gap between the wallets' receipts and reported revenue\nselect value\nfrom gold.fct_thesis_scorecard\nwhere claim_id = 'revenue_reaches_the_wallets';`,src:['fastnear','nearblocks','explorer','dune','bigquery'],
      exact:()=>({cols:['what','seen_from_outside','reading'],rows:outsideRows().map(r=>[r[0],r[2],r[3].replace(/<[^>]+>/g,'')])}),
      view:el=>{el.innerHTML=`<p class="chk-lead">${SW?`Since ${dm(SW.day)} most volume settles confidentially`:'Part of the volume settles confidentially'}, so this shows how far each figure on this page can still be checked.<span class="chk-key"><span class="stamp holds">By anyone, on chain</span><span class="stamp pending">Only in part</span><span class="stamp risk">Not at all: NEAR's figure alone</span></span></p><div class="tw"><table class="t chk"><thead><tr><th>What</th><th>Seen from outside</th><th>Reading</th></tr></thead><tbody>${outsideRows().map(r=>`<tr><td>${r[0]}</td><td><span class="stamp ${r[1]}">${r[2]}</span></td><td>${r[3]}</td></tr>`).join('')}</tbody></table></div>`}}]},
    'intents-volume':{first:{id:'swaps',label:'Swaps and their size',key:SWM.ago?`${fmt.compact(SWM.now.swaps)} swaps in ${monthName(SWM.now.m)}, ${fmt.compact(SWM.ago.swaps)} a year earlier`:`${fmt.compact(SWM.now.swaps)} swaps in ${monthName(SWM.now.m)}`},more:[
@@ -3957,17 +4090,22 @@ order by 1;`,
    'made-of':{layout:'stack',first:{id:'near-share',label:'NEAR itself and assets from outside',key:CPL.key.madeOf},more:[
     {id:'in-rhea',label:'Staking tokens held in Rhea',key:CPL.key.inRhea,form:'Ranked bars',read:CPL.read.inRhea,table:'gold.fct_lst_snapshot, gold.fct_wallet_holdings',sql:'',src:['rpc','fastnear'],view:CPL.view.inRhea}]},
    'tvl-history':{first:{id:'in-near',label:'Counted in NEAR',key:CPL.key.inNear},more:[
-    {id:'in-dollars',label:'In dollars',key:CPL.key.inDollars,form:'Area chart',read:CPL.read.inDollars,table:'gold.fct_defi_tvl_daily',sql:'',src:['defillama','coinmetrics'],view:null}]},
+    {id:'in-dollars',label:'In dollars',key:CPL.key.inDollars,form:'Area chart',read:CPL.read.inDollars,table:'gold.fct_defi_tvl_daily',sql:'',src:['defillama','coinmetrics'],view:null},
+    ...(BQ.rhea?[{id:'use',label:"Accounts using Rhea's exchange",key:BQ.rhea.key,form:'Line chart',read:BQ.rhea.read,table:'gold.fct_bigquery_contract_daily',sql:BQ.rhea.sql,src:['bigquery'],exact:BQ.rhea.rows,view:BQ.rhea.view}]:[])]},
    'near-at-work':{layout:'stack',first:{id:'staying',label:'NEAR in liquid staking',key:CPL.key.staying},more:[
     {id:'tokens',label:'Liquid staking, by token',key:CPL.key.tokens,form:'Stacked bars',read:CPL.read.tokens,table:'gold.fct_lst_snapshot',sql:'',src:['rpc'],view:null}]},
    'dollars':{layout:'stack',first:{id:'lines',label:'Stablecoins in the pool and on NEAR',key:CPL.key.dollars},more:[
-    {id:'holders',label:'Who holds the stablecoins on NEAR',key:CPL.key.holders,form:'Ranked bars',read:CPL.read.holders,table:'gold.fct_token_holders, gold.fct_stablecoin_assets',sql:'',src:['fastnear','defillama'],view:CPL.view.holders}]},
+    {id:'holders',label:'Who holds the stablecoins on NEAR',key:CPL.key.holders,form:'Ranked bars',read:CPL.read.holders,table:'gold.fct_token_holders, gold.fct_stablecoin_assets',sql:'',src:['fastnear','defillama'],view:CPL.view.holders},
+    ...(BQ.stable?[{id:'senders',label:'Who moves the stablecoins on NEAR',key:BQ.stable.key,form:'Line chart',read:BQ.stable.read,table:'gold.fct_bigquery_receiver_daily',sql:BQ.stable.sql,src:['bigquery','registry'],exact:BQ.stable.rows,view:BQ.stable.view}]:[])]},
    'intents-pool':{first:{id:'against-defi',label:"The pool and NEAR's DeFi",key:CPL.key.poolDefi},more:[
     {id:'by-asset',label:'What is in the pool',key:CPL.key.poolAssets,form:'Stacked bars',read:CPL.read.poolAssets,table:'gold.fct_dune_intents_tvl_asset_daily',sql:'',src:['dune'],view:null},
     {id:'on-chain',label:'The check on chain',key:CPL.key.poolChain,form:'Table',read:CPL.read.poolChain,table:'gold.fct_wallet_holdings, gold.fct_dune_intents_tvl_daily',sql:'',src:['fastnear','explorer','rhea','dune'],view:CPL.view.poolChain},
     ...(PHV?[{id:'history',label:'Month ends, read from the chain',key:PHV.key,form:'Table',read:PHV.read,table:'gold.fct_intents_pool_chain_monthly, gold.fct_token_price_daily, gold.fct_dune_intents_tvl_asset_daily',sql:PHV.sql,src:['rpc','coinmetrics','defillama','dune'],exact:PHV.rows,view:PHV.view}]:[])]},
    'stripes':{layout:'stack',first:{id:'days',label:'Every day since '+D.d[0].slice(0,4),key:USE.key.days,spec:()=>({x:D.d,series:[{name:'Transactions',values:D.txns,color:'#7f62e0'}],tipFmt:fmt.int}),read:USE.read.days},more:[
-    {id:'weeks',label:'Transactions a day',key:USE.key.txns,form:'Area chart',read:USE.read.txns,table:'gold.fct_chain_daily',sql:'',src:['nearblocks'],view:null}]},
+    {id:'weeks',label:'Transactions a day',key:USE.key.txns,form:'Area chart',read:USE.read.txns,table:'gold.fct_chain_daily',sql:'',src:['nearblocks'],view:null},
+    ...(BQ.split?[{id:'signers',label:'By who signed them',key:BQ.split.key,form:'Stacked bars',read:BQ.split.read,table:'gold.fct_bigquery_signer_daily',sql:BQ.split.sql,src:['bigquery'],exact:BQ.split.rows,view:BQ.split.view}]:[])]},
+   ...(DEVS.chain.bq?{'code-on-chain':{first:{id:'deploys',label:'Deploys and who signs them',key:DEVS.key.chain,exact:DEVS.rows.chainBq},more:[
+    {id:'nearblocks',label:"NearBlocks' count",key:DEVS.key.chainNb,form:'Bars',read:DEVS.read.chainNb,table:'gold.fct_chain_daily',sql:DEVS.sql.chainNb,src:['nearblocks'],view:chart(DEVS.spec.chain)}]}}:{}),
    'core-vs-peers':{first:{id:'bars',label:`Newest ${DEVS.half} weeks`,key:DEVS.key.peers},more:[
     {id:'table',label:`Against the ${DEVS.half} weeks before`,key:DEVS.key.peersTable,form:'Table',read:DEVS.read.peersTable,table:'gold.fct_dev_activity_weekly',sql:DEVS.sql.peers,src:['github'],view:DEVS.view.peersTable}]},
    'etf-absorption':{first:{id:'weeks',label:'Week by week',key:NRR.key.weeks},more:[
@@ -4671,7 +4809,14 @@ order by 1;`,{start:'day'});
   set('rerating','fees',g=>({type:'line',settled:FEES,...rollUp(withTail(MKT.X.d,'multiples','d'),MKT.lines.rerate.map((s,k)=>({...s,values:withTail(s.values,'multiples',['near','peer'][k])})),g,{partial:true}),yFmt:v=>fmt.int(v)+'×',tipFmt:v=>v.toFixed(1)+'×',height:340}),MKT.sqlFor.rerate);
   set('rerating','token',g=>({type:'line',settled:FEES,...rollUp(withTail(MKT.N9.d,'ninety','d'),MKT.lines.token.map((s,k)=>({...s,values:withTail(s.values,'ninety',['fees','token'][k])})),g,{partial:true}),log:true,endLabels:true,noLegend:true,yFmt:v=>fmt.int(v)+'×',tipFmt:v=>v.toFixed(v<100?1:0)+'×',height:340}),MKT.sqlFor.token);
   set('core-team',null,()=>DEVS.spec.core(),(g,x)=>DEVS.sql.core(x),{steps:['week'],start:'week'});
-  set('code-on-chain',null,g=>{const Q=DEVS.chain,r=rollUp(Q.Dp.d,[{name:'Contracts deployed',values:Q.Dp.n,how:'sum',color:DEVS.HUE}],g);return{type:'bar',...r,marks:Q.marks,yFmt:v=>fmt.compact(v,0),tipFmt:v=>fmt.int(v),height:320,zoom:long(r.x)}},
+  if(BQ.inUse)stepped('contracts-in-use',null,'mean',['contracts_called'],{start:'week'});
+  if(BQ.owners)stepped('stake-owners',null,'mean',['largest_share','top_10_share','top_100_share'],{start:'week'});
+  if(BQ.traffic&&BQ.senders)stepped('intents-traffic','senders','mean',['own_account_share','second_sender_share'],{start:'week'});
+  if(BQ.split)stepped('stripes','signers','mean',['batch_stream_txns','sweat_relayer_txns','other_txns'],{start:'week'});
+  if(BQ.rhea)stepped('tvl-history','use','mean',['accounts'],{start:'week'});
+  if(BQ.stable)stepped('dollars','senders','mean',['tether_accounts','circle_accounts'],{start:'week'});
+  if(DEVS.chain.bq)stepped('code-on-chain','deploys','mean',['deploys','accounts_given_code','accounts_signing','accounts_taking_shared_code'],{start:'week'});
+  set('code-on-chain',DEVS.chain.bq?'nearblocks':null,g=>{const Q=DEVS.chain,r=rollUp(Q.Dp.d,[{name:'Contracts deployed',values:Q.Dp.n,how:'sum',color:DEVS.HUE}],g);return{type:'bar',...r,marks:Q.marks,yFmt:v=>fmt.compact(v,0),tipFmt:v=>fmt.int(v),height:320,zoom:long(r.x)}},
     one('fct_chain_daily',[['sum(new_contracts_v3)','contracts_deployed']]),{start:'week'});
 
   /* ---- ETF: about six weeks of days, so day and week only ---- */
@@ -5242,7 +5387,8 @@ const gaugesOf=id=>{
     return [
      team('Authors a week on the core client',D.core,C.core),
      team('Authors a week on Chain Signatures',D.mpc,C.mpc),
-     line({t:`Contracts deployed a day, 30 days to ${dm(lastOf(D.chain.Dp.d))}`,to:'a-code-on-chain',v:D.whole(D.chain.ch.last30),s:D.chain.sub,fmt:v=>fmt.int(v),x:D.chain.Dp.d,y:D.chain.Dp.n},'day'),
+     D.chain.bq?line({t:`Deploys a day, 30 days to ${dm(D.chain.bq.facts.last_day)}`,to:'a-code-on-chain',v:D.whole(D.chain.bq.facts.deploys_now),s:`${D.one(D.chain.bq.facts.deploys_first)} in the 30 days from ${dm(D.chain.bq.facts.first_day)}`,fmt:v=>fmt.int(v),x:D.chain.bq.cols.date_day,y:D.chain.bq.cols.deploys},'day')
+      :line({t:`Contracts deployed a day, 30 days to ${dm(lastOf(D.chain.Dp.d))}`,to:'a-code-on-chain',v:D.whole(D.chain.ch.last30),s:D.chain.sub,fmt:v=>fmt.int(v),x:D.chain.Dp.d,y:D.chain.Dp.n},'day'),
     ]},
    market:()=>{const g=MKT.gauges;
     return [
@@ -5315,10 +5461,12 @@ function drawGauge(el,g){
 }
 const mountReading=s=>{const gs=gaugesOf(s.id);main.querySelectorAll('.gz-i').forEach(el=>{const g=gs[+el.dataset.g];if(g&&!g.parts)cleanup.push(drawGauge(el,g))})};
 
-/* One line under every page title says how fresh the page is. While daily collection is on hold the data is a fixed
-   snapshot, and this line and the Sources page say so. Set ON_HOLD to false when collection resumes. */
-const ON_HOLD=true;
-const ASOF_LINE=`Data through ${fmt.date(LC.asOf)}. Fees and revenue are final to ${dm(LC.windows.fees)}. NEAR's dashboard was last read on ${dm(LC.windows.duneRead)}.${ON_HOLD?' This is a fixed snapshot: daily collection is on hold for now.':''}`;
+/* One line under every page title says how fresh the page is. Two switches, both set by hand. ON_HOLD: daily
+   collection is paused, so the data is a fixed snapshot, and this line and the Sources page say so. STAYS_PUT: the
+   data is collected every night on its own branch, but this site is kept on one snapshot, as it is while the entry
+   is judged. Set both to false when the site follows the nightly run. */
+const ON_HOLD=false,STAYS_PUT=true;
+const ASOF_LINE=`Data through ${fmt.date(LC.asOf)}. Fees and revenue are final to ${dm(LC.windows.fees)}. NEAR's dashboard was last read on ${dm(LC.windows.duneRead)}.${ON_HOLD?' This is a fixed snapshot: daily collection is on hold for now.':STAYS_PUT?' This page stays on this snapshot while the entry is judged; newer days are collected every night.':''}`;
 /* The terms a reader needs before the first chart of a subject, one entry each, in fixed words that hold no figure that moves.
    `t` is the entries as [term, meaning]; `note` is a sentence that holds for every figure on the page. */
 const TERMS={
@@ -5362,6 +5510,7 @@ const TERMS={
     ['Signer',`An account that signed its own transaction that day.`],
     ['Active accounts',`These also count users whose transactions a relayer signed and paid for. Neither figure counts people.`],
     ['Automated jobs',`Two of them made up most of NEAR's transactions until 2 April 2026 and are left out where the page says so.`],
+    ...(BQ.traffic&&BQ.traffic.two?[['Sent to, and touching',BQ.traffic.two]]:[]),
     ...(()=>{const e=[...new Set((LC.usage.contracts||[]).map(c=>c.entity).filter(Boolean))];return e.length>1?[[`${e[0]} and ${e[1]}`,`The two busiest applications, named from their account names.`]]:[]})()]},
   security:{t:[
     ['Validators',`They run the chain. Holders stake NEAR with them through staking pools and share the new NEAR.`],

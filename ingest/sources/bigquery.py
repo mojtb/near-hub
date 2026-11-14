@@ -61,6 +61,12 @@ FIRST_DAY = {
     # and the years before 2025 would cost about as much again to read.
     "transactions_daily": date(2025, 1, 1),
     "actions_daily": AFTER_USAGE_BREAK,
+    # The same table and columns as transactions_daily, grouped by who signed, so the same start and the same cost.
+    "signers_daily": date(2025, 1, 1),
+    # receipt_actions again, for the callers of two contracts, from the same day as actions_daily.
+    "callers_daily": AFTER_USAGE_BREAK,
+    # The first day the dataset's table of staking balances holds. The whole table is about 5 GB.
+    "staking_balances_daily": date(2023, 1, 1),
 }
 TOP_N = 25
 
@@ -274,6 +280,34 @@ def actions_daily(ctx: Context) -> None:
     first, last = window(ctx, "actions_daily", "actions_daily")
     run_query(ctx, open_session(), "actions_daily", "actions_daily",
               {"first_day": first, "last_day": last, "top_n": TOP_N}, _key(first, last))
+
+
+@dataset("bigquery", "signers_daily", requires=REQUIRES)
+def signers_daily(ctx: Context) -> None:
+    """Each day's largest signers, and the largest senders of the transactions NEAR Intents' contract receives.
+
+    A first read from 2025-01-01 was 126 GB on 2026-11-14; a later read takes the last few days."""
+    first, last = window(ctx, "signers_daily", "signers_daily")
+    run_query(ctx, open_session(), "signers_daily", "signers_daily",
+              {"first_day": first, "last_day": last, "top_n": TOP_N}, _key(first, last))
+
+
+@dataset("bigquery", "callers_daily", requires=REQUIRES)
+def callers_daily(ctx: Context) -> None:
+    """Each day's largest callers of the Chain Signatures contract and of NEAR Intents' contract.
+
+    A first read from 2026-04-03 was 50 GB on 2026-11-14; a later read takes the last few days."""
+    first, last = window(ctx, "callers_daily", "callers_daily")
+    run_query(ctx, open_session(), "callers_daily", "callers_daily",
+              {"first_day": first, "last_day": last, "top_n": TOP_N}, _key(first, last))
+
+
+@dataset("bigquery", "staking_balances_daily", requires=REQUIRES)
+def staking_balances_daily(ctx: Context) -> None:
+    """Staked NEAR by day and how much of it the largest holders have, from the table named ft_balances_daily."""
+    first, last = window(ctx, "staking_balances_daily", "staking_balances_daily")
+    run_query(ctx, open_session(), "staking_balances_daily", "staking_balances_daily",
+              {"first_day": first, "last_day": last}, _key(first, last))
 
 
 @dataset("bigquery", "signer_cohorts", profile="backfill", requires=REQUIRES)

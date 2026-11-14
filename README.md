@@ -108,7 +108,7 @@ flowchart LR
 Each label on an arrow is a `make` command.
 
 `main` is pinned to one snapshot, the date in `data/PINNED`, so it rebuilds the same tables tomorrow as it does today.
-A nightly job collects on the `data/nightly` branch; it is paused while this entry is judged.
+A nightly job collects on the `data/nightly` branch; `main` and the site stay on one snapshot while this entry is judged.
 [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) has the layers, the rules each one follows and the reasons for the tools.
 
 ## Rebuild it yourself
@@ -156,7 +156,7 @@ These lines are generated from the warehouse, and `make verify` fails if they st
 
 <!-- expected:start -->
 - Data through: **2026-11-13**, the last full UTC day before the pinned snapshot of 2026-11-14; `dq_freshness` lists any source that ends earlier
-- Gold tables and columns: **96** and **936**
+- Gold tables and columns: **99** and **977**
 - Reconciliation: **112** comparisons agree, **13** differ, each with a written explanation
 - Issuance over the last 30 days, from supply change plus burn: **2.47%** a year, against **2.50%** in the protocol config
 - Circulating supply, built from NEAR's lockup contracts: **1,309.54M** NEAR, **99.84%** of total supply; on 2025-08-26, the last day NearBlocks computed its own, **1,249.72M** against **1,249.65M**
@@ -191,8 +191,8 @@ data quality.
 **NEAR's public BigQuery dataset** (`bigquery-public-data.crypto_near_mainnet_us`) is queried too. The SQL is in
 [`ingest/sql/bigquery/`](ingest/sql/bigquery), one file per query, and only counts are kept. Over the 682 days read, it
 counts exactly the same distinct signers as NearBlocks on every day and the same transactions on 680, so the figures the
-site shows are checked day for day. It adds what no other source here gives: accounts by contract, and how many of the
-74.9 million accounts that ever signed a transaction came back. And NEAR's own circulating supply table agrees with the
+site shows are checked day for day. It adds what no other source here gives: accounts by contract, who signs the day's transactions, who calls
+Chain Signatures, and how many of the 74.9 million accounts that ever signed a transaction came back. And NEAR's own circulating supply table agrees with the
 one this warehouse builds from the lockup contracts to within 24 NEAR of 2.1 million locked. The method, the cost and
 what it found are in [docs/SOURCES.md](docs/SOURCES.md#bigquery-public-dataset).
 
@@ -202,7 +202,7 @@ what it found are in [docs/SOURCES.md](docs/SOURCES.md#bigquery-public-dataset).
 
 | Area | Main tables in `gold` | Main sources |
 |---|---|---|
-| Chain usage, supply | `fct_chain_daily`, `fct_supply_daily`, `fct_circulating_supply_daily`, `fct_protocol_config`, `fct_contract_daily`, `fct_receiver_sample_daily`, `fct_bigquery_chain_daily`, `fct_bigquery_contract_daily`, `fct_bigquery_action_daily`, `fct_bigquery_circulating_supply_daily`, `fct_bigquery_signer_cohort_monthly` | NearBlocks, archival RPC, Neardata, NEAR's public BigQuery dataset |
+| Chain usage, supply | `fct_chain_daily`, `fct_supply_daily`, `fct_circulating_supply_daily`, `fct_protocol_config`, `fct_contract_daily`, `fct_receiver_sample_daily`, `fct_bigquery_chain_daily`, `fct_bigquery_contract_daily`, `fct_bigquery_action_daily`, `fct_bigquery_circulating_supply_daily`, `fct_bigquery_signer_cohort_monthly`, `fct_bigquery_signer_daily`, `fct_bigquery_caller_daily`, `fct_bigquery_staking_balance_daily` | NearBlocks, archival RPC, Neardata, NEAR's public BigQuery dataset |
 | NEAR Intents, revenue | `fct_intents_daily`, `fct_intents_chain_daily`, `fct_intents_asset_daily`, `fct_intents_fee_channels`, `fct_dune_intents_asset_daily`, `fct_dune_intents_chain_daily`, `fct_dune_intents_swaps_daily`, `fct_dune_intents_tvl_daily`, `fct_dune_intents_tvl_asset_daily`, `fct_dune_dashboard_results`, `fct_intents_1click_daily`, `fct_intents_1click_channel_daily`, `fct_revenue_capture` | DefiLlama, NearBlocks, revenue.near.org, NEAR's dashboard on Dune, Intents Explorer API |
 | The Intents pool, on chain | `fct_intents_pool_chain_monthly`, `fct_token_price_daily` | Archival RPC, Coin Metrics, DefiLlama |
 | Wallets | `fct_wallet_transfers`, `fct_wallet_counterparties`, `fct_revenue_inflows_daily`, `fct_wallet_balance_daily`, `fct_wallet_holdings`, `fct_token_holders`, `dim_entity` | FastNear, RPC, 1Click, Rhea |
@@ -236,7 +236,8 @@ limits; copy `.env.example` to start. Without a key, a keyed source is skipped w
 BigQuery is the one source with no keyless route. It needs a Google Cloud key file and one extra package
 (`pip install -r requirements-bigquery.txt`), and it runs with `python -m ingest run --sources bigquery`. It asks
 BigQuery what each query would read before running it, and stops at 150 GB a query unless the limit is raised for
-that run. Rebuilding from the saved data
+that run. The nightly job reads it only if the repository holds the key file as the secret
+`GOOGLE_APPLICATION_CREDENTIALS_JSON`. Rebuilding from the saved data
 needs neither.
 
 A fetch is dated today, which is after the pin, so `make warehouse` alone does not read it. To build with it, run
@@ -249,8 +250,9 @@ A GitHub Action takes a snapshot every night on the `data/nightly` branch and re
 thesis with it. `main` stays on the date in `data/PINNED`, so the expected results above do not drift. Each commit on
 that branch holds that night's code and data, so `make setup warehouse verify` rebuilds it.
 
-**The nightly job is paused while this entry is judged, through 18 November 2026;** `main` stays on the snapshot of
-14 November, which was fetched on the owner's machine with the job's own command.
+**While this entry is judged, through 18 November 2026, `main` and the site stay on the snapshot of 14 November,**
+which was fetched on the owner's machine with the job's own command. The nightly job keeps collecting on
+`data/nightly`.
 
 ## Repository map
 
