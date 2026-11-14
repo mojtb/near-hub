@@ -17,7 +17,7 @@ from pathlib import Path
 
 import duckdb
 
-from tools.catalog import closest_call
+from tools.horizon import offset_before, rating, recent_change
 from tools.horizon import horizon
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -194,9 +194,27 @@ zec_month = one("""
     where is_in_daily_run and cast(date_trunc('month', date_day) as date)
           = (select max(month_start) from gold.fct_intents_channel_economics_monthly where is_month_complete)""")
 zec = by_id["zcash_is_on_a_fifth_of_volume"]
-# The claim nearest its bar, by one rule for every claim (tools/catalog.py), and the tally if that result turned
-close = closest_call(con)
-closest = by_id[close["claim_id"]]
+# The result nearest its bar among the claims whose bar is not zero, as a share of that bar, and the smallest of the
+# changes whose bar is any rise or any fall. They are not on one scale: a change has no bar to be a share of.
+def turned(c: dict) -> tuple[int, int]:
+    """The tally if this one result turned."""
+    step = -1 if c["stands"] == "for" else 1
+    return tally["for"] + step, tally["against"] - step
+
+
+scored = [c for c in claims if c["stands"] != "open"]
+nearest = min((c for c in scored if c["threshold"]),
+              key=lambda c: (abs(c["value"] - c["threshold"]) / abs(c["threshold"]), c["claim_id"]), default=None)
+least = min((c for c in scored if not c["threshold"]), key=lambda c: (abs(c["value"]), c["claim_id"]), default=None)
+near_line = "- " + " ".join(filter(None, [
+    (f"Measured as a share of its bar, the result nearest its bar is \"{nearest['claim']}\": "
+     f"{figure(nearest['value'], nearest['unit'])} against a bar of {WORDS[nearest['comparison']]} "
+     f"{figure(nearest['threshold'], nearest['unit'], True)}. It counts {nearest['stands']} the case; if that one result "
+     f"reversed, the count would be {turned(nearest)[0]} for and {turned(nearest)[1]} against.") if nearest else "",
+    (f"The claims whose bar is any rise or any fall measure a change between two periods, which has no bar to be a share "
+     f"of, so they are not on that scale. The smallest of those changes is \"{least['claim']}\", "
+     f"{figure(least['value'], least['unit'])}; if it reversed, the count would be {turned(least)[0]} for and "
+     f"{turned(least)[1]} against.") if least else ""]))
 # The fee-growth claim: each side's growth over the scorecard's two quarters, and how the claim would have scored on
 # every nightly read of DefiLlama's fees since the newer quarter closed. Silver keeps each read; gold keeps the newest.
 fee = by_id["near_fees_outgrew_the_median_peer"]
@@ -232,9 +250,7 @@ thin = [
     f"{day(etf['peak_day'])}.",
     f"- The share of new NEAR received by the wallets or burned is up on the 90 days before, but it has not climbed steadily: over the 270 days to {day(settled)} "
     f"the 30-day share moved between {pct(offset_range['low'])} and {pct(offset_range['high'])}.",
-    f"- The closest call on the list is \"{closest['claim']}\": measured {figure(closest['value'], closest['unit'])} against a bar of "
-    f"{WORDS[closest['comparison']]} {figure(closest['threshold'], closest['unit'], True)}. If that one result reversed, the count "
-    f"would be {close['if_reversed'][0]} for and {close['if_reversed'][1]} against.",
+    *([near_line] if nearest or least else []),
     f"- The fee-growth claim has read the median peer since {day(FEE_MOVED)}. Against the fastest peer, as it read before, the "
     f"result rested on two nearly equal numbers: NEAR's application fees grew {pct(fee_near['change'], 2)} and "
     f"{fee_peer['chain_id'].capitalize()}'s {pct(fee_peer['change'], 2)}, the last three complete months against the three before. "
@@ -423,6 +439,31 @@ m_now, m_cut = scenario["current"]["breakeven_volume_multiple"], scenario["hsp02
 y_now, y_cut = pace_now["current"]["years_to_breakeven"], pace_now["hsp029_end_state"]["years_to_breakeven"]
 price_day = scenario["current"]["as_of_date"]
 NEEDS = "The long case needs the fees NEAR's revenue wallets receive and the gas burned to match the new NEAR the chain creates."
+# What cuts against the measured pace and the measured share: the newest 30 days of volume against the 30 before, which
+# the home page's verdict also says, and the share of new NEAR offset over the 30 days before these (tools/horizon.py).
+vol_recent, share_before = recent_change(con), offset_before(con)
+recent_clause = ("" if vol_recent is None or not growth or growth <= 0 else
+                 f", {'though' if vol_recent < 0 else 'and'} its newest 30 days are {pct(abs(vol_recent), 0)} "
+                 f"{'below' if vol_recent < 0 else 'above'} the 30 before")
+before_clause = ("" if share_before is None else
+                 f", {'down from' if share_before > dilution['offset_share'] else 'up from'} {pct(share_before)} over the "
+                 "30 days before those")
+# The price both multiples are counted at, and where it sits among the closes of its 30 days
+closes = one(f"""select min(price_usd) as low, avg(price_usd) as mean from gold.fct_market_daily
+                 where date_day > date '{price_day}' - 30 and date_day <= date '{price_day}'""")
+price_now = scenario["current"]["price_usd"]
+price_basis = (f" Both multiples are counted at NEAR's close of ${price_now:.2f} on {day(price_day)}, "
+               + ("the lowest close of those 30 days" if closes["low"] is not None and price_now <= closes["low"] * 1.0001
+                  else f"against an average close of ${closes['mean']:.2f} over those 30 days")
+               + (f"; on the NEAR the wallets received at each day's price the first is {received_multiple:.1f}×."
+                  if received_multiple else "."))
+# The author's rating, printed only in the state it was written for (tools/horizon.py)
+direction_for = sum(1 for c in by_reading["direction"] if c["stands"] == "for")
+rated = rating(dilution["offset_share"], m_now, direction_for, len(by_reading["direction"]))
+why_rated = (f"**Why {rated}.** The test that decides the case, whether revenue and burn match the new NEAR, fails, so the "
+             f"evidence does not support buying on the case today. {direction_for} of the {len(by_reading['direction'])} "
+             "tests of which way NEAR is moving support it, so the evidence does not support selling either. This is the "
+             "author's reading of the scorecard, and it is not investment advice." if rated else "")
 if dilution["offset_share"] >= 1:
     verdict = (f"**The gap has closed.** {NEEDS} Over the 30 days to {day(settled)} they came to {pct(dilution['offset_share'])} "
                "of it, so they match it. Whether that lasts turns on the price, the fee rate and NEAR's share of fees, which "
@@ -434,15 +475,42 @@ else:
         pace_line = ""
     else:
         match = (f"To match it, Intents volume has to be {m_now:.1f}× today's, " +
-                 (f"or {m_cut:.1f}× {CUT_WHEN}." if m_cut > 1 else f"and {CUT_WHEN}, today's volume would be enough ({m_cut:.1f}×)."))
+                 (f"or {m_cut:.1f}× {CUT_WHEN}." if m_cut > 1 else f"and {CUT_WHEN}, today's volume would be enough ({m_cut:.1f}×).")
+                 + price_basis)
         if growth is None or growth <= 0:
             pace_line = (f" Volume {'fell ' + pct(-growth, 0) if growth and growth < 0 else 'did not grow'} over the last year, "
                          "so at this pace the gap does not close.")
         else:
-            pace_line = (f" Volume grew {pct(growth, 0)} over the last year; at that pace, with the price and NEAR's share of "
+            pace_line = (f" Volume grew {pct(growth, 0)} over the last year{recent_clause}; at that pace, with the price and NEAR's share of "
                          f"fees unchanged, that is about {y_now:.1f} years away" + (f", or {y_cut:.1f} after the cut." if y_cut else "."))
-    verdict = (f"**Not yet.** {NEEDS} Over the 30 days to {day(settled)} they offset {pct(dilution['offset_share'])} of it. "
+    verdict = (f"**Not yet.{f' The rating is {rated}.' if rated else ''}** {NEEDS} Over the 30 days to {day(settled)} they offset "
+               f"{pct(dilution['offset_share'])} of it{before_clause}. "
                f"{match}{pace_line} That is arithmetic, not a forecast: [How far away](#how-far-away) sets out the sums.")
+# The three revenue wallets by name (registry/entities.csv), so that "received" has an address
+revenue_wallets = [f"`{w['account_id']}` ({w['role']})" for w in rows(
+    "select account_id, role from gold.dim_entity where entity = 'NEAR revenue wallets' order by account_id")]
+wallets_line = (
+    f"The revenue wallets are the {COUNT[len(revenue_wallets)]} accounts revenue.near.org names: "
+    f"{', '.join(revenue_wallets[:-1])} and {revenue_wallets[-1]}. The data here records what enters and leaves them. It does "
+    "not record who can sign for them, or any rule for what the NEAR they hold is used for, so received means held in "
+    "those accounts, not returned to holders."
+) if len(revenue_wallets) > 1 else ""
+# NEAR that already existed and reached other accounts: what treasury.near paid out over the last 365 days
+treasury = one(f"""
+    select sum(-amount_token) as paid, count(*) as transfers, min(date_day) as first_day, max(date_day) as last_day
+    from gold.fct_wallet_transfers
+    where account_id = 'treasury.near' and direction = 'out' and asset_id = 'native:near'
+      and date_day > date '{last_day}' - 365 and date_day <= date '{last_day}'""")
+created_year = one(f"""
+    select sum(minted_near) as minted, last(total_supply_near order by date_day) as supply
+    from gold.fct_supply_daily where date_day > date '{last_day}' - 365 and date_day <= date '{last_day}'""")
+treasury_line = (
+    "- The sums in this file set revenue against new NEAR only. NEAR that already existed can reach the market too: "
+    f"`treasury.near` paid out {near(treasury['paid'])} in {treasury['transfers']} transfers between "
+    f"{day(treasury['first_day'])} and {day(treasury['last_day'])}, {pct(treasury['paid'] / created_year['supply'])} of "
+    f"supply, beside the {near(created_year['minted'])} created over the 365 days to {day(last_day)}. That NEAR was counted "
+    f"as new when it was created, so it is not in the {pct(dilution['offset_share'])}; the Supply page charts the payouts."
+) if treasury["paid"] and treasury["paid"] >= 1e6 else None
 # The first objection of anyone who knows NEAR: new NEAR goes to stakers, so who is diluted?
 real = dilution["real_staking_yield_rate"]
 staking = (f"New NEAR is paid mostly to stakers: {pct(dilution['staked_share'], 0)} of supply is staked and earns "
@@ -709,6 +777,7 @@ md: list[str] = [
     "",
     verdict,
     "",
+    *([why_rated, ""] if why_rated else []),
     *([staking, ""] if staking else []),
     "## The claim",
     "",
@@ -718,6 +787,7 @@ md: list[str] = [
     f"{share_points - received_points:.1f}% burned. **The long case is that this gap closes:** NEAR Intents keeps "
     "growing, NEAR keeps a larger share of the fees charged on it, and issuance falls to 1.6% a year.",
     "",
+    *([wallets_line, ""] if wallets_line else []),
     f"On today's numbers the gap has {'closed' if dilution['offset_share'] >= 1 else 'not closed'}. Only the burned part leaves supply, so total supply grows "
     f"{pct(supply_growth, 2)} a year, and the NEAR outside the revenue wallets grows {pct(dilution['net_inflation_rate'], 2)}. "
     f"At the fee rate and the share of fees measured over those 30 days, and at NEAR's close of "
@@ -776,6 +846,7 @@ md: list[str] = [
     *([f"- {moved_note}."] if moved_note else []),
     *([f"- {bars_note}.{ots_line}"] if bars_note else []),
     *thin,
+    *([treasury_line] if treasury_line else []),
     unlock_line,
     *([lean_line] if lean_line else []),
     *([shared_line] if shared_line else []),
