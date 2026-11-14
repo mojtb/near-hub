@@ -77,7 +77,7 @@ def figure(v, unit: str, bar: bool = False) -> str:
     if unit == "share points":
         return trim(f"{v * 100:.1f}") + " points" if bar else ("+" if v >= 0 else "−") + f"{a * 100:.1f} points"
     if unit == "multiple":
-        return trim(f"{v:.1f}") + "×" if bar else f"{v:.2f}×"
+        return trim(f"{v:.1f}") + "×" if bar else ("−" if round(v, 2) < 0 else "") + f"{a:.2f}×"
     if unit == "USD":
         return usd(v, 0 if bar else 2)
     if unit == "correlation":
@@ -208,7 +208,7 @@ fee_reads = one(f"""
     )
     select count(*) as reads, count(*) filter (where gap >= {fee['threshold']}) as held, min(gap) as low, max(gap) as high from gaps""")
 thin = [
-    f"- The ETF claim is read over the last 30 days, {etf['ratio_30d']:.2f}× what the chain issued. Since its first trading day "
+    f"- The ETF claim is read over the last 30 days, {figure(etf['ratio_30d'], 'multiple')} what the chain issued. Since its first trading day "
     f"the fund has taken in {etf['ratio_all']:.2f}×, but that figure leans on its start: {pct(etf['first_week_near'] / etf['held_near'], 0)} "
     f"of the NEAR arrived in its first week, and it has handed back {near(etf['peak_near'] - etf['held_near'])} since its peak on "
     f"{day(etf['peak_day'])}.",
