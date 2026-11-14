@@ -683,8 +683,12 @@ if proof_file.exists():
     stamped = (proof[len(OTS_HEADER) + 2:len(OTS_HEADER) + 34]
                if proof.startswith(OTS_HEADER) and proof[len(OTS_HEADER) + 1:len(OTS_HEADER) + 2] == b"\x08" else None)
     if stamped == hashlib.sha256(claims_file.read_bytes()).digest():
-        ots_line = (" The claims file as submitted is timestamped (`registry/claims.csv.ots`, an OpenTimestamps proof) and the "
-                    "submitted state is tagged `submission-2026-11-14`, so a later change to a bar can be seen.")
+        # The tag submission-2026-11-14 was set on the repository before the claims changed later that day (the
+        # note printed above says what changed), so it marks the earlier claims, and the proof covers these.
+        ots_line = (" The claims file as it stands is timestamped (`registry/claims.csv.ots`, an OpenTimestamps proof). The "
+                    "tag `submission-2026-11-14` marks the repository before that day's change to the claims, so the change "
+                    "can be read with `git diff submission-2026-11-14 -- registry/claims.csv`, and a later change to a bar "
+                    "can be seen against the proof.")
     else:
         ots_line = (" `registry/claims.csv.ots` is an OpenTimestamps proof of the claims file as it stood before the last "
                     "change to it, so that change can be seen; the file as it stands now has not been stamped.")
