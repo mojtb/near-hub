@@ -3398,6 +3398,7 @@ const BQ=(()=>{const B=LC.more.bigquery||{},HUE='#7f62e0',ord=n=>{const s=['th',
    stretch, the worst one after it, the newest day) beside the chart, which names the same stretches. The question
    "How steady is the count?" on the Checks page draws the same chart with a range switch, the latest changes, and
    each test day by day. Every word and number is worked out from the data, so both follow the claims as they change.
+   Wherever a claim is named, a risk is set off by "Risk:" as in the ledger, so it never reads as an assertion.
    A file written before the history existed has none, and then neither is drawn.
    ============================================================================================ */
 const CZH=(()=>{
@@ -3512,7 +3513,7 @@ const CZH=(()=>{
     const show=px=>{const i=Math.max(i0,Math.min(i1,Math.round((x.invert(px)-T0)/DAY))),cx=X(i);
       cross.attr('x1',cx).attr('x2',cx).style('display',null);cF.attr('cx',cx).attr('cy',y(F[i])).style('display',null);cA.attr('cx',cx).attr('cy',y(-A[i])).style('display',null);
       const today=TURNS.filter(t=>t.i===i),prior=today.length?today:TURNS.filter(t=>t.i<=i&&t.i>i0).slice(-1);
-      const ch=prior.map(t=>`<small>${t.i===i?'Changed this day':`Last change, ${dY(dayAt(t.i))}`}</small>${claimOf(t.k).claim}: ${t.from==='.'?'first run, ':'now '}${t.to==='f'?'supports the case':'counts against it'}.`).join('<br>');
+      const ch=prior.map(t=>`<small>${t.i===i?'Changed this day':`Last change, ${dY(dayAt(t.i))}`}</small>${czRisk(claimOf(t.k))}${claimOf(t.k).claim}: ${t.from==='.'?'first run, ':'now '}${t.to==='f'?'supports the case':'counts against it'}.`).join('<br>');
       tip.innerHTML=`<b>${dY(dayAt(i))}</b><div class="r"><i class="k kf"></i><strong>${F[i]}</strong> support the case</div><div class="r"><i class="k ka"></i><strong>${A[i]}</strong> count against it</div>${U[i]?`<div class="r"><i class="k ku"></i><strong>${U[i]}</strong> could not run yet</div>`:''}${ch?`<div class="ch">${ch}</div>`:''}`;
       tip.hidden=false;const host=tip.offsetParent||box,hb=host.getBoundingClientRect(),bb=box.getBoundingClientRect(),ox=bb.left-hb.left,oy=bb.top-hb.top,tw=tip.offsetWidth,hw=host.clientWidth;
       let left=ox+m.l+cx+14;if(left+tw>hw)left=ox+m.l+cx-14-tw;tip.style.left=Math.max(0,left)+'px';tip.style.top=Math.min(oy+m.t+6,host.clientHeight-tip.offsetHeight-10)+'px'};
@@ -3548,12 +3549,12 @@ const CZH=(()=>{
   const turnsHtml=(i0,i1,n=5)=>{const list=TURNS.filter(t=>t.i>i0&&t.i<=i1).slice(-n).reverse(),yNow=dayAt(i1).slice(0,4);
     if(!list.length)return '<p class="czh-none">No test changed side in this stretch.</p>';
     return `<ol class="czt">${list.map(t=>{const c=claimOf(t.k),v=VAL[t.k],first=t.from==='.',d=dayAt(t.i),f=t.to==='f';
-      return `<li class="${f?'is-for-row':'is-against-row'}"><a class="czt-r" href="#${CLAIM_AT[t.k]||'library'}"><time datetime="${d}">${d.slice(0,4)===yNow?dM(d):dY(d)}</time><i class="cz-m ${f?'is-for':'is-against'}" aria-hidden="true"></i><span><strong>${c.claim}</strong><span class="s"><b>${first?'First run: ':'Now '}${f?'supports the case':'counts against the case'}</b>${barWords(c)?` · ${barWords(c)}`:''}</span></span><span class="v">${first?'first value':`was ${val(c,v[t.i-1])}`}<b>${val(c,v[t.i])}</b></span></a></li>`}).join('')}</ol>`};
+      return `<li class="${f?'is-for-row':'is-against-row'}"><a class="czt-r" href="#${CLAIM_AT[t.k]||'library'}"><time datetime="${d}">${d.slice(0,4)===yNow?dM(d):dY(d)}</time><i class="cz-m ${f?'is-for':'is-against'}" aria-hidden="true"></i><span><strong>${czRisk(c)}${c.claim}</strong><span class="s"><b>${first?'First run: ':'Now '}${f?'supports the case':'counts against the case'}</b>${barWords(c)?` · ${barWords(c)}`:''}</span></span><span class="v">${first?'first value':`was ${val(c,v[t.i-1])}`}<b>${val(c,v[t.i])}</b></span></a></li>`}).join('')}</ol>`};
   /* Each test as a lane, grouped as the case groups them, then how many times it turned. The rows are written first
      and the stretches drawn once a lane's width is known. */
   const lanesHtml=(i0,i1)=>{const P=czParts(csTested().filter(c=>S[c.claim_id])),turns=n=>n?`<b>${n}</b> ${n===1?'turn':'turns'}`:'Steady';
     return `<div class="czl-key" aria-hidden="true"><span><i class="kf"></i>Supports the case</span><span><i class="ka"></i>Counts against it</span><span><i class="ku"></i>Could not run yet</span></div>
-    <div class="czl">${P.map(p=>`<section class="czl-g"><h4>${p.title}</h4>${p.list.map(c=>`<div class="czl-r"><span class="czl-n">${c.claim}</span><span class="czl-l" data-k="${c.claim_id}"></span><span class="czl-t">${turns(turnsOf(c.claim_id,i0,i1))}</span></div>`).join('')}</section>`).join('')}
+    <div class="czl">${P.map(p=>`<section class="czl-g"><h4>${p.title}</h4>${p.list.map(c=>`<div class="czl-r"><span class="czl-n">${czRisk(c)}${c.claim}</span><span class="czl-l" data-k="${c.claim_id}"></span><span class="czl-t">${turns(turnsOf(c.claim_id,i0,i1))}</span></div>`).join('')}</section>`).join('')}
     <div class="czl-ax"><div></div></div></div>`};
   /* Where the edges between a lane's stretches are drawn. A result that stood for a day is narrower than a pixel or
      two, and drawn at a width one can see it would cover its neighbour. So every stretch gets at least LANE_MIN
@@ -3581,7 +3582,7 @@ const CZH=(()=>{
       let n=lay.runs.length-1;for(let q=0;q<lay.runs.length;q++)if(px<lay.e[q+1]){n=q;break}
       const r=lay.runs[n],i=Math.min(r.b,r.a+Math.floor((px-lay.e[n])/(lay.e[n+1]-lay.e[n])*(r.b-r.a+1))),st=S[k][i];
       const cu=l.querySelector('.cu');cu.style.left=px+'px';cu.style.display='block';
-      tip.innerHTML=`<b>${c.claim}</b><div>${dY(dayAt(i))}: ${st==='f'?'supports the case':st==='a'?'counts against it':'could not run yet'}${st!=='.'?`, ${val(c,VAL[k][i])}`:''}</div>${barWords(c)?`<div class="ch">${cap(barWords(c))}</div>`:''}`;
+      tip.innerHTML=`<b>${czRisk(c)}${c.claim}</b><div>${dY(dayAt(i))}: ${st==='f'?'supports the case':st==='a'?'counts against it':'could not run yet'}${st!=='.'?`, ${val(c,VAL[k][i])}`:''}</div>${barWords(c)?`<div class="ch">${cap(barWords(c))}</div>`:''}`;
       tip.hidden=false;const hb=box.getBoundingClientRect(),tw=tip.offsetWidth,cx=e.clientX-hb.left;
       tip.style.left=Math.max(0,Math.min(hb.width-tw,cx+14+tw>hb.width?cx-14-tw:cx+14))+'px';tip.style.top=(b.bottom-hb.top+8)+'px'});
     box.addEventListener('pointerleave',()=>{tip.hidden=true;box.querySelectorAll('.cu').forEach(c=>c.style.display='none')})};
