@@ -42,6 +42,8 @@ The multiple itself turns on NEAR's share of fees. These are the eight rows of `
 
 The growth columns count the NEAR the wallets would receive at the close of $3.62 on 9 Nov 2026, so the measured row's 2.00% differs from the 2.10% in The claim, which counts the NEAR they received at each day's price.
 
+A year of new NEAR is worth the issuance rate times NEAR's market value, so what reaches the token in a year (the fees the revenue wallets receive plus the gas burned) matches issuance when the market value is about 40× that amount at today's rate, or about 62× at 1.6%. On 9 Nov 2026 it was 198×. At today's price, then, what reaches the token has to be about 5× what it is: the 5.2× above, counted another way.
+
 All of this is arithmetic with the price, the fee rate and NEAR's share of fees held as measured on 9 Nov 2026, and not a forecast. Issuance is paid in NEAR, so its value in dollars rises with the price, while revenue is charged in dollars and does not: a higher price moves the break-even further away, and a lower one brings it closer.
 
 ## Evidence for
@@ -96,6 +98,16 @@ Because the revenue check fails, the revenue figures in this file are what NEAR'
 
 Beyond those, two figures decide the case. The share of new NEAR received by the wallets or burned, 16.1% now, has to reach 100%. At 100% the NEAR outside the wallets stops growing; total supply stops growing only if what the wallets hold is burned. The break-even multiple, 5.2× now, has to reach 1×.
 
+## What to watch
+
+What is due next, in date order, and what each means for the case.
+
+- **16 Nov 2026.** HSP-029's timelock is due to end. That does not start the cut to 1.6%, which validators must still adopt, and until the cut is in force the break-even multiple is the 5.2× for issuance as now, not the 3.3× at the end of its ramp.
+- **22 Nov 2026.** NearBlocks switches /v1 off and with it its count of distinct signers, the measure behind the claim that signers are falling. NEAR's public BigQuery dataset, which counted the same distinct signers on every one of the 680 days both sources hold, can carry the count on.
+- **30 Nov 2026.** November 2026 closes. The 8 claims that read complete months, 7 of them counting for the case today, then read the three months to 30 Nov 2026 in place of those to 31 Oct 2026.
+- **30 Dec 2026.** Sweat Wallet is due to end in its present form. Its relayer carried 25.0% of the transactions outside the batch streams over the 30 days to 11 Nov 2026, so another break in the transaction counts is likely, and it is one reason the usage claim reads signers and not transactions.
+- **No date set.** HSP-029's cut to 1.6% comes into force. Its text puts a grace period of 90 days before the first basis point comes off and then lowers the cap in a straight line over 24 months; the one precedent here, the proposal "Remove the NEAR Developer Gas Rebate", came into force on 4 Nov 2026, 124 days after its vote ended on 3 Jul 2026.
+
 ## The sample prompt's hypothesis
 
 The sample prompt for this track gives a working hypothesis to test: "cross-chain volume through NEAR Intents is a better leading indicator of real network usage than token price". It is on the scorecard as `intents_volume_leads_usage`, and it fails. The test reads 29 weekly changes, from the week of 20 Apr 2026 to the week of 2 Nov 2026 (`gold.fct_usage_lead_correlations`).
@@ -106,7 +118,7 @@ The sample prompt for this track gives a working hypothesis to test: "cross-chai
 - What would change this reading: a lead above the band once more weeks exist (97 weeks are needed to tell a correlation of 0.20 from chance), or a test on signers by application. The warehouse holds that count from 3 Apr 2026 (`gold.fct_bigquery_contract_daily`), 32 weeks so far, too few to test.
 - On the other usage claim: 62,272 accounts a day signed a transaction over the newest 30 days. The claim that signers are falling stops holding above 112,100 a day.
 
-What these sources cannot compute, so it is not on the site: daily active people (both account counts follow one game and one wallet app); who stands behind the HOT, Sweat and Kai-Ching accounts, which are named from their account ids alone; and new accounts once NearBlocks switches /v1 off on 22 November 2026.
+What these sources cannot compute, so it is not on the site: daily active people (both account counts follow one game and one wallet app); who stands behind the HOT, Sweat and Kai-Ching accounts, which are named from their account ids alone; and new accounts once NearBlocks switches /v1 off on 22 Nov 2026.
 
 The prompt names the NEAR BigQuery public dataset, and the warehouse queries it (the SQL is in `ingest/sql/bigquery/`). The chain counts on the site are NearBlocks', and BigQuery checks them day for day: over the 680 days read, the two count the same transactions on 678 and the same distinct signers on 680. BigQuery also counts accounts by contract and accounts that come back, which the Usage page charts: on 11 Nov 2026, 97.2% of the accounts that signed a function call called `game.hot.tg`, and 221 called `intents.near` (`gold.fct_bigquery_contract_daily`).
 
@@ -114,7 +126,7 @@ The prompt names the NEAR BigQuery public dataset, and the warehouse queries it 
 
 - The set was cut from 29 claims to 20 on 2026-11-11 by four rules: a claim sits on the chain the thesis argues (Intents grows, NEAR keeps more of its fees, the revenue reaches the token, supply growth slows, and the price paid) or names a risk to it; no measurement is scored twice; a claim must be able to hold and able to fail; and a claim about Intents reads three complete months together, so that one month does not decide it.
 - On 2026-11-12 one claim was added, the working hypothesis in the track's sample prompt (that Intents volume leads network usage), and the usage claim was pointed at distinct signers in place of transactions; two more came from the review of the Capital page, one for the case (dollars held in NEAR Intents are rising) and one against it (less NEAR sits in liquid staking than a year ago). The same day the security claim was pointed at the ten largest pools' share of the stake in place of the number of validator pools, because the pools that left in 60 days held under 1% of the stake.
-- The thresholds were written between 2026-11-10 and 2026-11-12 with the readings of those days in view, so they are round bars for what each claim's wording means, not predictions; why_this_threshold gives the reason for each.
+- The thresholds were written between 2026-11-10 and 2026-11-12 with the readings of those days in view, so they are round bars for what each claim's wording means, not predictions; why_this_threshold gives the reason for each. The claims file as submitted is timestamped (`registry/claims.csv.ots`, an OpenTimestamps proof) and the submitted state is tagged `submission-2026-11-14`, so a later change to a bar can be seen.
 - The ETF claim is read over the last 30 days, 0.12× what the chain issued. Since its first trading day the fund has taken in 3.86×, but that figure leans on its start: 75% of the NEAR arrived in its first week, and it has handed back 2.56M NEAR since its peak on 26 Oct 2026.
 - The share of new NEAR received by the wallets or burned is up on the 90 days before, but it has not climbed steadily: over the 270 days to 9 Nov 2026 the 30-day share moved between 7.8% and 25.5%.
 - The closest call on the list is "NEAR's application fees grew faster than any peer's over the last three complete months": measured +0.1 points against a bar of at least 0 points. If that one result reversed, the count would be 9 for and 10 against.
@@ -122,6 +134,7 @@ The prompt names the NEAR BigQuery public dataset, and the warehouse queries it 
 - Zcash is near its bar too: 17.7% of 1Click volume over three months against a bar of 20%, and 22.8% in October 2026 alone.
 - The unlock result rests on a definition. Lockups whose owners never switched transfers on held 19.35M NEAR on 11 Nov 2026, and they count as unlocked, as in NEAR Explorer. Counted as locked, the share still locked would be 1.6%, over the bar of at most 1%, and the claim would fail.
 - The count leans on results that sit close to their bars or on a definition: fee growth against peers (+0.1 points against a bar of at least 0 points), Zcash's share of 1Click volume (17.7% against a bar of at least 20%) and the share of supply still locked (0.2% against a bar of at most 1%). All three count for the case today; if all three reversed, the count would be 7 for and 12 against.
+- Most results that count for the case read the same months: 7 of the 10 read the three complete months to 31 Oct 2026, and 6 of them measure NEAR Intents. A strong or weak quarter for Intents would move those 6 together, so they are fewer independent pieces of evidence than their number suggests.
 - Intents volume and fees are NEAR's own published series. What its revenue wallets received is checked against the chain: DefiLlama's all-time figure is $9.83M and the same sum rebuilt from wallet transfers, valued as DefiLlama values it at each day's close, is $9.80M, 0.29% apart, so the two agree. DefiLlama takes its figure from NEAR's own count of the same wallets, so this confirms the count and nothing more. NEAR's own monthly revenue series says $11.69M; valued on the day each payment arrived, the wallets received $9.85M, 15.7% less, and no cause has been published.
 - Market caps are not on one supply rule: NEAR's counts nearly all of its supply, and each peer's counts what its project reports as circulating. Most of what DefiLlama counts as a chain's app fees is passed on to others. So the valuation result leans on its basis: NEAR is 1.65 times the median peer on app fees and 1.47 times on the part of fees that applications keep.
 - 38% of Intents volume in October 2026 settled confidentially. NEAR's own dashboard still gives that volume by chain and by asset, and no public record shows which account swapped what. That share is rising, so less of Intents can be checked from outside.
