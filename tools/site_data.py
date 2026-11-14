@@ -1998,6 +1998,13 @@ rivals = table(f"""
   group by 1, 2, 3, 4
   order by vol_q desc nulls last, service_id""", 0)
 
+# THE HORIZON. Years for Intents volume to reach the break-even multiple at the growth measured over the last year and
+# at three round rates, today and at the end of HSP-029's ramp. The rows and the query come from tools/horizon.py, which
+# THESIS.md reads too, so both print the same years. years_to_breakeven is null when a pace is not above zero.
+from tools.horizon import HORIZON_SQL, horizon as horizon_rows  # noqa: E402
+
+horizon = {"sql": HORIZON_SQL, "rows": [{k: clean(v, 6) for k, v in r.items()} for r in horizon_rows(con)]}
+
 # THE POOL'S HISTORY, READ FROM THE CHAIN. At each month end the intents.near contract's balances of wNEAR, the
 # stablecoins and the pool's other main assets, valued at prices from outside NEAR, beside the dashboard's value of
 # the same assets that day. The query is the one the page shows. The facts say how much of the pool the tokens read
@@ -2057,6 +2064,7 @@ pool_history = {
 }
 
 more = {
+    "horizon": horizon,
     "rivals": rivals,
     "poolHistory": pool_history,
     "venearWeeks": venear_weeks,

@@ -554,6 +554,8 @@ p{margin:0}
 .cap-meta .icn:hover,.cap-meta .icn:focus-visible{background:var(--soft);border-color:var(--line);color:var(--ink)}
 .cap-meta .icn[aria-expanded="true"]{background:var(--ink);border-color:var(--ink);color:var(--surface)}
 .cap-meta .icn.done{border-color:var(--accent);color:var(--accent)}
+/* The query button carries its name beside the icon, with a faint outline so it reads as a button before it is reached */
+.cap-meta .icn-q{display:inline-flex;align-items:center;gap:5px;width:auto;padding:0 10px 0 8px;border-color:var(--line);font-family:inherit;font-size:12.5px;font-weight:500;line-height:1;color:var(--mute);white-space:nowrap}
 /* The query opens under the line of sources. Its row grows from nothing, so the page moves once and smoothly, and the
    card settles into place as it appears. Closed, it is out of reach of the keyboard and of screen readers as well as
    out of sight. */
@@ -1250,7 +1252,7 @@ table.corr{--trk:clamp(52px,9.5vw,136px);--val:52px;--gap:12px;font-size:15px}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
 <!-- ECharts is fetched once the page has drawn: see the end of the script below -->
 <script src="shared/catalog.js?v=3fdab8d3"></script>
-<script src="shared/data.js?v=0f2ca37e"></script>
+<script src="shared/data.js?v=1b665681"></script>
 <script src="shared/charts.js?v=9d74e7aa"></script>
 <script src="shared/viz.js?v=64c3f1d5"></script>
 <script>
@@ -1782,6 +1784,21 @@ const grained=(build,{steps=['day','week','month'],start='week'}={})=>{
   view.spec=()=>specOf(now());view.steps=usable;view.start=start;
   return view;
 };
+/* THE HORIZON. Years for Intents volume to reach the break-even multiple at the growth measured over the last year and
+   at three round rates, today and after the cut: the rows of tools/horizon.py, the ones THESIS.md prints. The verdict on
+   the home page and a view of Supply's break-even question read it. `key` and `read` are worked out when first read,
+   after the governance figures exist. Null when the rows are missing, and then neither shows. */
+const HZ=(()=>{const h=LC.more.horizon;if(!h||!h.rows||!h.rows.length)return null;
+  const at=(p,s)=>h.rows.find(r=>r.pace===p&&r.scenario_id===s),m0=at('measured','current'),m1=at('measured','hsp029_end_state');if(!m0||m0.growth_a_year==null)return null;
+  const g=m0.growth_a_year,PACE=['measured','plus_25_pct','plus_50_pct','plus_100_pct'],x=r=>r.breakeven_volume_multiple.toFixed(1)+'×';
+  const yrs=r=>!r?'–':r.breakeven_volume_multiple<=1?'Already':r.years_to_breakeven==null?'Not reached':r.years_to_breakeven.toFixed(1);
+  const pace=r=>r.pace==='measured'?`${r.growth_a_year<0?'−':''}${fmt.pct(Math.abs(r.growth_a_year),0)}, as measured`:fmt.pct(r.growth_a_year,0);
+  return{sql:h.sql,rows:h.rows,at,growth:g,m0,m1,
+    get key(){return m0.breakeven_volume_multiple<=1?"Today's volume already breaks even":g<=0?'Volume is not growing, so at the measured pace it does not break even'
+      :`About ${yrs(m0)} years at the measured ${fmt.pct(g,0)} a year${!m1?'':m1.breakeven_volume_multiple<=1?', at once after the cut':`, ${yrs(m1)} after the cut`}`},
+    get read(){return `Years for Intents volume to grow to the break-even multiple, ${x(m0)} today's${m1?`, or ${x(m1)} after the cut to ${fmt.pct(GOV.capEnd,1)}, ${GOV.cutLive?'whose ramp has begun':'voted and not in force'}`:''}, at the growth measured over the last year (the 30 days to ${dm(m0.as_of_date)} against the same 30 days a year earlier) and at three round rates. The price, the fee rate and NEAR's share of fees are held as measured, so this is arithmetic, not a forecast.`},
+    exact:()=>({cols:Object.keys(h.rows[0]),rows:h.rows.map(r=>Object.values(r))}),
+    view:el=>{el.innerHTML=`<div class="tw"><table class="t"><thead><tr><th>Growth a year</th><th class="num">Years today</th><th class="num">Years at ${fmt.pct(GOV.capEnd,1)}</th></tr></thead><tbody>${PACE.map(p=>{const a=at(p,'current'),b=at(p,'hsp029_end_state'),r=a||b;return r?`<tr><td>${pace(r)}</td><td class="num">${yrs(a)}</td><td class="num">${yrs(b)}</td></tr>`:''}).join('')}</tbody></table></div>`}}})();
 /* ============================================================================================
    THE SUPPLY PAGE'S FIGURES. Every number its headlines, cards, gauges and readings print is worked
    out here from the exported series, so they agree with each other and with the charts. The 30-day
@@ -3444,7 +3461,8 @@ order by 1;`,
     {id:'scenarios',label:'Break-even by scenario',key:SUP.key.scenarios,form:'Ranked bars',read:SUP.read.scenarios,
      table:'gold.fct_deflation_scenarios',sql:'-- The break-even volume, as a multiple of the last 30 days\' volume, for each issuance rate and share of fees\nselect scenario_id, capture_case as fee_share_case, capture_rate as share_of_fees, breakeven_volume_multiple\nfrom gold.fct_deflation_scenarios\norder by scenario_id, capture_rate;',src:['nearblocks','rpc','revenue','defillama','coinmetrics'],
      exact:()=>({cols:['scenario_id','fee_share_case','share_of_fees','breakeven_volume_multiple'],rows:scenRows.map(s=>[s.scenario_id,s.capture_case,s.capture_rate,s.breakeven_volume_multiple])}),
-     view:el=>hbars(el,scenRows.map(s=>({label:`${s.scenario_id==='current'?'Today':'At 1.6%'}: ${fmt.pct(s.capture_rate,s.capture_case==='measured'?1:0)} of fees${s.capture_case==='measured'?', as now':''}`,value:s.breakeven_volume_multiple,color:s.scenario_id==='current'?'#d97f2e':'#00a874'})),{fmtV:v=>v.toFixed(2)+'×',labelWidth:230})}]},
+     view:el=>hbars(el,scenRows.map(s=>({label:`${s.scenario_id==='current'?'Today':'At 1.6%'}: ${fmt.pct(s.capture_rate,s.capture_case==='measured'?1:0)} of fees${s.capture_case==='measured'?', as now':''}`,value:s.breakeven_volume_multiple,color:s.scenario_id==='current'?'#d97f2e':'#00a874'})),{fmtV:v=>v.toFixed(2)+'×',labelWidth:230})},
+    ...(HZ?[{id:'horizon',label:'Years to break even',key:HZ.key,form:'Table',read:HZ.read,table:'gold.fct_deflation_scenarios, gold.fct_intents_daily',sql:HZ.sql,src:['nearblocks','rpc','revenue','defillama','coinmetrics'],exact:HZ.exact,view:HZ.view}]:[])]},
    'unlocks':{layout:'stack',first:{id:'locked',label:'Still locked',key:SUP.key.locked},more:[
     {id:'map',label:'Where the supply sits',key:SUP.key.map,form:'Ranked bars',read:SUP.read.map,table:'gold.fct_supply_daily',sql:'',src:['rpc','nearblocks','defillama','fastnear'],view:SUP.view.map}]},
    'tvl-map':{layout:'stack',first:{id:'once',label:"From DefiLlama's list to one count",key:CPL.key.once},more:[
@@ -4366,7 +4384,7 @@ const readHtml=(t,terms)=>{const seen=new Set();let inA=0;
 /* A reading with the sources and query of the chart above it. The key names the figure that its ids and buttons answer to. */
 function caption(a,key,c,{read,src,list}){
   return `<div class="cap"><p class="read" id="rd-${key}"${read?'':' hidden'}>${readHtml(read,true)}</p>
-    <div class="cap-meta"><span id="sr-${key}">${VZ.sources(src)}</span><span class="a-acts"><button class="icn" type="button" data-act="sql" data-id="${key}" aria-controls="qx-${key}" aria-expanded="false" aria-label="Show the query" data-tip="Show the query">${ICON_SQL}</button><button class="icn" type="button" data-act="link" data-a="${a.id}" data-c="${c?c.id:''}" aria-label="Copy a link to this chart" data-tip="Copy a link to this chart">${ICON_LINK}</button></span></div>
+    <div class="cap-meta"><span id="sr-${key}">${VZ.sources(src)}</span><span class="a-acts"><button class="icn icn-q" type="button" data-act="sql" data-id="${key}" aria-controls="qx-${key}" aria-expanded="false" aria-label="Show the query" data-tip="Show the query">${ICON_SQL}<span class="icn-w" aria-hidden="true">Query</span></button><button class="icn" type="button" data-act="link" data-a="${a.id}" data-c="${c?c.id:''}" aria-label="Copy a link to this chart" data-tip="Copy a link to this chart">${ICON_LINK}</button></span></div>
     <div class="qx" id="qx-${key}"><div class="qx-in"><div class="qx-box"><div class="qx-h"><b>Query</b><span class="qx-tabs">${sqlTabs(sqlOf(list))}</span><button class="icn" type="button" data-act="copysql" data-id="${key}" aria-label="Copy the query" data-tip="Copy the query">${ICON_COPY}</button></div><pre class="q-sql" id="sql-${key}">${sqlLines(sqlOf(list))}</pre></div></div></div></div>`;
 }
 /* i and n say where the chart stands among the question's charts; they are left out where charts sit side by side */
@@ -4490,17 +4508,27 @@ const czVd=p=>{const n=p.n,f=p.nFor;
   if(f===n)return n===1?'The one result supports it':n===2?'Both results support it':`All ${n} results support it`;
   if(!f)return n===1?'The one result counts against it':n===2?'Both results count against it':`All ${n} results count against it`;
   return `${f} of ${n} results ${f===1?'supports':'support'} it`};
-/* The answer, in sentences built from the figures the pages print. Each clause has a wording for the opposite state,
-   so the paragraph stays true when the data moves. */
-const czVerdict=P=>{const s=[],off=DN.offset_share,all=BILL.fees/BILL.iss,g=P.find(p=>p.key==='growth');
-  s.push(`${off<1?`The gap has not closed: fees received and gas burned offset ${fmt.pct(off,1)} of new NEAR`:'The gap has closed: fees received and gas burned offset all of the new NEAR'}, and every fee charged on Intents would cover ${all<1?fmt.pct(all,0):'it'}.`);
-  if(g){const every=g.nFor===g.n,down=VOL30!=null&&VOL30<0;
-    s.push(`Intents passes ${every?'every growth test':g.nFor?`${czWord(g.nFor)} of ${czWord(g.n)} growth tests`:`none of its ${czWord(g.n)} growth tests`}${VOL30==null?'':`${every&&down?', though':', and'} its newest 30 days of volume are ${fmt.pct(Math.abs(VOL30),0)} ${down?'below':'above'} the 30 before`}.`)}
-  const c=TH.scorecard.find(x=>x.claim_id==='a_doubling_of_volume_reaches_deflation_after_the_cut');
-  if(c&&c.value!=null){const ok=c.stands==='for';
-    s.push(`After the cut to ${fmt.pct(GOV.capEnd,1)}, ${GOV.cutLive?'whose ramp has begun':'voted and not in force'}, volume would ${ok?'':'still '}need to be ${c.value.toFixed(1)}× today's${ok?`, inside the bar of ${scNum(c.threshold,c.unit,true)}`:''}: the test that decides the case ${ok?'supports it':'counts against it'}.`)}
+/* The answer, in sentences built from the figures the pages print: the verdict first, then what it rests on and how
+   far away it is at the measured pace. Each clause has a wording for the opposite state, so the paragraph stays true
+   when the data moves: the gap closed (no years), volume not growing (no years), a multiple at or under 1. */
+const czVerdict=P=>{const s=[],off=DN.offset_share,closed=off>=1,x0=scen('current','measured'),x1=scen('hsp029_end_state','measured');
+  const m0=x0?x0.breakeven_volume_multiple:null,m1=x1?x1.breakeven_volume_multiple:null,cut=`the cut of issuance to ${fmt.pct(GOV.capEnd,1)}, ${GOV.cutLive?'whose ramp has begun':'voted and not in force'}`;
+  s.push(`<b>${closed?'The gap has closed.':'Not yet.'}</b> The long case needs the fees NEAR's revenue wallets receive and the gas burned to match the new NEAR the chain creates.`);
+  s.push(closed?`Today they offset all of it: ${fmt.pct(off,1)}.`:`Today they offset ${fmt.pct(off,1)} of it.`);
+  if(!closed&&m0!=null)s.push(m0>1?`To match it, Intents volume has to be ${m0.toFixed(1)}× today's${m1==null?'':m1>1?`, or ${m1.toFixed(1)}× after ${cut}`:`, and today's volume would do after ${cut}`}.`
+    :`At the ${dm(x0.as_of_date)} price and NEAR's share of fees, today's Intents volume would already match it.`);
+  if(HZ){const g=HZ.growth,down=VOL30!=null&&VOL30<0,y=r=>r&&r.years_to_breakeven!=null?r.years_to_breakeven.toFixed(1):null;
+    const recent=VOL30==null?'':`, ${(g>0)===!down?'and':'though'} its newest 30 days are ${fmt.pct(Math.abs(VOL30),0)} ${down?'below':'above'} the 30 before`;
+    const grew=`Volume ${g>0?`grew ${fmt.pct(g,0)}`:g<0?`fell ${fmt.pct(-g,0)}`:'did not grow'} over the last year${recent}`;
+    if(closed||m0==null||m0<=1)s.push(grew+'.');
+    else if(g<=0)s.push(`${grew}. At the yearly pace volume is not growing, so the gap does not close.`);
+    else if(y(HZ.m0))s.push(`${grew}. At the yearly pace, with the price and NEAR's share of fees unchanged, matching it is about ${y(HZ.m0)} years away${m1!=null&&m1>1&&y(HZ.m1)?`, or ${y(HZ.m1)} after the cut`:m1!=null&&m1<=1?', or as soon as the cut is in force':''}. That is arithmetic, not a forecast.`)}
   s.push('The count of results is not a vote: they do not weigh the same.');
   return s.join(' ')};
+/* The objection a staker raises first: new NEAR is paid to stakers, so it dilutes only NEAR that is not staked. The
+   staked share is the mean over the same 30 days as the yields, so it can differ by a point from the newest epoch's. */
+const czStake=()=>{const k=DN.staked_share,n=DN.nominal_staking_yield_rate,r=DN.real_staking_yield_rate;if(k==null||n==null||r==null)return '';
+  return `New NEAR is paid mostly to stakers: over the 30 days to ${dm(DN.date_day)}, ${fmt.pct(k,0)} of supply was staked and earned ${fmt.pct(n,1)} a year before pools' fees, ${r>0?`${fmt.pct(r,1)} after dilution, so the dilution falls on NEAR that is not staked`:'which does not keep up with dilution, so stakers lose share too'}.`};
 /* Where the case stands, in sentences that stay grammatical for any outcome */
 const czLede=P=>{
   const links=P.filter(p=>p.no),others=P.filter(p=>!p.no),full=links.filter(p=>p.nFor===p.n),hit=links.filter(p=>p.nFor<p.n),nL=links.length;
@@ -4551,6 +4579,11 @@ const czSpark=c=>{const f=CASE_TREND[c.claim_id];if(!f)return '';
    passes its risk bar. The bar follows in the claim's own unit: "over" and "under" follow the test's comparison, so a
    risk tested with "at most" reads the other way round, and a bar of zero is any rise or any fall. */
 const czState=c=>c.stands==='for'?'Supports the case':'Counts against the case';
+/* Whether the sentence is true, said before what it means for the case, so a claim that failed never stands alone as
+   an assertion: a claim for the case holds or does not; a risk, set off by "Risk:", is true today or not. */
+const czRisk=c=>c.side==='bear'?'Risk: ':'';
+const czResult=c=>c.side==='bear'?(c.status==='holds'?'True today':'Not true today'):(c.status==='holds'?'Holds':'Does not hold');
+const czLabel=c=>`${czResult(c)}, so it ${czState(c).toLowerCase()}`;
 const czBar=c=>{const up=c.comparison!=='<=',zero=!c.threshold&&(c.unit==='rate'||c.unit==='share points');
   if(c.side==='bear')return zero?`risk bar: any ${up?'rise':'fall'}`:`${(c.status==='holds')===up?'over':'under'} the risk bar of ${scNum(c.threshold,c.unit,true)}`;
   return `bar: ${zero?`any ${up?'rise':'fall'}`:csBarWords(c)}`};
@@ -4596,7 +4629,7 @@ const CLAIM_SPAN={
 const czSpan=c=>c.as_of_date?(CLAIM_SPAN[c.claim_id]||(d=>`On ${dm(d)}`))(c.as_of_date):'';
 /* A result as one row: its mark, the claim, how it came out and over what time, its trend and its number */
 const czCls=c=>c.stands==='for'?'is-for':'is-against';
-const czIn=c=>`<i class="cz-m ${czCls(c)}" aria-hidden="true"></i><strong>${c.claim}</strong><small><b>${czState(c)}</b> · ${czBar(c)}${csNear(c)?(c.side==='bear'?`, by ${csNearWords(c).replace(/ (below|above) its bar$/,'')}`:`, ${csNearWords(c)}`):''}${MKT.claimNote[c.claim_id]?`: ${MKT.claimNote[c.claim_id]}`:''}${c.pillar==='watch'?'<em class="cz-tag">tripwire</em>':''}${czSpan(c)?`<span class="cz-w">${czSpan(c)}</span>`:''}${CLAIM_NOTE[c.claim_id]&&czTry(CLAIM_NOTE[c.claim_id],c)?`<span class="cz-n">${czTry(CLAIM_NOTE[c.claim_id],c)}</span>`:''}</small>${czSpark(c)}<span class="cz-v">${scNum(c.value,c.unit)}</span>`;
+const czIn=c=>`<i class="cz-m ${czCls(c)}" aria-hidden="true"></i><strong>${czRisk(c)}${c.claim}</strong><small><b>${czLabel(c)}</b> · ${czBar(c)}${csNear(c)?(c.side==='bear'?`, by ${csNearWords(c).replace(/ (below|above) its bar$/,'')}`:`, ${csNearWords(c)}`):''}${MKT.claimNote[c.claim_id]?`: ${MKT.claimNote[c.claim_id]}`:''}${c.pillar==='watch'?'<em class="cz-tag">tripwire</em>':''}${czSpan(c)?`<span class="cz-w">${czSpan(c)}</span>`:''}${CLAIM_NOTE[c.claim_id]&&czTry(CLAIM_NOTE[c.claim_id],c)?`<span class="cz-n">${czTry(CLAIM_NOTE[c.claim_id],c)}</span>`:''}</small>${czSpark(c)}<span class="cz-v">${scNum(c.value,c.unit)}</span>`;
 const czRow=c=>`<li><a class="cz-r ${czCls(c)}" href="#${CLAIM_AT[c.claim_id]||'library'}" data-i="${c.claim_id}">${czIn(c)}</a></li>`;
 const czSection=T=>{
   const P=czParts(T),nF=T.filter(c=>c.stands==='for').length,nA=T.length-nF;
@@ -4609,6 +4642,7 @@ const czSection=T=>{
   return `<section class="case-sec" aria-labelledby="case-h">
     <div class="sec-head"><h2 id="case-h">The case so far</h2><span class="cz-tally"><span><i class="cz-m is-for" aria-hidden="true"></i><b>${nF}</b> ${nF===1?'result supports':'results support'} the long case</span><span><i class="cz-m is-against" aria-hidden="true"></i><b>${nA}</b> ${nA===1?'counts':'count'} against it</span></span></div>
     <p class="cz-lede">${czVerdict(P)}</p>
+    ${czTry(czStake)?`<p class="cz-sub cz-stake">${czTry(czStake)}</p>`:''}
     <p class="cz-sub">${czLede(P)}</p>
     <div class="card cz" id="cz">
       <ol class="cz-rail" style="--n:${P.length}" aria-label="The parts of the long case, in order">${rail}</ol>
@@ -4627,7 +4661,7 @@ const czWire=()=>{
   let cur=null;
   const lite=id=>{if(id===cur)return;[cur,id].forEach((x,k)=>{if(!x)return;const r=rowOf(x),m=markOf(x);if(r)r.classList.toggle('lit',!!k);if(m)m.classList.toggle('lit',!!k)});cur=id};
   const say=m=>{const c=all.get(m.dataset.i);if(!c){tip.hidden=true;return}
-    tip.innerHTML=`<b>${c.claim}</b><span>${scNum(c.value,c.unit)}: ${czState(c).toLowerCase()}, ${czBar(c)}</span>`;
+    tip.innerHTML=`<b>${czRisk(c)}${c.claim}</b><span>${scNum(c.value,c.unit)}: ${czLabel(c).toLowerCase()}, ${czBar(c)}</span>`;
     tip.hidden=false;const fb=box.getBoundingClientRect(),mb=m.getBoundingClientRect(),w=tip.offsetWidth;
     tip.style.left=Math.max(w/2+8,Math.min(fb.width-w/2-8,mb.left+mb.width/2-fb.left))+'px';tip.style.top=(mb.top-fb.top)+'px'};
   const open=el=>{el.scrollIntoView({behavior:still?'auto':'smooth',block:'nearest'});el.classList.remove('flash');void el.offsetWidth;el.classList.add('flash')};
@@ -4766,8 +4800,10 @@ function drawGauge(el,g){
 }
 const mountReading=s=>{const gs=gaugesOf(s.id);main.querySelectorAll('.gz-i').forEach(el=>{const g=gs[+el.dataset.g];if(g&&!g.parts)cleanup.push(drawGauge(el,g))})};
 
-/* One line under every page title says how fresh the page is */
-const ASOF_LINE=`Data through ${fmt.date(LC.asOf)}. Fees and revenue are final to ${dm(LC.windows.fees)}. NEAR's dashboard was last read on ${dm(LC.windows.duneRead)}.`;
+/* One line under every page title says how fresh the page is. While daily collection is on hold the data is a fixed
+   snapshot, and this line and the Sources page say so. Set ON_HOLD to false when collection resumes. */
+const ON_HOLD=true;
+const ASOF_LINE=`Data through ${fmt.date(LC.asOf)}. Fees and revenue are final to ${dm(LC.windows.fees)}. NEAR's dashboard was last read on ${dm(LC.windows.duneRead)}.${ON_HOLD?' This is a fixed snapshot: daily collection is on hold for now.':''}`;
 /* The terms a reader needs before the first chart of a subject, one entry each, in fixed words that hold no figure that moves.
    `t` is the entries as [term, meaning]; `note` is a sentence that holds for every figure on the page. */
 const TERMS={
@@ -4870,16 +4906,16 @@ const V={
         <p class="hero-kick"><b>The Long Case</b><span>An investment case for NEAR, tested claim by claim</span></p>
         <h1>NEAR created <span class="h-n h-iss">${fmt.usd(hIss)}</span> of new tokens in 30 days. <span class="h-b">Its revenue wallets received <span class="h-n h-kept">${fmt.usd(hRec)}</span>${hClosed?', more than that':''}.</span></h1>
         <div class="gapbar"><div class="gb-track" role="img" aria-label="To one scale: ${fmt.usd(hRec)} received beside ${fmt.usd(hIss)} created in the 30 days to ${dm(DN.date_day)}"><i style="width:${hBar}%"></i></div><div class="gb-key" style="--k:${hBar}%" aria-hidden="true"><span class="k">Received</span><span class="g">${hClosed?'':'the gap'}</span></div></div>
-        <p class="lede">The 30 days to ${dm(DN.date_day)}: new NEAR at each day's price, beside what fees on <span class="tm" tabindex="0" data-tm="intents">NEAR Intents</span> sent to NEAR's <span class="tm" tabindex="0" data-tm="wallets">revenue wallets</span>. ${hClosed?'On these 30 days the gap is closed.':'The long case is that this gap closes.'} Below is the evidence, for and against.</p>
+        <p class="lede">The 30 days to ${dm(DN.date_day)}: new NEAR at each day's price, beside what fees on <span class="tm" tabindex="0" data-tm="intents">NEAR Intents</span> sent to NEAR's <span class="tm" tabindex="0" data-tm="wallets">revenue wallets</span>. ${hClosed?'On these 30 days the gap is closed.':'The long case is that this gap closes. It has not closed yet.'} Below is the evidence, for and against.</p>
         <div class="hero-cta"><button type="button" class="hbtn pri" data-go="case">Read the case${svg('<path d="M12 5v14M6 13l6 6 6-6"/>',17)}</button><a class="hbtn alt" href="docs/">Browse the data${ARROW}</a></div>
       </div>
       <aside class="hfig" aria-labelledby="hfig-h">
         <h2 class="hfig-h" id="hfig-h">Four figures the case turns on</h2>
         <div class="stats">
-          <a class="stat" href="#a-issuance-share"><b>${fmt.pct(DN.offset_share,1)}</b><span><strong>Issuance offset</strong>of the new NEAR was received by the revenue wallets or burned, counted in NEAR over the 30 days to ${dm(DN.date_day)}</span></a>
+          <a class="stat" href="#a-issuance-share"><b>${fmt.pct(DN.offset_share,1)}</b><span><strong>Issuance offset</strong>of the NEAR created in the 30 days to ${dm(DN.date_day)}: ${SHARE.R.toFixed(1)}% received by NEAR's wallets, ${SHARE.B.toFixed(1)}% burned, counted in NEAR</span></a>
           <a class="stat" href="#a-burn"><b>${fmt.signedPct(DN.net_inflation_rate)}</b><span><strong>Net new supply</strong>a year: growth of the NEAR outside the revenue wallets, 30 days to ${dm(TH.settled)}; total supply grows ${fmt.pct(SHARE.total,2)}</span></a>
           <a class="stat" href="#a-revenue-drivers"><b>${fmt.pct(QR.now.share,1)}</b><span><strong>NEAR's share of fees</strong>of the fees on Intents received by NEAR's wallets over ${qShort(QR.now)}, against ${fmt.pct(QR.then.share,1)} over ${qShort(QR.then)}</span></a>
-          <a class="stat" href="#a-net-issuance--scenarios"><b>${sc0.breakeven_volume_multiple.toFixed(1)}×</b><span><strong>Volume to break even</strong>${sc0.breakeven_volume_multiple<=1?"today's Intents volume already covers issuance":"today's Intents volume for the wallets to receive as much NEAR as is created"}, at the ${dm(sc0.as_of_date)} price and the last 30 days' share of fees (${fmt.pct(sc0.capture_rate,1)}); ${sc1.breakeven_volume_multiple.toFixed(1)}× after the cut to ${fmt.pct(GOV.capEnd,1)}${GOV.cutLive?', where the ramp ends':', voted and not in force'}</span></a>
+          <a class="stat" href="#a-net-issuance--scenarios"><b>${sc0.breakeven_volume_multiple.toFixed(1)}×</b><span><strong>Volume to break even</strong>${sc0.breakeven_volume_multiple<=1?"today's Intents volume already covers issuance":"today's Intents volume for the wallets to receive as much NEAR as is created"} at the ${dm(sc0.as_of_date)} price; ${BILL.mult.toFixed(1)}× on the NEAR the wallets received over the 30 days; ${sc1.breakeven_volume_multiple.toFixed(1)}× after the cut to ${fmt.pct(GOV.capEnd,1)}${GOV.cutLive?', where the ramp ends':', voted and not in force'}</span></a>
         </div>
         <button type="button" class="hfig-sc" data-go="case"><span class="sc-bar" aria-hidden="true"><i class="sc-for" style="flex:${hFor}"></i><i class="sc-con" style="flex:${hAgainst}"></i></span><span class="sc-t">On the scorecard, <b>${hFor}</b> ${hFor===1?'result supports':'results support'} the long case and <b>${hAgainst}</b> ${hAgainst===1?'counts':'count'} against it</span>${svg('<path d="M12 5v14M6 13l6 6 6-6"/>',16)}</button>
       </aside>
@@ -4993,7 +5029,7 @@ const V={
   const relOf=id=>rel.map(s=>s.plottedIds.includes(id)?'on':s.behindIds.includes(id)?'behind':'');
   const nRead=k=>ids.filter(id=>srcRead(id)===k).length,off=nRead('request')+nRead('hand');
   const gs=[
-   {t:'Sources behind this site',v:String(ids.length),s:`${nRead('script')} are collected every night${off?`, ${numWord(off)} on request or by hand`:''}`,parts:[['Collected every night',nRead('script'),'#2fe0a0'],['Read on request',nRead('request'),'#e8954a'],['Read by hand',nRead('hand'),'#8b9693']]},
+   {t:'Sources behind this site',v:String(ids.length),s:ON_HOLD?`${nRead('script')} are collected by a daily run, on hold for now${off?`; ${numWord(off)} are read on request or by hand`:''}`:`${nRead('script')} are collected every night${off?`, ${numWord(off)} on request or by hand`:''}`,parts:[[ON_HOLD?'Daily run, on hold':'Collected every night',nRead('script'),'#2fe0a0'],['Read on request',nRead('request'),'#e8954a'],['Read by hand',nRead('hand'),'#8b9693']]},
    {t:'Comparisons between sources that agree',to:'a-ledger',v:`${R.agree} of ${R.total}`,s:`${R.independent_agree} of them between independent sources`,parts:[['Independent, agree',R.independent_agree,'#2fe0a0'],['Same upstream, agree',R.same_upstream_agree,'#8b9693'],['Differ',R.differs,'#ef7563']]}];
   const also=`<dl><div><dt>Data through</dt><dd>${fmt.date(LC.asOf)}</dd></div></dl><a class="gz-case" href="#s-quality"><span>How they are checked</span><b class="open">${subj('quality').name}</b></a><a class="gz-case" href="docs/" style="margin-left:0"><span>Data dictionary</span><b class="open">Every table and field</b></a>`;
   const row=id=>{const s=VZ.sourceInfo(id),info=LC.lineage.sources[id]||{},u=use[id]||{n:0,by:{}},r=relOf(id),f=FR_BY.find(g=>g.id===id),w=f?frWorst(f):null;
@@ -5008,7 +5044,7 @@ const V={
     <div class="sl-fresh">${f?`<span class="stamp ${w[0]}">${dm(f.oldest)}</span>`:`<span class="sl-none">${srcRead(id)==='hand'?'Dated by hand':'No date'}</span>`}</div>
     <div class="sl-links">${id==='registry'?'':`<a class="icn" href="${s.url}" target="_blank" rel="noopener" aria-label="Open the site of ${esc(s.name)}" data-tip="Open its site">${ICON_OUT}</a>`}${info.terms?`<a class="icn" href="${info.terms}" target="_blank" rel="noopener" aria-label="Read the terms of ${esc(s.name)}" data-tip="Read its terms">${ICON_TERMS}</a>`:''}</div>
    </article>`};
-  main.innerHTML=`${mtHero('Sources',`Every number on this site comes from one of ${ids.length} public sources. The data is collected every night; this site shows the snapshot of ${dm(LC.pinned)}.`,gs,also)}
+  main.innerHTML=`${mtHero('Sources',`Every number on this site comes from one of ${ids.length} public sources${ON_HOLD?`, as read for the snapshot of ${dm(LC.pinned)}.`:`. The data is collected every night; this site shows the snapshot of ${dm(LC.pinned)}.`}`,gs,also)}
   <div class="sheet"><div class="wrap" style="padding-bottom:64px">
    <div class="sec-head"><h2>What reaches each subject</h2><span>Select a logo or a subject to trace its lines</span></div>
    <div class="mapcard" id="src-map"></div>
