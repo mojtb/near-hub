@@ -1402,12 +1402,12 @@ table.corr{--trk:clamp(52px,9.5vw,136px);--val:52px;--gap:12px;font-size:15px}
   </div>
 </div></header>
 <main id="main" aria-busy="true"><section class="night boot" aria-label="Loading"><div class="wrap hero"><div class="hero-top"><div><span class="bk bk-kick"></span><span class="bk bk-h"></span><span class="bk bk-h"></span><span class="bk bk-h short"></span><span class="bk bk-bar"></span><span class="bk bk-l"></span><span class="bk bk-l"></span><span class="bk bk-l short"></span><span class="bk bk-btns"><i></i><i></i></span></div><span class="bk bk-panel"></span></div><p class="boot-slow">Still loading. On a slow connection the first visit takes a while; after that the page opens quickly.</p></div></section></main>
-<footer class="end"><div class="wrap"><div class="end-top"><div class="end-id"><a class="end-brand" href="#overview"><svg width="24" height="24" viewBox="0 0 32 32" aria-hidden="true"><use href="#lc-mark"/></svg><span><span class="brand-q">NEAR</span> Hub</span></a><p>Home of The Long Case, an investment case for NEAR tested claim by claim against public data. Each chart shows the query behind it.</p><a class="end-data" href="#s-quality" title="How far each number can be trusted"><i aria-hidden="true"></i><span>Data through <b data-asof>11 Nov 2026</b></span></a></div><nav class="end-nav" id="endnav" aria-label="Site index"></nav></div><div class="end-base"><p class="end-ind">Independent project, not affiliated with the NEAR Foundation. The author may hold NEAR and may be paid in NEAR for this work. Not investment advice.</p><button type="button" class="end-up" id="end-up">Back to top<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5"/><path d="m6 11 6-6 6 6"/></svg></button></div></div></footer>
+<footer class="end"><div class="wrap"><div class="end-top"><div class="end-id"><a class="end-brand" href="#overview"><svg width="24" height="24" viewBox="0 0 32 32" aria-hidden="true"><use href="#lc-mark"/></svg><span><span class="brand-q">NEAR</span> Hub</span></a><p>Home of The Long Case, an investment case for NEAR tested claim by claim against public data. Each chart shows the query behind it.</p><a class="end-data" href="#s-quality" title="How far each number can be trusted"><i aria-hidden="true"></i><span>Data through <b data-asof>13 Nov 2026</b></span></a></div><nav class="end-nav" id="endnav" aria-label="Site index"></nav></div><div class="end-base"><p class="end-ind">Independent project, not affiliated with the NEAR Foundation. The author may hold NEAR and may be paid in NEAR for this work. Not investment advice.</p><button type="button" class="end-up" id="end-up">Back to top<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5"/><path d="m6 11 6-6 6 6"/></svg></button></div></div></footer>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
 <!-- ECharts is fetched once the page has drawn: see the end of the script below -->
-<script src="shared/catalog.js?v=a0e3c5f4"></script>
-<script src="shared/data.js?v=1d5c130b"></script>
+<script src="shared/catalog.js?v=2daf0ae6"></script>
+<script src="shared/data.js?v=39950c1e"></script>
 <script src="shared/charts.js?v=9d74e7aa"></script>
 <script src="shared/viz.js?v=6238b9d1"></script>
 <script>
@@ -1958,7 +1958,7 @@ const HZ=(()=>{const h=LC.more.horizon;if(!h||!h.rows||!h.rows.length)return nul
    THE SUPPLY PAGE'S FIGURES. Every number its headlines, cards, gauges and readings print is worked
    out here from the exported series, so they agree with each other and with the charts. The 30-day
    figures are held at the settled day (`set`), because the NEAR the revenue wallets received can
-   still change on the two newest days; levels and the 12-month figures run to the newest day (`day`).
+   still change on the three newest days; levels and the 12-month figures run to the newest day (`day`).
    ============================================================================================ */
 const SUP=(()=>{
   const D=LC.daily,n=D.d.length-1,M=LC.more,day=D.d[n],set=DN.date_day,sN=D.d.indexOf(set),yr=day.slice(0,4);
@@ -2663,7 +2663,7 @@ order by 1;`;
   ans.rerating=[times(rNow),`the median peer's multiple on app fees on ${dm(set)}; ${times(ratio[iMin])} on ${dm(X.d[iMin])}`];
   key.rerate=`NEAR ${fmt.int(X.near[m])}×, the median peer ${fmt.int(X.peer[m])}×`;
   sqlFor.rerate=(g,x,to)=>`-- Market cap over a year of app fees (the 30 days to each day, times 365/30): NEAR, and the median of
--- the six other chains. A week or a month takes its last day. The newest two days are provisional
+-- the six other chains. A week or a month takes its last day. The newest three days are provisional
 -- (is_provisional), because their fees can still change.
 with days as (
   select date_day,

@@ -104,7 +104,9 @@ vars:
   # A day's Intents fee and revenue figures can change until they are read this many nights after the day ended.
   # Measured on 2026-11-05 from every snapshot; see docs/audits/DATA_AUDIT_2026-11-05.md, finding 10. If you change it, change
   # the descriptions of is_fee_revenue_provisional on fct_intents_daily and fct_peer_daily, which state the number.
-  intents_fee_settle_nights: 3
+  # Raised from 3 to 4 on 2026-11-14: DefiLlama's NEAR Intents dailyFees for 2026-11-09 read $263,740 on the third night
+  # and $263,808 on the fourth (+0.026%), so the two settle tests failed from the 2026-11-13 snapshot on.
+  intents_fee_settle_nights: 4
   # Percent of the larger price. When 1Click and Rhea price a token this far apart, fct_wallet_holdings leaves its value empty.
   # On 2026-11-01 to 11-05 two of the 26 tokens both price passed this, and the next largest gap was 10.7%.
   price_disagreement_pct: 20

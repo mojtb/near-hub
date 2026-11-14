@@ -1901,3 +1901,9 @@ snapshot_date,token,contract,price_near,token_supply,delegated_near,read_from
 2026-11-12,LiNEAR,linear-protocol.near,1.430808,8924125.592458,12768711.516755,archival
 2026-11-12,rNEAR,lst.rhealab.near,1.068923,17595262.063545,18807988.735596,archival
 2026-11-12,stNEAR,meta-pool.near,1.514785,14260527.37399,21601636.293369,archival
+2026-11-13,LiNEAR,linear-protocol.near,1.431005,8676374.499849,12415941.676712,archival
+2026-11-13,rNEAR,lst.rhealab.near,1.069074,17600796.523677,18816559.822775,archival
+2026-11-13,stNEAR,meta-pool.near,1.514971,14256013.74958,21597461.548688,archival
+2026-11-14,LiNEAR,linear-protocol.near,1.431156,8675991.506309,12416702.583164,archival
+2026-11-14,rNEAR,lst.rhealab.near,1.069188,17595750.351596,18813180.990031,archival
+2026-11-14,stNEAR,meta-pool.near,1.515112,14256151.321008,21599666.946203,archival

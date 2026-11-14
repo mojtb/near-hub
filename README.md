@@ -30,7 +30,7 @@
 ## Where the case stands
 
 <!-- verdict:start -->
-**Not yet.** Over the 30 days to 2026-11-09, the fees NEAR's revenue wallets received and the gas burned offset **16.1%** of the new NEAR the chain created; to match it, Intents volume has to be **5.2×** today's, or **3.3×** once the voted cut of issuance to 1.6% is in force. Volume grew **60%** over the last year; at that pace, with the price and NEAR's share of fees unchanged, that is about **3.5 years** away, or **2.6** after the cut: arithmetic, not a forecast. At the snapshot of 2026-11-12, of 19 claims the data can test, **10** support the long case and **9** count against it; **4** more cannot be tested from public data. The closest result, "NEAR's application fees grew faster than any peer's over the last three complete months", holds by 0.11 points; reversed, the count would be **9** and **10**.
+**Not yet.** Over the 30 days to 2026-11-10, the fees NEAR's revenue wallets received and the gas burned offset **16.1%** of the new NEAR the chain created; to match it, Intents volume has to be **5.2×** today's, or **3.3×** once the voted cut of issuance to 1.6% is in force. Volume grew **58%** over the last year; at that pace, with the price and NEAR's share of fees unchanged, that is about **3.6 years** away, or **2.6** after the cut: arithmetic, not a forecast. At the snapshot of 2026-11-14, of 19 claims the data can test, **9** support the long case and **10** count against it; **4** more cannot be tested from public data. The closest result, "NEAR's application fees grew faster than any peer's over the last three complete months", fails by 0.45 points; reversed, the count would be **10** and **9**.
 <!-- verdict:end -->
 
 The count is not a vote, because the claims do not weigh the same. [THESIS.md](THESIS.md) says which one decides the
@@ -155,16 +155,16 @@ Then:
 These lines are generated from the warehouse, and `make verify` fails if they stop matching it.
 
 <!-- expected:start -->
-- Data through: **2026-11-11**, the last full UTC day before the pinned snapshot of 2026-11-12; `dq_freshness` lists any source that ends earlier
+- Data through: **2026-11-13**, the last full UTC day before the pinned snapshot of 2026-11-14; `dq_freshness` lists any source that ends earlier
 - Gold tables and columns: **96** and **935**
-- Reconciliation: **110** comparisons agree, **15** differ, each with a written explanation
-- Issuance over the last 30 days, from supply change plus burn: **2.49%** a year, against **2.50%** in the protocol config
-- Circulating supply, built from NEAR's lockup contracts: **1,309.38M** NEAR, **99.84%** of total supply; on 2025-08-26, the last day NearBlocks computed its own, **1,249.72M** against **1,249.65M**
-- Captured Intents revenue, all time: **$9.83M** per DefiLlama, **$9.80M** rebuilt from wallet transfers
+- Reconciliation: **112** comparisons agree, **13** differ, each with a written explanation
+- Issuance over the last 30 days, from supply change plus burn: **2.47%** a year, against **2.50%** in the protocol config
+- Circulating supply, built from NEAR's lockup contracts: **1,309.54M** NEAR, **99.84%** of total supply; on 2025-08-26, the last day NearBlocks computed its own, **1,249.72M** against **1,249.65M**
+- Captured Intents revenue, all time: **$9.97M** per DefiLlama, **$9.95M** rebuilt from wallet transfers
 - Public Intents volume, all time through 2026-11-11, the last full day of the latest Dune reading: **$33.47B** per NearBlocks, **$33.09B** per NEAR's dashboard on Dune
 - Chain Signatures: **16** MPC participants with a threshold of **11**
 - Largest Intents fee channel, per NEAR's dashboard on Dune as read on 2026-11-12: **swapkit**, with **73%** of listed fees
-- Bitwise NEAR ETF shares outstanding: **2,930,000** per the fund, **3,000,000** counted on chain in whole baskets
+- Bitwise NEAR ETF shares outstanding: **2,930,000** per the fund, **2,930,000** counted on chain in whole baskets
 <!-- expected:end -->
 
 ## The track's sample prompt, item by item
@@ -250,7 +250,7 @@ thesis with it. `main` stays on the date in `data/PINNED`, so the expected resul
 that branch holds that night's code and data, so `make setup warehouse verify` rebuilds it.
 
 **The nightly job is paused while this entry is judged, through 18 November 2026;** `main` stays on the snapshot of
-12 November.
+14 November, which was fetched on the owner's machine with the job's own command.
 
 ## Repository map
 
