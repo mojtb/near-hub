@@ -156,7 +156,7 @@ These lines are generated from the warehouse, and `make verify` fails if they st
 
 <!-- expected:start -->
 - Data through: **2026-11-11**, the last full UTC day before the pinned snapshot of 2026-11-12; `dq_freshness` lists any source that ends earlier
-- Gold tables and columns: **95** and **928**
+- Gold tables and columns: **96** and **935**
 - Reconciliation: **110** comparisons agree, **15** differ, each with a written explanation
 - Issuance over the last 30 days, from supply change plus burn: **2.49%** a year, against **2.50%** in the protocol config
 - Circulating supply, built from NEAR's lockup contracts: **1,309.38M** NEAR, **99.84%** of total supply; on 2025-08-26, the last day NearBlocks computed its own, **1,249.72M** against **1,249.65M**
@@ -211,7 +211,7 @@ what it found are in [docs/SOURCES.md](docs/SOURCES.md#bigquery-public-dataset).
 | Market, peers | `fct_market_daily`, `fct_token_prices`, `fct_peer_daily`, `fct_peer_supply_readings`, `fct_swap_services_daily` | CoinMetrics, Coinbase, DefiLlama, 1Click, Rhea |
 | Bitwise NEAR ETF flows | `fct_etf_nrr_daily`, `fct_etf_nrr_chain_daily` | Bitwise's page, archival RPC, SoSoValue through news reports |
 | Developers, governance | `fct_dev_activity_weekly`, `fct_repo_snapshot`, `fct_governance_proposals`, `fct_governance_decisions`, `fct_venear_snapshot`, `fct_governance_threads`, `dim_event` | GitHub, RPC, gov.near.org |
-| Thesis models | `fct_thesis_scorecard`, `dim_claim`, `fct_net_dilution_daily`, `fct_deflation_scenarios`, `fct_intents_unit_economics_monthly`, `fct_intents_channel_economics_monthly`, `fct_intents_concentration_monthly`, `fct_valuation_multiples_daily`, `fct_usage_quality_daily`, `fct_usage_lead_correlations`, `fct_etf_absorption_daily` | The gold tables above, `registry/claims.csv`, `registry/issuance_scenarios.csv` |
+| Thesis models | `fct_thesis_scorecard`, `fct_thesis_scorecard_daily`, `dim_claim`, `fct_net_dilution_daily`, `fct_deflation_scenarios`, `fct_intents_unit_economics_monthly`, `fct_intents_channel_economics_monthly`, `fct_intents_concentration_monthly`, `fct_valuation_multiples_daily`, `fct_usage_quality_daily`, `fct_usage_lead_correlations`, `fct_etf_absorption_daily` | The gold tables above, `registry/claims.csv`, `registry/issuance_scenarios.csv` |
 | Data quality | `dq_reconciliation`, `dq_freshness`, `dq_revisions`, `dq_ingest_runs`, `dq_provenance`, `dq_bigquery_tables`, `dq_bigquery_reads` | All of the above |
 
 </details>

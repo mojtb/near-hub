@@ -294,6 +294,154 @@ p{margin:0}
 .cz-v{grid-area:v;padding-left:12px;text-align:right;font-size:17px;font-weight:500;line-height:1.25;letter-spacing:-.02em;white-space:nowrap;font-variant-numeric:tabular-nums}
 .cz-foot{margin:0;padding:14px var(--px) 18px;border-top:1px solid var(--line);font-size:13px;line-height:1.5;color:var(--mute)}
 .cz-foot span{white-space:nowrap}
+/* How the count has moved: the base of the case card. The rail opens the card on a band of its own and this band
+   closes it, on the same ground: soft by day, the hero's night at night, with the glow in the opposite corner. Three
+   counts stand in the card's own marks beside the chart, and a count and its stretch on the chart light each other. */
+.czb{position:relative;padding:clamp(20px,2.2vw,28px) var(--px) clamp(16px,1.8vw,24px);border-top:1px solid var(--line);border-radius:0 0 calc(var(--r) - 1px) calc(var(--r) - 1px);
+  --czg:color-mix(in srgb,var(--soft) 78%,var(--surface));background:radial-gradient(56% 150% at 0% 135%,color-mix(in srgb,var(--accent) 12%,transparent),transparent 62%),var(--czg)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .czb{--help:#19c99a;--hurt:#ff7d66;--czg:var(--night);background:radial-gradient(56% 150% at 0% 135%,rgba(0,236,151,.1),transparent 62%),var(--night);border-top-color:transparent}}
+:root[data-theme="dark"] .czb{--help:#19c99a;--hurt:#ff7d66;--czg:var(--night);background:radial-gradient(56% 150% at 0% 135%,rgba(0,236,151,.1),transparent 62%),var(--night);border-top-color:transparent}
+.czb-top h3{font-size:17px;font-weight:600;letter-spacing:-.018em;line-height:1.25}
+.czb-top p{margin:3px 0 0;font-size:13px;line-height:1.45;color:var(--mute)}
+.czb-go{position:absolute;top:clamp(18px,2vw,25px);right:var(--px);display:inline-flex;align-items:center;gap:7px;height:34px;padding:0 10px 0 14px;border-radius:10px;font-size:13.5px;font-weight:600;letter-spacing:-.005em;line-height:1;white-space:nowrap;text-decoration:none;color:var(--ink);background:color-mix(in srgb,var(--surface) 72%,transparent);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--ink) 13%,transparent);transition:background .16s,box-shadow .16s}
+.czb-go:hover{background:var(--surface);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--ink) 28%,transparent)}
+.czb-go:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.czb-go svg{width:15px;height:15px;flex:none;transition:transform .16s}
+.czb-go:hover svg{transform:translateX(2px)}
+.czb-main{display:grid;grid-template-columns:minmax(236px,.92fr) minmax(0,2.7fr);gap:10px clamp(26px,3.6vw,56px);align-items:center;margin-top:clamp(10px,1.2vw,16px)}
+.czb-rows{list-style:none;margin:0;padding:0}
+.czb-row{position:relative;display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;column-gap:14px;margin-inline:-10px;padding:9px 10px 10px;border-radius:9px;transition:background .15s}
+.czb-row+.czb-row::before{content:"";position:absolute;left:10px;right:10px;top:0;height:1px;background:var(--line)}
+.czb-row:hover,.czb-row:focus-visible,.czb-row.lit{background:color-mix(in srgb,var(--ink) 5%,transparent)}
+.czb-row:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.czb-l b{display:block;font-size:14.5px;font-weight:500;letter-spacing:-.008em;line-height:1.3}
+.czb-l small{display:block;margin-top:1px;font-size:12.5px;line-height:1.35;color:var(--mute)}
+/* A count in the case's marks: solid for, hollow against. The numbers keep a column each, so three counts line up. */
+.czn{display:inline-flex;align-items:center;gap:7px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.czn b{font-size:22px;font-weight:500;letter-spacing:-.03em;line-height:1;min-width:1.2em}
+.czn b+.sx-vh+.cz-m{margin-left:7px}
+.czb-plot{position:relative;min-width:0;touch-action:pan-y}
+@media (max-width:760px){
+  .czb-main{grid-template-columns:minmax(0,1fr);row-gap:14px;align-items:start}
+  .czb-go{position:static;display:flex;justify-content:center;margin-top:14px;height:40px}}
+/* The chart of the count, here and in the question "How steady is the count?": results for the case above the line
+   and against it below, each fill fading toward the line, a named column under each stretch, the case's mark at
+   each line's end. Where four or more tests could not run yet the plot is hatched, so that stretch is not taken for
+   a named one. */
+.czh-plot{position:relative;touch-action:pan-y}
+.czh-plot svg,.czb-plot svg{display:block;width:100%;overflow:visible}
+:is(.czh-plot,.czb-plot) text{font:500 11.5px/1 var(--chart-font);fill:var(--chart-ink)}
+:is(.czh-plot,.czb-plot) .grid line{stroke:var(--chart-grid);stroke-width:1;shape-rendering:crispEdges}
+:is(.czh-plot,.czb-plot) .zero{stroke:var(--chart-mark);stroke-width:1;shape-rendering:crispEdges}
+:is(.czh-plot,.czb-plot) .st-for{stop-color:var(--help)}
+:is(.czh-plot,.czb-plot) .st-against{stop-color:var(--hurt)}
+:is(.czh-plot,.czb-plot) .l-for{fill:none;stroke:var(--help);stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
+:is(.czh-plot,.czb-plot) .l-against{fill:none;stroke:var(--hurt);stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
+:is(.czh-plot,.czb-plot) .hatch{stroke:var(--chart-mark);stroke-width:1.1;opacity:.55}
+:is(.czh-plot,.czb-plot) .band-t{font-size:11px;fill:var(--mute)}
+:is(.czh-plot,.czb-plot) .hl{fill:var(--ink);fill-opacity:.05;transition:fill-opacity .18s}
+:is(.czh-plot,.czb-plot) .hl.lit{fill-opacity:.11}
+:is(.czh-plot,.czb-plot) .hl-t{font-size:11.5px;font-weight:600;fill:var(--mute);transition:fill .18s}
+:is(.czh-plot,.czb-plot) .hl-t.lit{fill:var(--ink)}
+:is(.czh-plot,.czb-plot) .hl-k{stroke:var(--chart-mark);stroke-width:1;shape-rendering:crispEdges}
+:is(.czh-plot,.czb-plot) .end-t{font-size:15px;font-weight:600;letter-spacing:-.02em;fill:var(--ink)}
+:is(.czh-plot,.czb-plot) .end-s{font-size:11.5px;font-weight:500;letter-spacing:0;fill:var(--mute)}
+:is(.czh-plot,.czb-plot) .halo-for{fill:var(--help);fill-opacity:.2}
+:is(.czh-plot,.czb-plot) .halo-against{fill:var(--hurt);fill-opacity:.16}
+:is(.czh-plot,.czb-plot) .dot-for{fill:var(--help)}
+:is(.czh-plot,.czb-plot) .dot-against{fill:var(--czg,var(--surface));stroke:var(--hurt);stroke-width:2}
+:is(.czh-plot,.czb-plot) .cross{stroke:var(--chart-strong);stroke-width:1;opacity:.5;shape-rendering:crispEdges}
+:is(.czh-plot,.czb-plot) .cur-for{fill:var(--help);stroke:var(--czg,var(--surface));stroke-width:2}
+:is(.czh-plot,.czb-plot) .cur-against{fill:var(--czg,var(--surface));stroke:var(--hurt);stroke-width:2}
+.czh-tip{position:absolute;z-index:6;pointer-events:none;min-width:208px;max-width:300px;padding:10px 13px 11px;border-radius:11px;background:var(--tip-bg);color:var(--tip-ink);font-size:12.5px;line-height:1.45;box-shadow:0 12px 30px rgba(0,0,0,.24)}
+.czh-tip b{font-weight:600}
+.czh-tip>b{display:block;font-size:13px;margin-bottom:2px}
+.czh-tip .r{display:flex;align-items:center;gap:8px;margin-top:3px;font-variant-numeric:tabular-nums}
+.czh-tip .r strong{font-weight:600;min-width:1.4em;text-align:right}
+.czh-tip .k{flex:none;width:9px;height:9px;border-radius:50%}
+.czh-tip .k.kf{background:#19c99a}.czh-tip .k.ka{box-shadow:inset 0 0 0 2px #ff7d66}.czh-tip .k.ku{box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--tip-ink) 45%,transparent)}
+.czh-tip .ch{margin-top:8px;padding-top:7px;border-top:1px solid color-mix(in srgb,var(--tip-ink) 18%,transparent);opacity:.88}
+.czh-tip .ch small{display:block;font-size:11.5px;opacity:.75;margin-bottom:1px}
+/* The question on the Checks page. It stands outside the case section, so it sets the case's two colours itself. */
+.czq{position:relative;--help:#0b9a7d;--hurt:#d9553f}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .czq{--help:#14a985;--hurt:#e86245}}
+:root[data-theme="dark"] .czq{--help:#14a985;--hurt:#e86245}
+.czq .gtop{justify-content:space-between}
+.czq .gtop .gseg{margin-left:0}
+.czq-note{margin:0;font-size:12.5px;line-height:1.35;color:var(--mute);text-align:right}
+/* The three counts as cells on one band, divided by hairlines */
+.czs{display:grid;grid-template-columns:repeat(var(--n,3),minmax(0,1fr));margin:8px 0 18px;padding:0;list-style:none;border-block:1px solid var(--line)}
+.czs>li{position:relative;padding:13px clamp(12px,1.8vw,24px) 14px;transition:background .15s}
+.czs>li+li{border-left:1px solid var(--line)}
+.czs>li:first-child{padding-left:2px}
+.czs>li:hover,.czs>li.lit,.czs>li:focus-visible{background:color-mix(in srgb,var(--ink) 3.5%,transparent)}
+.czs>li:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.czs .t{display:block;font-size:13.5px;line-height:1.3;color:var(--mute)}
+.czs .czn{margin-top:7px;gap:8px}
+.czs .czn b{font-size:clamp(24px,2.4vw,32px);min-width:0}
+.czs .czn .cz-m{width:10px;height:10px}
+.czs small{display:block;margin-top:6px;font-size:13px;line-height:1.35;color:var(--mute)}
+/* The latest changes as a timeline: a spine, a mark for each change, the newest first. Each row leads to its claim's question. */
+.czt-h{margin:20px 0 2px;font-size:15px;font-weight:600;letter-spacing:-.012em}
+.czt{list-style:none;margin:0;padding:0}
+.czt-r{position:relative;display:grid;grid-template-columns:3.4rem 17px minmax(0,1fr) auto;column-gap:12px;align-items:start;margin-inline:-10px;padding:11px 10px 12px;border-radius:9px;color:inherit;text-decoration:none;transition:background .15s}
+.czt-r:hover{background:var(--soft)}
+.czt-r:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.czt-r::before{content:"";position:absolute;left:calc(10px + 3.4rem + 12px + 8px);top:0;bottom:0;width:1px;background:color-mix(in srgb,var(--ink) 16%,transparent)}
+.czt li:first-child .czt-r::before{top:18px}
+.czt li:last-child .czt-r::before{bottom:calc(100% - 18px)}
+.czt time{padding-top:2px;font-size:12.5px;line-height:1.4;color:var(--mute);text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.czt .cz-m{position:relative;justify-self:center;margin-top:6px;outline:4px solid var(--surface)}
+.czt-r:hover .cz-m{outline-color:var(--soft)}
+.czt .cz-m.is-against{background:var(--surface)}
+.czt-r:hover .cz-m.is-against{background:var(--soft)}
+.czt strong{display:block;font-weight:500;font-size:15px;line-height:1.33;letter-spacing:-.01em;text-wrap:pretty}
+.czt .s{display:block;margin-top:3px;font-size:13px;line-height:1.42;color:var(--mute)}
+.czt .s b{font-weight:500;color:var(--st-holds)}
+.czt .is-against-row .s b{color:var(--st-risk)}
+.czt .v{padding-left:10px;padding-top:1px;font-size:13.5px;line-height:1.4;color:var(--mute);font-variant-numeric:tabular-nums;white-space:nowrap;text-align:right}
+.czt .v b{display:block;font-size:17px;font-weight:500;letter-spacing:-.02em;line-height:1.25;color:var(--ink)}
+.czh-none{margin:6px 0 0;font-size:13.5px;color:var(--mute)}
+/* Each test as a lane: solid where its result supports the case, hollow where it counts against it, dotted before it
+   could run, then how many times it turned. The rows are HTML, so a long claim wraps and nothing redraws on resize. */
+.czl-key{display:flex;flex-wrap:wrap;gap:6px 18px;margin:0 0 6px;font-size:12.5px;color:var(--mute)}
+.czl-key span{display:inline-flex;align-items:center;gap:7px}
+.czl-key i{flex:none;width:22px;height:10px;border-radius:5px}
+.czl-key .kf{background:var(--help)}
+.czl-key .ka{box-shadow:inset 0 0 0 1.5px var(--hurt);background:color-mix(in srgb,var(--hurt) 10%,transparent)}
+.czl-key .ku{height:0;border-top:1.5px dotted var(--chart-mark);border-radius:0}
+.czl{--nm:minmax(0,36%);--tn:4.4rem;position:relative}
+.czl-g{margin-top:14px}
+.czl-g h4{margin:0;padding-bottom:7px;font-size:14.5px;font-weight:600;letter-spacing:-.012em;border-bottom:1px solid var(--line)}
+.czl-r{display:grid;grid-template-columns:var(--nm) minmax(0,1fr) var(--tn);column-gap:16px;align-items:center;min-height:34px;padding:5px 0;border-bottom:1px solid color-mix(in srgb,var(--line) 60%,transparent)}
+.czl-g .czl-r:last-child{border-bottom:0}
+.czl-n{font-size:13.5px;line-height:1.3;color:color-mix(in srgb,var(--ink) 84%,var(--surface));text-wrap:pretty}
+.czl-l{position:relative;height:22px;cursor:crosshair}
+.czl-l .s{position:absolute;top:5px;height:12px;border-radius:6px;min-width:3px}
+.czl-l .sf{background:var(--help)}
+.czl-l .sa{box-shadow:inset 0 0 0 1.5px var(--hurt);background:color-mix(in srgb,var(--hurt) 10%,transparent)}
+.czl-l .su{top:10.5px;height:0;min-width:0;border-top:1.5px dotted var(--chart-mark);border-radius:0;opacity:.8}
+.czl-l .tk{position:absolute;top:-5px;bottom:-5px;width:1px;background:var(--chart-grid)}
+.czl-l .cu{position:absolute;top:-2px;bottom:-2px;width:1px;background:var(--chart-strong);opacity:.55;display:none}
+.czl-t{font-size:13px;line-height:1.2;text-align:right;color:var(--mute);font-variant-numeric:tabular-nums;white-space:nowrap}
+.czl-t b{font-weight:500;color:var(--ink)}
+.czl-ax{display:grid;grid-template-columns:var(--nm) minmax(0,1fr) var(--tn);column-gap:16px;margin-top:4px}
+.czl-ax div{position:relative;height:18px;grid-column:2}
+.czl-ax span{position:absolute;top:3px;transform:translateX(-50%);font:500 11.5px/1 var(--chart-font);color:var(--chart-ink);white-space:nowrap}
+@media (max-width:720px){
+  .czl-r{grid-template-columns:minmax(0,1fr) var(--tn);row-gap:1px;padding:7px 0 5px}
+  .czl-n{grid-column:1/-1}.czl-l .tk{top:2px;bottom:2px}
+  .czl-ax{grid-template-columns:minmax(0,1fr) var(--tn)}.czl-ax div{grid-column:1}
+  .czt-r{grid-template-columns:17px minmax(0,1fr);row-gap:1px}
+  .czt time{grid-column:2;grid-row:1;text-align:left;padding:0}
+  .czt .cz-m{grid-row:2}
+  .czt-r>span:not(.v){grid-column:2}
+  .czt .v{grid-column:2;text-align:left;padding:3px 0 0}
+  .czt .v b{display:inline;font-size:14px;margin-left:4px}
+  .czt-r::before{left:calc(10px + 8px)}
+  .czt li:nth-child(n+4){display:none}
+  .czs>li{padding:11px 10px 12px}.czs .czn b{font-size:22px}.czs .czn{gap:6px}.czs .czn b+.sx-vh+.cz-m{margin-left:3px}
+  .czq-note{text-align:left}}
 .cz-r.flash{animation:cz-flash 1.5s ease-out}
 .cz-g.flash .cz-gh h3{animation:cz-ink 1.5s ease-out}
 @keyframes cz-flash{0%,25%{background:color-mix(in srgb,var(--help) 16%,var(--surface))}100%{background:transparent}}
@@ -1251,8 +1399,8 @@ table.corr{--trk:clamp(52px,9.5vw,136px);--val:52px;--gap:12px;font-size:15px}
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
 <!-- ECharts is fetched once the page has drawn: see the end of the script below -->
-<script src="shared/catalog.js?v=3fdab8d3"></script>
-<script src="shared/data.js?v=96621792"></script>
+<script src="shared/catalog.js?v=a0e3c5f4"></script>
+<script src="shared/data.js?v=1d5c130b"></script>
 <script src="shared/charts.js?v=9d74e7aa"></script>
 <script src="shared/viz.js?v=e0fc35d6"></script>
 <script>
@@ -3231,6 +3379,212 @@ const BQ=(()=>{const B=LC.more.bigquery||{},HUE='#7f62e0',ord=n=>{const s=['th',
         el.innerHTML=`<div class="tw"><table class="t"><thead><tr><th>What is compared</th><th class="num">Apart</th>${narrow?'':'<th>Result</th>'}</tr></thead><tbody>${K.map(r=>`<tr><td style="min-width:${narrow?0:220}px;white-space:normal;line-height:1.45"><b style="font-weight:500">${r.metric}</b>${narrow?`<div style="margin:3px 0 1px">${stamp(r)}</div>`:''}${sub(`${src(r.source_a)}: ${dqVal(r.value_a)}`)}${sub(`${src(r.source_b)}: ${dqVal(r.value_b)}`)}${r.status==='differs'&&r.explanation?sub(dqGist(r.explanation)):''}</td><td class="num" style="vertical-align:top">${dqPct(r.diff_pct)}${sub(`limit ${+r.tolerance_pct}%`)}</td>${narrow?'':`<td style="vertical-align:top">${stamp(r)}</td>`}</tr>`).join('')}</tbody></table></div>`}};})();
   return{who,back,check};
 })();
+/* ============================================================================================
+   HOW THE COUNT HAS MOVED. The scorecard on every day, from gold.fct_thesis_scorecard_daily (TH.history): each
+   tested claim measured as the scorecard measures it, with the data cut at that day. Two places draw it. The base
+   of "The case so far" closes the card as the rail opens it: three counts in the card's own marks (the best
+   stretch, the worst one after it, the newest day) beside the chart, which names the same stretches. The question
+   "How steady is the count?" on the Checks page draws the same chart with a range switch, the latest changes, and
+   each test day by day. Every word and number is worked out from the data, so both follow the claims as they change.
+   A file written before the history existed has none, and then neither is drawn.
+   ============================================================================================ */
+const CZH=(()=>{
+  const H=TH.history;if(!H||!H.n)return null;
+  const DAY=864e5,T0=Date.parse(H.start+'T00:00:00Z'),N=H.n,ids=TH.scorecard.map(c=>c.claim_id).filter(k=>H.claims[k]),TOTAL=ids.length;
+  const dayAt=i=>new Date(T0+i*DAY).toISOString().slice(0,10);
+  /* One letter a day for each claim (f for the case, a against it, a full stop while it cannot be tested yet), and
+     its values, which arrive as runs and are laid out by day here */
+  const S={},VAL={};ids.forEach(k=>{S[k]=H.claims[k].s;const v=VAL[k]=new Array(N),r=H.claims[k].v;r.forEach(([i,x],n)=>{const to=n+1<r.length?r[n+1][0]:N;for(let j=i;j<to;j++)v[j]=x})});
+  const F=new Array(N).fill(0),A=new Array(N).fill(0),U=new Array(N).fill(0);
+  ids.forEach(k=>{const s=S[k];for(let i=0;i<N;i++){const c=s[i];if(c==='f')F[i]++;else if(c==='a')A[i]++;else U[i]++}});
+  /* Every change of side, and the first day each test could run */
+  const TURNS=[];ids.forEach(k=>{const s=S[k];for(let i=1;i<N;i++)if(s[i]!==s[i-1]&&s[i]!=='.')TURNS.push({i,k,from:s[i-1],to:s[i]})});
+  TURNS.sort((a,b)=>a.i-b.i||ids.indexOf(a.k)-ids.indexOf(b.k));
+  const claimOf=k=>TH.scorecard.find(c=>c.claim_id===k);
+  const val=(c,v)=>v==null?'–':scNum(v,c.unit);
+  const dOf=(d,o)=>new Date(d+'T00:00:00Z').toLocaleDateString('en-GB',{timeZone:'UTC',...o});
+  const dY=d=>dOf(d,{day:'numeric',month:'short',year:'numeric'}),dM=d=>dOf(d,{day:'numeric',month:'short'});
+  const word=n=>['no','one','two','three','four','five','six','seven','eight','nine','ten','eleven','twelve','thirteen','fourteen','fifteen','sixteen','seventeen','eighteen','nineteen','twenty'][n]||String(n);
+  const RANGES=[{k:'all',t:`Since ${dOf(H.start,{month:'short',year:'numeric'})}`,from:()=>0},{k:'12m',t:'12 months',from:()=>Math.max(0,N-1-365)},{k:'90d',t:'90 days',from:()=>Math.max(0,N-1-90)}];
+  /* The home band reads the last 12 months, from the first day on which at most three tests could not run yet */
+  const W12=(()=>{let i=Math.max(0,N-1-365);while(i<N-1&&U[i]>3)i++;return i})();
+  let range='12m';const redraws=new Set();
+  const start=()=>RANGES.find(r=>r.k===range).from();
+
+  /* Runs of days with the same count. A stretch is a run that lasted a week or more, so a count that held for a day
+     or two is never named as the best or the worst. The newest run is "now", not a stretch. */
+  const STRETCH=7;
+  const stretches=(i0,i1)=>{const runs=[];let a=i0;for(let i=i0+1;i<=i1+1;i++)if(i>i1||F[i]!==F[a]||A[i]!==A[a]){runs.push({a,b:i-1,n:i-a});a=i}
+    return runs.filter(r=>r.n>=STRETCH&&U[r.a]<=3&&r.b<i1)};
+  const net=i=>F[i]-A[i];
+  /* A stretch's days in words, to the day: "12 to 30 Jul 2026", "31 Jan to 29 Apr 2026" */
+  const period=(x,y)=>{const a=dayAt(x),b=dayAt(y);if(a===b)return dY(a);if(a.slice(0,7)===b.slice(0,7))return `${+a.slice(8)} to ${dY(b)}`;
+    return a.slice(0,4)===b.slice(0,4)?`${dM(a)} to ${dY(b)}`:`${dY(a)} to ${dY(b)}`};
+  /* A stretch of days in up to three counts, in the order they happened: the best stretch, the worst one after it,
+     and the newest day. A best that does not beat the newest day is left out, and the worst is then looked for over
+     the whole stretch. Each count but the newest also marks its days on the chart. */
+  const story=(i0,i1)=>{const ok=stretches(i0,i1),rows=[],marks=[];
+    if(ok.length){
+      const top=Math.max(...ok.map(r=>net(r.a))),best=ok.filter(r=>net(r.a)===top),showBest=top>net(i1);
+      const pool=showBest?ok.filter(r=>r.a>lastOf(best).b):ok;let worst=null;
+      if(pool.length){const low=Math.min(...pool.map(r=>net(r.a)));if(low<net(i1))worst=pool.filter(r=>net(r.a)===low)}
+      if(showBest){const a=best[0].a,b=lastOf(best).b;rows.push({k:'best',label:'Best stretch',i:a,when:period(a,b)});marks.push({k:'best',a,b,label:'Best'})}
+      if(worst){const a=worst[0].a,b=lastOf(worst).b;rows.push({k:'worst',label:showBest?'Worst since':'Worst stretch',i:a,when:period(a,b)});marks.push({k:'worst',a,b,label:'Worst'})}}
+    rows.push({k:'now',label:'Now',i:i1,when:dY(dayAt(i1))+(U[i1]?`, ${word(U[i1])} not yet testable`:'')});
+    return{rows,marks}};
+  /* A count in the card's own marks: solid for the case, hollow against it */
+  const pair=i=>`<span class="czn"><i class="cz-m is-for" aria-hidden="true"></i><b>${F[i]}</b><span class="sx-vh"> for, </span><i class="cz-m is-against" aria-hidden="true"></i><b>${A[i]}</b><span class="sx-vh"> against</span></span>`;
+  const turnsOf=(k,i0,i1)=>TURNS.filter(t=>t.k===k&&t.i>i0&&t.i<=i1&&t.from!=='.').length;
+  /* What changed over a stretch, for the finding and the answer card */
+  const changes=(i0,i1)=>{let days=0;for(let i=i0+1;i<=i1;i++)if(F[i]!==F[i-1]||A[i]!==A[i-1])days++;
+    const fs=stretches(i0,i1).concat([{a:i1}]).map(r=>F[r.a]);
+    return{days,moved:ids.filter(k=>turnsOf(k,i0,i1)).length,lo:Math.min(...fs),hi:Math.max(...fs)}};
+  /* A claim's bar in words that do not depend on which side of it the claim stands today */
+  const barWords=c=>{if(!c||c.comparison==null)return '';const up=c.comparison!=='<=',zero=!c.threshold&&(c.unit==='rate'||c.unit==='share points');
+    return `${c.side==='bear'?'risk bar':'bar'}: ${zero?`any ${up?'rise':'fall'}`:csBarWords(c)}`};
+
+  /* As many month or week labels as fit with room between them: about one per 100px, never fewer than three */
+  const ticksFor=(x,w,i0,i1)=>{const days=i1-i0,n=Math.max(3,Math.floor(w/100));
+    if(days<=120){const t=x.ticks(d3.utcWeek.every(days<=60?1:2));return{t:t.length>n?t.filter((_,k)=>k%Math.ceil(t.length/n)===0):t,f:d3.utcFormat('%-d %b')}}
+    const every=[1,2,3,4,6].find(m=>x.ticks(d3.utcMonth.every(m)).length<=n)||12,t=x.ticks(d3.utcMonth.every(every));
+    return{t,f:d=>d.getUTCMonth()===0||d===t[0]?d3.utcFormat('%b %Y')(d):d3.utcFormat('%b')(d)}};
+
+  /* The count each day: results for the case above the line, against it below. o.compact draws it shorter for the
+     home page; o.marks are the stretches to name. */
+  let uid=0;
+  const draw=(box,tip,i0,i1,o={})=>{
+    box.textContent='';const w=box.clientWidth;if(!w)return;
+    const compact=!!o.compact,marks=o.marks||[],narrow=w<560,h=compact?(narrow?168:176):(narrow?214:254),m={l:24,r:narrow?76:88,t:22,b:compact?24:28},iw=w-m.l-m.r,ih=h-m.t-m.b;
+    let M=0;for(let i=i0;i<=i1;i++)M=Math.max(M,F[i],A[i]);M=Math.max(6,M+1);
+    const x=d3.scaleUtc().domain([new Date(T0+i0*DAY),new Date(T0+i1*DAY)]).range([0,iw]),y=d3.scaleLinear().domain([-M,M]).range([ih,0]);
+    const X=i=>x(new Date(T0+Math.min(i,i1)*DAY)),id='czg'+(++uid);
+    const svg=d3.select(box).append('svg').attr('height',h).attr('viewBox',`0 0 ${w} ${h}`).attr('role','img')
+      .attr('aria-label',`Results for and against the long case each day from ${dY(dayAt(i0))} to ${dY(dayAt(i1))}: ${F[i1]} support it and ${A[i1]} count against it on the last day.`);
+    const defs=svg.append('defs'),grad=(k,cls,y1,y2,o1,o2)=>{const g=defs.append('linearGradient').attr('id',id+k).attr('gradientUnits','userSpaceOnUse').attr('x1',0).attr('x2',0).attr('y1',y1).attr('y2',y2);
+      g.append('stop').attr('offset',0).attr('class',cls).attr('stop-opacity',o1);g.append('stop').attr('offset',1).attr('class',cls).attr('stop-opacity',o2)};
+    grad('f','st-for',y(M),y(0),.3,.04);grad('a','st-against',y(0),y(-M),.03,.2);
+    const g=svg.append('g').attr('transform',`translate(${m.l},${m.t})`);
+    /* Stretches where four or more tests could not run yet, hatched */
+    const waits=[];let s=null;for(let i=i0;i<=i1;i++){if(U[i]>=4){if(s==null)s=i}else if(s!=null){waits.push([s,i]);s=null}}if(s!=null)waits.push([s,i1]);
+    if(waits.length)defs.append('pattern').attr('id',id+'h').attr('patternUnits','userSpaceOnUse').attr('width',7).attr('height',7).attr('patternTransform','rotate(45)').append('line').attr('class','hatch').attr('x1',0).attr('y1',0).attr('x2',0).attr('y2',7);
+    waits.forEach(([a,b])=>{g.append('rect').attr('fill',`url(#${id}h)`).attr('x',X(a)).attr('y',0).attr('width',Math.max(0,X(b)-X(a))).attr('height',ih).attr('rx',3);
+      let lo=TOTAL,hi=0;for(let i=a;i<b;i++){lo=Math.min(lo,U[i]);hi=Math.max(hi,U[i])}
+      const label=`${hi===lo?hi:`${hi} to ${lo}`} of ${TOTAL} tests could not run yet`;if(X(b)-X(a)>label.length*5.6+16)g.append('text').attr('class','band-t').attr('x',X(a)+8).attr('y',ih-8).text(label)});
+    /* The named stretches: a column under the lines and the name above the plot */
+    const cols=marks.filter(k=>k.b>=i0&&k.a<=i1).map(k=>{const x0=X(Math.max(k.a,i0)),x1=X(Math.min(k.b+1,i1));return{...k,x0,x1,cx:(x0+x1)/2}});
+    cols.forEach((k,n)=>{g.append('rect').attr('class','hl').attr('data-k',k.k).attr('x',k.x0).attr('y',0).attr('width',Math.max(2,k.x1-k.x0)).attr('height',ih).attr('rx',3);
+      if(n&&Math.abs(k.cx-cols[n-1].cx)<54)return;
+      g.append('line').attr('class','hl-k').attr('x1',k.cx).attr('x2',k.cx).attr('y1',-5).attr('y2',0);
+      g.append('text').attr('class','hl-t').attr('data-k',k.k).attr('x',k.cx).attr('y',-10).attr('text-anchor','middle').text(k.label)});
+    const yt=d3.range(-Math.floor(M/5)*5,M+1,5).filter(v=>v);
+    g.append('g').attr('class','grid').selectAll('line').data(yt).join('line').attr('x1',0).attr('x2',iw).attr('y1',y).attr('y2',y);
+    g.append('g').selectAll('text').data(yt).join('text').attr('x',-8).attr('y',v=>y(v)+4).attr('text-anchor','end').text(v=>Math.abs(v));
+    const step=d3.curveStepAfter,pts=d3.range(i0,i1+2),xs=i=>i>i1?iw:X(i),fv=i=>F[Math.min(i,i1)],av=i=>A[Math.min(i,i1)];
+    g.append('path').attr('fill',`url(#${id}f)`).attr('d',d3.area().curve(step).x(xs).y0(y(0)).y1(i=>y(fv(i)))(pts));
+    g.append('path').attr('fill',`url(#${id}a)`).attr('d',d3.area().curve(step).x(xs).y0(y(0)).y1(i=>y(-av(i)))(pts));
+    g.append('line').attr('class','zero').attr('x1',0).attr('x2',iw).attr('y1',y(0)).attr('y2',y(0));
+    g.append('path').attr('class','l-for').attr('d',d3.line().curve(step).x(xs).y(i=>y(fv(i)))(pts));
+    g.append('path').attr('class','l-against').attr('d',d3.line().curve(step).x(xs).y(i=>y(-av(i)))(pts));
+    const T=ticksFor(x,iw,i0,i1);
+    g.append('g').selectAll('text').data(T.t).join('text').attr('x',x).attr('y',ih+(compact?17:19)).attr('text-anchor',(d,k)=>k===0&&x(d)<24?'start':'middle').text(T.f);
+    /* The newest day: each line ends on the case's mark, solid for and hollow against, with its number beside it */
+    const yF=y(F[i1]),yA=y(-A[i1]);
+    g.append('circle').attr('class','halo-for').attr('cx',iw).attr('cy',yF).attr('r',9);g.append('circle').attr('class','dot-for').attr('cx',iw).attr('cy',yF).attr('r',4.5);
+    g.append('circle').attr('class','halo-against').attr('cx',iw).attr('cy',yA).attr('r',9);g.append('circle').attr('class','dot-against').attr('cx',iw).attr('cy',yA).attr('r',4);
+    const e=g.append('g').attr('transform',`translate(${iw+16},0)`);
+    e.append('text').attr('class','end-t').attr('y',yF+5).text(F[i1]).append('tspan').attr('class','end-s').attr('dx',5).text('for');
+    e.append('text').attr('class','end-t').attr('y',yA+5).text(A[i1]).append('tspan').attr('class','end-s').attr('dx',5).text('against');
+    /* The pointer finds the nearest day: its count, and the latest change on or before it */
+    const cross=g.append('line').attr('class','cross').attr('y1',0).attr('y2',ih).style('display','none');
+    const cF=g.append('circle').attr('class','cur-for').attr('r',4.5).style('display','none'),cA=g.append('circle').attr('class','cur-against').attr('r',4.5).style('display','none');
+    const show=px=>{const i=Math.max(i0,Math.min(i1,Math.round((x.invert(px)-T0)/DAY))),cx=X(i);
+      cross.attr('x1',cx).attr('x2',cx).style('display',null);cF.attr('cx',cx).attr('cy',y(F[i])).style('display',null);cA.attr('cx',cx).attr('cy',y(-A[i])).style('display',null);
+      const today=TURNS.filter(t=>t.i===i),prior=today.length?today:TURNS.filter(t=>t.i<=i&&t.i>i0).slice(-1);
+      const ch=prior.map(t=>`<small>${t.i===i?'Changed this day':`Last change, ${dY(dayAt(t.i))}`}</small>${claimOf(t.k).claim}: ${t.from==='.'?'first run, ':'now '}${t.to==='f'?'supports the case':'counts against it'}.`).join('<br>');
+      tip.innerHTML=`<b>${dY(dayAt(i))}</b><div class="r"><i class="k kf"></i><strong>${F[i]}</strong> support the case</div><div class="r"><i class="k ka"></i><strong>${A[i]}</strong> count against it</div>${U[i]?`<div class="r"><i class="k ku"></i><strong>${U[i]}</strong> could not run yet</div>`:''}${ch?`<div class="ch">${ch}</div>`:''}`;
+      tip.hidden=false;const host=tip.offsetParent||box,hb=host.getBoundingClientRect(),bb=box.getBoundingClientRect(),ox=bb.left-hb.left,oy=bb.top-hb.top,tw=tip.offsetWidth,hw=host.clientWidth;
+      let left=ox+m.l+cx+14;if(left+tw>hw)left=ox+m.l+cx-14-tw;tip.style.left=Math.max(0,left)+'px';tip.style.top=Math.min(oy+m.t+6,host.clientHeight-tip.offsetHeight-10)+'px'};
+    const hide=()=>{cross.style('display','none');cF.style('display','none');cA.style('display','none');tip.hidden=true};
+    g.append('rect').attr('width',iw).attr('height',ih).attr('fill','transparent').style('cursor','crosshair')
+      .on('pointermove',ev=>show(d3.pointer(ev)[0])).on('pointerdown',ev=>show(d3.pointer(ev)[0])).on('pointerleave',hide)};
+  /* A count and its stretch on the chart point at each other, as the rail's marks and the ledger's rows do */
+  const wireStory=(list,plot)=>{const lite=k=>{list.querySelectorAll('[data-k]').forEach(r=>r.classList.toggle('lit',!!k&&r.dataset.k===k));plot.querySelectorAll('.hl,.hl-t').forEach(r=>r.classList.toggle('lit',!!k&&r.getAttribute('data-k')===k))};
+    const of=e=>{const r=e.target.closest('[data-k]');return r&&r.dataset.k!=='now'?r.dataset.k:null};
+    list.addEventListener('pointerover',e=>lite(of(e)));list.addEventListener('pointerleave',()=>lite(null));
+    list.addEventListener('focusin',e=>lite(of(e)));list.addEventListener('focusout',()=>lite(null))};
+  /* A chart is drawn again when its box changes width, on the next frame: drawing inside the observer's own call
+     would change the layout it is still reporting on */
+  const keep=(el,fn)=>{let wPrev=0,frame=0;const ro=new ResizeObserver(()=>{const w=el.clientWidth;if(Math.abs(w-wPrev)>2){wPrev=w;cancelAnimationFrame(frame);frame=requestAnimationFrame(fn)}});ro.observe(el);return()=>{cancelAnimationFrame(frame);ro.disconnect()}};
+
+  /* The base of the case card on the home page */
+  const S12=story(W12,N-1);
+  const band=()=>`<section class="czb" id="czb" aria-labelledby="czb-h">
+      <div class="czb-top"><h3 id="czb-h">How the count has moved</h3><p>The same ${TOTAL} tests, run on the data up to each day</p></div>
+      <div class="czb-main">
+        <ol class="czb-rows" id="czb-rows">${S12.rows.map(r=>`<li class="czb-row" data-k="${r.k}"${r.k==='now'?'':' tabindex="0"'}><span class="czb-l"><b>${r.label}</b><small>${r.when}</small></span>${pair(r.i)}</li>`).join('')}</ol>
+        <div class="czb-plot" id="czb-plot"></div>
+      </div>
+      <a class="czb-go" href="#a-steady--tests">Each test, day by day${ARROW}</a>
+      <div class="czh-tip" id="czb-tip" hidden></div>
+    </section>`;
+  const wire=()=>{const plot=$('#czb-plot'),tip=$('#czb-tip'),list=$('#czb-rows');if(!plot||!tip||!list)return;
+    cleanup.push(keep(plot,()=>draw(plot,tip,W12,N-1,{compact:true,marks:S12.marks})));wireStory(list,plot)};
+
+  /* The latest changes, newest first: when, which way, the claim, its bar, and the value before and after */
+  const turnsHtml=(i0,i1,n=5)=>{const list=TURNS.filter(t=>t.i>i0&&t.i<=i1).slice(-n).reverse(),yNow=dayAt(i1).slice(0,4);
+    if(!list.length)return '<p class="czh-none">No test changed side in this stretch.</p>';
+    return `<ol class="czt">${list.map(t=>{const c=claimOf(t.k),v=VAL[t.k],first=t.from==='.',d=dayAt(t.i),f=t.to==='f';
+      return `<li class="${f?'is-for-row':'is-against-row'}"><a class="czt-r" href="#${CLAIM_AT[t.k]||'library'}"><time datetime="${d}">${d.slice(0,4)===yNow?dM(d):dY(d)}</time><i class="cz-m ${f?'is-for':'is-against'}" aria-hidden="true"></i><span><strong>${c.claim}</strong><span class="s"><b>${first?'First run: ':'Now '}${f?'supports the case':'counts against the case'}</b>${barWords(c)?` · ${barWords(c)}`:''}</span></span><span class="v">${first?'first value':`was ${val(c,v[t.i-1])}`}<b>${val(c,v[t.i])}</b></span></a></li>`}).join('')}</ol>`};
+  /* Each test as a lane of segments, grouped as the case groups them, then how many times it turned */
+  const lanesHtml=(i0,i1)=>{const P=czParts(csTested().filter(c=>S[c.claim_id])),span=i1+1-i0,pc=v=>(v/span*100).toFixed(3)+'%';
+    const x=d3.scaleUtc().domain([new Date(T0+i0*DAY),new Date(T0+(i1+1)*DAY)]).range([0,100]),T=ticksFor(x,560,i0,i1),tk=T.t.map(d=>`<i class="tk" style="left:${x(d).toFixed(3)}%"></i>`).join('');
+    const lane=c=>{const s=S[c.claim_id];let out='',a=i0;
+      for(let i=i0+1;i<=i1+1;i++)if(i>i1||s[i]!==s[a]){const st=s[a];out+=`<i class="s ${st==='f'?'sf':st==='a'?'sa':'su'}" style="left:${pc(a-i0)};width:calc(${pc(i-a)} - 2px)"></i>`;a=i}
+      return out};
+    const turns=n=>n?`<b>${n}</b> ${n===1?'turn':'turns'}`:'Steady';
+    return `<div class="czl-key" aria-hidden="true"><span><i class="kf"></i>Supports the case</span><span><i class="ka"></i>Counts against it</span><span><i class="ku"></i>Could not run yet</span></div>
+    <div class="czl">${P.map(p=>`<section class="czl-g"><h4>${p.title}</h4>${p.list.map(c=>`<div class="czl-r"><span class="czl-n">${c.claim}</span><span class="czl-l" data-k="${c.claim_id}">${tk}${lane(c)}<i class="cu"></i></span><span class="czl-t">${turns(turnsOf(c.claim_id,i0,i1))}</span></div>`).join('')}</section>`).join('')}
+    <div class="czl-ax"><div>${T.t.map(d=>`<span style="left:${x(d).toFixed(3)}%">${T.f(d)}</span>`).join('')}</div></div></div>`};
+  const wireLanes=(box,tip)=>{
+    box.addEventListener('pointermove',e=>{const l=e.target.closest('.czl-l');box.querySelectorAll('.cu').forEach(c=>c.style.display='none');if(!l){tip.hidden=true;return}
+      const i0=start(),i1=N-1,b=l.getBoundingClientRect(),fr=Math.max(0,Math.min(.9999,(e.clientX-b.left)/b.width)),i=i0+Math.floor(fr*(i1+1-i0)),k=l.dataset.k,c=claimOf(k),st=S[k][i];
+      const cu=l.querySelector('.cu');cu.style.left=(fr*100)+'%';cu.style.display='block';
+      tip.innerHTML=`<b>${c.claim}</b><div>${dY(dayAt(i))}: ${st==='f'?'supports the case':st==='a'?'counts against it':'could not run yet'}${st!=='.'?`, ${val(c,VAL[k][i])}`:''}</div>${barWords(c)?`<div class="ch">${cap(barWords(c))}</div>`:''}`;
+      tip.hidden=false;const hb=box.getBoundingClientRect(),tw=tip.offsetWidth,cx=e.clientX-hb.left;
+      tip.style.left=Math.max(0,Math.min(hb.width-tw,cx+14+tw>hb.width?cx-14-tw:cx+14))+'px';tip.style.top=(b.bottom-hb.top+8)+'px'});
+    box.addEventListener('pointerleave',()=>{tip.hidden=true;box.querySelectorAll('.cu').forEach(c=>c.style.display='none')})};
+
+  /* The question on the Checks page: its finding, its answer card, and its two charts */
+  const C12=changes(W12,N-1),steady=ids.filter(k=>!turnsOf(k,W12,N-1)).length,sent=s=>s.charAt(0).toUpperCase()+s.slice(1);
+  const view={
+    count:el=>{el.innerHTML=`<div class="czq"><div class="gtop"><span class="gseg" role="group" aria-label="Time range">${RANGES.map(r=>`<button type="button" data-r="${r.k}" aria-pressed="${r.k===range}">${r.t}</button>`).join('')}</span><p class="czq-note"></p></div><ol class="czs"></ol><div class="czh-plot"></div><div class="czh-tip" hidden></div><h4 class="czt-h">Latest changes</h4><div class="czq-turns"></div></div>`;
+      const box=el.querySelector('.czq'),plot=box.querySelector('.czh-plot'),tip=box.querySelector('.czh-tip'),cells=box.querySelector('.czs');
+      box.querySelector('.gseg').addEventListener('click',e=>{const b=e.target.closest('button[data-r]');if(!b||b.dataset.r===range)return;range=b.dataset.r;redraws.forEach(f=>f())});
+      wireStory(cells,plot);
+      const paint=()=>{const i0=start(),i1=N-1,st=story(i0,i1);box.querySelectorAll('.gseg button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.r===range)));
+        let j=i0;while(j<i1&&U[j]>3)j++;
+        box.querySelector('.czq-note').textContent=U[i0]>3?`Hatched until ${dY(dayAt(j))}: four or more tests could not run yet`:'';
+        cells.style.setProperty('--n',st.rows.length);cells.innerHTML=st.rows.map(r=>`<li data-k="${r.k}"${r.k==='now'?'':' tabindex="0"'}><span class="t">${r.label}</span>${pair(r.i)}<small>${r.when}</small></li>`).join('');
+        draw(plot,tip,i0,i1,{marks:st.marks});box.querySelector('.czq-turns').innerHTML=turnsHtml(i0,i1)};
+      const stop=keep(plot,paint);redraws.add(paint);return()=>{stop();redraws.delete(paint)}},
+    tests:el=>{el.innerHTML=`<div class="czq"><div class="czq-lanes"></div><div class="czh-tip" hidden></div></div>`;
+      const box=el.querySelector('.czq'),host=box.querySelector('.czq-lanes'),tip=box.querySelector('.czh-tip');wireLanes(box,tip);
+      const paint=()=>{host.innerHTML=lanesHtml(start(),N-1)};paint();redraws.add(paint);return()=>redraws.delete(paint)}};
+  /* The stretches each claim's result has stood, as the lanes draw them and the query returns them */
+  const runsOf=()=>ids.slice().sort().flatMap(k=>{const s=S[k],out=[];let a=0;for(let i=1;i<=N;i++)if(i===N||s[i]!==s[a]){out.push([k,dayAt(a),dayAt(i-1),i-a,s[a]==='f'?'for':s[a]==='a'?'against':null]);a=i}return out});
+  return{band,wire,view,
+    src:['defillama','explorer','dune','fastnear','revenue','rpc','nearblocks','coinmetrics','bitwise'],
+    f:`In the last 12 months between ${C12.lo} and ${C12.hi} of the ${TOTAL} results supported the case for a week or more; the count changed on ${C12.days} days`,
+    ans:[`${C12.moved} of ${TOTAL}`,'tests changed side in 12 months'],
+    key:{count:'Results that support the case above the line, results that count against it below',tests:'How long each result has stood, and how many times it turned'},
+    read:{count:`Each day runs the scorecard's own tests again on the data up to that day. A test joins once the stretch it reads is whole: six complete months for a test of three months against three, a year for a yearly test, twelve weeks for the lead test. The data is as it stood on ${dY(H.end)}; sources revise recent days, so a day's count can differ from what was read on that day. The tests and their bars were set in November 2026 with these series in view, so this shows how today's tests read on earlier data, not what was argued then.`,
+      tests:`${sent(word(steady))} of the ${TOTAL} tests stayed on one side all through the last 12 months; the others turned at least once. The tests are grouped by the part of the case they rest on, in the order of <a href="#overview">The case so far</a>. A turn is a change of side; the first day a test could run is not one.`},
+    sql:{count:`-- Results for and against the long case on each day, with every test's data cut at that day.\n-- The chart draws the days its range switch names; these are all of them.\nselect date_day,\n       count(*) filter (where stands = 'for') as results_for,\n       count(*) filter (where stands = 'against') as results_against,\n       count(*) filter (where status = 'not_yet_testable') as not_yet_testable\nfrom gold.fct_thesis_scorecard_daily\ngroup by 1\norder by 1;`,
+      tests:`-- Each tested claim's result as stretches of days: a new row whenever it changes side, or first can be tested\nwith marked as (\n  select *, case when stands is distinct from lag(stands) over (partition by claim_id order by date_day) then 1 else 0 end as starts\n  from gold.fct_thesis_scorecard_daily\n), numbered as (\n  select *, sum(starts) over (partition by claim_id order by date_day) as stretch from marked\n)\nselect claim_id, min(date_day) as first_day, max(date_day) as last_day, count(*) as days, any_value(stands) as stands\nfrom numbered\ngroup by claim_id, stretch\norder by claim_id, first_day;`},
+    rows:{count:()=>({cols:['date_day','results_for','results_against','not_yet_testable'],rows:d3.range(N).map(i=>[dayAt(i),F[i],A[i],U[i]])}),
+      tests:()=>({cols:['claim_id','first_day','last_day','days','stands'],rows:runsOf()})}};
+})();
+
 const ANALYSES=[
  /* Intents */
  {id:'market-share',isNew:true,subject:'intents',form:'Ranked bars',q:'Is Intents taking share, or riding the market?',f:`Over the last three months Intents volume ${msWord(msQ.i)} ${fmt.pct(Math.abs(msQ.i),0)} and the six chains' DEX volume ${msWord(msQ.p)} ${fmt.pct(Math.abs(msQ.p),0)}, so Intents ${msQ.after>=msQ.before?'gained':'lost'} share`,ans:[fmt.pct(msQ.after,2),`of six chains' DEX volume over three months, from ${fmt.pct(msQ.before,2)} in the three before`],src:['revenue','defillama'],read:`Volume over ${monthName(MSQ.then.m0)} to ${monthName(MSQ.then.m1)} and over ${monthName(MSQ.now.m0)} to ${monthName(MSQ.now.m1)}: Intents across all routes, and the DEX volume of Aptos, Avalanche, Ethereum, Solana, Sui and TON together. The third pair is the first over the second, which is the scorecard's test. Each pair has its own scale, because the six chains trade about ${(MSQ.now.p/MSQ.now.i).toFixed(0)} times as much as Intents settles.`,table:'gold.fct_intents_daily, gold.fct_peer_daily',sql:`with i as (\n  select date_trunc('month', date_day) as month, sum(volume_usd) as intents_usd\n  from gold.fct_intents_daily group by 1\n), p as (\n  select date_trunc('month', date_day) as month, sum(dex_volume_usd) as peers_dex_usd\n  from gold.fct_peer_daily where chain_id <> 'near' group by 1\n)\nselect min(month) as from_month, max(month) as to_month,\n       sum(intents_usd) as intents_usd,\n       sum(peers_dex_usd) as peers_dex_usd,\n       sum(intents_usd) / sum(peers_dex_usd) as intents_over_peers\nfrom i join p using (month)\nwhere month between date '${MSQ.then.m0}' and date '${MSQ.now.m1}'\ngroup by month >= date '${MSQ.now.m0}'\norder by 1;`,view:el=>{el.innerHTML=`<div class="qpair">${MSQ.sets.map(s=>`<div><div class="qp-h"><span>${s[0]}</span><b>${s[2]}</b></div><div class="qp-b"></div></div>`).join('')}</div>`;el.querySelectorAll('.qp-b').forEach((box,k)=>{const s=MSQ.sets[k];hbars(box,[{label:MSQ.lab(MSQ.then),value:MSQ.then[s[1]]},{label:MSQ.lab(MSQ.now),value:MSQ.now[s[1]]}],{fmtV:s[4],color:s[3],labelWidth:88,emphasis:MSQ.lab(MSQ.now)})})}},
@@ -3335,6 +3689,7 @@ order by 1;`,view:chart(()=>({type:'stack',x:LINES.months,series:[{name:'Matched
  ...(BQ.check?[{id:'bigquery-check',isNew:true,subject:'quality',form:'Table',q:'Can the chain counts be checked?',f:BQ.check.f,ans:BQ.check.ans,src:['bigquery','nearblocks','rpc'],read:BQ.check.read,table:'gold.dq_reconciliation',sql:BQ.check.sql,exact:BQ.check.rows,view:BQ.check.view}]:[]),
  {id:'untestable',isNew:true,subject:'quality',form:'Table',q:'What can the data not settle?',f:`${dqCap(numWord(TH.open.length))} of the ${TH.scorecard.length+TH.open.length} claims have no public data to test them, so they stay off the scorecard`,ans:[String(TH.open.length),`of ${TH.scorecard.length+TH.open.length} claims no public source can test`],src:['registry'],read:`A claim goes on the scorecard only when a public source can test it. These ${numWord(TH.open.length)} stay listed here so that their absence from the scorecard is not read as a result: ${numWord(TH.open.filter(c=>c.side==='bear').length)} would count against the long case and ${numWord(TH.open.filter(c=>c.side==='bull').length)} for it.`,table:'gold.fct_thesis_scorecard, gold.dim_claim',sql:`select s.claim, s.side, c.pillar, c.test\nfrom gold.fct_thesis_scorecard s\njoin gold.dim_claim c using (claim_id)\nwhere s.status = 'not_testable';`,exact:()=>({cols:['claim','side','pillar','test'],rows:TH.open.map(c=>[c.claim,c.side,c.pillar,c.test])}),view:el=>{el.innerHTML=dqOpen()}},
  {id:'method',subject:'quality',form:'Table',q:'How were the claims chosen?',f:'The claims were cut from 29 to 20 on 11 November 2026 by four rules, and three were added on 12 November',ans:[String(DQ_RULES.length),'rules a claim had to pass'],src:['registry'],read:`On 12 November 2026 three claims were added and two were pointed at a different measure. On 13 November the claim on fee growth was moved from a yearly window to quarters, the window the other growth claims read. The bars were written on 10 to 12 November with the readings in view, so they are round bars for what each claim means, not predictions. Today ${TH.scorecard.length} claims are tested on the <a href="#overview">scorecard</a>${TH.open.length?` and ${numWord(TH.open.length)} cannot be tested (see <a href="#a-untestable">the question before this one</a>)`:''}. The query lists each bar with the reason written for it.`,table:'gold.dim_claim',sql:`-- Each tested claim with the part of the case it sits on, its bar and the reason written for the bar\nselect claim_id, pillar, side, comparison, threshold, unit, why_this_threshold\nfrom gold.dim_claim\nwhere comparison is not null\norder by pillar, claim_id;`,exact:()=>({cols:['claim_id','pillar','side','comparison','threshold','unit','why_this_threshold'],rows:[...TH.scorecard].sort((a,b)=>d3.ascending(a.pillar,b.pillar)||d3.ascending(a.claim_id,b.claim_id)).map(c=>[c.claim_id,c.pillar,c.side,c.comparison,c.threshold,c.unit,c.why])}),view:el=>{el.innerHTML=dqMethod()}},
+ ...(CZH?[{id:'steady',isNew:true,subject:'quality',form:'Step lines',q:'How steady is the count?',f:CZH.f,ans:CZH.ans,src:CZH.src,read:CZH.read.count,table:'gold.fct_thesis_scorecard_daily',sql:'',view:CZH.view.count}]:[]),
 ];
 
 /* Every analysis also states its short answer and its sources, so the cards, the rail and the logo row generate themselves */
@@ -3567,6 +3922,8 @@ order by 1;`,
     {id:'year',label:'A year, at three levels',key:GOV.key.year,form:'Bars with targets',read:GOV.read.year,table:'gold.fct_supply_daily, gold.fct_deflation_scenarios',sql:GOV.sql.year,src:['nearblocks','rpc','registry'],exact:GOV.rows.year,view:GOV.view.year}]},
    'who-decides':{first:{id:'accounts',label:'Accounts that voted',key:GOV.key.accounts,exact:GOV.rows.accounts},more:[
     {id:'against',label:'Votes against',key:GOV.key.against,form:'Bars with targets',read:GOV.read.against,table:'gold.fct_governance_decisions',sql:GOV.sql.against,src:['hos','rpc'],exact:GOV.rows.against,view:GOV.view.against}]},
+   ...(CZH?{'steady':{layout:'stack',first:{id:'count',label:'The count, day by day',key:CZH.key.count},more:[
+    {id:'tests',label:'Each test, day by day',key:CZH.key.tests,form:'Timeline',read:CZH.read.tests,table:'gold.fct_thesis_scorecard_daily',sql:'',src:CZH.src,view:CZH.view.tests}]}}:{}),
    'voting-power':{first:{id:'venear',label:'veNEAR by day',key:GOV.key.venear},more:[
     {id:'joined',label:'Accounts registered',key:GOV.key.joined,form:'Bars with targets',read:GOV.read.joined,table:'gold.fct_venear_snapshot',sql:GOV.sql.joined,src:['rpc'],exact:GOV.rows.joined,view:GOV.view.joined}]},
   };
@@ -4011,6 +4368,7 @@ order by 1, 4;`,
    'stake-map':{sql:SEC.sql.map,rows:SEC.rows.map},
    'mpc--who':{sql:SEC.sql.who,rows:SEC.rows.who},
    /* Data quality */
+   ...(CZH?{'steady--count':{sql:CZH.sql.count,rows:CZH.rows.count},'steady--tests':{sql:CZH.sql.tests,rows:CZH.rows.tests}}:{}),
    'ledger':{sql:`-- Every comparison between two sources that has a gap to show, the ones that differ first
 -- A check on wallets, years or tokens runs once for each, so ${R.total} comparisons come from ${DQ_CHECKS} checks
 select check_id, metric, subject, source_a, value_a, source_b, value_b,
@@ -4721,6 +5079,7 @@ const czSection=T=>{
       <p class="cz-leg">Each row is one test with a stated bar.${T.some(c=>c.pillar==='watch')?' A tripwire is a result that would change the author\'s mind if it stopped holding.':''} Select a row to see its chart and query.</p>
       <div class="cz-led">${groups}</div>
       <p class="cz-foot">${when}Each row states its own period. <a href="#a-method">How the claims were chosen</a></p>
+      ${CZH?CZH.band():''}
     </div>
   </section>`};
 /* The rail and the ledger point at each other: a mark lights its row and a row its mark; a part of the rail opens its rows */
@@ -5005,7 +5364,7 @@ const V={
       <ul>${next.map(a=>`<li><a href="#a-${a.id}" style="--hue:${subj(a.subject).hue}">${a.q}</a></li>`).join('')}</ul>
     </section>`:''}
   </div></div>`;
-  czWire();
+  czWire();if(CZH)CZH.wire();
   /* The hero's two ways to the case scroll to it, clear of the header */
   main.querySelectorAll('[data-go="case"]').forEach(b=>b.addEventListener('click',()=>{const el=main.querySelector('.case-sec');if(el)scrollTo({top:el.getBoundingClientRect().top+scrollY-$('.head').offsetHeight-18,behavior:LCC.reduce()?'auto':'smooth'})}));
   const hChart=timeChart($('#ov-main'),{type:'line',...iss(),endLabels:true,noLegend:true,yFmt:v=>fmt.usd(v,0),tipFmt:fmt.usd,height:Math.max(250,Math.min(350,innerHeight-510)),marks:[{d:'2026-02-23',label:'Fee switch'}]});

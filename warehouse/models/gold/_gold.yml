@@ -1699,6 +1699,22 @@ models:
       - {name: threshold, description: "The bar, from dim_claim.", meta: {unit: "see dim_claim.unit"}}
       - {name: status, description: "holds if the value meets the bar, fails if it does not, not_testable if the claim has no test. A fourth value, not_measured, would mean a test returned nothing, and a data test fails the build if it appears.", meta: {unit: "label"}, data_tests: [not_null, {accepted_values: {arguments: {values: ["holds", "fails", "not_testable"]}}}]}
       - {name: as_of_date, description: "The newest day, or the last day of the month, the value rests on.", meta: {unit: "date"}}
+  - name: fct_thesis_scorecard_daily
+    description: "The scorecard on every day since 2025-01-01: each tested claim in dim_claim measured as fct_thesis_scorecard measures it, with every input cut at that day. It answers what the scorecard would have said with the data up to a day, from the warehouse as it stands now; it is not a record of what was read on the day, because sources revise recent days. On its newest day it equals fct_thesis_scorecard, and a data test fails the build if it does not. A claim reads not_yet_testable until the window its test needs is whole: six complete months for a test of three months against three, three for a three-month test, a year of readings for a yearly test, and var thesis_lead_test_min_weeks weekly changes for the lead test. The claims and their bars were set in November 2026 with these series in view, so the table shows how today's tests read on earlier data and is not evidence of its own. Claims that cannot be tested are left out. One row per day and tested claim."
+    config:
+      meta: {grain: "date_day, claim_id", sources: "dim_claim and the gold tables each claim's test names"}
+    data_tests:
+      - unique_grain: {arguments: {columns: ["date_day", "claim_id"]}}
+      - min_rows: {arguments: {n: 10000}}
+      - no_missing_days: {arguments: {day_column: date_day, partition_by: claim_id}}
+    columns:
+      - {name: date_day, description: "The day the data is cut at: no input later than this day is read.", meta: {unit: "date"}, data_tests: [not_null]}
+      - {name: claim_id, description: "Claim from dim_claim. Only claims with a test.", meta: {unit: "id"}, data_tests: [not_null]}
+      - {name: side, description: "bull or bear, from dim_claim.", meta: {unit: "label"}, data_tests: [not_null]}
+      - {name: value, description: "The measured value on the data up to date_day, in dim_claim.unit, rounded to ten decimals as the scorecard rounds. Empty while the claim is not_yet_testable, and on the days a_doubling_of_volume_reaches_deflation_after_the_cut has no multiple because no fee reached the revenue wallets in its 30 days.", meta: {unit: "see dim_claim.unit"}}
+      - {name: status, description: "holds if the value meets the claim's bar, fails if it does not, not_yet_testable while the window the test needs is not whole or its data has not begun. The doubling claim fails without a value when no fee reached the wallets, since no multiple of volume would then do.", meta: {unit: "label"}, data_tests: [not_null, {accepted_values: {arguments: {values: ["holds", "fails", "not_yet_testable"]}}}]}
+      - {name: stands, description: "What the result does to the long case: for when a bull claim holds or a bear claim fails, against when a bull claim fails or a bear claim holds. Empty while the claim is not_yet_testable.", meta: {unit: "label"}, data_tests: [{accepted_values: {arguments: {values: ["for", "against"]}}}]}
+      - {name: as_of_date, description: "The newest day, or the last day of the month, the value rests on, as of date_day.", meta: {unit: "date"}}
 
 # These hold the rules on made-up rows, because at a pin with few decimals most of them have no real rows to fail on.
 unit_tests:
