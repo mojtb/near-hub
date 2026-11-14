@@ -12,9 +12,8 @@ if(location.protocol==='file:')addEventListener('click',function(e){var a=e.targ
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600;700&display=swap" onload="this.onload=null;this.rel='stylesheet'">
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600;700&display=swap"></noscript>
 <style>
-/* The warehouse guide, in NEAR Hub's look: the Hub's dark header and logo, an index of every table beside it, and a
-   reading pane. Only the header and the footer are dark in both themes; the index, the top of each page and
-   everything under it follow the theme, light by day and dark by night.
+/* The warehouse guide, in NEAR Hub's look: the Hub's header and logo, an index of every table beside it, and a
+   reading pane. Everything follows the theme, the header and the footer included: light by day and dark by night.
    One visual language everywhere: a solid bar is data in the warehouse, a hatched bar is history queued for
    backfill, and bare track is history the source cannot give. The kind of history is a text label, never a colour.
    Identifiers inside descriptions are set in mono, and a table's name there links to its page. */
@@ -83,7 +82,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:var(--top);z-index:
 .menu{display:none;padding:0 12px}
 
 /* ---------- shell: the index beside the reading pane ---------- */
-/* The index follows the theme, light by day and dark by night; only the header and the band that opens a page stay dark */
+/* The index follows the theme, light by day and dark by night */
 .app{display:grid;grid-template-columns:var(--side) minmax(0,1fr);align-items:start;min-height:calc(100vh - var(--head-h))}
 .index{position:sticky;top:calc(var(--head-h) + var(--top));height:calc(100vh - var(--head-h) - var(--top));display:flex;flex-direction:column;min-width:0;background:var(--index);color:var(--ink);box-shadow:inset -1px 0 0 var(--line)}
 .index-top{display:flex;flex-direction:column;gap:8px;padding:16px 14px 12px;border-bottom:1px solid var(--line)}
@@ -440,6 +439,55 @@ footer.foot .wrap{padding-block:30px 40px;display:grid;grid-template-columns:min
 @media (max-width:380px){.brand-t{display:none}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 .sec,.block,.block>h2{scroll-margin-top:calc(var(--head-h) + var(--top) + 14px)}
+/* ---------- day mode, figures in the open, and small things ---------- */
+
+/* Day mode is day throughout, as on the Hub. The header and the footer read their paint from the night's tokens and
+   three variables; by day the tokens point at the page's own colours, so the bar is light glass and the footer is
+   the page under one rule. Night keeps the night surface. */
+:root{--hd-rgb:243,247,245;--hd-bg:rgba(9,14,13,.94)}
+.head{background:var(--hd-bg)}
+.head-a,.head-b,.menu{background:rgba(var(--hd-rgb),.045)}
+.head-a:hover,.head-b:hover,.menu:hover{background:rgba(var(--hd-rgb),.09);box-shadow:inset 0 0 0 1px rgba(var(--hd-rgb),.2)}
+.docs-tag{background:var(--tag-bg,rgba(0,236,151,.1));box-shadow:var(--tag-edge,inset 0 0 0 1px rgba(0,236,151,.22))}
+.docs-tag:hover{background:var(--tag-bg-h,rgba(0,236,151,.16))}
+.foot-l a:hover{color:var(--hd-accent,var(--mint))}
+footer.foot{border-top:var(--foot-rule,0)}
+:root[data-theme="light"]{--night:var(--page);--night-2:var(--surface);--night-ink:var(--ink);--night-mute:var(--mute);--night-faint:var(--faint);--night-line:var(--line);--hd-rgb:12,16,15;--hd-bg:rgba(249,250,250,.86);--hd-accent:var(--accent);--tag-bg:rgba(0,138,96,.08);--tag-edge:inset 0 0 0 1px rgba(0,138,96,.3);--tag-bg-h:rgba(0,138,96,.14);--foot-rule:1px solid var(--line)}
+@media (prefers-color-scheme:light){
+:root:not([data-theme="dark"]){--night:var(--page);--night-2:var(--surface);--night-ink:var(--ink);--night-mute:var(--mute);--night-faint:var(--faint);--night-line:var(--line);--hd-rgb:12,16,15;--hd-bg:rgba(249,250,250,.86);--hd-accent:var(--accent);--tag-bg:rgba(0,138,96,.08);--tag-edge:inset 0 0 0 1px rgba(0,138,96,.3);--tag-bg-h:rgba(0,138,96,.14);--foot-rule:1px solid var(--line)}}
+
+/* Figures in the open. Each figure stands under its name, a rule in the gap before it; the first of a row has
+   none, because its gap falls outside the row. The longest entry of a table's strip (its sources) takes the room
+   that is left. */
+.facts,.meta{--g:clamp(28px,3.4vw,52px);gap:14px var(--g);margin:clamp(18px,2.6vh,26px) 0 0;padding:clamp(14px,1.6vw,18px) 0 2px;border:0;border-top:1px solid var(--line);border-radius:0;background:none;box-shadow:none;overflow:hidden}
+.facts div,.meta div{position:relative;flex:0 1 auto;padding:0;background:none}
+.facts div::before,.meta div::before{content:"";position:absolute;left:calc(var(--g) / -2);top:3px;bottom:3px;width:1px;background:var(--line)}
+.meta div:nth-child(1),.meta div:nth-child(2),.meta div:nth-child(3){flex:0 1 auto}
+.meta div:nth-child(1){max-width:44%}
+.meta div:nth-child(4),.meta div:last-child{flex:1 1 320px}
+.facts dd,.meta dd{margin-top:4px;font-size:18px;font-weight:600;letter-spacing:-.02em}
+.meta dd.rich{font-size:14.5px;font-weight:400;letter-spacing:0;line-height:1.5;color:var(--mute)}
+.meta dd.mono{font-size:14.5px;font-weight:500}
+@media (max-width:720px){
+  .meta div:nth-child(1),.meta div:nth-child(4){flex:1 1 100%;max-width:none}
+  .meta div:nth-child(2),.meta div:nth-child(3){flex:0 1 auto}}
+
+/* The first query sits level with the headline's block instead of hanging at its foot */
+.hero-top{align-items:center}
+.hq{box-shadow:0 0 0 1px var(--line),var(--shadow);border:0}
+/* The index marks the table being read with a bar at its edge, as the Hub's chain marks its link */
+.nav-i[aria-current="page"],.nav-home[aria-current="page"]{position:relative}
+.nav-i[aria-current="page"]::before,.nav-home[aria-current="page"]::before{content:"";position:absolute;left:0;top:5px;bottom:5px;width:2px;border-radius:2px;background:var(--accent)}
+/* A kind of history that is picked is the page's ink on its surface, ringed, as the Hub's switches are */
+.chip[aria-pressed="true"]{background:var(--surface);color:var(--ink);border-color:color-mix(in srgb,var(--ink) 70%,transparent);box-shadow:0 1px 2px rgba(12,16,15,.1)}
+.chip[aria-pressed="true"] .n{opacity:.8}
+/* The footer is lower and its links say that they lead on */
+footer.foot{margin-top:clamp(36px,6vh,64px)}
+footer.foot .wrap{padding-block:24px 30px}
+.foot-l a{gap:6px}
+.foot-l a::after{content:"";width:5px;height:5px;border-top:1.5px solid;border-right:1.5px solid;transform:rotate(45deg);opacity:.45;transition:transform .15s,opacity .15s}
+.foot-l a:hover::after{opacity:1;transform:translateX(2px) rotate(45deg)}
+@media (prefers-reduced-motion:reduce){.foot-l a::after{transition:none}}
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs><clipPath id="lcm-t"><path d="M10 0H22C28.8 0 32 3.2 32 10V22C32 28.8 28.8 32 22 32H10C3.2 32 0 28.8 0 22V10C0 3.2 3.2 0 10 0Z"/></clipPath><linearGradient id="lcm-f" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#66fbca"/><stop offset=".42" stop-color="#00ec97"/><stop offset="1" stop-color="#00b377"/></linearGradient><radialGradient id="lcm-s" cx=".26" cy=".1" r=".8"><stop offset="0" stop-color="#fff" stop-opacity=".38"/><stop offset=".6" stop-color="#fff" stop-opacity="0"/></radialGradient><radialGradient id="lcm-p" gradientUnits="userSpaceOnUse" cx="19" cy="20" r="14"><stop offset="0" stop-color="#03241a" stop-opacity=".26"/><stop offset="1" stop-color="#03241a" stop-opacity="0"/></radialGradient><linearGradient id="lcm-r" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".75"/><stop offset=".42" stop-color="#fff" stop-opacity="0"/><stop offset=".62" stop-color="#02130d" stop-opacity="0"/><stop offset="1" stop-color="#02130d" stop-opacity=".38"/></linearGradient><linearGradient id="lcm-k" gradientUnits="userSpaceOnUse" x1="0" y1="7" x2="0" y2="25"><stop offset="0" stop-color="#0f2a20"/><stop offset="1" stop-color="#040c09"/></linearGradient><filter id="lcm-b" x="-30%" y="-30%" width="160%" height="170%"><feGaussianBlur stdDeviation=".8"/></filter></defs><symbol id="lc-mark" viewBox="0 0 32 32"><path d="M10 0H22C28.8 0 32 3.2 32 10V22C32 28.8 28.8 32 22 32H10C3.2 32 0 28.8 0 22V10C0 3.2 3.2 0 10 0Z" fill="url(#lcm-f)"/><g clip-path="url(#lcm-t)"><rect width="32" height="32" fill="url(#lcm-s)"/><path d="M0 23.4H11.2V18.6H16V13.8H20.8V9H32V32H0Z" fill="url(#lcm-p)"/><path d="M10 0H22C28.8 0 32 3.2 32 10V22C32 28.8 28.8 32 22 32H10C3.2 32 0 28.8 0 22V10C0 3.2 3.2 0 10 0Z" fill="none" stroke="url(#lcm-r)" stroke-width="1.7"/><path transform="translate(.5 1.1)" d="M5.2 22.2H10V17.4H14.8V12.6H19.6V7.8H26.8V10.2H22V15H17.2V19.8H12.4V24.6H5.2Z" fill="#02130d" stroke="#02130d" stroke-width="1" stroke-linejoin="round" opacity=".36" filter="url(#lcm-b)"/></g><path d="M5.2 22.2H10V17.4H14.8V12.6H19.6V7.8H26.8V10.2H22V15H17.2V19.8H12.4V24.6H5.2Z" fill="url(#lcm-k)" stroke="url(#lcm-k)" stroke-width="1" stroke-linejoin="round"/></symbol></svg>
