@@ -38,6 +38,9 @@ env:
   FASTNEAR_API_KEY: ${{ secrets.FASTNEAR_API_KEY }}
   INTENTS_EXPLORER_JWT: ${{ secrets.INTENTS_EXPLORER_JWT }}
   DUNE_API_KEY: ${{ secrets.DUNE_API_KEY }}
+  # How far a month's BigQuery reads may go on the loader's own count, in GB. The repository variable is optional:
+  # empty leaves the loader's own stop of 600. Whatever it is set to, the loader never runs a query that would pass it.
+  BIGQUERY_MAX_GB_PER_MONTH: ${{ vars.BIGQUERY_MAX_GB_PER_MONTH }}
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
