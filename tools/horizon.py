@@ -70,3 +70,38 @@ def horizon(con) -> list[dict]:
     cur = con.execute(HORIZON_SQL.rstrip().rstrip(";"))
     names = [d[0] for d in cur.description]
     return [dict(zip(names, row)) for row in cur.fetchall()]
+
+
+def recent_change(con) -> float | None:
+    """Intents volume over the newest 30 days against the 30 before, as the home page's verdict reads it.
+
+    None when the earlier 30 days hold no volume. It reads to the newest day of volume, not the settled day, because
+    volume is not provisional the way fees are.
+    """
+    row = con.execute("""
+        with newest as (select max(date_day) as d from gold.fct_intents_daily)
+        select sum(volume_usd) filter (where date_day > d - 30)
+               / nullif(sum(volume_usd) filter (where date_day > d - 60 and date_day <= d - 30), 0) - 1
+        from gold.fct_intents_daily, newest""").fetchone()
+    return row[0] if row else None
+
+
+def offset_before(con) -> float | None:
+    """The share of new NEAR received or burned over the 30 days that ended 30 days before the settled day."""
+    row = con.execute("""
+        select offset_share from gold.fct_net_dilution_daily
+        where date_day = (select max(date_day) from gold.fct_intents_daily
+                          where not is_fee_revenue_provisional) - 30""").fetchone()
+    return row[0] if row else None
+
+
+def rating(offset_share: float, multiple_now: float, direction_for: int, direction_tests: int) -> str | None:
+    """The author's rating, printed only in the state it was written for.
+
+    Hold: the gap has not closed, so the evidence does not support buying on the case, and most tests of which way
+    NEAR is moving support it, so it does not support selling. In any other state no rating is printed, because the
+    author has not written one for it.
+    """
+    if offset_share < 1 and multiple_now > 1 and direction_tests and direction_for * 2 > direction_tests:
+        return "Hold"
+    return None
