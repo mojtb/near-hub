@@ -33,7 +33,7 @@ AREAS = [
                           "fct_peer_chain_fees_snapshot", "fct_swap_services_daily", "fct_etf_nrr_daily", "fct_etf_nrr_chain_daily"]),
     ("Developers and governance", ["fct_dev_activity_weekly", "fct_repo_snapshot", "fct_catalog_projects", "fct_governance_threads", "fct_governance_proposals", "fct_governance_decisions",
                                    "fct_venear_snapshot"]),
-    ("Thesis models", ["fct_thesis_scorecard", "dim_claim", "fct_net_dilution_daily", "fct_deflation_scenarios",
+    ("Thesis models", ["fct_thesis_scorecard", "fct_thesis_scorecard_daily", "dim_claim", "fct_net_dilution_daily", "fct_deflation_scenarios",
                        "fct_intents_unit_economics_monthly", "fct_intents_channel_economics_monthly", "fct_intents_concentration_monthly",
                        "fct_valuation_multiples_daily", "fct_usage_quality_daily", "fct_usage_lead_correlations",
                        "fct_etf_absorption_daily"]),

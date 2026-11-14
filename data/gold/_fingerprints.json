@@ -399,6 +399,11 @@
   "hash": "c48e7338618cf2a19acfee1b9c939425",
   "rows": 23
  },
+ "fct_thesis_scorecard_daily": {
+  "columns": 7,
+  "hash": "5048270003a859fa5dcb111e7aa1bbe6",
+  "rows": 12939
+ },
  "fct_token_holders": {
   "columns": 10,
   "hash": "c64fd31110b689e9cab07eac1221a806",

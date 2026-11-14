@@ -42,6 +42,8 @@ Each of these ends with `make warehouse fingerprints catalog verify`, which must
 - **A comparison between sources:** add it to `warehouse/models/gold/quality/dq_reconciliation.sql` with a tolerance
   you can defend, and, if the two differ, a reason in `registry/reconciliation_notes.csv`.
 - **A claim:** add a row to `registry/claims.csv` with its test, its bar and why that bar, then measure it in
-  `warehouse/models/gold/thesis/fct_thesis_scorecard.sql`. The thesis and the dashboard pick it up by themselves.
+  `warehouse/models/gold/thesis/fct_thesis_scorecard.sql`, and again in `fct_thesis_scorecard_daily.sql` beside it, in
+  the form that takes a day. A data test fails until the two agree on the newest day. The thesis and the dashboard
+  pick the claim up by themselves.
 - **A question on the dashboard:** add its figures to `tools/site_data.py` and its entry to `ANALYSES` in
   `site/index.html`, with the query it draws, then run `make site`.

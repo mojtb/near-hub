@@ -2199,6 +2199,37 @@ more = {
     "security": security,
 }
 
+# The scorecard on every day (gold.fct_thesis_scorecard_daily), for the base of "The case so far" and the question
+# "How steady is the count?". Each tested claim, in the registry's order, as one letter a day (f: the result supports
+# the case, a: it counts against it, a full stop: not yet testable) and its values as runs, [first day's index, value],
+# because a claim that reads complete months holds one value for a month. Four significant figures are what the page
+# prints. The newest day must stand as the scorecard does, or the page would show two counts.
+def four_figures(value):
+    if value is None:
+        return None
+    value = float(f"{float(f'{float(value):.14g}'):.4g}")
+    return round(value) if abs(value) >= 1000 else value
+
+
+history_days = [r["d"] for r in rows("select distinct date_day d from gold.fct_thesis_scorecard_daily order by 1")]
+history_claims = {}
+for claim in scorecard:
+    days = rows(f"""select stands, value from gold.fct_thesis_scorecard_daily
+                    where claim_id = '{claim["claim_id"]}' order by date_day""")
+    if len(days) != len(history_days):
+        sys.exit(f"The scorecard's history: {claim['claim_id']} has {len(days)} days, not {len(history_days)}")
+    runs = []
+    for i, r in enumerate(days):
+        value = four_figures(r["value"])
+        if not runs or runs[-1][1] != value:
+            runs.append([i, value])
+    letters = "".join({"for": "f", "against": "a"}.get(r["stands"], ".") for r in days)
+    if {"f": "for", "a": "against"}.get(letters[-1]) != claim["stands"]:
+        sys.exit(f"The scorecard's history: on its newest day {claim['claim_id']} stands {letters[-1]!r}, "
+                 f"but the scorecard has it {claim['stands']}")
+    history_claims[claim["claim_id"]] = {"s": letters, "v": runs}
+history = {"start": clean(history_days[0]), "end": clean(history_days[-1]), "n": len(history_days), "claims": history_claims}
+
 thesis = {
     "settled": clean(FEE_DAY),
     "marketShare": market_share,
@@ -2210,6 +2241,7 @@ thesis = {
     "scorecard": scorecard,
     "open": open_claims,
     "tally": tally,
+    "history": history,
     "dilution": dilution,
     # Nine decimals, so a figure the page works out from these rates agrees with the warehouse to the dollar
     "dilutionNow": {k: clean(v, 9) for k, v in dilution_now.items()},
