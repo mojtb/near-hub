@@ -121,7 +121,7 @@ The sample prompt for this track gives a working hypothesis to test: "cross-chai
 
 What these sources cannot compute, so it is not on the site: daily active people (both account counts follow one game and one wallet app); who stands behind the HOT, Sweat and Kai-Ching accounts, which are named from their account ids alone; and new accounts once NearBlocks switches /v1 off on 22 Nov 2026.
 
-The prompt names the NEAR BigQuery public dataset, and the warehouse queries it (the SQL is in `ingest/sql/bigquery/`). The chain counts on the site are NearBlocks', and BigQuery checks them day for day: over the 682 days read, the two count the same transactions on 680 and the same distinct signers on 682. BigQuery also counts accounts by contract and accounts that come back, which the Usage page charts: on 13 Nov 2026, 97.0% of the accounts that signed a function call called `game.hot.tg`, and 217 called `intents.near` (`gold.fct_bigquery_contract_daily`).
+The prompt names the NEAR BigQuery public dataset, and the warehouse queries it (the SQL is in `ingest/sql/bigquery/`). The transaction and signer counts on the site are NearBlocks', and BigQuery checks them day for day: over the 682 days read, the two count the same transactions on 680 and the same distinct signers on 682. BigQuery also counts what no other source here does, charted on the Usage, Developers, Security and Capital pages: accounts by contract, accounts that come back, who signs the day's transactions, deploys, blocks since launch and the owners of stake. Of accounts by contract: on 13 Nov 2026, 97.0% of the accounts that signed a function call called `game.hot.tg`, and 217 called `intents.near` (`gold.fct_bigquery_contract_daily`).
 
 ## Limits
 

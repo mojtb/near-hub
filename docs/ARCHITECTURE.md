@@ -57,7 +57,7 @@ flowchart LR
 | `main` | Code plus the pinned snapshot. What judges run | Commits, and data copied from `data/nightly` when the pin moves |
 | `data/nightly` | One commit per night: that night's code and data, pinned to that night, without `.github` | `.github/workflows/nightly.yml` |
 
-`ci.yml` runs `make setup warehouse verify` on a clean Linux machine for every push to `main`. It has no network keys, so it proves the judge path.
+`ci.yml` runs `make setup warehouse verify` on a clean Linux machine for every push to `main` and every pull request, on Python 3.11, 3.12 and 3.13 and once in the container. It then runs `make catalog site thesis` and fails if any committed file comes out different. It has no network keys, so it proves the judge path.
 
 `data/nightly` shares no history with `main` and is never merged. Each night the job starts from `main`'s code, brings in the branch's `data/`, and commits the result on top of the branch. Up to `main`'s pin, `main`'s bronze is the record, so a reading added or removed by hand on `main` stays that way. After the pin, the branch's bronze is the record. A commit on the branch passes `make setup warehouse verify` by itself, except on a night the job reports a failed check.
 
