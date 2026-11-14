@@ -322,7 +322,7 @@ hypothesis = [
     f"The chain counts on the site are NearBlocks', and BigQuery checks them day for day: over the {bq['chain_txns_days_equal_bigquery_vs_nearblocks']['b']} "
     f"days read, the two count the same transactions on {bq['chain_txns_days_equal_bigquery_vs_nearblocks']['a']} and the same "
     f"distinct signers on {bq['chain_signers_days_equal_bigquery_vs_nearblocks']['a']}. BigQuery also counts accounts by "
-    f"contract, which the site does not chart yet: on {day(bq_top['date_day'])}, {pct(bq_top['signer_share'])} of the accounts that "
+    f"contract and accounts that come back, which the Usage page charts: on {day(bq_top['date_day'])}, {pct(bq_top['signer_share'])} of the accounts that "
     f"signed a function call called `{bq_top['contract_id']}`, and {bq_intents['signers']:,.0f} called `intents.near` "
     "(`gold.fct_bigquery_contract_daily`).",
     "",

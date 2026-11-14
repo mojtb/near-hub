@@ -536,6 +536,7 @@
     hos: { name: 'House of Stake', group: 'chain', url: 'https://houseofstake.org', what: 'Proposals and votes, read from the vote.dao contract', how: 'Contract views over RPC' },
     fastnear: { name: 'FastNear', group: 'chain', url: 'https://fastnear.com', what: 'Wallet transfers, holdings and the largest holders of each token', how: 'Public API' },
     neardata: { name: 'Neardata', group: 'chain', logo: 'neardata.svg', url: 'https://neardata.xyz', what: 'Sample blocks, kept only as aggregated counts', how: 'Public API' },
+    bigquery: { name: "NEAR's public BigQuery dataset", group: 'chain', logo: 'near', url: 'https://docs.near.org/data-infrastructure/big-query', what: 'Transactions, signers and calls by contract for each day, and how many accounts came back, read from the dataset as counts', how: 'SQL on Google BigQuery' },
     nearblocks: { name: 'NearBlocks', group: 'data', url: 'https://nearblocks.io', what: 'Daily chain, Intents, per-contract and wallet statistics', how: 'Public API' },
     defillama: { name: 'DefiLlama', group: 'data', url: 'https://defillama.com', what: 'TVL, fees, revenue, DEX volume, stablecoins, yields and prices', how: 'Public API' },
     nansen: { name: 'Nansen', group: 'data', url: 'https://www.nansen.ai', what: 'Published signer counts, used as a cross-check', how: 'Published report, read by hand' },

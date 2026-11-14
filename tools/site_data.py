@@ -2063,10 +2063,98 @@ pool_history = {
     "facts": {k: clean(v, 6) for k, v in pool_history_facts.items()},
 }
 
+# NEAR'S PUBLIC BIGQUERY DATASET, for three questions. Which contracts the accounts that sign transactions call: the
+# newest day's leading contracts by signers, and three counts on every day read. Whether accounts come back: the share
+# of the accounts that first signed in a year that signed again 1, 2, 3, 6 and 12 months later, complete months only.
+# The third, BigQuery against NearBlocks, reads dq_reconciliation, exported above as recon. Each query is the one the
+# page shows. A warehouse without these tables exports None for that part, and the page leaves its question out.
+BQ_HAVE = {r["table_name"] for r in rows("select table_name from information_schema.tables where table_schema = 'gold'")}
+BQ_NEWEST = f"(select max(date_day) from gold.fct_bigquery_contract_daily where date_day <= {LAST})"
+BQ_CONTRACTS_SQL = f"""-- The contracts that the most accounts signed a call to on the newest day read from NEAR's public BigQuery dataset,
+-- with NEAR Intents' contract always listed. A signer is the account that signed the transaction a call came from;
+-- for a relayed call that is the relayer. signer_share is of the day's accounts that signed any function call: one
+-- that called several contracts counts under each, so the shares do not add up to 100%. The dataset is read for each
+-- day's largest contracts only, by calls, by signers and by callers.
+select date_day, contract_id, entity, signers, signer_share, function_calls, rank_by_signers, rank_by_calls
+from gold.fct_bigquery_contract_daily
+where date_day = {BQ_NEWEST}
+  and (rank_by_signers <= 10 or contract_id = 'intents.near')
+order by rank_by_signers, contract_id;"""
+BQ_DAYS_SQL = f"""-- Every day read: the accounts that signed a transaction leading to a function call, how many of them called the
+-- newest day's leading contract and NEAR Intents' contract, the leader's rank by signers that day, and the function
+-- calls Intents' contract received.
+with leader as (
+  select contract_id
+  from gold.fct_bigquery_contract_daily
+  where date_day = {BQ_NEWEST}
+  order by rank_by_signers, contract_id
+  limit 1
+)
+select a.date_day,
+       a.signers as all_signers,
+       max(c.signers) filter (where c.contract_id = (select contract_id from leader)) as leader_signers,
+       max(c.rank_by_signers) filter (where c.contract_id = (select contract_id from leader)) as leader_rank,
+       max(c.signers) filter (where c.contract_id = 'intents.near') as intents_signers,
+       max(c.function_calls) filter (where c.contract_id = 'intents.near') as intents_calls
+from gold.fct_bigquery_action_daily a
+left join gold.fct_bigquery_contract_daily c using (date_day)
+where a.action_kind = 'FUNCTION_CALL' and a.date_day <= {LAST}
+group by 1, 2
+order by 1;"""
+BQ_COHORTS_SQL = """-- Do accounts come back? NEAR's public BigQuery dataset places every account that ever signed a transaction in the
+-- month it first signed one. Each row is a year of those months: the share of its accounts that signed again 1, 2, 3,
+-- 6 and 12 months later. Only complete months count, so a share is over the months of that year whose later month
+-- is complete.
+with cohorts as (
+  select cohort_month, cohort_signers
+  from gold.fct_bigquery_signer_cohort_monthly
+  where months_since_first = 0
+), complete as (
+  select max(active_month) as last_month
+  from gold.fct_bigquery_signer_cohort_monthly
+  where is_active_month_complete
+), later as (
+  select unnest([1, 2, 3, 6, 12]) as months_later
+)
+select year(c.cohort_month) as first_signed_year, l.months_later,
+       count(*) as cohort_months,
+       sum(c.cohort_signers) as accounts,
+       coalesce(sum(r.signers), 0) as signed_again,
+       coalesce(sum(r.signers), 0) / sum(c.cohort_signers) as retained_share
+from cohorts c
+cross join later l
+cross join complete m
+left join gold.fct_bigquery_signer_cohort_monthly r
+  on r.cohort_month = c.cohort_month and r.months_since_first = l.months_later
+where c.cohort_month + to_months(l.months_later) <= m.last_month
+group by 1, 2
+order by 1, 2;"""
+bigquery = {"contracts": None, "days": None, "cohorts": None}
+if {"fct_bigquery_contract_daily", "fct_bigquery_action_daily"} <= BQ_HAVE:
+    bigquery["contracts"] = {"sql": BQ_CONTRACTS_SQL, "rows": table(BQ_CONTRACTS_SQL.rstrip(";"), 6)}
+    bigquery["days"] = {"sql": BQ_DAYS_SQL, "cols": columns(BQ_DAYS_SQL.rstrip(";"), 6)}
+if "fct_bigquery_signer_cohort_monthly" in BQ_HAVE:
+    bigquery["cohorts"] = {
+        "sql": BQ_COHORTS_SQL,
+        "rows": table(BQ_COHORTS_SQL.rstrip(";"), 6),
+        # How many accounts ever signed, and the newest complete month's signers by whether they first signed before
+        # that month's year
+        "facts": {k: clean(v, 6) for k, v in one("""
+          with m as (select max(active_month) as last_month from gold.fct_bigquery_signer_cohort_monthly
+                     where is_active_month_complete)
+          select (select sum(cohort_signers) from gold.fct_bigquery_signer_cohort_monthly
+                  where months_since_first = 0) as accounts_ever,
+                 max(m.last_month) as last_month,
+                 sum(r.signers) as signed_last_month,
+                 sum(r.signers) filter (where year(r.cohort_month) < year(m.last_month)) as signed_last_month_older
+          from gold.fct_bigquery_signer_cohort_monthly r join m on r.active_month = m.last_month""").items()},
+    }
+
 more = {
     "horizon": horizon,
     "rivals": rivals,
     "poolHistory": pool_history,
+    "bigquery": bigquery,
     "venearWeeks": venear_weeks,
     "marketDaily": market_daily,
     "oneclickDaily": oneclick_daily,
