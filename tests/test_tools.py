@@ -134,3 +134,12 @@ def test_nightly_start_drops_only_what_main_is_the_record_for(tmp_path):
     assert drop_up_to(tmp_path, "2026-11-01") == 3
     assert not any((tmp_path / relative).exists() for relative in earlier)
     assert all((tmp_path / relative).exists() for relative in later)
+
+
+def test_years_to_breakeven_is_compound_growth_and_none_when_volume_is_not_growing():
+    from tools.horizon import years_to
+
+    assert years_to(4.0, 1.0) == pytest.approx(2.0)
+    assert years_to(0.9, 0.5) == 0.0
+    assert years_to(3.0, 0.0) is None
+    assert years_to(3.0, -0.1) is None
