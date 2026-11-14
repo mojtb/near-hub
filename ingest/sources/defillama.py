@@ -22,6 +22,8 @@ YIELDS = "https://yields.llama.fi"
 TOP_NEAR_PROTOCOLS = 25
 PRICE_HISTORY_START = date(2020, 9, 1)
 PRICE_POINTS_PER_CALL = 450
+# The NEAR Intents pool's balances are read from the chain at month ends from 2024-11, so token prices start here.
+TOKEN_PRICE_HISTORY_START = date(2024, 11, 1)
 # DefiLlama also serves dailyHoldersRevenue, dailyProtocolRevenue and dailySupplySideRevenue for near-intents. They are
 # arithmetic of these two (revenue split at 2026-02-23, and fees minus revenue), so they are not fetched; bronze up to
 # 2026-11-08 holds them.
@@ -75,6 +77,34 @@ def chain_dex_volume(ctx: Context) -> None:
 @dataset(SOURCE, "intents_volume")
 def intents_volume(ctx: Context) -> None:
     fetch(ctx, SOURCE, "intents_volume", "near-intents", f"{API}/summary/dexs/near-intents")
+
+
+@dataset(SOURCE, "swap_service_volume")
+def swap_service_volume(ctx: Context) -> None:
+    """Daily volume of the other cross-chain swap services in registry/swap_services.csv, each from the DefiLlama list its
+    row names. `dexs` holds the swaps a service settled, the list NEAR Intents itself is in. `bridges` holds what was sent
+    into a service on one chain to arrive on another: dailyOutgoingVolume counts each transfer once, where the per-chain
+    breakdown counts it leaving and arriving (checked 2026-11-12 on Across: the breakdown sums to twice the total).
+    NEAR Intents' own row names no list, because its series is fct_intents_daily's."""
+    for service in read_registry("swap_services"):
+        dimension, slug = service["llama_dimension"], service["llama_slug"]
+        if not slug:
+            continue
+        url = f"{API}/summary/{dimension}/{slug}"
+        params = {"excludeTotalDataChartBreakdown": "true", "dataType": service["llama_data_type"]}
+        try:
+            reply = ctx.http.get(url, params=params)
+        except HttpError as e:
+            ctx.warn(f"{slug}: {e}")
+            continue
+        # A slug can pass to another listing while the id stays (Templar, 2026-11-05), so the reply must carry the
+        # registry's id. A reply for anything else is refused, not saved under this service's name.
+        answered = str(reply.json().get("defillamaId"))
+        if answered != service["llama_id"]:
+            ctx.warn(f"{slug}: {url} answered for id {answered}, not {service['llama_id']}, so it was not saved")
+            continue
+        ctx.bronze.save(SOURCE, "swap_service_volume", f"{dimension}__{slug}", reply.content, url=url, params=params,
+                        status=reply.status)
 
 
 @dataset(SOURCE, "intents_fees")
@@ -148,6 +178,40 @@ def peer_price(ctx: Context) -> None:
             start += timedelta(days=PRICE_POINTS_PER_CALL)
         fetch(ctx, SOURCE, "peer_price", f"{key}__recent", url,
               params={"start": midnight(today - timedelta(days=OVERLAP_DAYS)), "span": OVERLAP_DAYS + 1, "period": "1d"})
+
+
+@dataset(SOURCE, "token_price")
+def token_price(ctx: Context) -> None:
+    """Daily price of each asset in registry/token_prices.csv that DefiLlama prices, asked like peer_price.
+
+    The registry gives DefiLlama's own coin key: `coingecko:<id>`, or `<chain>:<address>` for a token contract. No
+    CoinGecko call is made. A window before a coin's first price comes back empty and is saved as the answer it is. The
+    warehouse finds a coin by the key in the reply, so a reply that names the coin by another key than the registry's,
+    in another case for instance, is refused with a warning that shows the key DefiLlama uses."""
+    today = date.fromisoformat(ctx.snapshot)
+    midnight = lambda d: int(datetime(d.year, d.month, d.day, tzinfo=timezone.utc).timestamp())
+    for token in read_registry("token_prices"):
+        if token["price_source"] != "defillama":
+            continue
+        coin = token["source_asset_id"]
+        url = f"{COINS}/chart/{coin}"
+        windows = [(f"{coin}__recent", {"start": midnight(today - timedelta(days=OVERLAP_DAYS)), "span": OVERLAP_DAYS + 1, "period": "1d"})]
+        if not has_prior(ctx, SOURCE, "token_price", f"{coin}__recent"):
+            start = TOKEN_PRICE_HISTORY_START
+            while start < today:
+                windows.insert(-1, (f"{coin}__{start.isoformat()}", {"start": midnight(start), "span": PRICE_POINTS_PER_CALL, "period": "1d"}))
+                start += timedelta(days=PRICE_POINTS_PER_CALL)
+        for key, params in windows:
+            try:
+                reply = ctx.http.get(url, params=params)
+            except HttpError as e:
+                ctx.warn(f"{key}: {e}")
+                continue
+            answered = sorted(reply.json().get("coins") or {})
+            if answered not in ([], [coin]):
+                ctx.warn(f"{key}: {url} answered for {answered}, not {coin}, so it was not saved")
+                continue
+            ctx.bronze.save(SOURCE, "token_price", key, reply.content, url=url, params=params, status=reply.status)
 
 
 @dataset(SOURCE, "yield_pools")

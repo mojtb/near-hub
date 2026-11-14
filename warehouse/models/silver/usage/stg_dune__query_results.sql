@@ -1,6 +1,6 @@
 -- Rows of public Dune queries read through Dune's official API (ingest dataset dune/query_results), one bronze file per
 -- page of up to 5,000 rows, keyed <query id>__p<page>. Builds empty until a DUNE_API_KEY with API access has run.
--- The hand readings of the dashboard page are in stg_dune_public__query_results.
+-- Readings of the dashboard page in a browser are in stg_dune_public__query_results.
 {% set page_size = 5000 %}
 
 with files as ({{ bronze_files('dune__query_results') }}),

@@ -1,4 +1,46 @@
 {
+ "bigquery/actions_daily": {
+  "detail": "",
+  "files": 0,
+  "seconds": 7.5,
+  "status": "ok"
+ },
+ "bigquery/blocks_daily": {
+  "detail": "",
+  "files": 1,
+  "seconds": 9.1,
+  "status": "ok"
+ },
+ "bigquery/circulating_supply": {
+  "detail": "",
+  "files": 0,
+  "seconds": 2.8,
+  "status": "ok"
+ },
+ "bigquery/partitions": {
+  "detail": "",
+  "files": 1,
+  "seconds": 8.7,
+  "status": "ok"
+ },
+ "bigquery/signer_cohorts": {
+  "detail": "",
+  "files": 1,
+  "seconds": 9.7,
+  "status": "ok"
+ },
+ "bigquery/tables": {
+  "detail": "",
+  "files": 0,
+  "seconds": 5.8,
+  "status": "ok"
+ },
+ "bigquery/transactions_daily": {
+  "detail": "",
+  "files": 2,
+  "seconds": 97.0,
+  "status": "ok"
+ },
  "coinbase/candles": {
   "detail": "",
   "files": 1,
@@ -9,6 +51,12 @@
   "detail": "",
   "files": 7,
   "seconds": 39.2,
+  "status": "ok"
+ },
+ "coinmetrics/token_price": {
+  "detail": "",
+  "files": 5,
+  "seconds": 26.5,
   "status": "ok"
  },
  "defillama/chain_dex_volume": {
@@ -69,6 +117,18 @@
   "detail": "",
   "files": 7,
   "seconds": 4.9,
+  "status": "ok"
+ },
+ "defillama/swap_service_volume": {
+  "detail": "",
+  "files": 6,
+  "seconds": 6.2,
+  "status": "ok"
+ },
+ "defillama/token_price": {
+  "detail": "",
+  "files": 9,
+  "seconds": 6.1,
   "status": "ok"
  },
  "defillama/yield_pools": {
@@ -386,6 +446,12 @@
   "detail": "",
   "files": 1,
   "seconds": 0.6,
+  "status": "ok"
+ },
+ "rpc/intents_pool_history": {
+  "detail": "",
+  "files": 25,
+  "seconds": 4022.9,
   "status": "ok"
  },
  "rpc/lockups": {

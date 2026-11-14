@@ -30,6 +30,8 @@ HOT did not cause this. `0-relay.hot.tg` and `game.hot.tg` were flat across the 
 
 **Why the warehouse could not show this.** None of these accounts is in `registry/entities.csv`, so no contract in `fct_contract_daily` moved by more than about 27,000 a day. `fct_receiver_sample_daily` holds only 2026-10-31 at this pin. The accounts came from sampling 105 blocks from Neardata between 03-30 and 04-04, and the sample was used only to name them, because these streams arrive in bursts that a small sample misjudges.
 
+**What the warehouse shows now.** That paragraph describes the pin at which this note was written. Those accounts are now in `registry/entities.csv`, and `fct_contract_daily` holds their days. `fct_usage_quality_daily` takes the two streams out and, from 2025-11-01, splits each day into five layers that add up to `fct_chain_daily.txns`: the batch streams, HOT's game, the Sweat relayer, the Intents contract and everything else. `fct_chain_daily.distinct_signers` leaves out accounts that only signed their own deletion. `dim_event` dates this break, the stop of `relay.tg` on 2026-04-13, the deletion of Kai-Ching's accounts from 2026-10-02 and Sweat Wallet's scheduled end. The dashboard's Usage page reads those tables.
+
 **Why v1 barely moved.** v1 is distinct signers, and a relayed user is not a signer. NearBlocks documents neither count, so this comes from the numbers:
 
 - v1 matches Nansen's published Q3 2026 distinct signers: minimum 42,517 on 09-16, maximum 106,771 on 07-06, and a mean of 79,289 against Nansen's "approximately 79,300". `txns` matches Nansen's 584,733 on 08-15 and 1,217,209 on 09-27.

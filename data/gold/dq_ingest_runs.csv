@@ -741,8 +741,16 @@ snapshot_date,dataset,status,detail,files,seconds
 2026-11-11,rpc/status,ok,"",1,0.3
 2026-11-11,rpc/validators_current,ok,"",1,0.4
 2026-11-11,rpc/validators_epoch,ok,"",2,4.7
+2026-11-12,bigquery/actions_daily,ok,"",0,7.5
+2026-11-12,bigquery/blocks_daily,ok,"",1,9.1
+2026-11-12,bigquery/circulating_supply,ok,"",0,2.8
+2026-11-12,bigquery/partitions,ok,"",1,8.7
+2026-11-12,bigquery/signer_cohorts,ok,"",1,9.7
+2026-11-12,bigquery/tables,ok,"",0,5.8
+2026-11-12,bigquery/transactions_daily,ok,"",2,97.0
 2026-11-12,coinbase/candles,ok,"",1,0.3
 2026-11-12,coinmetrics/asset_metrics,ok,"",7,39.2
+2026-11-12,coinmetrics/token_price,ok,"",5,26.5
 2026-11-12,defillama/chain_dex_volume,ok,"",7,6.5
 2026-11-12,defillama/chain_fees,ok,"",14,13.7
 2026-11-12,defillama/chain_gas_fees,ok,"",7,3.1
@@ -753,6 +761,8 @@ snapshot_date,dataset,status,detail,files,seconds
 2026-11-12,defillama/protocols,ok,"",26,46.2
 2026-11-12,defillama/stablecoin_assets,ok,"",1,0.4
 2026-11-12,defillama/stablecoin_chain,ok,"",7,4.9
+2026-11-12,defillama/swap_service_volume,ok,"",6,6.2
+2026-11-12,defillama/token_price,ok,"",9,6.1
 2026-11-12,defillama/yield_pools,ok,"",1,0.7
 2026-11-12,dune/query_results,skipped,needs DUNE_API_KEY,,0.0
 2026-11-12,fastnear/account_full,ok,"",15,3.9
@@ -806,6 +816,7 @@ snapshot_date,dataset,status,detail,files,seconds
 2026-11-12,rpc/ft_metadata,ok,"",1,5.3
 2026-11-12,rpc/gas_price,ok,"",1,0.1
 2026-11-12,rpc/hos_proposals,ok,"",1,0.6
+2026-11-12,rpc/intents_pool_history,ok,"",25,4022.9
 2026-11-12,rpc/lockups,ok,"",2,145.6
 2026-11-12,rpc/nrr_pool_daily,ok,"",1,4.1
 2026-11-12,rpc/protocol_config,ok,"",1,0.1
@@ -883,3 +894,88 @@ snapshot_date,dataset,status,detail,files,seconds
 2026-11-13,rpc/status,ok,"",1,0.3
 2026-11-13,rpc/validators_current,ok,"",1,0.4
 2026-11-13,rpc/validators_epoch,ok,"",2,4.6
+2026-11-14,bigquery/actions_daily,partial,"actions_daily: would read 4.8 GB on top of 657.4 GB this month, over the limit of 600 GB; not run",0,0.3
+2026-11-14,bigquery/blocks_daily,partial,"blocks_daily: would read 0.1 GB on top of 657.4 GB this month, over the limit of 600 GB; not run",0,0.3
+2026-11-14,bigquery/callers_daily,partial,"callers_daily: would read 50.0 GB on top of 657.4 GB this month, over the limit of 600 GB; not run",0,0.3
+2026-11-14,bigquery/circulating_supply,partial,"circulating_supply: would read 0.0 GB on top of 657.4 GB this month, over the limit of 600 GB; not run",0,0.4
+2026-11-14,bigquery/partitions,partial,"partitions: would read 0.0 GB on top of 657.4 GB this month, over the limit of 600 GB; not run",0,0.4
+2026-11-14,bigquery/signer_cohorts,partial,"signer_cohorts: would read 155.4 GB, over the limit of 150 GB a query; not run",0,0.4
+2026-11-14,bigquery/signers_daily,partial,"signers_daily: would read 126.3 GB on top of 657.4 GB this month, over the limit of 600 GB; not run",0,0.4
+2026-11-14,bigquery/staking_balances_daily,partial,"staking_balances_daily: would read 4.7 GB on top of 657.4 GB this month, over the limit of 600 GB; not run",0,0.7
+2026-11-14,bigquery/tables,partial,"tables: would read 0.0 GB on top of 657.4 GB this month, over the limit of 600 GB; not run",0,1.0
+2026-11-14,bigquery/transactions_daily,partial,"transactions_daily: would read 0.6 GB on top of 657.4 GB this month, over the limit of 600 GB; not run",0,0.5
+2026-11-14,coinbase/candles,ok,"",0,0.1
+2026-11-14,coinmetrics/asset_metrics,ok,"",0,39.2
+2026-11-14,coinmetrics/token_price,ok,"",0,32.5
+2026-11-14,defillama/chain_dex_volume,ok,"",0,3.8
+2026-11-14,defillama/chain_fees,ok,"",0,10.4
+2026-11-14,defillama/chain_gas_fees,ok,"",0,3.2
+2026-11-14,defillama/chain_tvl,ok,"",0,3.0
+2026-11-14,defillama/intents_fees,ok,"",0,0.5
+2026-11-14,defillama/intents_volume,ok,"",0,0.7
+2026-11-14,defillama/peer_price,ok,"",0,3.2
+2026-11-14,defillama/protocols,ok,"",0,32.0
+2026-11-14,defillama/stablecoin_assets,ok,"",0,0.0
+2026-11-14,defillama/stablecoin_chain,ok,"",0,3.6
+2026-11-14,defillama/swap_service_volume,ok,"",0,3.9
+2026-11-14,defillama/token_price,ok,"",0,1.9
+2026-11-14,defillama/yield_pools,ok,"",0,1.1
+2026-11-14,dune/query_results,skipped,needs DUNE_API_KEY,,0.0
+2026-11-14,fastnear/account_full,ok,"",0,3.5
+2026-11-14,fastnear/ft_top_holders,ok,"",0,1.8
+2026-11-14,fastnear/transfers,ok,"",1,1.9
+2026-11-14,fastnear/tx_counts,ok,"",0,15.3
+2026-11-14,github/commit_activity,ok,"",0,20.1
+2026-11-14,github/commits_weekly,ok,"",0,149.3
+2026-11-14,github/repos,ok,"",0,13.0
+2026-11-14,gov/topics,ok,"",0,6.2
+2026-11-14,intents_explorer/daily_tally,ok,"",0,409.9
+2026-11-14,nearblocks/address_stats,ok,"",0,36.6
+2026-11-14,nearblocks/block_stats,ok,"",0,6.0
+2026-11-14,nearblocks/blocks_24h,ok,"",0,6.0
+2026-11-14,nearblocks/charts_v1,ok,"",0,6.3
+2026-11-14,nearblocks/contract_txns,ok,"",0,387.2
+2026-11-14,nearblocks/ft_transfer_stats,ok,"",0,134.9
+2026-11-14,nearblocks/intents_accounts,ok,"",0,6.0
+2026-11-14,nearblocks/intents_chains,ok,"",0,6.0
+2026-11-14,nearblocks/intents_swaps,ok,"",0,6.0
+2026-11-14,nearblocks/intents_tokens,ok,"",0,6.1
+2026-11-14,nearblocks/intents_totals,ok,"",0,6.3
+2026-11-14,nearblocks/intents_volume,ok,"",0,5.9
+2026-11-14,nearblocks/intents_volume_by_asset,ok,"",0,6.3
+2026-11-14,nearblocks/intents_volume_by_chain,ok,"",0,37.3
+2026-11-14,nearblocks/mpc_operators,ok,"",0,5.8
+2026-11-14,nearblocks/price_stats,ok,"",0,6.0
+2026-11-14,nearblocks/signatures_24h,ok,"",0,5.9
+2026-11-14,nearblocks/signer_stats,ok,"",0,6.0
+2026-11-14,nearblocks/signer_totals,ok,"",0,6.0
+2026-11-14,nearblocks/stats,ok,"",0,0.2
+2026-11-14,nearblocks/stats_v1,ok,"",0,6.0
+2026-11-14,nearblocks/tvl_stats,ok,"",0,6.1
+2026-11-14,nearblocks/txn_stats,ok,"",0,6.0
+2026-11-14,nearblocks/txns_24h,ok,"",0,6.0
+2026-11-14,nearblocks/validators,ok,"",0,85.5
+2026-11-14,nearblocks/validators_info,ok,"",0,6.0
+2026-11-14,nearblocks/wallet_balance,ok,"",0,68.5
+2026-11-14,nearcatalog/projects,ok,"",0,0.8
+2026-11-14,neardata/receiver_sample,ok,"",0,440.3
+2026-11-14,neardata/receiver_sample_backfill,ok,"",0,0.0
+2026-11-14,nrr_fund/figures,ok,"",0,0.2
+2026-11-14,oneclick/tokens,ok,"",0,0.4
+2026-11-14,revenue_page/page,ok,"",0,1.0
+2026-11-14,rhea/token_prices,ok,"",0,2.3
+2026-11-14,rhea/top_pools,ok,"",0,2.4
+2026-11-14,rpc/accounts,ok,"",0,10.9
+2026-11-14,rpc/block_day,ok,"",0,9.0
+2026-11-14,rpc/contract_views,ok,"",0,2.5
+2026-11-14,rpc/contract_views_history,ok,"",0,0.1
+2026-11-14,rpc/ft_metadata,ok,"",0,3.2
+2026-11-14,rpc/gas_price,ok,"",0,0.1
+2026-11-14,rpc/hos_proposals,ok,"",0,0.6
+2026-11-14,rpc/intents_pool_history,ok,"",0,0.1
+2026-11-14,rpc/lockups,ok,"",0,61.9
+2026-11-14,rpc/nrr_pool_daily,ok,"",0,3.1
+2026-11-14,rpc/protocol_config,ok,"",0,0.1
+2026-11-14,rpc/status,ok,"",0,0.1
+2026-11-14,rpc/validators_current,ok,"",0,0.2
+2026-11-14,rpc/validators_epoch,ok,"",0,0.6

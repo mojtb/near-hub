@@ -7,7 +7,9 @@ flowchart LR
     B -->|make warehouse| C[Silver<br/>typed, every snapshot]
     C --> D[Gold<br/>facts, dimensions, quality]
     D --> E[data/gold<br/>Parquet and CSV]
-    D --> F[docs<br/>catalog, reconciliation]
+    D -->|make catalog| F[docs<br/>catalog, reconciliation]
+    D -->|make thesis| T[THESIS.md<br/>the claim scorecard, written out]
+    D -->|make site| S[site<br/>dashboard and table guide]
 ```
 
 ## Layers
@@ -19,6 +21,8 @@ flowchart LR
 | Silver | `warehouse/models/silver/`, schema `silver` | One typed model per dataset, every snapshot kept, with `is_latest` on the newest value per key | Faithful to the source. Units converted, nothing joined |
 | Gold | `warehouse/models/gold/`, schema `gold` | Shared facts and dimensions | One stated grain per table, tested. Every column documented with a unit |
 | Exports | `data/gold/` | Gold as Parquet, CSV for tables up to 5,000 rows, fingerprints, catalog | Rebuilt by `make warehouse` |
+| Thesis | `THESIS.md` | The claim scorecard written out: the case, the evidence for and against, the limits | Written by `make thesis`. No figure is typed |
+| Site | `site/` | The dashboard, its data (`site/shared/data.js`, `site/shared/catalog.js`) and the guide to every table (`site/docs/index.html`) | Data and guide rewritten by `make site` from the warehouse |
 
 ## Why these tools
 
@@ -57,7 +61,7 @@ flowchart LR
 
 `data/nightly` shares no history with `main` and is never merged. Each night the job starts from `main`'s code, brings in the branch's `data/`, and commits the result on top of the branch. Up to `main`'s pin, `main`'s bronze is the record, so a reading added or removed by hand on `main` stays that way. After the pin, the branch's bronze is the record. A commit on the branch passes `make setup warehouse verify` by itself, except on a night the job reports a failed check.
 
-To move the pin: run `git fetch origin data/nightly && git checkout FETCH_HEAD -- data`, then `make warehouse fingerprints catalog verify`, and commit. `data/PINNED` comes along with the data.
+To move the pin: run `git fetch origin && python3 -m tools.bring_in_nightly`, then `make warehouse fingerprints catalog site thesis verify`, and commit. The helper takes the branch's `data/`, `data/PINNED` with it, and puts `main`'s own bronze back up to the old pin, so readings added by hand keep their files and their manifest lines.
 
 ## Conventions
 

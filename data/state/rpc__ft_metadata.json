@@ -1520,6 +1520,10 @@
    "decimals": 18,
    "symbol": "AM"
   },
+  "ambfj.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "AMBFJ"
+  },
   "amc-2.nearlytrade.near": {
    "decimals": 18,
    "symbol": "AMC"
@@ -3552,6 +3556,10 @@
    "symbol": "BLOCKRADAR"
   },
   "blockradar.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "BLOCKRADAR"
+  },
+  "blockradar.v2-launchpad.justhoot.near": {
    "decimals": 18,
    "symbol": "BLOCKRADAR"
   },
@@ -6127,6 +6135,10 @@
    "decimals": 18,
    "symbol": "DEGEN"
   },
+  "degen.basketcase.near": {
+   "decimals": 18,
+   "symbol": "DEGEN"
+  },
   "degen.keypadlaunch.near": {
    "decimals": 18,
    "symbol": "DEGEN"
@@ -6656,6 +6668,10 @@
   },
   "done.token.workinghard.near": {
    "error": "UNKNOWN_ACCOUNT"
+  },
+  "donk.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "DONK"
   },
   "donnabella-370.meme-cooking.near": {
    "decimals": 18,
@@ -7974,6 +7990,10 @@
    "decimals": 18,
    "symbol": "FACAI"
   },
+  "facestealer.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "FACESTEALER"
+  },
   "fade.token0.near": {
    "decimals": 18,
    "symbol": "FADE"
@@ -8523,6 +8543,10 @@
   "forever.nearlytrade.near": {
    "decimals": 18,
    "symbol": "FOREVER"
+  },
+  "forger.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "FORGER"
   },
   "fork.fork-it.near": {
    "decimals": 24,
@@ -11296,6 +11320,10 @@
    "decimals": 18,
    "symbol": "ICPUSSY"
   },
+  "icredit.nearonhq.near": {
+   "decimals": 24,
+   "symbol": "iCREDIT"
+  },
   "id.nsaw.near": {
    "decimals": 24,
    "symbol": "NSAW"
@@ -12152,7 +12180,15 @@
    "decimals": 24,
    "symbol": "jelly"
   },
+  "jen2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "JEN2"
+  },
   "jensen-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "JENSEN"
+  },
+  "jensen-2.v2-launchpad.justhoot.near": {
    "decimals": 18,
    "symbol": "JENSEN"
   },
@@ -12908,6 +12944,14 @@
    "decimals": 18,
    "symbol": "LADYRHEA"
   },
+  "lagos-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "LAGOS"
+  },
+  "lagos.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "LAGOS"
+  },
   "laid-39d2e2.nearpaid.near": {
    "decimals": 18,
    "symbol": "LAID"
@@ -12939,6 +12983,10 @@
   "lantern.v2-launchpad.justhoot.near": {
    "decimals": 18,
    "symbol": "LANTERN"
+  },
+  "last-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "LAST"
   },
   "last-hvno.dumpaddict.near": {
    "decimals": 18,
@@ -13519,6 +13567,10 @@
   "luca.nearlytrade.near": {
    "decimals": 18,
    "symbol": "LUCA"
+  },
+  "lucicat.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "LUCICAT"
   },
   "lucky-273.meme-cooking.near": {
    "decimals": 18,
@@ -14374,6 +14426,14 @@
   "mihao.nearlytrade.near": {
    "decimals": 18,
    "symbol": "MIHAO"
+  },
+  "mihaocat.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "MIHAOCAT"
+  },
+  "mihaocat.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "MIHAOCAT"
   },
   "mika.tkn.near": {
    "decimals": 18,
@@ -26824,6 +26884,10 @@
    "decimals": 18,
    "symbol": "SIGHT"
   },
+  "signal.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "SIGNAL"
+  },
   "silent.v2-launchpad.justhoot.near": {
    "decimals": 18,
    "symbol": "SILENT"
@@ -28132,6 +28196,10 @@
    "decimals": 18,
    "symbol": "SURE"
   },
+  "surv.v2.meme-launchpad.near": {
+   "decimals": 18,
+   "symbol": "SURV"
+  },
   "sux-1860.meme-cooking.near": {
    "decimals": 18,
    "symbol": "sux"
@@ -29142,6 +29210,10 @@
   "theburningrealm.near": {
    "decimals": 2,
    "symbol": "TBR"
+  },
+  "thehuangs.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "THEHUANGS"
   },
   "thekangs-2.nearlytrade.near": {
    "decimals": 18,
@@ -30848,6 +30920,10 @@
    "decimals": 18,
    "symbol": "VOTE"
   },
+  "vpine.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "VPINE"
+  },
   "vs.nearlytrade.near": {
    "decimals": 18,
    "symbol": "VS"
@@ -31055,6 +31131,10 @@
   "what.nearlytrade.near": {
    "decimals": 18,
    "symbol": "WHAT"
+  },
+  "whatsnow.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "WHATSNOW"
   },
   "white.v1.whole-market.near": {
    "decimals": 24,

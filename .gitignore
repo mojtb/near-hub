@@ -3,6 +3,12 @@ __pycache__/
 *.pyc
 .env
 .DS_Store
+
+# A Google Cloud key file belongs outside the repository (see .env.example). These names are ignored in case one is
+# dropped here by mistake; `make verify` also fails on any file that holds a private key.
+/bigquery*.json
+/*service-account*.json
+/*credentials*.json
 .pytest_cache/
 .logs/
 
@@ -13,6 +19,8 @@ __pycache__/
 warehouse/target/
 warehouse/logs/
 logs/
+# dbt run by hand, outside make, writes here
+/target/
 dbt_packages/
 
 # The warehouse file is rebuilt by `make warehouse`; gold exports are committed instead.

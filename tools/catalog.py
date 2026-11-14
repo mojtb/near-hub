@@ -19,19 +19,26 @@ DOCS = ROOT / "docs"
 AREAS = [
     ("Calendar and registry", ["dim_date", "dim_entity", "dim_token", "dim_event", "dim_block_day", "dim_protocol", "dim_source"]),
     ("Chain usage, supply and parameters", ["fct_chain_daily", "fct_supply_daily", "fct_circulating_supply_daily", "fct_protocol_config", "fct_contract_daily", "fct_receiver_sample_daily"]),
+    ("NEAR's public BigQuery dataset", ["fct_bigquery_chain_daily", "fct_bigquery_receiver_daily", "fct_bigquery_contract_daily", "fct_bigquery_action_daily",
+                                        "fct_bigquery_circulating_supply_daily", "fct_bigquery_signer_cohort_monthly",
+                                        "fct_bigquery_signer_daily", "fct_bigquery_caller_daily", "fct_bigquery_staking_balance_daily"]),
     ("NEAR Intents and revenue", ["fct_intents_daily", "fct_intents_chain_daily", "fct_intents_asset_daily", "fct_intents_fee_channels",
-                                  "fct_intents_dashboard_readings", "fct_dune_intents_asset_daily", "fct_dune_dashboard_results",
+                                  "fct_intents_dashboard_readings", "fct_dune_intents_asset_daily", "fct_dune_intents_chain_daily", "fct_dune_intents_swaps_daily",
+                                  "fct_dune_intents_tvl_daily", "fct_dune_intents_tvl_asset_daily", "fct_intents_pool_chain_monthly", "fct_dune_dashboard_results",
                                   "fct_intents_1click_daily", "fct_intents_1click_channel_daily", "fct_intents_1click_pair_daily", "fct_intents_1click_route_daily", "fct_intents_1click_size_daily",
                                   "fct_intents_1click_fee_recipient_daily", "fct_revenue_capture", "fct_revenue_page_emissions", "fct_revenue_page_monthly"]),
     ("Wallets", ["fct_wallet_transfers", "fct_wallet_flows_daily", "fct_wallet_counterparties", "fct_revenue_inflows_daily", "fct_wallet_balance_daily", "fct_wallet_holdings", "fct_token_holders"]),
     ("Security and staking", ["fct_validator_epoch", "fct_validator_summary", "fct_chain_signatures_daily", "fct_mpc_state", "fct_mpc_participants", "fct_mpc_operators", "fct_lst_snapshot"]),
-    ("Capital and DeFi", ["fct_protocol_tvl_daily", "fct_exchange_balance_daily", "fct_protocol_fees_snapshot", "fct_stablecoin_assets", "fct_yield_pools"]),
-    ("Market and peers", ["fct_market_daily", "fct_token_prices", "fct_peer_daily", "fct_etf_nrr_daily", "fct_etf_nrr_chain_daily"]),
-    ("Developers and governance", ["fct_dev_activity_weekly", "fct_repo_snapshot", "fct_catalog_projects", "fct_governance_threads", "fct_governance_proposals", "fct_venear_snapshot"]),
-    ("Thesis models", ["fct_thesis_scorecard", "dim_claim", "fct_net_dilution_daily", "fct_deflation_scenarios",
+    ("Capital and DeFi", ["fct_protocol_tvl_daily", "fct_defi_tvl_daily", "fct_exchange_balance_daily", "fct_protocol_fees_snapshot", "fct_stablecoin_assets", "fct_yield_pools"]),
+    ("Market and peers", ["fct_market_daily", "fct_token_prices", "fct_token_price_daily", "fct_peer_daily", "fct_peer_supply_readings", "fct_peer_app_fees_snapshot",
+                          "fct_peer_chain_fees_snapshot", "fct_swap_services_daily", "fct_etf_nrr_daily", "fct_etf_nrr_chain_daily"]),
+    ("Developers and governance", ["fct_dev_activity_weekly", "fct_repo_snapshot", "fct_catalog_projects", "fct_governance_threads", "fct_governance_proposals", "fct_governance_decisions",
+                                   "fct_venear_snapshot"]),
+    ("Thesis models", ["fct_thesis_scorecard", "fct_thesis_scorecard_daily", "dim_claim", "fct_net_dilution_daily", "fct_deflation_scenarios",
                        "fct_intents_unit_economics_monthly", "fct_intents_channel_economics_monthly", "fct_intents_concentration_monthly",
-                       "fct_valuation_multiples_daily", "fct_usage_quality_daily", "fct_etf_absorption_daily"]),
-    ("Data quality", ["dq_reconciliation", "dq_freshness", "dq_revisions", "dq_ingest_runs", "dq_provenance"]),
+                       "fct_valuation_multiples_daily", "fct_usage_quality_daily", "fct_usage_lead_correlations",
+                       "fct_etf_absorption_daily"]),
+    ("Data quality", ["dq_reconciliation", "dq_freshness", "dq_revisions", "dq_ingest_runs", "dq_provenance", "dq_bigquery_tables", "dq_bigquery_reads"]),
 ]
 DATE_COLUMNS = ("date_day", "snapshot_date", "week_start", "month_start", "event_date")
 
@@ -152,13 +159,113 @@ def expected_results(con: duckdb.DuckDBPyConnection) -> str:
     return "\n".join(lines)
 
 
-def write_readme_results(con: duckdb.DuckDBPyConnection) -> None:
-    readme = ROOT / "README.md"
-    text = readme.read_text()
-    start, end = "<!-- expected:start -->", "<!-- expected:end -->"
+def closest_call(con: duckdb.DuckDBPyConnection) -> Dict[str, Any]:
+    """The tested claim nearest its bar. The gap is a share of the bar; where the bar is zero the claim measures a
+    change between two periods, so the measured value is the gap. `if_reversed` is the tally with that result turned."""
+    cur = con.execute("""
+        select s.claim_id, s.claim, s.side, s.status, s.value, s.threshold,
+               case when s.threshold = 0 then abs(s.value) else abs(s.value - s.threshold) / abs(s.threshold) end as gap,
+               count(*) filter (where (s.side = 'bull') = (s.status = 'holds')) over () as stands_for,
+               count(*) filter (where (s.side = 'bull') <> (s.status = 'holds')) over () as stands_against
+        from gold.fct_thesis_scorecard s
+        where s.status in ('holds', 'fails')
+        order by gap, s.claim_id limit 1""")
+    row = dict(zip([d[0] for d in cur.description], cur.fetchone()))
+    turn = -1 if (row["side"] == "bull") == (row["status"] == "holds") else 1
+    row["if_reversed"] = (row["stands_for"] + turn, row["stands_against"] - turn)
+    return row
+
+
+def verdict(con: duckdb.DuckDBPyConnection) -> str:
+    """The README's headline result, so the first thing a reader sees cannot drift from the scorecard."""
+    one = lambda sql: con.execute(sql).fetchone()
+    # A claim for the case supports it when it holds; a claim naming a risk supports it when it fails.
+    # A claim the data cannot settle (not_testable, not_settled) is on neither side.
+    stands = """count(*) filter (where (side = 'bull') = (status = 'holds') and status in ('holds', 'fails'))"""
+    against = """count(*) filter (where (side = 'bull') <> (status = 'holds') and status in ('holds', 'fails'))"""
+    no_test = "count(*) filter (where status not in ('holds', 'fails'))"
+    f, a, n, day = one(f"select {stands}, {against}, {no_test}, max(as_of_date) from gold.fct_thesis_scorecard")
+    # The same count by what a claim reads (dim_claim.reading): where NEAR stands, and which way it is moving.
+    kinds = {r[0]: r[1:] for r in con.execute(f"""
+        select c.reading, {stands}, count(*)
+        from gold.fct_thesis_scorecard s join (select claim_id, reading from gold.dim_claim) c using (claim_id)
+        where s.status in ('holds', 'fails') group by 1""").fetchall()}
+    two_ways = (f" Of the {kinds['state'][1]} that test where NEAR stands today, **{kinds['state'][0]}** support it; of the "
+                f"{kinds['direction'][1]} that test which way it is moving, **{kinds['direction'][0]}** do."
+                if {"state", "direction"} <= set(kinds) else "")
+    # The 30 days to the newest day whose fees have settled, which is the window THESIS.md and the dashboard read.
+    off = one("""select offset_share, date_day from gold.fct_net_dilution_daily
+                 where date_day = (select max(date_day) from gold.fct_intents_daily
+                                   where not is_fee_revenue_provisional)""")
+    # Said only while the count hangs on it: a result within a hundredth of its bar can turn on a source's revision.
+    close = closest_call(con)
+    by = (f"{close['status']} by {abs(close['value']) * 100:.2f} points" if close["threshold"] == 0
+          else f"is {close['gap'] * 100:.1f}% from its bar")
+    thin = (f" The closest result, \"{close['claim']}\", {by}; reversed, the count would be "
+            f"**{close['if_reversed'][0]}** and **{close['if_reversed'][1]}**.") if close["gap"] < 0.01 else ""
+    # The verdict leads, worded as THESIS.md words it: the offset, the break-even multiples today and after the cut, and
+    # the years at the measured growth of volume (tools/horizon.py), each with its wording when it turns.
+    from tools.horizon import horizon
+    pace = {r["scenario_id"]: r for r in horizon(con) if r["pace"] == "measured"}
+    m_now, m_cut = pace["current"]["breakeven_volume_multiple"], pace["hsp029_end_state"]["breakeven_volume_multiple"]
+    growth, price_day = pace["current"]["growth_a_year"], pace["current"]["as_of_date"]
+    rate, status = one("select annual_issuance_rate, status from registry.issuance_scenarios where scenario_id = 'hsp029_end_state'")
+    cut = f"{rate * 100:.1f}".rstrip("0").rstrip(".") + "%"
+    when = f"once the voted cut of issuance to {cut} is in force" if status == "passed_vote_not_in_force" else f"at the end of HSP-029's ramp to {cut}"
+    offset = (f"Over the 30 days to {off[1]}, the fees NEAR's revenue wallets received and the gas burned "
+              f"{'came to' if off[0] >= 1 else 'offset'} **{off[0] * 100:.1f}%** of the new NEAR the chain created")
+    if off[0] >= 1:
+        lead = f"**The gap has closed.** {offset}, so they match it."
+    elif m_now <= 1:
+        lead = (f"**Not yet.** {offset}; at NEAR's close on {price_day}, today's Intents volume would already be enough to "
+                f"match it (**{m_now:.1f}×**). That is arithmetic, not a forecast.")
+    else:
+        lead = (f"**Not yet.** {offset}; to match it, Intents volume has to be **{m_now:.1f}×** today's, " +
+                (f"or **{m_cut:.1f}×** {when}." if m_cut > 1 else f"and {when}, today's volume would be enough (**{m_cut:.1f}×**)."))
+        if growth is None or growth <= 0:
+            lead += (f" Volume {'fell **' + f'{-growth * 100:.0f}%' + '**' if growth and growth < 0 else 'did not grow'} over "
+                     "the last year, so at this pace the gap does not close. That is arithmetic, not a forecast.")
+        else:
+            years_cut = pace["hsp029_end_state"]["years_to_breakeven"]
+            lead += (f" Volume grew **{growth * 100:.0f}%** over the last year; at that pace, with the price and NEAR's share of "
+                     f"fees unchanged, that is about **{pace['current']['years_to_breakeven']:.1f} years** away"
+                     + (f", or **{years_cut:.1f}** after the cut" if years_cut else "") + ": arithmetic, not a forecast.")
+    return (f"{lead} At the snapshot of {day}, of {f + a} claims the data can test, "
+            f"**{f}** support the long case and **{a}** count against it; **{n}** more cannot be settled "
+            f"yet.{two_ways}{thin}")
+
+
+def source_table(con: duckdb.DuckDBPyConnection) -> str:
+    """The data notice's table of sources, generated from registry/sources.csv so the notice cannot drift from it."""
+    rows = con.execute("""
+        select source, provides, terms_summary, terms_url
+        from gold.dim_source
+        where provides is not null and lower(provides) not like 'not used%'
+        order by source""").fetchall()
+    cell = lambda v: (v or "").replace("|", "\\|").replace("\n", " ").strip()
+    lines = ["| Source | What it gives this project | Its terms, as read when it was added | Terms page |", "|---|---|---|---|"]
+    for source, provides, terms, url in rows:
+        link = f"[{cell(url).split('//')[-1].split('/')[0]}]({cell(url)})" if url else "none found"
+        lines.append(f"| `{cell(source)}` | {cell(provides)} | {cell(terms)} | {link} |")
+    return "\n".join(lines)
+
+
+def _splice(path: Path, name: str, body: str) -> None:
+    """Replace what sits between <!-- name:start --> and <!-- name:end --> in a file that is otherwise written by hand."""
+    text = path.read_text()
+    start, end = f"<!-- {name}:start -->", f"<!-- {name}:end -->"
     before, rest = text.split(start, 1)
     _, after = rest.split(end, 1)
-    readme.write_text(f"{before}{start}\n{expected_results(con)}\n{end}{after}")
+    path.write_text(f"{before}{start}\n{body}\n{end}{after}")
+
+
+def write_readme_results(con: duckdb.DuckDBPyConnection) -> None:
+    _splice(ROOT / "README.md", "verdict", verdict(con))
+    _splice(ROOT / "README.md", "expected", expected_results(con))
+
+
+def write_data_notice(con: duckdb.DuckDBPyConnection) -> None:
+    _splice(ROOT / "DATA_NOTICE.md", "sources", source_table(con))
 
 
 def main() -> None:
@@ -169,8 +276,10 @@ def main() -> None:
     write_catalog(catalog)
     write_reconciliation(con)
     write_readme_results(con)
+    write_data_notice(con)
     (ROOT / "data" / "gold" / "_catalog.json").write_text(json.dumps(catalog, indent=1) + "\n")
-    print(f"Wrote docs/DATA_CATALOG.md, docs/RECONCILIATION.md and data/gold/_catalog.json ({len(catalog)} tables)")
+    print(f"Wrote docs/DATA_CATALOG.md, docs/RECONCILIATION.md, DATA_NOTICE.md's source table "
+          f"and data/gold/_catalog.json ({len(catalog)} tables)")
 
 
 if __name__ == "__main__":

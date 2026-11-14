@@ -5,6 +5,7 @@
     ('stg_defillama__intents_fees', 'data_type', 'value_usd'),
     ('stg_defillama__chain_tvl', 'llama_chain', 'tvl_usd'),
     ('stg_defillama__chain_fees', "llama_chain || ':' || data_type", 'value_usd'),
+    ('stg_defillama__swap_service_volume', "llama_dimension || ':' || llama_slug", 'volume_usd'),
     ('stg_defillama__stablecoin_chain', 'llama_chain', 'stablecoins_usd'),
     ('stg_nearblocks__txn_stats', "'txns'", 'txns'),
     ('stg_nearblocks__address_stats', "'active_accounts'", 'active_accounts'),

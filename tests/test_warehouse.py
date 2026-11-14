@@ -81,6 +81,23 @@ def test_oneclick_asset_id_names_the_near_contract(con):
     ])
 
 
+def test_oneclick_symbol_drops_the_deprecated_mark(con):
+    listed = [
+        {"assetId": "nep245:v2_1.omni.hot.tg:56_2CMM", "blockchain": "bsc", "symbol": "USDT(DEPRECATED)", "decimals": 18, "price": 1},
+        {"assetId": "nep141:bnb-0x55d3.omft.near", "blockchain": "bsc", "symbol": "USDT", "decimals": 18, "price": 1},
+        {"assetId": "nep245:v2_1.omni.hot.tg:9745_1111", "blockchain": "plasma", "symbol": "XPL_(DEPRECATED)", "decimals": 18, "price": 0.05},
+        {"assetId": "nep141:wrap.near", "blockchain": "near", "symbol": "wNEAR", "decimals": 24, "price": 4.02},
+    ]
+    sql = _silver("protocols/stg_oneclick__tokens.sql", [("2026-11-11", listed)])
+    rows = con.execute(f"select symbol, listed_symbol, is_deprecated from ({sql}) order by asset_id").fetchall()
+    assert rows == [
+        ("USDT", "USDT", False),
+        ("wNEAR", "wNEAR", False),
+        ("USDT", "USDT(DEPRECATED)", True),
+        ("XPL", "XPL_(DEPRECATED)", True),
+    ]
+
+
 def test_rhea_price_keeps_the_first_read_of_that_exact_price(con):
     files = [
         ("2026-11-01", {"same.near": {"price": "0.5", "symbol": "", "decimal": 18}, "moved.near": {"price": "1.0000000000000000000000000001", "symbol": "USDC", "decimal": 6}}),
@@ -193,3 +210,93 @@ def test_defillama_price_is_dated_by_the_nearest_midnight(con):
                                                          is_latest=macros.is_latest, unix_day=macros.unix_day)
     rows = con.execute(f"select cast(date_day as varchar), price_usd from ({sql}) order by 1").fetchall()
     assert rows == [("2026-11-01", 2.0), ("2026-11-02", 2.5), ("2026-11-03", 3.0)]
+
+
+def test_defillama_token_price_takes_the_coin_from_the_reply_and_dates_it_by_the_nearest_midnight(con):
+    # The file name cannot hold a coin key's colon, so the key is read from the reply. A stamp 49 minutes after the
+    # midnight that starts 2026-09-24 closes 2026-09-23, and one seven minutes before the next midnight closes 2026-09-24.
+    # A window from before the coin's first price is an empty reply and leaves no row.
+    midnight_sep_24 = 1790208000
+    key = "ethereum:0x0f38"
+    prices = [{"timestamp": midnight_sep_24 + 2960, "price": 1.0202}, {"timestamp": midnight_sep_24 + 86400 - 500, "price": 1.0203}]
+    sql = _silver("defillama/stg_defillama__token_price.sql", [
+        ("2026-11-12", {"coins": {}}),
+        ("2026-11-12", {"coins": {key: {"symbol": "TLO", "decimals": 8, "confidence": 0.99, "prices": prices}}}),
+        ("2026-11-13", {"coins": {key: {"symbol": "TLO", "decimals": 8, "confidence": 0.99, "prices": [{"timestamp": midnight_sep_24 + 86400 - 400, "price": 1.0204}]}}}),
+    ])
+    rows = con.execute(f"select coin_key, listed_symbol, cast(date_day as varchar), cast(priced_at as varchar), price_usd, is_latest from ({sql}) order by date_day, snapshot_date").fetchall()
+    assert rows == [(key, "TLO", "2026-09-23", "2026-09-24 00:49:20", 1.0202, True),
+                    (key, "TLO", "2026-09-24", "2026-09-24 23:51:40", 1.0203, False),
+                    (key, "TLO", "2026-09-24", "2026-09-24 23:53:20", 1.0204, True)]  # a later read of a day replaces the earlier one
+
+
+def test_coinmetrics_token_price_dates_a_rate_by_the_day_it_closes(con):
+    # CoinMetrics stamps the fixed close at 00:00 UTC as a day ends with that day's own date, so no day is moved. The
+    # day a snapshot was taken on is not over yet and is left out.
+    data = [{"asset": "zec", "time": "2026-11-11T00:00:00.000000000Z", "PriceUSD": "963.407991290132"},
+            {"asset": "zec", "time": "2026-11-12T00:00:00.000000000Z", "PriceUSD": "949.690221828208"}]
+    sql = _silver("market/stg_coinmetrics__token_price.sql", [("2026-11-12", {"data": data})])
+    assert con.execute(f"select coinmetrics_asset, cast(date_day as varchar), price_usd, is_latest from ({sql})").fetchall() == [
+        ("zec", "2026-11-11", 963.407991290132, True)]
+
+
+def _bq_doc(rows, **head):
+    return {"query": "q", "page": 0, "rows": rows, **head}
+
+
+def test_bigquery_later_read_replaces_a_days_whole_list_of_receivers(con):
+    # On the first read 11 November was still loading: the day total was low and a.near led. The next read has the whole
+    # day, and b.near has taken a.near's place. Only the newer read's rows may count for that day, or a.near would linger.
+    day = {"block_date": "2026-11-11", "signers": "5", "receivers": "9"}
+    first = _bq_doc([{**day, "is_day_total": "1", "receiver_account_id": None, "txns": "100", "rank_by_txns": None, "rank_by_signers": None},
+                     {**day, "is_day_total": "0", "receiver_account_id": "a.near", "txns": "60", "rank_by_txns": "1", "rank_by_signers": "1"}])
+    second = _bq_doc([{**day, "is_day_total": "1", "receiver_account_id": None, "txns": "900", "rank_by_txns": None, "rank_by_signers": None},
+                      {**day, "is_day_total": "0", "receiver_account_id": "b.near", "txns": "500", "rank_by_txns": "1", "rank_by_signers": "2"},
+                      {"block_date": "2026-11-12", "is_day_total": "1", "receiver_account_id": None, "txns": "7", "signers": "1", "receivers": "1",
+                       "rank_by_txns": None, "rank_by_signers": None}])
+    sql = _silver("bigquery/stg_bigquery__transactions_daily.sql", [("2026-11-12", first), ("2026-11-13", second)])
+    rows = con.execute(f"select cast(date_day as varchar), is_day_total, receiver_account_id, txns, rank_by_txns from ({sql}) where is_latest order by 1, 2 desc, 3").fetchall()
+    assert rows == [("2026-11-11", True, None, 900, None), ("2026-11-11", False, "b.near", 500, 1), ("2026-11-12", True, None, 7, None)]
+
+
+def test_bigquery_partition_ids_become_days_and_its_own_buckets_keep_no_day(con):
+    doc = _bq_doc([{"table_name": "transactions", "partition_id": "20261111", "total_rows": "891297", "total_logical_bytes": "5", "last_modified_utc": "2026-11-12T00:41:07Z"},
+                   {"table_name": "transactions", "partition_id": "__NULL__", "total_rows": "0", "total_logical_bytes": "0", "last_modified_utc": "2026-11-12T00:41:07Z"}])
+    sql = _silver("bigquery/stg_bigquery__partitions.sql", [("2026-11-12", doc)])
+    rows = con.execute(f"select partition_id, cast(date_day as varchar), total_rows, cast(last_modified_at as varchar) from ({sql}) order by 1").fetchall()
+    assert rows == [("20261111", "2026-11-11", 891297, "2026-11-12 00:41:07"), ("__NULL__", None, 0, "2026-11-12 00:41:07")]
+
+
+def test_bigquery_actions_split_day_totals_from_the_contracts_listed(con):
+    base = {"block_date": "2026-11-11", "signers": "3", "predecessors": "4", "receivers": "2", "from_system": "0"}
+    doc = _bq_doc([{**base, "action_kind": "FUNCTION_CALL", "is_kind_total": "1", "contract_id": None, "actions": "10", "rank_by_calls": None, "rank_by_signers": None, "rank_by_predecessors": None},
+                   {**base, "action_kind": "FUNCTION_CALL", "is_kind_total": "0", "contract_id": "game.hot.tg", "actions": "8", "rank_by_calls": "1", "rank_by_signers": "1", "rank_by_predecessors": "1"},
+                   {**base, "action_kind": "TRANSFER", "is_kind_total": "1", "contract_id": None, "actions": "6", "from_system": "5", "rank_by_calls": None, "rank_by_signers": None, "rank_by_predecessors": None}])
+    sql = _silver("bigquery/stg_bigquery__actions_daily.sql", [("2026-11-12", doc)])
+    rows = con.execute(f"select action_kind, is_kind_total, contract_id, actions, from_system, rank_by_calls from ({sql}) where is_latest order by 1, 2 desc").fetchall()
+    assert rows == [("FUNCTION_CALL", True, None, 10, 0, None), ("FUNCTION_CALL", False, "game.hot.tg", 8, 0, 1), ("TRANSFER", True, None, 6, 5, None)]
+
+
+def test_bigquery_cohorts_take_the_newest_read_and_the_day_it_ended(con):
+    old = _bq_doc([{"cohort_month": "2026-10-01", "active_month": "2026-10-01", "signers": "10"}], parameters={"last_day": "2026-10-31"})
+    new = _bq_doc([{"cohort_month": "2026-10-01", "active_month": "2026-10-01", "signers": "12"},
+                   {"cohort_month": "2026-10-01", "active_month": "2026-11-01", "signers": "3"}], parameters={"last_day": "2026-11-11"})
+    sql = _silver("bigquery/stg_bigquery__signer_cohorts.sql", [("2026-11-01", old), ("2026-11-12", new)])
+    rows = con.execute(f"select cast(active_month as varchar), signers, cast(last_day as varchar) from ({sql}) where is_latest order by 1").fetchall()
+    assert rows == [("2026-10-01", 12, "2026-11-11"), ("2026-11-01", 3, "2026-11-11")]
+
+
+def test_bigquery_a_wider_read_taken_later_in_the_same_snapshot_replaces_the_first(con):
+    # The first read of the snapshot kept ten receivers a day; a second read the same day kept twenty-five. Both files sit
+    # in one snapshot, and the first has the greater key, so only the time of the read can say which is newer.
+    day = {"block_date": "2026-11-11", "is_day_total": "0", "signers": "5", "receivers": "1", "rank_by_signers": "1"}
+    first = _bq_doc([{**day, "receiver_account_id": "a.near", "txns": "60", "rank_by_txns": "1"}], read_at="2026-11-14T13:17:50+00:00")
+    wider = _bq_doc([{**day, "receiver_account_id": "a.near", "txns": "60", "rank_by_txns": "1"},
+                     {**day, "receiver_account_id": "k.near", "txns": "3", "rank_by_txns": "11"}], read_at="2026-11-14T13:45:00+00:00")
+    model = (Path(__file__).resolve().parents[1] / "warehouse" / "models" / "silver" / "bigquery" / "stg_bigquery__transactions_daily.sql").read_text()
+    macros = jinja2.Environment().from_string(MACROS).module
+    files = " union all ".join(f"select cast('2026-11-12' as date) as snapshot_date, '{key}' as file_key, '{json.dumps(doc)}'::json as doc"
+                               for key, doc in (("2025-11-01__2026-11-11__p000", first), ("2025-01-01__2026-11-11__p000", wider)))
+    sql = jinja2.Environment().from_string(model).render(bronze_files=lambda table: files, explode=macros.explode)
+    rows = con.execute(f"select read_key, receiver_account_id from ({sql}) where is_latest order by 2").fetchall()
+    assert rows == [("2025-01-01__2026-11-11", "a.near"), ("2025-01-01__2026-11-11", "k.near")]

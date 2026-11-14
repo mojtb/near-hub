@@ -1,6 +1,7 @@
 -- NEAR and peer chains per day: DefiLlama for activity, CoinMetrics for price and market cap, DefiLlama prices where CoinMetrics
 -- has no series (Sui before 2023-08-17, TON before 2022-05-05); price_basis says which. TON's CoinMetrics asset id is `gram`.
 -- NEAR's price and market cap are fct_market_daily's.
+-- reported_spot_volume_usd is CoinMetrics' reported spot volume for every chain; TON's starts on 2026-06-29.
 -- fees_usd and revenue_usd are what DefiLlama sums over the applications on a chain. The chain's own transaction fees are
 -- a separate series, gas_fees_usd, so neither holds the other.
 -- Empty cells mean the source has no value. Market caps are not on one definition. Each peer's uses the circulating
@@ -39,7 +40,7 @@ stable as (
 ),
 
 cm as (
-    select p.chain_id, m.date_day, m.price_usd, m.market_cap_usd
+    select p.chain_id, m.date_day, m.price_usd, m.market_cap_usd, m.spot_volume_usd
     from {{ ref('stg_coinmetrics__asset_metrics') }} m join peers p on p.coinmetrics_asset = m.coinmetrics_asset where m.is_latest
 ),
 
@@ -78,6 +79,7 @@ select
     gas.gas_fees_usd,
     dex.volume_usd as dex_volume_usd,
     stable.stablecoins_usd,
+    case when k.chain_id = 'near' then near_cap.reported_spot_volume_usd else cm.spot_volume_usd end as reported_spot_volume_usd,
     -- Measured on NEAR, whose fees are mostly Intents fees and settle with them. Every chain gets the same rule, so a
     -- filter on this column cuts all of them at the same day; only NEAR's figures are held to it by a test.
     coalesce(fees.fee_read_date - k.date_day < {{ var('intents_fee_settle_nights') }}, false) as is_fee_revenue_provisional

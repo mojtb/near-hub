@@ -23,7 +23,8 @@ COMMITS_PAGE_SIZE = 100
 COMMITS_MAX_PAGES = 200  # 20,000 commits in a year; the busiest tracked repository makes about 5,000
 CATALOG = "https://api.nearcatalog.xyz/projects"
 GOV = "https://gov.near.org"
-GOV_SEARCHES = ["HSP-", "inflation", "issuance", "fee switch", "buyback"]
+# The thread-level fields silver reads. The forum's reply also carries every post with its author, which is not kept.
+GOV_TOPIC_FIELDS = ("id", "title", "created_at", "last_posted_at", "posts_count", "views", "like_count", "closed")
 
 
 def _github_headers() -> Dict[str, str]:
@@ -98,7 +99,7 @@ def _stats_all_zero(ctx: Context, repo: str) -> bool:
 def github_commits_weekly(ctx: Context) -> None:
     """Commits per week on the default branch, counted from the commits list: one method for every repository.
 
-    GitHub's statistic counts more than the default branch holds (about a quarter more for near/nearcore, which keeps
+    GitHub's statistic counts more than the default branch holds (about 31% more for near/nearcore, which keeps
     release branches), and serves nothing at all for a repository with over 10,000 commits. This count is the same
     measure for every repository, and it is the only one for such a repository. It costs a call per 100 commits, so
     without a token only the repositories whose statistics came back as zeros are read.
@@ -140,7 +141,13 @@ def nearcatalog_projects(ctx: Context) -> None:
 
 @dataset("gov", "topics")
 def gov_topics(ctx: Context) -> None:
-    for query in GOV_SEARCHES:
-        fetch(ctx, "gov", "search", query, f"{GOV}/search.json", params={"q": query})
+    """Four tracked threads, saved as thread-level fields only: no post, author name, username or avatar is kept."""
     for topic_id in (42644, 42595, 41140, 41669):  # HSP-029, the 1.6% discussion, the 2.5% thread, Tokenomics 2.0
-        fetch(ctx, "gov", "topics", str(topic_id), f"{GOV}/t/{topic_id}.json")
+        url = f"{GOV}/t/{topic_id}.json"
+        try:
+            doc = ctx.http.get(url).json()
+        except HttpError as e:
+            ctx.warn(f"{topic_id}: {e}")
+            continue
+        ctx.bronze.save_json("gov", "topics", str(topic_id), {k: doc.get(k) for k in GOV_TOPIC_FIELDS}, url=url, rows=1,
+                             note="trimmed: thread-level fields only; posts, authors and avatars are not kept")

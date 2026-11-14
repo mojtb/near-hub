@@ -1,0 +1,6 @@
+chain_id,reading_date,total_supply_tokens,read_from,evidence_level,note
+sui,2026-11-05,10000000000,Sui GraphQL coinMetadata,read_from_chain,"Read once by hand on 2026-11-05 and recorded in docs/CIRCULATING_SUPPLY.md to the million; the read itself is not in bronze"
+aptos,2026-11-05,1211000000,Aptos 0x1::coin::supply,read_from_chain,"Read once by hand on 2026-11-05 and recorded in docs/CIRCULATING_SUPPLY.md to the million; the read itself is not in bronze"
+solana,2026-11-05,637000000,Solana getSupply,read_from_chain,"Read once by hand on 2026-11-05 and recorded in docs/CIRCULATING_SUPPLY.md to the million; the read itself is not in bronze. The same call gave a circulating figure of 590.32M"
+avalanche,2026-11-05,476000000,Avalanche platform.getCurrentSupply,read_from_chain,"Read once by hand on 2026-11-05 and recorded in docs/CIRCULATING_SUPPLY.md to the million; the read itself is not in bronze"
+ethereum,2026-11-05,122000000,CoinMetrics SplyCur,data_provider,"CoinMetrics indexes this figure from the chain itself. Read once by hand on 2026-11-05 and recorded in docs/CIRCULATING_SUPPLY.md to the million; the read itself is not in bronze"

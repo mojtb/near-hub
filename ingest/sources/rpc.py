@@ -86,7 +86,7 @@ VALIDATOR_KEEP = ("account_id", "stake", "is_slashed", "num_produced_blocks", "n
 
 
 def body(method: str, params: Any) -> Dict[str, Any]:
-    return {"jsonrpc": "2.0", "id": "near-thesis", "method": method, "params": params}
+    return {"jsonrpc": "2.0", "id": "near-hub", "method": method, "params": params}
 
 
 def _headers() -> Optional[Dict[str, str]]:

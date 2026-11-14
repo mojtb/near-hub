@@ -1,11 +1,18 @@
 query_id,title,evidence_url,note
-5175131,NEAR Intents volume per asset per day,https://dune.com/queries/5175131/8775850,query behind the dashboard; has blockchain and symbol filters
-5175176,NEAR Intents volume metrics,https://dune.com/near/near-intents,query behind the dashboard; reads a dataset uploaded by NEAR
-5175161,NEAR Intents dashboard query,https://dune.com/near/near-intents,query behind the dashboard
-5175173,NEAR Intents dashboard query,https://dune.com/near/near-intents,query behind the dashboard
-5179085,NEAR Intents dashboard query,https://dune.com/near/near-intents,query behind the dashboard
-6162606,NEAR Intents dashboard query,https://dune.com/near/near-intents,query behind the dashboard
-7586891,NEAR Intents dashboard query,https://dune.com/near/near-intents,query behind the dashboard
+5175131,"Daily volume by asset, last 30 days",https://dune.com/queries/5175131/8775850,"query behind the dashboard: Daily Volume by Asset, NEAR Intents - Token Volume 30 Days; has blockchain and symbol filters; matched to the page on 2026-11-10"
+5175176,"Volume over the last 30 days: all, public and confidential",https://dune.com/near/near-intents,query behind the dashboard: 30-day volume tiles; has blockchain and symbol filters; reads a dataset uploaded by NEAR; matched to the page on 2026-11-10
+5175161,"Volume per day: all, public and confidential; its tiles show the past day",https://dune.com/near/near-intents,query behind the dashboard: past-day volume tiles; has blockchain and symbol filters; matched to the page on 2026-11-10
+5175173,"Volume over the last 7 days: all, public and confidential",https://dune.com/near/near-intents,query behind the dashboard: 7-day volume tiles; has blockchain and symbol filters; matched to the page on 2026-11-10
+5179085,"Volume per day and cumulative: all, public and confidential; its tiles show all-time volume",https://dune.com/near/near-intents,query behind the dashboard: NEAR Intents - All-time Volume; has blockchain and symbol filters; matched to the page on 2026-11-10
+6162606,"Total generated fees: all, public and confidential",https://dune.com/near/near-intents,query behind the dashboard: total generated fees tiles; matched to the page on 2026-11-10
+7586891,"TVL per day: all, public and confidential; its tiles show the latest day",https://dune.com/near/near-intents,query behind the dashboard: TVL tiles; matched to the page on 2026-11-10
 6162763,Total generated fees,https://github.com/DefiLlama/dimension-adapters/blob/master/fees/near-intents/index.ts,named in DefiLlama's adapter as mirroring revenue.near.org
 6740088,Net captured revenue into revenue wallets,https://github.com/DefiLlama/dimension-adapters/blob/master/fees/near-intents/index.ts,named in DefiLlama's adapter as NEAR's own query
 6732239,Revenue wallet designations,https://github.com/DefiLlama/dimension-adapters/blob/master/fees/near-intents/index.ts,named in DefiLlama's adapter as NEAR's own query
+5157527,"Daily volume by asset, full history",https://dune.com/near/near-intents,"query behind the dashboard: Daily Volume by Asset, NEAR Intents - Token Volume; has blockchain and symbol filters; first read 2026-11-10"
+5157565,"Daily volume by blockchain, full history",https://dune.com/near/near-intents,"query behind the dashboard: Daily Volume by Blockchain, NEAR Intents - Blockchain Volume; has blockchain and symbol filters; first read 2026-11-10"
+8644439,"Daily volume by Intents type, public and confidential, last 30 days",https://dune.com/near/near-intents,"query behind the dashboard: Daily Volume by Intents type, NEAR Intents - Token Volume 30 Days; has blockchain and symbol filters; first read 2026-11-10"
+7586763,TVL by asset per day,https://dune.com/near/near-intents,query behind the dashboard: NEAR Intents - TVL by Asset; first read 2026-11-10
+8644298,"TVL by Intents type per day, public and confidential",https://dune.com/near/near-intents,query behind the dashboard: NEAR Intents - TVL by Intents type; first read 2026-11-10
+6162721,"Total generated fees by channel, top 100",https://dune.com/near/near-intents,query behind the dashboard: Total generated fees by channel; 25 rows a page; first read 2026-11-10
+4374089,Swaps per day and cumulative,https://dune.com/near/near-intents,query behind the dashboard: NEAR Intents - Activity; first read 2026-11-10
