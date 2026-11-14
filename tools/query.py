@@ -23,7 +23,14 @@ def _format(value: object) -> str:
 
 def main(sql: str) -> int:
     os.chdir(ROOT)
-    result = duckdb.connect("data/warehouse.duckdb", read_only=True).execute(sql)
+    if not Path("data/warehouse.duckdb").exists():
+        print("data/warehouse.duckdb is missing: run `make warehouse` first")
+        return 1
+    try:
+        result = duckdb.connect("data/warehouse.duckdb", read_only=True).execute(sql)
+    except duckdb.Error as error:  # a typo in the query: say what DuckDB said, without a traceback
+        print(f"The query did not run. DuckDB says:\n{error}")
+        return 1
     if result is None or result.description is None:
         print("The statement returned no rows (was it only a comment?)")
         return 1

@@ -1,4 +1,6 @@
-PYTHON ?= python3.11
+# The first of these that is on this machine. The rebuild check runs on each of 3.11, 3.12 and 3.13.
+# To name another: make setup PYTHON=/path/to/python
+PYTHON ?= $(shell for p in python3.11 python3.12 python3.13 python3; do command -v $$p >/dev/null 2>&1 && { echo $$p; break; }; done)
 VENV := .venv
 PY := $(VENV)/bin/python
 DBT := $(VENV)/bin/dbt
@@ -17,7 +19,8 @@ help:  ## Show the available commands
 	@grep -E '^[a-z-]+:.*##' $(MAKEFILE_LIST) | sed -E 's/:.*## /\t/' | expand -t 12
 
 setup:  ## Create .venv and install the pinned toolchain (needs network, once)
-	$(PYTHON) -m venv $(VENV)
+	@$(or $(PYTHON),python3) -c 'import sys; v = sys.version_info[:2]; sys.exit(0 if v >= (3, 11) else "Python 3.11 or newer is needed, and this one is %d.%d. Install Python 3.11, 3.12 or 3.13 and run make again, or name it: make setup PYTHON=/path/to/python3.11. With Docker, no Python is needed: docker build -t near-hub . && docker run --rm near-hub" % v)'
+	$(or $(PYTHON),python3) -m venv $(VENV)
 	$(PY) -m pip install -q --disable-pip-version-check --only-binary :all: -r requirements.lock
 	@echo "Setup complete: $$($(PY) -m pip list --format=freeze | wc -l | tr -d ' ') packages installed"
 

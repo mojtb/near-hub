@@ -40,7 +40,7 @@ case, where it stands, and what would change the author's mind. A claim that fai
 |---|---|
 | One minute | [nearhub.tech](https://nearhub.tech). The sentence at the top is the case, and the panel beside it is where it stands |
 | Five minutes | [THESIS.md](THESIS.md): the claim, the evidence for it and against it, and the limits of both |
-| Fifteen minutes | `make all`, then `10/10 checks passed`: every table rebuilt on your machine from the raw responses in this repository |
+| Ten minutes | Clone it and run `make all`, which takes about a minute once the clone is done. See `10/10 checks passed`: every table rebuilt on your machine from the raw responses in this repository |
 
 ## A short tour
 
@@ -48,7 +48,8 @@ case, where it stands, and what would change the author's mind. A claim that fai
   <a href="https://nearhub.tech"><img src="docs/images/hub-tour.gif" width="640" alt="A tour of NEAR Hub: the case as five links with a result for each test, the eleven subjects, one question about NEAR Intents with its chart, reading and query, the guide to every table, and the home page."></a>
 </p>
 
-The pictures on this page show the snapshot of 12 November 2026. The site moves with the data.
+The pictures on this page show the snapshot of 12 November 2026, and they and the demo video were made on
+13 November, before the BigQuery tables and the questions drawn from them were added. The site moves with the data.
 
 ## What is in this repository
 
@@ -112,8 +113,10 @@ A nightly job collects on the `data/nightly` branch; it is paused while this ent
 
 ## Rebuild it yourself
 
-You need Python 3.11 and `make`, on macOS or Linux. No keys and no API calls are needed: everything is rebuilt from
-the responses committed in `data/bronze/`. Only `make setup` uses the network, to download the pinned Python packages.
+You need Python 3.11, 3.12 or 3.13 and `make`, on macOS or Linux. `make` uses the first of those it finds, and stops
+with a plain message if it finds none; to name one yourself, add `PYTHON=/path/to/python` to the command. No keys and
+no API calls are needed: everything is rebuilt from the responses committed in `data/bronze/`. Only `make setup` uses
+the network, to download the pinned Python packages.
 The command below fetches `main` alone, with its full history: about 140 MB, because every stored response is in it.
 A plain `git clone` also fetches every nightly snapshot, which is larger and grows each night.
 
@@ -123,7 +126,8 @@ cd near-hub
 make all
 ```
 
-`make all` runs these five steps in order. Each can also be run alone.
+`make all` runs these five steps in order, in about a minute once the packages are downloaded. Each can also be run
+alone.
 
 | Step | Command | You should see | What it shows |
 |---|---|---|---|
@@ -162,6 +166,21 @@ These lines are generated from the warehouse, and `make verify` fails if they st
 - Largest Intents fee channel, per NEAR's dashboard on Dune as read on 2026-11-12: **swapkit**, with **73%** of listed fees
 - Bitwise NEAR ETF shares outstanding: **2,930,000** per the fund, **3,000,000** counted on chain in whole baskets
 <!-- expected:end -->
+
+## The track's sample prompt, item by item
+
+The organizers publish a [sample prompt](https://github.com/nearai/near-hackathon-prompt-examples/blob/main/tracks/02-thesis.md)
+for this track. This is where each thing it asks for is in this repository.
+
+| The prompt asks for | Where it is here |
+|---|---|
+| A working hypothesis, tested, with what cuts against it: "cross-chain volume through NEAR Intents is a better leading indicator of real network usage than token price" | It is claim `intents_volume_leads_usage` on the scorecard, and it fails. [THESIS.md](THESIS.md#the-sample-prompts-hypothesis) gives the test and its result; the table is `gold.fct_usage_lead_correlations` |
+| SQL against the NEAR BigQuery public dataset for daily active accounts, transaction counts and contract usage, filtered on `block_date` | [`ingest/sql/bigquery/`](ingest/sql/bigquery), one file per query: `transactions_daily.sql` counts transactions and distinct signers by day (`gold.fct_bigquery_chain_daily`), and `actions_daily.sql` counts calls, signers and callers by contract (`gold.fct_bigquery_contract_daily`). Each daily query is cut to its partitions by `block_date`, and priced with a dry run before it runs |
+| A pull from the NEAR Intents Explorer API for swap volume | [`ingest/sources/intents.py`](ingest/sources/intents.py) reads it day by day from November 2024; the responses are in `data/bronze/intents_explorer/` and the tables are `gold.fct_intents_1click_daily` and the five beside it |
+| One command that rebuilds every chart from raw data | `make all`, from the responses in `data/bronze/`, with no key and no API call |
+| A static dashboard page: each chart, the query behind it, and one plain sentence on what it shows | [nearhub.tech](https://nearhub.tech), which is [`site/index.html`](site/index.html). Every question has its finding as the heading, a chart, a reading, and a Query button that shows the SQL that drew it |
+| `THESIS.md` with the claim, the evidence for it, the evidence against it, and what result would change my mind | [THESIS.md](THESIS.md) has those four sections under those names, and opens with where the case stands |
+| Never invent numbers; if a metric cannot be computed from these sources, say so | THESIS.md and the numbers on this page are written by the build from the warehouse, and `make verify` fails when they stop matching it. THESIS.md lists four claims the data cannot settle, and what these sources cannot compute |
 
 ## What the warehouse holds
 
@@ -268,7 +287,7 @@ terms, listed in [registry/sources.csv](registry/sources.csv).
 ## Origin
 
 This began as an entry in the Investment Thesis track of NEAR HACKATHON 2026. Prizes there are paid in NEAR, so the
-author could gain exposure to the asset analysed here, and the thesis says so where it states its conclusion. It is an
+author could gain exposure to the asset analysed here, and the thesis says so in its limits. It is an
 independent project, not affiliated with the NEAR Foundation, and nothing here is investment advice.
 
 ## Disclosures
