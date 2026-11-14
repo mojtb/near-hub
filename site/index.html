@@ -403,7 +403,8 @@ p{margin:0}
 .czt .v b{display:block;font-size:17px;font-weight:500;letter-spacing:-.02em;line-height:1.25;color:var(--ink)}
 .czh-none{margin:6px 0 0;font-size:13.5px;color:var(--mute)}
 /* Each test as a lane: solid where its result supports the case, hollow where it counts against it, dotted before it
-   could run, then how many times it turned. The rows are HTML, so a long claim wraps and nothing redraws on resize. */
+   could run, then how many times it turned. The rows are HTML, so a long claim wraps; the stretches are placed in
+   pixels, each with a width one can see and a gap from its neighbour, and placed again when the lane changes width. */
 .czl-key{display:flex;flex-wrap:wrap;gap:6px 18px;margin:0 0 6px;font-size:12.5px;color:var(--mute)}
 .czl-key span{display:inline-flex;align-items:center;gap:7px}
 .czl-key i{flex:none;width:22px;height:10px;border-radius:5px}
@@ -417,10 +418,10 @@ p{margin:0}
 .czl-g .czl-r:last-child{border-bottom:0}
 .czl-n{font-size:13.5px;line-height:1.3;color:color-mix(in srgb,var(--ink) 84%,var(--surface));text-wrap:pretty}
 .czl-l{position:relative;height:22px;cursor:crosshair}
-.czl-l .s{position:absolute;top:5px;height:12px;border-radius:6px;min-width:3px}
+.czl-l .s{position:absolute;top:5px;height:12px;border-radius:6px}
 .czl-l .sf{background:var(--help)}
 .czl-l .sa{box-shadow:inset 0 0 0 1.5px var(--hurt);background:color-mix(in srgb,var(--hurt) 10%,transparent)}
-.czl-l .su{top:10.5px;height:0;min-width:0;border-top:1.5px dotted var(--chart-mark);border-radius:0;opacity:.8}
+.czl-l .su{top:10.5px;height:0;border-top:1.5px dotted var(--chart-mark);border-radius:0;opacity:.8}
 .czl-l .tk{position:absolute;top:-5px;bottom:-5px;width:1px;background:var(--chart-grid)}
 .czl-l .cu{position:absolute;top:-2px;bottom:-2px;width:1px;background:var(--chart-strong);opacity:.55;display:none}
 .czl-t{font-size:13px;line-height:1.2;text-align:right;color:var(--mute);font-variant-numeric:tabular-nums;white-space:nowrap}
@@ -3518,9 +3519,11 @@ const CZH=(()=>{
     const of=e=>{const r=e.target.closest('[data-k]');return r&&r.dataset.k!=='now'?r.dataset.k:null};
     list.addEventListener('pointerover',e=>lite(of(e)));list.addEventListener('pointerleave',()=>lite(null));
     list.addEventListener('focusin',e=>lite(of(e)));list.addEventListener('focusout',()=>lite(null))};
-  /* A chart is drawn again when its box changes width, on the next frame: drawing inside the observer's own call
-     would change the layout it is still reporting on */
-  const keep=(el,fn)=>{let wPrev=0,frame=0;const ro=new ResizeObserver(()=>{const w=el.clientWidth;if(Math.abs(w-wPrev)>2){wPrev=w;cancelAnimationFrame(frame);frame=requestAnimationFrame(fn)}});ro.observe(el);return()=>{cancelAnimationFrame(frame);ro.disconnect()}};
+  /* A chart is drawn at once, and again when its box changes width. The redraw waits for the next frame: drawing
+     inside the observer's own call would change the layout it is still reporting on. The first drawing does not
+     wait, because a tab opened in the background is given no frame until it is shown. */
+  const keep=(el,fn)=>{let wPrev=el.clientWidth,frame=0;if(wPrev)fn();
+    const ro=new ResizeObserver(()=>{const w=el.clientWidth;if(Math.abs(w-wPrev)>2){wPrev=w;cancelAnimationFrame(frame);frame=requestAnimationFrame(fn)}});ro.observe(el);return()=>{cancelAnimationFrame(frame);ro.disconnect()}};
 
   /* The base of the case card on the home page */
   const S12=story(W12,N-1);
@@ -3541,20 +3544,38 @@ const CZH=(()=>{
     if(!list.length)return '<p class="czh-none">No test changed side in this stretch.</p>';
     return `<ol class="czt">${list.map(t=>{const c=claimOf(t.k),v=VAL[t.k],first=t.from==='.',d=dayAt(t.i),f=t.to==='f';
       return `<li class="${f?'is-for-row':'is-against-row'}"><a class="czt-r" href="#${CLAIM_AT[t.k]||'library'}"><time datetime="${d}">${d.slice(0,4)===yNow?dM(d):dY(d)}</time><i class="cz-m ${f?'is-for':'is-against'}" aria-hidden="true"></i><span><strong>${c.claim}</strong><span class="s"><b>${first?'First run: ':'Now '}${f?'supports the case':'counts against the case'}</b>${barWords(c)?` · ${barWords(c)}`:''}</span></span><span class="v">${first?'first value':`was ${val(c,v[t.i-1])}`}<b>${val(c,v[t.i])}</b></span></a></li>`}).join('')}</ol>`};
-  /* Each test as a lane of segments, grouped as the case groups them, then how many times it turned */
-  const lanesHtml=(i0,i1)=>{const P=czParts(csTested().filter(c=>S[c.claim_id])),span=i1+1-i0,pc=v=>(v/span*100).toFixed(3)+'%';
-    const x=d3.scaleUtc().domain([new Date(T0+i0*DAY),new Date(T0+(i1+1)*DAY)]).range([0,100]),T=ticksFor(x,560,i0,i1),tk=T.t.map(d=>`<i class="tk" style="left:${x(d).toFixed(3)}%"></i>`).join('');
-    const lane=c=>{const s=S[c.claim_id];let out='',a=i0;
-      for(let i=i0+1;i<=i1+1;i++)if(i>i1||s[i]!==s[a]){const st=s[a];out+=`<i class="s ${st==='f'?'sf':st==='a'?'sa':'su'}" style="left:${pc(a-i0)};width:calc(${pc(i-a)} - 2px)"></i>`;a=i}
-      return out};
-    const turns=n=>n?`<b>${n}</b> ${n===1?'turn':'turns'}`:'Steady';
+  /* Each test as a lane, grouped as the case groups them, then how many times it turned. The rows are written first
+     and the stretches drawn once a lane's width is known. */
+  const lanesHtml=(i0,i1)=>{const P=czParts(csTested().filter(c=>S[c.claim_id])),turns=n=>n?`<b>${n}</b> ${n===1?'turn':'turns'}`:'Steady';
     return `<div class="czl-key" aria-hidden="true"><span><i class="kf"></i>Supports the case</span><span><i class="ka"></i>Counts against it</span><span><i class="ku"></i>Could not run yet</span></div>
-    <div class="czl">${P.map(p=>`<section class="czl-g"><h4>${p.title}</h4>${p.list.map(c=>`<div class="czl-r"><span class="czl-n">${c.claim}</span><span class="czl-l" data-k="${c.claim_id}">${tk}${lane(c)}<i class="cu"></i></span><span class="czl-t">${turns(turnsOf(c.claim_id,i0,i1))}</span></div>`).join('')}</section>`).join('')}
-    <div class="czl-ax"><div>${T.t.map(d=>`<span style="left:${x(d).toFixed(3)}%">${T.f(d)}</span>`).join('')}</div></div></div>`};
+    <div class="czl">${P.map(p=>`<section class="czl-g"><h4>${p.title}</h4>${p.list.map(c=>`<div class="czl-r"><span class="czl-n">${c.claim}</span><span class="czl-l" data-k="${c.claim_id}"></span><span class="czl-t">${turns(turnsOf(c.claim_id,i0,i1))}</span></div>`).join('')}</section>`).join('')}
+    <div class="czl-ax"><div></div></div></div>`};
+  /* Where the edges between a lane's stretches are drawn. A result that stood for a day is narrower than a pixel or
+     two, and drawn at a width one can see it would cover its neighbour. So every stretch gets at least LANE_MIN
+     pixels, and the edges move just enough to make room: pushed right from the start, pushed left from the end, and
+     set halfway between the two. A cluster of short stretches then opens around its own days, and every edge away
+     from it stays on its day. */
+  const LANE_MIN=7,LAY=new Map();
+  const laneEdges=(runs,i0,span,W)=>{const n=runs.length,t=[0].concat(runs.map(r=>(r.b+1-i0)/span*W)),need=Math.min(LANE_MIN,W/n),f=t.slice(),b=t.slice();
+    for(let k=1;k<n;k++)f[k]=Math.max(t[k],f[k-1]+need);
+    for(let k=n-1;k>0;k--)f[k]=Math.min(f[k],f[k+1]-need);
+    for(let k=n-1;k>0;k--)b[k]=Math.min(t[k],b[k+1]-need);
+    for(let k=1;k<n;k++)b[k]=Math.max(b[k],b[k-1]+need);
+    return t.map((_,k)=>(f[k]+b[k])/2)};
+  const fillLanes=(host,i0,i1)=>{const lanes=[...host.querySelectorAll('.czl-l')],W=lanes.length?lanes[0].clientWidth:0;if(!W)return;
+    const span=i1+1-i0,x=d3.scaleUtc().domain([new Date(T0+i0*DAY),new Date(T0+(i1+1)*DAY)]).range([0,W]),T=ticksFor(x,W,i0,i1),tk=T.t.map(d=>`<i class="tk" style="left:${x(d).toFixed(1)}px"></i>`).join('');
+    lanes.forEach(l=>{const s=S[l.dataset.k],runs=[];let a=i0;for(let i=i0+1;i<=i1+1;i++)if(i>i1||s[i]!==s[a]){runs.push({a,b:i-1,st:s[a]});a=i}
+      const e=laneEdges(runs,i0,span,W);LAY.set(l.dataset.k,{runs,e});
+      /* A two-pixel gap between neighbours, a pixel from each */
+      l.innerHTML=tk+runs.map((r,k)=>{const x0=e[k]+(k?1:0),x1=e[k+1]-(k<runs.length-1?1:0);return `<i class="s ${r.st==='f'?'sf':r.st==='a'?'sa':'su'}" style="left:${x0.toFixed(1)}px;width:${Math.max(1,x1-x0).toFixed(1)}px"></i>`}).join('')+'<i class="cu"></i>'});
+    host.querySelector('.czl-ax div').innerHTML=T.t.map(d=>`<span style="left:${x(d).toFixed(1)}px">${T.f(d)}</span>`).join('')};
+  /* The pointer names the day under it: the stretch it is over, then how far along that stretch */
   const wireLanes=(box,tip)=>{
-    box.addEventListener('pointermove',e=>{const l=e.target.closest('.czl-l');box.querySelectorAll('.cu').forEach(c=>c.style.display='none');if(!l){tip.hidden=true;return}
-      const i0=start(),i1=N-1,b=l.getBoundingClientRect(),fr=Math.max(0,Math.min(.9999,(e.clientX-b.left)/b.width)),i=i0+Math.floor(fr*(i1+1-i0)),k=l.dataset.k,c=claimOf(k),st=S[k][i];
-      const cu=l.querySelector('.cu');cu.style.left=(fr*100)+'%';cu.style.display='block';
+    box.addEventListener('pointermove',e=>{const l=e.target.closest('.czl-l'),lay=l&&LAY.get(l.dataset.k);box.querySelectorAll('.cu').forEach(c=>c.style.display='none');if(!lay){tip.hidden=true;return}
+      const b=l.getBoundingClientRect(),px=Math.max(0,Math.min(b.width-.01,e.clientX-b.left)),k=l.dataset.k,c=claimOf(k);
+      let n=lay.runs.length-1;for(let q=0;q<lay.runs.length;q++)if(px<lay.e[q+1]){n=q;break}
+      const r=lay.runs[n],i=Math.min(r.b,r.a+Math.floor((px-lay.e[n])/(lay.e[n+1]-lay.e[n])*(r.b-r.a+1))),st=S[k][i];
+      const cu=l.querySelector('.cu');cu.style.left=px+'px';cu.style.display='block';
       tip.innerHTML=`<b>${c.claim}</b><div>${dY(dayAt(i))}: ${st==='f'?'supports the case':st==='a'?'counts against it':'could not run yet'}${st!=='.'?`, ${val(c,VAL[k][i])}`:''}</div>${barWords(c)?`<div class="ch">${cap(barWords(c))}</div>`:''}`;
       tip.hidden=false;const hb=box.getBoundingClientRect(),tw=tip.offsetWidth,cx=e.clientX-hb.left;
       tip.style.left=Math.max(0,Math.min(hb.width-tw,cx+14+tw>hb.width?cx-14-tw:cx+14))+'px';tip.style.top=(b.bottom-hb.top+8)+'px'});
@@ -3575,7 +3596,8 @@ const CZH=(()=>{
       const stop=keep(plot,paint);redraws.add(paint);return()=>{stop();redraws.delete(paint)}},
     tests:el=>{el.innerHTML=`<div class="czq"><div class="czq-lanes"></div><div class="czh-tip" hidden></div></div>`;
       const box=el.querySelector('.czq'),host=box.querySelector('.czq-lanes'),tip=box.querySelector('.czh-tip');wireLanes(box,tip);
-      const paint=()=>{host.innerHTML=lanesHtml(start(),N-1)};paint();redraws.add(paint);return()=>redraws.delete(paint)}};
+      const paint=()=>{host.innerHTML=lanesHtml(start(),N-1);fillLanes(host,start(),N-1)};
+      const stop=keep(host,paint);redraws.add(paint);return()=>{stop();redraws.delete(paint)}}};
   /* The stretches each claim's result has stood, as the lanes draw them and the query returns them */
   const runsOf=()=>ids.slice().sort().flatMap(k=>{const s=S[k],out=[];let a=0;for(let i=1;i<=N;i++)if(i===N||s[i]!==s[a]){out.push([k,dayAt(a),dayAt(i-1),i-a,s[a]==='f'?'for':s[a]==='a'?'against':null]);a=i}return out});
   return{band,wire,view,
