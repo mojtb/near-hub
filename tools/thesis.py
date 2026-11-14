@@ -233,6 +233,9 @@ thin = [
 # the weeks are cut on other weekdays.
 USAGE_NAMES = {"transactions": "transactions", "other_transactions": "transactions outside the known apps",
                "signers": "distinct signers", "gas_paid": "gas paid"}
+# The day NearBlocks switches /v1 off, and with it its count of distinct signers: dated by its notice, typed once here
+# and read by the hypothesis section and by What to watch.
+V1_ENDS = date(2026, 11, 22)
 LEADER_NAMES = {"intents_volume": "Intents volume", "near_price": "the NEAR price"}
 
 
@@ -316,7 +319,7 @@ hypothesis = [
     "",
     "What these sources cannot compute, so it is not on the site: daily active people (both account counts follow one game "
     "and one wallet app); who stands behind the HOT, Sweat and Kai-Ching accounts, which are named from their account ids "
-    "alone; and new accounts once NearBlocks switches /v1 off on 22 November 2026.",
+    f"alone; and new accounts once NearBlocks switches /v1 off on {day(V1_ENDS)}.",
     "",
     "The prompt names the NEAR BigQuery public dataset, and the warehouse queries it (the SQL is in `ingest/sql/bigquery/`). "
     f"The chain counts on the site are NearBlocks', and BigQuery checks them day for day: over the {bq['chain_txns_days_equal_bigquery_vs_nearblocks']['b']} "
@@ -412,6 +415,31 @@ scenario_rows = [
 grown = pace_now["current"]
 growth_words = ("did not change" if not growth else f"grew {pct(growth, 0)}" if growth > 0 else f"fell {pct(-growth, 0)}")
 at_close = signed(scenarios[("current", "measured")]["net_inflation_rate_at_current_volume"], 2).lstrip("+")
+# What the price already assumes. A year of new NEAR is worth the issuance rate times NEAR's market value, so what
+# reaches the token in a year (gas burned plus what the revenue wallets received: the holder_revenue basis, which the
+# Market page prints as "what reaches the token") matches issuance when the market value is one over the rate times
+# that amount. The table's multiple is the market value over that amount on the settled day; times the rate, it is how
+# many times today's amount is needed at today's price. No price is derived from it.
+token_multiple = (rows(f"""select multiple from gold.fct_valuation_multiples_daily
+                           where chain_id = 'near' and basis = 'holder_revenue' and date_day = date '{settled}'""")
+                  or [{"multiple": None}])[0]["multiple"]
+rate_now, rate_cut = dilution["gross_inflation_rate"], float(ramp["annual_issuance_rate"])
+price_line = None
+if token_multiple and rate_now:
+    need = token_multiple * rate_now
+    price_line = (
+        "A year of new NEAR is worth the issuance rate times NEAR's market value, so what reaches the token in a year (the "
+        "fees the revenue wallets receive plus the gas burned) matches issuance when the market value is about "
+        f"{1 / rate_now:.0f}× that amount at today's rate" +
+        (f", or about {1 / rate_cut:.0f}× at {CUT}" if abs(1 / rate_now - 1 / rate_cut) >= 1 else "") +
+        f". On {day(settled)} it was {token_multiple:.0f}×. " +
+        (f"At today's price, then, what reaches the token has to be about {need:.0f}× what it is" if need >= 3 else
+         f"At today's price, then, what reaches the token has to be {need:.1f}× what it is" if need > 1 else
+         "At today's price, then, what reaches the token already matches issuance") +
+        # The break-even multiple takes the burn off issuance and grows Intents revenue alone, so the two differ a
+        # little (4.95 and 5.24 on 9 Nov 2026); they are tied only while they stay within a fifth of each other.
+        (f": the {m_now:.1f}× above, counted another way." if need > 1 and m_now > 1 and abs(need / m_now - 1) <= 0.2
+         else "."))
 how_far = [
     "## How far away",
     "",
@@ -439,6 +467,7 @@ how_far = [
        f"{day(price_day)}, so the measured row's {at_close} differs from the {pct(dilution['net_inflation_rate'], 2)} in "
        "The claim, which counts the NEAR they received at each day's price.", ""]
       if at_close != pct(dilution["net_inflation_rate"], 2) else []),
+    *([price_line, ""] if price_line else []),
     f"All of this is arithmetic with the price, the fee rate and NEAR's share of fees held as measured on {day(price_day)}, "
     "and not a forecast. Issuance is paid in NEAR, so its value in dollars rises with the price, while revenue is charged "
     "in dollars and does not: a higher price moves the break-even further away, and a lower one brings it closer.",
@@ -479,6 +508,104 @@ revenue_tripped = (
     f", not what NEAR reports. The wallets received {figure(revenue_check['value'], revenue_check['unit'])} less than NEAR's "
     "own monthly series says, and that series stays unexplained until a cause for the gap is published."
 ) if revenue_check["status"] == "fails" else None
+
+# The tests on complete months: the claims whose as_of_date is the last day of the newest complete month. They all move
+# to a new window when the month after it closes.
+months = one("""select cast(max(month_start) + interval 1 month - interval 1 day as date) as this_end,
+                       cast(max(month_start) + interval 2 month - interval 1 day as date) as next_end
+                from gold.fct_intents_unit_economics_monthly where is_month_complete""")
+complete = [c for c in claims if c["as_of_date"] == months["this_end"]]
+three = all("three complete months" in c["test"] for c in complete)
+span, stretch = ("three complete months", "quarter") if three else ("complete months", "stretch of months")
+
+# What to watch: the events in gold.dim_event that are scheduled, the day NearBlocks ends its signer count, the day the
+# tests on complete months next move, and HSP-029's cut, which has no date. Dated lines in date order, undated last.
+sweat = one("""select max(date_day) as d, sum(sweat_relayer_txns) / sum(txns_ex_batch_streams) as share
+               from gold.fct_usage_quality_daily
+               where date_day > (select max(date_day) from gold.fct_usage_quality_daily) - 30""")
+
+
+def event_line(e: dict) -> str:
+    """What a scheduled event is and why it matters for the case. An event this module has no words for prints its own
+    title and detail."""
+    if "HSP-029" in e["title"] and "timelock" in e["title"].lower():
+        return (f"{e['title']}. That does not start the cut to {CUT}, which validators must still adopt, and until the cut "
+                f"is in force the break-even multiple is the {m_now:.1f}× for issuance as now, not the {m_cut:.1f}× at the "
+                "end of its ramp.")
+    if re.search(r"Sweat Wallet due to end", e["title"], re.I):
+        return (f"Sweat Wallet is due to end in its present form. Its relayer carried {pct(sweat['share'])} of the "
+                f"transactions outside the batch streams over the 30 days to {day(sweat['d'])}, so another break in the "
+                "transaction counts is likely, and it is one reason the usage claim reads signers and not transactions.")
+    return f"{e['title']}. {e['detail'].rstrip('.')}."
+
+
+events = rows("select event_date, title, detail from gold.dim_event where status = 'scheduled' order by event_date")
+signers_bq = bq["chain_signers_days_equal_bigquery_vs_nearblocks"]
+# fct_chain_daily falls back to NearBlocks /v3 on days /v1 does not hold, so the line says BigQuery can carry the count,
+# not that it does.
+v1_line = ("NearBlocks switches /v1 off and with it its count of distinct signers, the measure behind the claim that "
+           "signers are falling. NEAR's public BigQuery dataset, which counted the same distinct signers "
+           + (f"on every one of the {signers_bq['b']} days both sources hold" if signers_bq["a"] == signers_bq["b"] else
+              f"on {signers_bq['a']} of the {signers_bq['b']} days both sources hold")
+           + ", can carry the count on.")
+complete_for = sum(1 for c in complete if c["stands"] == "for")
+months_line = (f"{months['next_end']:%B %Y} closes. The {len(complete)} claims that read complete months"
+               + (f", {complete_for} of them counting for the case today," if complete_for else "")
+               + f" then read the {'three months' if three else 'months'} to {day(months['next_end'])} in place of those "
+               f"to {day(months['this_end'])}.")
+# HSP-029's cut has no date. The precedent is every other voted change with an in_force_date: how long it took from the
+# end of its vote to coming into force. HSP-029's ramp_months and grace_days are printed in the words of its own text,
+# which fct_governance_decisions.evidence quotes.
+decisions = rows("""select hsp, title, voting_end_date, in_force_date, in_force_date - voting_end_date as days,
+                           ramp_months, grace_days
+                    from gold.fct_governance_decisions order by in_force_date""")
+cut_vote = next((d for d in decisions if d["hsp"] == "HSP-029"), None)
+precedents = [d for d in decisions if d["in_force_date"] is not None and d["hsp"] != "HSP-029"]
+cut_line = None
+if cut_vote and cut_vote["in_force_date"] is None:
+    shape = ([f"puts a grace period of {cut_vote['grace_days']} days before the first basis point comes off"]
+             if cut_vote["grace_days"] else []) + \
+            ([f"lowers the cap in a straight line over {cut_vote['ramp_months']} months"] if cut_vote["ramp_months"] else [])
+    if len(precedents) == 1:
+        prior = precedents[0]
+        before = (f"the one precedent here, the proposal \"{prior['title']}\", came into force on "
+                  f"{day(prior['in_force_date'])}, {prior['days']} days after its vote ended on {day(prior['voting_end_date'])}")
+    elif precedents:
+        before = (f"the {len(precedents)} voted changes here that came into force did so between "
+                  f"{min(d['days'] for d in precedents)} and {max(d['days'] for d in precedents)} days after their votes ended")
+    else:
+        before = ""
+    rest = "; ".join(([f"its text {' and then '.join(shape)}"] if shape else []) + ([before] if before else []))
+    cut_line = f"HSP-029's cut to {CUT} comes into force." + (f" {rest[0].upper()}{rest[1:]}." if rest else "")
+watch_rows = sorted(
+    [(e["event_date"], event_line(e)) for e in events]
+    + ([(V1_ENDS, v1_line)] if V1_ENDS > last_day else [])
+    + ([(months["next_end"], months_line)] if complete else [])
+    + ([(None, cut_line)] if cut_line else []),
+    key=lambda r: (r[0] is None, r[0] or date.min))
+watch_section = ["## What to watch", "", "What is due next, in date order, and what each means for the case.", "",
+                 *[f"- **{day(d) if d else 'No date set'}.** {text}" for d, text in watch_rows], ""] if watch_rows else []
+
+# Results that count for the case and read the same months: the tests on complete months among those for the case. A
+# claim measures NEAR Intents when its test names a table whose name holds "intents" (fct_intents_*,
+# fct_dune_intents_*). The rule reads the test text, so a claim on NEAR's fees in fct_peer_daily does not count, though
+# most of those fees are charged on Intents. Fewer than three sharing a window prints nothing.
+shared = [c for c in complete if c["stands"] == "for"]
+shared_intents = [c for c in shared if re.search(r"\bfct_\w*intents\w*", c["test"])]
+shared_line = (
+    f"- {'Most' if 2 * len(shared) > tally['for'] else 'Several'} results that count for the case read the same months: "
+    f"{len(shared)} of the {tally['for']} read the {span} to {day(months['this_end'])}" +
+    (f", and {len(shared_intents)} of them measure NEAR Intents. A strong or weak {stretch} for Intents would move those "
+     f"{len(shared_intents)} together, so they are fewer independent pieces of evidence than their number suggests."
+     if len(shared_intents) >= 2 else
+     f". A strong or weak {stretch} would move them together, so they are fewer independent pieces of evidence than their "
+     "number suggests.")
+) if len(shared) >= 3 else None
+# The claims file as submitted carries an OpenTimestamps proof. The sentence is printed only when the proof is in the
+# repository, so this file never points to one that is not there.
+ots_line = (" The claims file as submitted is timestamped (`registry/claims.csv.ots`, an OpenTimestamps proof) and the "
+            "submitted state is tagged `submission-2026-11-14`, so a later change to a bar can be seen."
+            if (ROOT / "registry" / "claims.csv.ots").exists() else "")
 
 md: list[str] = [
     "# The long case for NEAR, and what the data says about it",
@@ -552,15 +679,17 @@ md: list[str] = [
     f"stops growing only if what the wallets hold is burned. The break-even multiple, "
     f"{scenario['current']['breakeven_volume_multiple']:.1f}× now, has to reach 1×.",
     "",
+    *watch_section,
     *hypothesis,
     "## Limits",
     "",
     *([f"- {set_note}."] if set_note else []),
     *([f"- {added_note}."] if added_note else []),
-    *([f"- {bars_note}."] if bars_note else []),
+    *([f"- {bars_note}.{ots_line}"] if bars_note else []),
     *thin,
     unlock_line,
     *([lean_line] if lean_line else []),
+    *([shared_line] if shared_line else []),
     f"- Intents volume and fees are NEAR's own published series. What its revenue wallets received is checked against the "
     f"chain: DefiLlama's all-time figure is {usd(wallets['value_a'])} and the same sum rebuilt from wallet transfers, valued as DefiLlama "
     f"values it at each day's close, is {usd(wallets['value_b'])}, {wallets['diff_pct']:.2f}% apart, so the two {wallets['status']}. DefiLlama takes its figure "
