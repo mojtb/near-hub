@@ -30,7 +30,7 @@
 ## Where the case stands
 
 <!-- verdict:start -->
-**Not yet.** Over the 30 days to 2026-11-10, the fees NEAR's revenue wallets received and the gas burned offset **16.1%** of the new NEAR the chain created; to match it, Intents volume has to be **5.2×** today's, or **3.3×** once the voted cut of issuance to 1.6% is in force. Volume grew **58%** over the last year; at that pace, with the price and NEAR's share of fees unchanged, that is about **3.6 years** away, or **2.6** after the cut: arithmetic, not a forecast. At the snapshot of 2026-11-14, of 19 claims the data can test, **11** support the long case and **8** count against it; **5** more cannot be settled yet. Of the 10 that test where NEAR stands today, **4** support it; of the 9 that test which way it is moving, **7** do.
+**Not yet. The rating is Hold.** Over the 30 days to 2026-11-11, the fees NEAR's revenue wallets received and the gas burned offset **16.2%** of the new NEAR the chain created, down from **20.5%** over the 30 days before those; to match it, Intents volume has to be **5.3×** today's, or **3.4×** once the voted cut of issuance to 1.6% is in force. Volume grew **54%** over the last year, though its newest 30 days are **20%** below the 30 before; at that pace, with the price and NEAR's share of fees unchanged, that is about **3.9 years** away, or **2.8** after the cut: arithmetic, not a forecast. At the snapshot of 2026-11-15, of 19 claims the data can test, **11** support the long case and **8** count against it; **5** more cannot be settled yet. Of the 10 that test where NEAR stands today, **4** support it; of the 9 that test which way it is moving, **7** do. The rating is Hold because the test that decides the case fails, so the evidence does not support buying on it, and most tests of which way NEAR is moving support it, so the evidence does not support selling either; it is the author's reading, not investment advice.
 <!-- verdict:end -->
 
 The count is not a vote, because the claims do not weigh the same. [THESIS.md](THESIS.md) says which one decides the
@@ -48,8 +48,11 @@ case, where it stands, and what would change the author's mind. A claim that fai
   <a href="https://nearhub.tech"><img src="docs/images/hub-tour.gif" width="640" alt="A tour of NEAR Hub in night mode: the case so far, its links opened one at a time with a result for each test, how the count has moved and the findings, the subjects at a glance, one question about NEAR Intents with its chart, reading and query, the guide to every table, and the home page."></a>
 </p>
 
-The pictures on this page show the snapshot of 12 November 2026, and they and the demo video were made on
-13 November, before the BigQuery tables and the questions drawn from them were added. The site moves with the data.
+The pictures on this page show the snapshot of 14 November 2026. The demo video was made on 13 November from the
+snapshot of 12 November, before the BigQuery tables and the questions drawn from them were added: it shows 10 results
+for the case and 9 against, 66 questions and 82 tables. The count, the questions and the tables have moved on since,
+and the Limits in [THESIS.md](THESIS.md#limits) say what changed in the claims on 14 November. The site moves with the
+data.
 
 ## What is in this repository
 
@@ -117,7 +120,7 @@ You need Python 3.11, 3.12 or 3.13 and `make`, on macOS or Linux. `make` uses th
 with a plain message if it finds none; to name one yourself, add `PYTHON=/path/to/python` to the command. No keys and
 no API calls are needed: everything is rebuilt from the responses committed in `data/bronze/`. Only `make setup` uses
 the network, to download the pinned Python packages.
-The command below fetches `main` alone, with its full history: about 140 MB, because every stored response is in it.
+The command below fetches `main` alone, with its full history: about 180 MB, because every stored response is in it.
 A plain `git clone` also fetches every nightly snapshot, which is larger and grows each night.
 
 ```bash
@@ -155,12 +158,12 @@ Then:
 These lines are generated from the warehouse, and `make verify` fails if they stop matching it.
 
 <!-- expected:start -->
-- Data through: **2026-11-13**, the last full UTC day before the pinned snapshot of 2026-11-14; `dq_freshness` lists any source that ends earlier
+- Data through: **2026-11-14**, the last full UTC day before the pinned snapshot of 2026-11-15; `dq_freshness` lists any source that ends earlier
 - Gold tables and columns: **99** and **977**
 - Reconciliation: **112** comparisons agree, **13** differ, each with a written explanation
-- Issuance over the last 30 days, from supply change plus burn: **2.47%** a year, against **2.50%** in the protocol config
-- Circulating supply, built from NEAR's lockup contracts: **1,309.54M** NEAR, **99.84%** of total supply; on 2025-08-26, the last day NearBlocks computed its own, **1,249.72M** against **1,249.65M**
-- Captured Intents revenue, all time: **$9.97M** per DefiLlama, **$9.95M** rebuilt from wallet transfers
+- Issuance over the last 30 days, from supply change plus burn: **2.50%** a year, against **2.50%** in the protocol config
+- Circulating supply, built from NEAR's lockup contracts: **1,309.65M** NEAR, **99.84%** of total supply; on 2025-08-26, the last day NearBlocks computed its own, **1,249.72M** against **1,249.65M**
+- Captured Intents revenue, all time: **$10.03M** per DefiLlama, **$10.01M** rebuilt from wallet transfers
 - Public Intents volume, all time through 2026-11-11, the last full day of the latest Dune reading: **$33.47B** per NearBlocks, **$33.09B** per NEAR's dashboard on Dune
 - Chain Signatures: **16** MPC participants with a threshold of **11**
 - Largest Intents fee channel, per NEAR's dashboard on Dune as read on 2026-11-12: **swapkit**, with **73%** of listed fees
@@ -264,7 +267,7 @@ which was fetched on the owner's machine with the job's own command. The nightly
 | [`data/gold/`](data/gold) | The finished tables as Parquet and CSV, with their fingerprints and catalog |
 | [`data/state/`](data/state) | Where the long history jobs resume from |
 | [`data/PINNED`](data/PINNED) | The snapshot date `main` is built at |
-| [`registry/`](registry) | Reviewed CSVs: wallets, tokens, peers, events, the claims and their bars, each source's terms. `claims.csv.ots` is an [OpenTimestamps](https://opentimestamps.org) proof of the claims file as submitted, so a later change to a bar can be seen: `ots verify registry/claims.csv.ots` |
+| [`registry/`](registry) | Reviewed CSVs: wallets, tokens, peers, events, the claims and their bars, each source's terms. `claims.csv.ots` is an [OpenTimestamps](https://opentimestamps.org) proof of the claims file as it has stood since its change of 14 November, so a later change to a bar can be seen: `ots verify registry/claims.csv.ots`. The tag `submission-2026-11-14` holds the file as it was before that change |
 | [`ingest/`](ingest) | One fetcher per source, run by `make ingest`; the BigQuery queries are in [`ingest/sql/bigquery/`](ingest/sql/bigquery) |
 | [`warehouse/`](warehouse) | The dbt models: silver types each response, gold holds the tables a reader should use, and the data tests |
 | [`tools/`](tools) | The build steps: export, verify, catalog, thesis, the site's data and the table guide |
