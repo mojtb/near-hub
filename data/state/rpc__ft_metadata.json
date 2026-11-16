@@ -14427,6 +14427,10 @@
    "decimals": 18,
    "symbol": "MIHAO"
   },
+  "mihaocat-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "MIHAOCAT"
+  },
   "mihaocat.nearlytrade.near": {
    "decimals": 18,
    "symbol": "MIHAOCAT"
