@@ -1124,6 +1124,10 @@
    "decimals": 18,
    "symbol": "AGE"
   },
+  "age.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "AGE"
+  },
   "agency.nearlytrade.near": {
    "decimals": 18,
    "symbol": "AGENCY"
@@ -5162,6 +5166,10 @@
    "decimals": 8,
    "symbol": "CHIPS"
   },
+  "chipsets.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "CHIPSETS"
+  },
   "cholow.nearlytrade.near": {
    "decimals": 18,
    "symbol": "CHOLOW"
@@ -5241,6 +5249,10 @@
   "clapcat.nearlytrade.near": {
    "decimals": 18,
    "symbol": "CLAPCAT"
+  },
+  "clark.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "CLARK"
   },
   "claudecat.nearlytrade.near": {
    "decimals": 18,
@@ -12328,6 +12340,10 @@
    "decimals": 18,
    "symbol": "JOKERINU"
   },
+  "jokowi.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "JOKOWI"
+  },
   "jolly-12a5a6.launchpad.justhoot.near": {
    "decimals": 18,
    "symbol": "JOLLY"
@@ -14424,6 +14440,10 @@
    "symbol": "SOL"
   },
   "mihao.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "MIHAO"
+  },
+  "mihao.v2-launchpad.justhoot.near": {
    "decimals": 18,
    "symbol": "MIHAO"
   },
@@ -21574,6 +21594,10 @@
    "decimals": 18,
    "symbol": "OLYMPIC"
   },
+  "omeme.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "OMEME"
+  },
   "omgy-1992.meme-cooking.near": {
    "decimals": 18,
    "symbol": "OMGY"
@@ -21613,6 +21637,10 @@
   "onemorehot.token0.near": {
    "decimals": 18,
    "symbol": "ONEMOREHOT"
+  },
+  "only.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "ONLY"
   },
   "only2digit.v2-launchpad.justhoot.near": {
    "decimals": 18,
