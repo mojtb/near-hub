@@ -1124,6 +1124,10 @@
    "decimals": 18,
    "symbol": "AGE"
   },
+  "age.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "AGE"
+  },
   "agency.nearlytrade.near": {
    "decimals": 18,
    "symbol": "AGENCY"
@@ -3559,6 +3563,10 @@
    "decimals": 18,
    "symbol": "BLOCKRADAR"
   },
+  "blockradar.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "BLOCKRADAR"
+  },
   "blockrips.nearlytrade.near": {
    "decimals": 18,
    "symbol": "BLOCKRIPS"
@@ -5158,6 +5166,10 @@
    "decimals": 8,
    "symbol": "CHIPS"
   },
+  "chipsets.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "CHIPSETS"
+  },
   "cholow.nearlytrade.near": {
    "decimals": 18,
    "symbol": "CHOLOW"
@@ -5237,6 +5249,14 @@
   "clapcat.nearlytrade.near": {
    "decimals": 18,
    "symbol": "CLAPCAT"
+  },
+  "clark-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "CLARK"
+  },
+  "clark.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "CLARK"
   },
   "claudecat.nearlytrade.near": {
    "decimals": 18,
@@ -5405,6 +5425,10 @@
   "coin.npumptober.near": {
    "decimals": 24,
    "symbol": "NPumptober"
+  },
+  "coin.nrings.near": {
+   "decimals": 24,
+   "symbol": "NRINGS"
   },
   "coin.superintelligence276.near": {
    "decimals": 24,
@@ -6128,6 +6152,10 @@
    "symbol": "DEGEN"
   },
   "degen-4.nearlytrader.near": {
+   "decimals": 18,
+   "symbol": "DEGEN"
+  },
+  "degen.basketcase.near": {
    "decimals": 18,
    "symbol": "DEGEN"
   },
@@ -8535,6 +8563,10 @@
   "forever.nearlytrade.near": {
    "decimals": 18,
    "symbol": "FOREVER"
+  },
+  "forger.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "FORGER"
   },
   "fork.fork-it.near": {
    "decimals": 24,
@@ -12316,6 +12348,10 @@
    "decimals": 18,
    "symbol": "JOKERINU"
   },
+  "jokowi.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "JOKOWI"
+  },
   "jolly-12a5a6.launchpad.justhoot.near": {
    "decimals": 18,
    "symbol": "JOLLY"
@@ -12932,6 +12968,18 @@
    "decimals": 18,
    "symbol": "LADYRHEA"
   },
+  "lagos-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "LAGOS"
+  },
+  "lagos.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "LAGOS"
+  },
+  "lagos.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "LAGOS"
+  },
   "laid-39d2e2.nearpaid.near": {
    "decimals": 18,
    "symbol": "LAID"
@@ -13547,6 +13595,10 @@
   "luca.nearlytrade.near": {
    "decimals": 18,
    "symbol": "LUCA"
+  },
+  "lucicat.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "LUCICAT"
   },
   "lucky-273.meme-cooking.near": {
    "decimals": 18,
@@ -14399,11 +14451,27 @@
    "decimals": 8,
    "symbol": "SOL"
   },
+  "mihao-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "MIHAO"
+  },
   "mihao.nearlytrade.near": {
    "decimals": 18,
    "symbol": "MIHAO"
   },
+  "mihao.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "MIHAO"
+  },
+  "mihaocat-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "MIHAOCAT"
+  },
   "mihaocat.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "MIHAOCAT"
+  },
+  "mihaocat.v2-launchpad.justhoot.near": {
    "decimals": 18,
    "symbol": "MIHAOCAT"
   },
@@ -21158,6 +21226,10 @@
    "decimals": 18,
    "symbol": "NULLSWORLD"
   },
+  "nullsxslmm.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "NULLSXSLMM"
+  },
   "nun.nearlytrade.near": {
    "decimals": 18,
    "symbol": "NUN"
@@ -21538,6 +21610,10 @@
    "decimals": 18,
    "symbol": "OLYMPIC"
   },
+  "omeme.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "OMEME"
+  },
   "omgy-1992.meme-cooking.near": {
    "decimals": 18,
    "symbol": "OMGY"
@@ -21577,6 +21653,10 @@
   "onemorehot.token0.near": {
    "decimals": 18,
    "symbol": "ONEMOREHOT"
+  },
+  "only.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "ONLY"
   },
   "only2digit.v2-launchpad.justhoot.near": {
    "decimals": 18,
@@ -26855,6 +26935,10 @@
   "sight.nearlytrade.near": {
    "decimals": 18,
    "symbol": "SIGHT"
+  },
+  "signal.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "SIGNAL"
   },
   "silent.v2-launchpad.justhoot.near": {
    "decimals": 18,
