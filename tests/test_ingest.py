@@ -419,6 +419,66 @@ def _nrr_page(**changes):
     return f'<html><body><h1>Marketing copy</h1><script id="__NEXT_DATA__" type="application/json">{json.dumps(doc)}</script></body></html>'
 
 
+def _nrr_flight_page(**changes):
+    """The layout of www.bitwiseetfs.com/single-asset/nrr, where nrretf.com redirects from 2026-11-17: the fund's data
+    is one `aggregate` object inside the page's React Server Component chunks. Every value here is made up."""
+    point = lambda day, value: {"t": (date.fromisoformat(day) - date(1970, 1, 1)).days * 86400000 + 43200000, "v": value}
+    aggregate = {
+        "ticker": "NRR", "lifecycle": "Active",
+        "details": {"asOfDate": "2026-11-17", "sharesOutstanding": 2500000, "netAssets": 40000000.5,
+                    "thirtyDayMedianBidAskSpread": {"asOfDate": "2026-11-17", "value": 0.0061}},
+        "holdings": {"asOfDate": "2026-11-17", "basket": [{"name": "NEAR", "ticker": "NEAR", "assetInTrust": 12000000.25}]},
+        "navMarketPrice": {"chart": {"nav": [point("2026-11-16", 16.009999999999998), point("2026-11-17", 16.5)],
+                                     "marketPrice": [point("2026-11-16", 16.1), point("2026-11-17", 16.6)]}},
+        "premiumDiscount": {"asOfDate": "2026-11-17", "volume": 120000, "difference": {"currency": 0.1, "percent": 0.006},
+                            "daysTradedAtPremium": [{"label": "q4y2026", "value": 20}, {"label": "y2026", "value": 20}],
+                            "daysTradedAtDiscount": [{"label": "q4y2026", "value": 10}, {"label": "y2026", "value": 12}],
+                            "daysTradedAtNav": [{"label": "y2026", "value": 0}]},
+        "staking": {"asOfDate": "2026-11-16", "grossStakingRewardRate": 0.05, "netStakingRewardRate": 0.034,
+                    "currentPercentageOfAssetsStaked": 0.99},
+        "wallets": {"updatedAt": "2026-11-18T16:00:00Z", "securityName": "NEAR",
+                    "walletBalances": [{"address": "c" * 64, "balance": 250.5, "active": True}]},
+    }
+    aggregate.update(changes)
+    flight = '1a:["$","div",null,{"children":"Marketing copy"}]\n1b:["$","$L95","x",{"fund":{"kind":"available","ticker":"NRR",' \
+             f'"aggregate":{json.dumps(aggregate, separators=(",", ":"))}}}}}]\n'
+    half = len(flight) // 2
+    chunks = "".join(f'<script>self.__next_f.push([1,{json.dumps(part)}])</script>' for part in (flight[:half], flight[half:]))
+    return f'<html><body><h1>Marketing copy</h1><script>self.__next_f.push([0])</script>{chunks}</body></html>'
+
+
+def test_nrr_page_reads_the_layout_at_bitwiseetfs_com():
+    from ingest.parsers import nrr_page
+
+    parsed = nrr_page.parse(_nrr_flight_page())
+    assert parsed["as_of"] == "2026-11-17" and parsed["shares_outstanding"] == 2500000 and parsed["net_assets_usd"] == 40000000.5
+    assert parsed["near_in_trust"] == 12000000.25 and parsed["near_in_trust_as_of"] == "2026-11-17"
+    assert parsed["staked_share"] == 0.99 and parsed["net_staking_rate"] == 0.034 and parsed["staking_as_of"] == "2026-11-16"
+    assert parsed["premium_as_of"] == "2026-11-17" and parsed["volume_shares"] == 120000
+    assert parsed["nav_chart"] == [{"day": "2026-11-16", "value": 16.01}, {"day": "2026-11-17", "value": 16.5}]
+    assert parsed["market_price_chart"][-1] == {"day": "2026-11-17", "value": 16.6}
+    assert parsed["wallets"] == [{"address": "c" * 64, "balance": 250.5, "active": True}]
+    assert parsed["wallets_updated_at"] == "2026-11-18T16:00:00Z" and parsed["page_updated_at"] is None
+    assert parsed["premium_discount_rate"] == 0.006 and parsed["days_at_premium"] == {"q4y2026": 20, "y2026": 20}
+    assert parsed["days_at_discount"]["y2026"] == 12 and parsed["days_at_nav"] == {"y2026": 0}
+    assert parsed["bid_ask_spread_30d_median_rate"] == 0.0061 and parsed["bid_ask_spread_as_of"] == "2026-11-17"
+    assert set(parsed) == set(nrr_page.parse(_nrr_page())), "both layouts save the same figures"
+
+
+@pytest.mark.parametrize("page", [
+    '<html><script>self.__next_f.push([1,"0:[\\"$\\",\\"div\\",null,{}]\\n"])</script></html>',
+    _nrr_flight_page(holdings={"asOfDate": "2026-11-17", "basket": [{"name": "Something else", "assetInTrust": 1.0}]}),
+    _nrr_flight_page(details={"asOfDate": "2026-11-17"}),
+    _nrr_flight_page(wallets={"updatedAt": "2026-11-18T16:00:00Z", "walletBalances": []}),
+    _nrr_flight_page(navMarketPrice={"chart": {"nav": [], "marketPrice": []}}),
+])
+def test_nrr_page_at_bitwiseetfs_com_fails_loudly_when_it_changes(page):
+    from ingest.parsers import nrr_page
+
+    with pytest.raises(ValueError, match="NRR page"):
+        nrr_page.parse(page)
+
+
 def test_nrr_page_keeps_the_figures_and_cleans_chart_values():
     from ingest.parsers import nrr_page
 
@@ -478,9 +538,18 @@ def _nrr_context(tmp_path, monkeypatch, replies, snapshot="2026-10-01"):
     monkeypatch.setattr("ingest.pipeline.STATE", tmp_path)
     monkeypatch.delenv("FASTNEAR_API_KEY", raising=False)
     http = client(replies)
-    http.policies["nrretf.com"] = HostPolicy()
+    http.policies["www.bitwiseetfs.com"] = HostPolicy()
     http.policies["archival-rpc.mainnet.fastnear.com"] = HostPolicy()
     return etf, Context(snapshot, http, BronzeWriter(snapshot, root=tmp_path / "bronze")), http
+
+
+def test_nrr_figures_read_the_page_at_its_new_address(tmp_path, monkeypatch):
+    etf, ctx, http = _nrr_context(tmp_path, monkeypatch, [FakeResponse(200, _nrr_flight_page().encode())])
+    etf.nrr_figures(ctx)
+    assert http.session.calls[0][1] == "https://www.bitwiseetfs.com/single-asset/nrr"
+    saved = gzip.decompress((tmp_path / "bronze/nrr_fund/figures/dt=2026-10-01/page.json.gz").read_bytes()).decode()
+    assert "Marketing copy" not in saved and json.loads(saved)["shares_outstanding"] == 2500000
+    assert ctx.load_state("nrr_fund__wallets") == ["c" * 64]
 
 
 def test_nrr_figures_save_no_page_and_remember_every_wallet_seen(tmp_path, monkeypatch):
