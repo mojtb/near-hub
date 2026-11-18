@@ -32,7 +32,7 @@ branch. The developer tables count authors without naming them.
 
 Three sources cannot be fetched by a script and are read by hand: the Bitwise fund's flows as news reports give them,
 NEAR's published supply figures, and the protocol upgrades that changed a rate. NEAR's public dashboard on Dune has no
-free API, so it is read as a page. Its three stored readings (2026-11-01, 11-10 and 11-12) were taken in a browser, on
+free API, so it is read as a page. Its four stored readings (2026-11-01, 11-10, 11-12 and 11-18) were taken in a browser, on
 request and never on a schedule, by an AI-driven browser at the author's instruction; one widget of the first was
 copied by hand. Each reading is dated, credited and kept with the rest, and the pages that use it say when it was
 taken.
