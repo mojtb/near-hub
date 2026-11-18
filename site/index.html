@@ -5958,7 +5958,7 @@ const mountReading=s=>{const gs=gaugesOf(s.id);main.querySelectorAll('.gz-i').fo
    collection is paused, so the data is a fixed snapshot, and this line and the Sources page say so. STAYS_PUT: the
    data is collected every night on its own branch, but this site is kept on one snapshot, as it is while the entry
    is judged. Set both to false when the site follows the nightly run. */
-const ON_HOLD=false,STAYS_PUT=true;
+const ON_HOLD=false,STAYS_PUT=false;
 const ASOF_LINE=`Data through ${fmt.date(LC.asOf)}. Fees and revenue are final to ${dm(LC.windows.fees)}. NEAR's dashboard was last read on ${dm(LC.windows.duneRead)}.${ON_HOLD?' This is a fixed snapshot: daily collection is on hold for now.':STAYS_PUT?' This page stays on this snapshot while the entry is judged; newer days are collected every night.':''}`;
 /* The terms a reader needs before the first chart of a subject, one entry each, in fixed words that hold no figure that moves.
    `t` is the entries as [term, meaning]; `note` is a sentence that holds for every figure on the page. */
