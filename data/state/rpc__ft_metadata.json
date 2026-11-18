@@ -5250,6 +5250,10 @@
    "decimals": 18,
    "symbol": "CLAPCAT"
   },
+  "clark-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "CLARK"
+  },
   "clark.nearlytrade.near": {
    "decimals": 18,
    "symbol": "CLARK"
@@ -5421,6 +5425,10 @@
   "coin.npumptober.near": {
    "decimals": 24,
    "symbol": "NPumptober"
+  },
+  "coin.nrings.near": {
+   "decimals": 24,
+   "symbol": "NRINGS"
   },
   "coin.superintelligence276.near": {
    "decimals": 24,
@@ -12968,6 +12976,10 @@
    "decimals": 18,
    "symbol": "LAGOS"
   },
+  "lagos.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "LAGOS"
+  },
   "laid-39d2e2.nearpaid.near": {
    "decimals": 18,
    "symbol": "LAID"
@@ -14438,6 +14450,10 @@
   "miden-0xf4f3dd3678997811522164320be4be.omft.near": {
    "decimals": 8,
    "symbol": "SOL"
+  },
+  "mihao-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "MIHAO"
   },
   "mihao.nearlytrade.near": {
    "decimals": 18,
