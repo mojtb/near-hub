@@ -111,7 +111,7 @@ flowchart LR
 Each label on an arrow is a `make` command.
 
 `main` is pinned to one snapshot, the date in `data/PINNED`, so it rebuilds the same tables tomorrow as it does today.
-A nightly job collects on the `data/nightly` branch; `main` and the site stay on one snapshot while this entry is judged.
+A nightly job collects on the `data/nightly` branch; the site shows each night's snapshot once its checks pass.
 [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) has the layers, the rules each one follows and the reasons for the tools.
 
 ## Rebuild it yourself
@@ -253,9 +253,9 @@ A GitHub Action takes a snapshot every night on the `data/nightly` branch and re
 thesis with it. `main` stays on the date in `data/PINNED`, so the expected results above do not drift. Each commit on
 that branch holds that night's code and data, so `make setup warehouse verify` rebuilds it.
 
-**While this entry is judged, through 18 November 2026, `main` and the site stay on the snapshot of 14 November,**
-which was fetched on the owner's machine with the job's own command. The nightly job keeps collecting on
-`data/nightly`.
+**The site at [nearhub.tech](https://nearhub.tech) follows `data/nightly`:** each night's snapshot goes live once its
+checks pass, so the site can be a day or more ahead of `main`. A snapshot whose checks fail stays on the branch, where
+it can be inspected, and is not shown.
 
 ## Repository map
 
