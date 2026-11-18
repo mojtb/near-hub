@@ -13,7 +13,7 @@ from ..parsers.nrr_page import EXTRAS as NRR_PAGE_EXTRAS, parse as parse_nrr_pag
 from ..pipeline import Context, Skip, dataset
 from .rpc import ARCHIVAL, _view
 
-NRR_PAGE = "https://nrretf.com/"
+NRR_PAGE = "https://www.bitwiseetfs.com/single-asset/nrr"  # nrretf.com redirects here since 2026-11-17
 POOL = "bitwise_2.poolv1.near"
 FIRST_BLOCK_DAY = date(2026, 9, 28)  # the first block of this day closes the last day before the fund's first deposit
 RECENT_DAYS = 3  # read again each night, in case the page lists a new wallet late
