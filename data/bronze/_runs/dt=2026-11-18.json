@@ -395,10 +395,10 @@
   "status": "ok"
  },
  "nrr_fund/figures": {
-  "detail": "ValueError: NRR page: no __NEXT_DATA__ script found",
-  "files": 0,
-  "seconds": 0.4,
-  "status": "failed"
+  "detail": "",
+  "files": 1,
+  "seconds": 2.0,
+  "status": "ok"
  },
  "oneclick/tokens": {
   "detail": "",

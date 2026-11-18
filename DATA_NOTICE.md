@@ -32,7 +32,7 @@ branch. The developer tables count authors without naming them.
 
 Three sources cannot be fetched by a script and are read by hand: the Bitwise fund's flows as news reports give them,
 NEAR's published supply figures, and the protocol upgrades that changed a rate. NEAR's public dashboard on Dune has no
-free API, so it is read as a page. Its three stored readings (2026-11-01, 11-10 and 11-12) were taken in a browser, on
+free API, so it is read as a page. Its four stored readings (2026-11-01, 11-10, 11-12 and 11-18) were taken in a browser, on
 request and never on a schedule, by an AI-driven browser at the author's instruction; one widget of the first was
 copied by hand. Each reading is dated, credited and kept with the rest, and the pages that use it say when it was
 taken.
@@ -60,7 +60,7 @@ can and cannot tell you is in [docs/SOURCES.md](docs/SOURCES.md).
 | `nearblocks` | Daily chain, Intents, per-contract, per-token and wallet statistics, and the validator list | Free plan is marked personal use with attribution required; commercial use needs a paid plan | [nearblocks.io](https://nearblocks.io/apis) |
 | `nearcatalog` | Project directory | Terms not reviewed | [nearcatalog.xyz](https://nearcatalog.xyz/) |
 | `neardata` | Sample blocks | Public chain data; terms not reviewed | [neardata.xyz](https://neardata.xyz) |
-| `nrr_fund` | Bitwise NEAR ETF (NRR): share count, NEAR held, NAV, market price and its wallet list | Terms effective 2022-06-06 give a personal-use license and bar copying or republishing site content, or public or commercial use, without written permission; they cover Bitwise's own sites and don't name nrretf.com; its robots.txt allows crawling | [bitwiseinvestments.com](https://bitwiseinvestments.com/terms-of-service) |
+| `nrr_fund` | Bitwise NEAR ETF (NRR): share count, NEAR held, NAV, market price and its wallet list | Terms effective 2022-06-06 give a personal-use license and bar copying or republishing site content, or public or commercial use, without written permission; they cover Bitwise's own sites, which now include the fund's page: from 2026-11-17 nrretf.com, which they did not name, redirects to www.bitwiseetfs.com/single-asset/nrr; both sites' robots.txt allow crawling | [bitwiseinvestments.com](https://bitwiseinvestments.com/terms-of-service) |
 | `oneclick` | Supported token list with prices | Terms not reviewed | [docs.near-intents.org](https://docs.near-intents.org/) |
 | `protocol_upgrades` | Protocol upgrades that changed a rate gold uses, dated to the block by archival EXPERIMENTAL_protocol_config reads, with the evidence on each row | Chain data read from a public node; registry/protocol_upgrades.csv keeps only versions, heights, times and rates | [docs.near.org](https://docs.near.org/api/rpc/protocol) |
 | `revenue_page` | NEAR's own revenue and fee series | NEAR's public report; no license stated | [revenue.near.org](https://revenue.near.org/) |

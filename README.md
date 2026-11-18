@@ -111,7 +111,7 @@ flowchart LR
 Each label on an arrow is a `make` command.
 
 `main` is pinned to one snapshot, the date in `data/PINNED`, so it rebuilds the same tables tomorrow as it does today.
-A nightly job collects on the `data/nightly` branch; `main` and the site stay on one snapshot while this entry is judged.
+A nightly job collects on the `data/nightly` branch; the site shows each night's snapshot once its checks pass.
 [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) has the layers, the rules each one follows and the reasons for the tools.
 
 ## Rebuild it yourself
@@ -164,10 +164,10 @@ These lines are generated from the warehouse, and `make verify` fails if they st
 - Issuance over the last 30 days, from supply change plus burn: **2.49%** a year, against **2.50%** in the protocol config
 - Circulating supply, built from NEAR's lockup contracts: **1,309.93M** NEAR, **99.84%** of total supply; on 2025-08-26, the last day NearBlocks computed its own, **1,249.72M** against **1,249.65M**
 - Captured Intents revenue, all time: **$10.15M** per DefiLlama, **$10.12M** rebuilt from wallet transfers
-- Public Intents volume, all time through 2026-11-11, the last full day of the latest Dune reading: **$33.47B** per NearBlocks, **$33.09B** per NEAR's dashboard on Dune
+- Public Intents volume, all time through 2026-11-17, the last full day of the latest Dune reading: **$33.53B** per NearBlocks, **$33.15B** per NEAR's dashboard on Dune
 - Chain Signatures: **16** MPC participants with a threshold of **11**
-- Largest Intents fee channel, per NEAR's dashboard on Dune as read on 2026-11-12: **swapkit**, with **73%** of listed fees
-- Bitwise NEAR ETF shares outstanding: **2,930,000** per the fund, **2,890,000** counted on chain in whole baskets
+- Largest Intents fee channel, per NEAR's dashboard on Dune as read on 2026-11-18: **swapkit**, with **74%** of listed fees
+- Bitwise NEAR ETF shares outstanding: **2,890,000** per the fund, **2,890,000** counted on chain in whole baskets
 <!-- expected:end -->
 
 ## The track's sample prompt, item by item
@@ -253,9 +253,9 @@ A GitHub Action takes a snapshot every night on the `data/nightly` branch and re
 thesis with it. `main` stays on the date in `data/PINNED`, so the expected results above do not drift. Each commit on
 that branch holds that night's code and data, so `make setup warehouse verify` rebuilds it.
 
-**While this entry is judged, through 18 November 2026, `main` and the site stay on the snapshot of 14 November,**
-which was fetched on the owner's machine with the job's own command. The nightly job keeps collecting on
-`data/nightly`.
+**The site at [nearhub.tech](https://nearhub.tech) follows `data/nightly`:** each night's snapshot goes live once its
+checks pass, so the site can be a day or more ahead of `main`. A snapshot whose checks fail stays on the branch, where
+it can be inspected, and is not shown.
 
 ## Repository map
 
@@ -304,7 +304,7 @@ independent project, not affiliated with the NEAR Foundation, and nothing here i
   separate submission; `tools/import_legacy_snapshot.py` records how.
 - **Libraries:** dbt-core, dbt-duckdb, DuckDB, requests and pytest, pinned in `requirements.lock`. The dashboard loads
   D3, ECharts and its fonts from a CDN.
-- **AI assistance:** written with Claude Code. The three readings of NEAR's dashboard on Dune were taken by an
+- **AI assistance:** written with Claude Code. The four readings of NEAR's dashboard on Dune were taken by an
   AI-driven browser at the author's instruction; [DATA_NOTICE.md](DATA_NOTICE.md) says how.
 - **Self-reported data:** figures from NEAR's own dashboard on Dune and from revenue.near.org are NEAR's reports about
   itself. Every table built from them says so, and [DATA_NOTICE.md](DATA_NOTICE.md) says how each reading was taken.

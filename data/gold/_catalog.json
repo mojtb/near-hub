@@ -1965,9 +1965,9 @@
     "description": "Credit to the dashboard and its creator."
    }
   ],
-  "rows": 300,
+  "rows": 400,
   "first": "2026-11-01",
-  "last": "2026-11-12"
+  "last": "2026-11-18"
  },
  {
   "area": "NEAR Intents and revenue",
@@ -2008,9 +2008,9 @@
     "description": "Credit to the dashboard and its creator."
    }
   ],
-  "rows": 52,
+  "rows": 70,
   "first": "2026-11-01",
-  "last": "2026-11-12"
+  "last": "2026-11-18"
  },
  {
   "area": "NEAR Intents and revenue",
@@ -2057,9 +2057,9 @@
     "description": "Credit to the dashboard and its creator."
    }
   ],
-  "rows": 33537,
+  "rows": 34064,
   "first": "2024-12-10",
-  "last": "2026-11-11"
+  "last": "2026-11-17"
  },
  {
   "area": "NEAR Intents and revenue",
@@ -2106,9 +2106,9 @@
     "description": "Credit to the dashboard and its creator."
    }
   ],
-  "rows": 15272,
+  "rows": 15480,
   "first": "2024-12-10",
-  "last": "2026-11-11"
+  "last": "2026-11-17"
  },
  {
   "area": "NEAR Intents and revenue",
@@ -2149,9 +2149,9 @@
     "description": "Credit to the dashboard and its creator."
    }
   ],
-  "rows": 702,
+  "rows": 708,
   "first": "2024-12-10",
-  "last": "2026-11-11"
+  "last": "2026-11-17"
  },
  {
   "area": "NEAR Intents and revenue",
@@ -2192,9 +2192,9 @@
     "description": "Credit to the dashboard and its creator."
    }
   ],
-  "rows": 949,
+  "rows": 961,
   "first": "2025-01-01",
-  "last": "2026-11-11"
+  "last": "2026-11-17"
  },
  {
   "area": "NEAR Intents and revenue",
@@ -2241,9 +2241,9 @@
     "description": "Credit to the dashboard and its creator."
    }
   ],
-  "rows": 47880,
+  "rows": 49755,
   "first": "2026-01-01",
-  "last": "2026-11-11"
+  "last": "2026-11-17"
  },
  {
   "area": "NEAR Intents and revenue",
@@ -2411,9 +2411,9 @@
     "description": "Credit to the dashboard and its creator, or to the query's creator for an API read."
    }
   ],
-  "rows": 207060,
+  "rows": 312265,
   "first": "2026-11-01",
-  "last": "2026-11-12"
+  "last": "2026-11-18"
  },
  {
   "area": "NEAR Intents and revenue",
@@ -4897,9 +4897,9 @@
     "description": "How this row in the history file was reached."
    }
   ],
-  "rows": 35,
+  "rows": 37,
   "first": "2026-09-28",
-  "last": "2026-11-13"
+  "last": "2026-11-17"
  },
  {
   "area": "Market and peers",
@@ -6615,9 +6615,9 @@
     "description": "flow_30d_near over minted_30d_near: how many times the chain's issuance the fund took in over the last 30 days. Negative when it handed back more NEAR than it took in."
    }
   ],
-  "rows": 34,
+  "rows": 35,
   "first": "2026-09-29",
-  "last": "2026-11-13"
+  "last": "2026-11-17"
  },
  {
   "area": "Data quality",
@@ -6968,7 +6968,7 @@
     "description": "Any change made before saving, such as trimming."
    }
   ],
-  "rows": 1355,
+  "rows": 1357,
   "first": "2026-10-28",
   "last": "2026-11-18"
  },

@@ -4,8 +4,8 @@ Archival RPC daily block,stg_rpc__block_day,daily,2026-11-18,2026-11-18,2026-11-
 "BigQuery actions and contracts per day, read where a Google key is set",stg_bigquery__actions_daily,daily,2026-11-18,2026-11-17,2026-11-18,1,,false,16367
 "BigQuery blocks per day, read where a Google key is set",stg_bigquery__blocks_daily,daily,2026-11-18,2026-11-17,2026-11-18,1,,false,2757
 "BigQuery transactions and receivers per day, read where a Google key is set",stg_bigquery__transactions_daily,daily,2026-11-18,2026-11-17,2026-11-18,1,,false,39465
-Bitwise NEAR ETF NAV and market price,stg_nrr_fund__prices,daily,2026-11-16,2026-11-12,2026-11-18,6,7,false,374
-Bitwise NEAR ETF fund readings,stg_nrr_fund__readings,daily,2026-11-16,2026-11-13,2026-11-18,5,7,false,13
+Bitwise NEAR ETF NAV and market price,stg_nrr_fund__prices,daily,2026-11-18,2026-11-17,2026-11-18,1,7,false,410
+Bitwise NEAR ETF fund readings,stg_nrr_fund__readings,daily,2026-11-18,2026-11-17,2026-11-18,1,7,false,14
 Bitwise NEAR ETF wallets on chain,stg_rpc__nrr_pool_daily,daily,2026-11-18,2026-11-17,2026-11-18,1,3,false,5315
 CoinMetrics,stg_coinmetrics__asset_metrics,daily,2026-11-18,2026-11-17,2026-11-18,1,3,false,15412
 CoinMetrics prices of Intents pool assets,stg_coinmetrics__token_price,daily,2026-11-18,2026-11-17,2026-11-18,1,3,false,4055
@@ -27,7 +27,7 @@ DefiLlama protocol list,stg_defillama__protocols,snapshot,2026-11-18,2026-11-18,
 DefiLlama stablecoins,stg_defillama__stablecoin_chain,daily,2026-11-18,2026-11-17,2026-11-18,1,3,false,217328
 DefiLlama stablecoins by asset,stg_defillama__stablecoin_assets,snapshot,2026-11-18,2026-11-18,2026-11-18,0,2,false,7118
 DefiLlama yield pools,stg_defillama__yield_pools,snapshot,2026-11-18,2026-11-18,2026-11-18,0,2,false,174
-"Dune dashboard Intents by asset, read in a browser on request",fct_dune_intents_asset_daily,daily,2026-11-12,2026-11-11,2026-11-18,7,,false,33537
+"Dune dashboard Intents by asset, read in a browser on request",fct_dune_intents_asset_daily,daily,2026-11-18,2026-11-17,2026-11-18,1,,false,34064
 FastNear token holders,stg_fastnear__ft_top_holders,snapshot,2026-11-18,2026-11-18,2026-11-18,0,2,false,17100
 FastNear wallet holdings,stg_fastnear__holdings,snapshot,2026-11-18,2026-11-18,2026-11-18,0,2,false,168178
 FastNear wallet transfers,stg_fastnear__transfers,daily,2026-11-18,2026-11-17,2026-11-18,1,3,false,12412

@@ -3,7 +3,7 @@ a_doubling_of_volume_reaches_deflation_after_the_cut,bull,"At the end of HSP-029
 capture_is_rising,bull,NEAR's wallets receive a rising share of the fees charged on Intents,0.0856343211,>=,0.0,holds,2026-10-31
 competitors_are_as_large,bear,Other cross-chain swap protocols are as large as NEAR Intents and can take its flow,,,,not_testable,
 dollars_are_arriving_in_intents,bull,Dollars held in NEAR Intents are higher than a quarter ago,0.554294081,>=,0.0,holds,2026-10-31
-etf_took_in_more_than_issuance,bull,The Bitwise ETF took in more NEAR than the chain created over the last 30 days,-0.1771981005,>=,1.0,fails,2026-11-13
+etf_took_in_more_than_issuance,bull,The Bitwise ETF took in more NEAR than the chain created over the last 30 days,-0.5263827837,>=,1.0,fails,2026-11-17
 fee_base_is_widening,bull,More partners pay meaningful fees than a quarter ago,0.4827586207,>=,0.0,holds,2026-10-31
 fees_depend_on_one_partner,bear,One partner supplies more than half of 1Click's fees,0.6943629884,>=,0.5,holds,2026-10-31
 foundation_float_is_an_overhang,bear,The NEAR Foundation's liquid NEAR is a large overhang on the float,,,,not_testable,
