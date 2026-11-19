@@ -1664,6 +1664,10 @@
    "decimals": 18,
    "symbol": "ANT"
   },
+  "antinu.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "ANTINU"
+  },
   "antithesis.nearlytrade.near": {
    "decimals": 18,
    "symbol": "ANTITHESIS"
@@ -1691,6 +1695,10 @@
   "ao.nearlytrade.near": {
    "decimals": 18,
    "symbol": "AO"
+  },
+  "aotearoa.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "AOTEAROA"
   },
   "ap.nearlytrade.near": {
    "decimals": 18,
@@ -5839,6 +5847,14 @@
    "decimals": 6,
    "symbol": "USDT.e"
   },
+  "dacity-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "DACITY"
+  },
+  "dacity-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "DACITY"
+  },
   "dacity.nearlytrade.near": {
    "decimals": 18,
    "symbol": "DACITY"
@@ -6057,6 +6073,34 @@
   "dcml-1819.meme-cooking.near": {
    "decimals": 18,
    "symbol": "DCML"
+  },
+  "dcty-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "DCTY"
+  },
+  "dcty-2.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "DCTY"
+  },
+  "dcty-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "DCTY"
+  },
+  "dcty-4.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "DCTY"
+  },
+  "dcty-5.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "DCTY"
+  },
+  "dcty.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "DCTY"
+  },
+  "dcty.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "DCTY"
   },
   "dd.tg": {
    "decimals": 8,
@@ -8786,6 +8830,10 @@
    "decimals": 18,
    "symbol": "FUNCHICKEN"
   },
+  "fundador.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "FUNDADOR"
+  },
   "furries.nearlytrade.near": {
    "decimals": 18,
    "symbol": "FURRIES"
@@ -8853,6 +8901,10 @@
   "gashish.token0.near": {
    "decimals": 18,
    "symbol": "GASHISH"
+  },
+  "gatoinu.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "GATOINU"
   },
   "gay-a4e751.launchpad.justhoot.near": {
    "decimals": 18,
@@ -9586,7 +9638,23 @@
    "decimals": 24,
    "symbol": "GTA"
   },
+  "gta.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "GTA"
+  },
   "gta6-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "GTA6"
+  },
+  "gta6-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "GTA6"
+  },
+  "gta6-4.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "GTA6"
+  },
+  "gta6-5.nearlytrade.near": {
    "decimals": 18,
    "symbol": "GTA6"
   },
@@ -9597,6 +9665,22 @@
   "gta6.nearlytrade.near": {
    "decimals": 18,
    "symbol": "GTA6"
+  },
+  "gtainu.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "GTAINU"
+  },
+  "gtavi.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "GTAVI"
+  },
+  "gtavi.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "GTAVI"
+  },
+  "gtavinu.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "GTAVINU"
   },
   "gtd.nearlytrade.near": {
    "decimals": 18,
@@ -11156,6 +11240,10 @@
    "decimals": 18,
    "symbol": "HUNG"
   },
+  "hunnid.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "HUNNID"
+  },
   "hunter.v2-launchpad.justhoot.near": {
    "decimals": 18,
    "symbol": "HUNTER"
@@ -12043,6 +12131,10 @@
   "ja.nearlytrade.near": {
    "decimals": 18,
    "symbol": "JA"
+  },
+  "jack.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "JACK"
   },
   "jacket-2.nearlytrade.near": {
    "decimals": 18,
@@ -13488,6 +13580,10 @@
    "decimals": 24,
    "symbol": "LonkMeme.com"
   },
+  "lontra.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "LONTRA"
+  },
   "looongcat.nearlytrade.near": {
    "decimals": 18,
    "symbol": "LOOONGCAT"
@@ -13596,9 +13692,17 @@
    "decimals": 18,
    "symbol": "LUCA"
   },
+  "lucia.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "LUCIA"
+  },
   "lucicat.v2-launchpad.justhoot.near": {
    "decimals": 18,
    "symbol": "LUCICAT"
+  },
+  "lucie.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "LUCIE"
   },
   "lucky-273.meme-cooking.near": {
    "decimals": 18,
@@ -21126,6 +21230,10 @@
    "decimals": 18,
    "symbol": "NTRUMP"
   },
+  "nttwo.rwa.assetize.near": {
+   "decimals": 8,
+   "symbol": "nTTWO"
+  },
   "ntu-482673.launchpad.justhoot.near": {
    "decimals": 18,
    "symbol": "NTU"
@@ -25568,6 +25676,10 @@
   "robotx.nearlytrade.near": {
    "decimals": 18,
    "symbol": "ROBOTX"
+  },
+  "rocco.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "ROCCO"
   },
   "rock.nearbased.near": {
    "decimals": 18,
@@ -31056,6 +31168,14 @@
    "decimals": 18,
    "symbol": "WARRIOR"
   },
+  "wasted-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "WASTED"
+  },
+  "wasted.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "WASTED"
+  },
   "watto-1563.meme-cooking.near": {
    "decimals": 18,
    "symbol": "WATTO"
@@ -32471,6 +32591,14 @@
   "zoe-1188.meme-cooking.near": {
    "decimals": 18,
    "symbol": "ZOE"
+  },
+  "zoil.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "ZOIL"
+  },
+  "zoil.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "ZOIL"
   },
   "zolanear-1726.meme-cooking.near": {
    "decimals": 18,
