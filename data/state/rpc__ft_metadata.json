@@ -1196,6 +1196,10 @@
    "decimals": 18,
    "symbol": "AI"
   },
+  "ai-10.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "AI"
+  },
   "ai-2.blastnearlaunchpad.near": {
    "decimals": 18,
    "symbol": "AI"
@@ -1671,6 +1675,10 @@
   "antithesis.nearlytrade.near": {
    "decimals": 18,
    "symbol": "ANTITHESIS"
+  },
+  "anton-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "ANTON"
   },
   "anton.nearlytrade.near": {
    "decimals": 18,
@@ -3663,6 +3671,10 @@
    "decimals": 18,
    "symbol": "YLD8on"
   },
+  "bnb-0x343ccbc9f8409f862008b7abebfff20ecf935c75.omdep.near": {
+   "decimals": 18,
+   "symbol": "ANTon"
+  },
   "bnb-0x390a684ef9cade28a7ad0dfa61ab1eb3842618c4.omdep.near": {
    "decimals": 18,
    "symbol": "AAPLon"
@@ -5238,6 +5250,10 @@
    "decimals": 18,
    "symbol": "CIRCLE"
   },
+  "cj.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "CJ"
+  },
   "cjr.tkn.near": {
    "decimals": 24,
    "symbol": "CJR"
@@ -5867,6 +5883,10 @@
    "decimals": 18,
    "symbol": "DACITYCOIN"
   },
+  "dacitycoin-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "DACITYCOIN"
+  },
   "dacitycoin.nearlytrade.near": {
    "decimals": 18,
    "symbol": "DACITYCOIN"
@@ -6091,6 +6111,10 @@
    "symbol": "DCTY"
   },
   "dcty-5.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "DCTY"
+  },
+  "dcty-6.nearlytrade.near": {
    "decimals": 18,
    "symbol": "DCTY"
   },
@@ -9634,6 +9658,10 @@
    "decimals": 18,
    "symbol": "GT"
   },
+  "gta-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "GTA"
+  },
   "gta.grandtheftapes.near": {
    "decimals": 24,
    "symbol": "GTA"
@@ -9669,6 +9697,14 @@
   "gtainu.nearlytrade.near": {
    "decimals": 18,
    "symbol": "GTAINU"
+  },
+  "gtaszn.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "GTASZN"
+  },
+  "gtaszn.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "GTASZN"
   },
   "gtavi.nearlytrade.near": {
    "decimals": 18,
@@ -12360,6 +12396,10 @@
    "decimals": 18,
    "symbol": "JIM"
   },
+  "jingyu.thegreatwhale.near": {
+   "decimals": 24,
+   "symbol": "jingyu"
+  },
   "jinxo.nearlytrade.near": {
    "decimals": 18,
    "symbol": "JINXO"
@@ -12656,6 +12696,10 @@
    "decimals": 18,
    "symbol": "KAYRA"
   },
+  "kcat.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "KCAT"
+  },
   "kcc.nearlytrade.near": {
    "decimals": 18,
    "symbol": "KCC"
@@ -12779,6 +12823,10 @@
   "keypoms.nearlytrade.near": {
    "decimals": 18,
    "symbol": "KEYPOMS"
+  },
+  "kfcat.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "KFCAT"
   },
   "ki.nearlytrade.near": {
    "decimals": 18,
@@ -20966,6 +21014,10 @@
    "decimals": 18,
    "symbol": "NSEC"
   },
+  "nshield.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NSHIELD"
+  },
   "nshitty.shitty-coin.near": {
    "decimals": 24,
    "symbol": "NShitty"
@@ -21593,6 +21645,10 @@
   "ofp.tkn.near": {
    "decimals": 18,
    "symbol": "OFP"
+  },
+  "ogcj.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "OGCJ"
   },
   "ohfuk.nearlytrade.near": {
    "decimals": 18,
@@ -22666,6 +22722,18 @@
    "decimals": 18,
    "symbol": "PIPECAT"
   },
+  "pipi-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PIPI"
+  },
+  "pipi.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PIPI"
+  },
+  "pipi6.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PIPI6"
+  },
   "pippin.nearlytrade.near": {
    "decimals": 18,
    "symbol": "PIPPIN"
@@ -23688,6 +23756,10 @@
   "qad-263.meme-cooking.near": {
    "decimals": 18,
    "symbol": "QAD"
+  },
+  "qant.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "QANT"
   },
   "qantas.nearlytrade.near": {
    "decimals": 18,
@@ -26652,6 +26724,14 @@
    "decimals": 18,
    "symbol": "SHIELD"
   },
+  "shield-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "SHIELD"
+  },
+  "shield-4.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "SHIELD"
+  },
   "shield.nearlytrade.near": {
    "decimals": 18,
    "symbol": "SHIELD"
@@ -28847,6 +28927,14 @@
   "test-115.nearlytrade.near": {
    "decimals": 18,
    "symbol": "test"
+  },
+  "test-116.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "TEST"
+  },
+  "test-117.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "TEST"
   },
   "test-12.nearlytrade.near": {
    "decimals": 18,

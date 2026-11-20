@@ -40,7 +40,7 @@ week_start,repo,ecosystem,repo_group,commits_default_branch,authors_default_bran
 2025-11-23,anza-xyz/agave,solana,protocol,50,19
 2025-11-23,aptos-labs/aptos-core,aptos,protocol,8,6
 2025-11-23,aurora-is-near/aurora-engine,near,ecosystem,1,1
-2025-11-23,ava-labs/avalanchego,avalanche,protocol,17,9
+2025-11-23,ava-labs/avalanchego,avalanche,protocol,19,10
 2025-11-23,ethereum/go-ethereum,ethereum,protocol,35,25
 2025-11-23,near-daos/sputnik-dao-contract,near,governance,1,1
 2025-11-23,near/docs,near,developer_tools,9,6
@@ -58,7 +58,7 @@ week_start,repo,ecosystem,repo_group,commits_default_branch,authors_default_bran
 2025-11-30,anza-xyz/agave,solana,protocol,61,24
 2025-11-30,aptos-labs/aptos-core,aptos,protocol,70,16
 2025-11-30,aurora-is-near/aurora-engine,near,ecosystem,1,1
-2025-11-30,ava-labs/avalanchego,avalanche,protocol,37,8
+2025-11-30,ava-labs/avalanchego,avalanche,protocol,38,9
 2025-11-30,ethereum/go-ethereum,ethereum,protocol,11,7
 2025-11-30,near-daos/sputnik-dao-contract,near,governance,0,0
 2025-11-30,near/docs,near,developer_tools,10,5
@@ -76,7 +76,7 @@ week_start,repo,ecosystem,repo_group,commits_default_branch,authors_default_bran
 2025-12-07,anza-xyz/agave,solana,protocol,46,11
 2025-12-07,aptos-labs/aptos-core,aptos,protocol,26,11
 2025-12-07,aurora-is-near/aurora-engine,near,ecosystem,3,3
-2025-12-07,ava-labs/avalanchego,avalanche,protocol,22,7
+2025-12-07,ava-labs/avalanchego,avalanche,protocol,25,8
 2025-12-07,ethereum/go-ethereum,ethereum,protocol,18,17
 2025-12-07,near-daos/sputnik-dao-contract,near,governance,0,0
 2025-12-07,near/docs,near,developer_tools,2,1
@@ -112,7 +112,7 @@ week_start,repo,ecosystem,repo_group,commits_default_branch,authors_default_bran
 2025-12-21,anza-xyz/agave,solana,protocol,34,12
 2025-12-21,aptos-labs/aptos-core,aptos,protocol,6,5
 2025-12-21,aurora-is-near/aurora-engine,near,ecosystem,0,0
-2025-12-21,ava-labs/avalanchego,avalanche,protocol,7,5
+2025-12-21,ava-labs/avalanchego,avalanche,protocol,8,6
 2025-12-21,ethereum/go-ethereum,ethereum,protocol,1,1
 2025-12-21,near-daos/sputnik-dao-contract,near,governance,0,0
 2025-12-21,near/docs,near,developer_tools,1,1
@@ -130,7 +130,7 @@ week_start,repo,ecosystem,repo_group,commits_default_branch,authors_default_bran
 2025-12-28,anza-xyz/agave,solana,protocol,5,4
 2025-12-28,aptos-labs/aptos-core,aptos,protocol,7,6
 2025-12-28,aurora-is-near/aurora-engine,near,ecosystem,0,0
-2025-12-28,ava-labs/avalanchego,avalanche,protocol,13,7
+2025-12-28,ava-labs/avalanchego,avalanche,protocol,21,8
 2025-12-28,ethereum/go-ethereum,ethereum,protocol,12,9
 2025-12-28,near-daos/sputnik-dao-contract,near,governance,0,0
 2025-12-28,near/docs,near,developer_tools,0,0
@@ -148,7 +148,7 @@ week_start,repo,ecosystem,repo_group,commits_default_branch,authors_default_bran
 2026-01-04,anza-xyz/agave,solana,protocol,79,28
 2026-01-04,aptos-labs/aptos-core,aptos,protocol,18,8
 2026-01-04,aurora-is-near/aurora-engine,near,ecosystem,1,1
-2026-01-04,ava-labs/avalanchego,avalanche,protocol,25,7
+2026-01-04,ava-labs/avalanchego,avalanche,protocol,28,8
 2026-01-04,ethereum/go-ethereum,ethereum,protocol,16,10
 2026-01-04,near-daos/sputnik-dao-contract,near,governance,0,0
 2026-01-04,near/docs,near,developer_tools,5,4
@@ -166,7 +166,7 @@ week_start,repo,ecosystem,repo_group,commits_default_branch,authors_default_bran
 2026-01-11,anza-xyz/agave,solana,protocol,72,23
 2026-01-11,aptos-labs/aptos-core,aptos,protocol,28,12
 2026-01-11,aurora-is-near/aurora-engine,near,ecosystem,7,2
-2026-01-11,ava-labs/avalanchego,avalanche,protocol,26,9
+2026-01-11,ava-labs/avalanchego,avalanche,protocol,28,10
 2026-01-11,ethereum/go-ethereum,ethereum,protocol,20,13
 2026-01-11,near-daos/sputnik-dao-contract,near,governance,0,0
 2026-01-11,near/docs,near,developer_tools,9,6
@@ -184,7 +184,7 @@ week_start,repo,ecosystem,repo_group,commits_default_branch,authors_default_bran
 2026-01-18,anza-xyz/agave,solana,protocol,58,25
 2026-01-18,aptos-labs/aptos-core,aptos,protocol,16,10
 2026-01-18,aurora-is-near/aurora-engine,near,ecosystem,3,1
-2026-01-18,ava-labs/avalanchego,avalanche,protocol,18,8
+2026-01-18,ava-labs/avalanchego,avalanche,protocol,19,8
 2026-01-18,ethereum/go-ethereum,ethereum,protocol,12,8
 2026-01-18,near-daos/sputnik-dao-contract,near,governance,0,0
 2026-01-18,near/docs,near,developer_tools,8,3
@@ -220,7 +220,7 @@ week_start,repo,ecosystem,repo_group,commits_default_branch,authors_default_bran
 2026-02-01,anza-xyz/agave,solana,protocol,105,25
 2026-02-01,aptos-labs/aptos-core,aptos,protocol,26,10
 2026-02-01,aurora-is-near/aurora-engine,near,ecosystem,3,2
-2026-02-01,ava-labs/avalanchego,avalanche,protocol,17,7
+2026-02-01,ava-labs/avalanchego,avalanche,protocol,24,7
 2026-02-01,ethereum/go-ethereum,ethereum,protocol,17,12
 2026-02-01,near-daos/sputnik-dao-contract,near,governance,0,0
 2026-02-01,near/docs,near,developer_tools,6,3
@@ -238,7 +238,7 @@ week_start,repo,ecosystem,repo_group,commits_default_branch,authors_default_bran
 2026-02-08,anza-xyz/agave,solana,protocol,70,26
 2026-02-08,aptos-labs/aptos-core,aptos,protocol,66,20
 2026-02-08,aurora-is-near/aurora-engine,near,ecosystem,0,0
-2026-02-08,ava-labs/avalanchego,avalanche,protocol,18,6
+2026-02-08,ava-labs/avalanchego,avalanche,protocol,28,7
 2026-02-08,ethereum/go-ethereum,ethereum,protocol,23,10
 2026-02-08,near-daos/sputnik-dao-contract,near,governance,0,0
 2026-02-08,near/docs,near,developer_tools,1,1
@@ -256,7 +256,7 @@ week_start,repo,ecosystem,repo_group,commits_default_branch,authors_default_bran
 2026-02-15,anza-xyz/agave,solana,protocol,87,25
 2026-02-15,aptos-labs/aptos-core,aptos,protocol,40,10
 2026-02-15,aurora-is-near/aurora-engine,near,ecosystem,0,0
-2026-02-15,ava-labs/avalanchego,avalanche,protocol,32,7
+2026-02-15,ava-labs/avalanchego,avalanche,protocol,34,8
 2026-02-15,ethereum/go-ethereum,ethereum,protocol,13,5
 2026-02-15,near-daos/sputnik-dao-contract,near,governance,0,0
 2026-02-15,near/docs,near,developer_tools,2,2
@@ -292,7 +292,7 @@ week_start,repo,ecosystem,repo_group,commits_default_branch,authors_default_bran
 2026-03-01,anza-xyz/agave,solana,protocol,105,26
 2026-03-01,aptos-labs/aptos-core,aptos,protocol,55,20
 2026-03-01,aurora-is-near/aurora-engine,near,ecosystem,0,0
-2026-03-01,ava-labs/avalanchego,avalanche,protocol,29,10
+2026-03-01,ava-labs/avalanchego,avalanche,protocol,32,10
 2026-03-01,ethereum/go-ethereum,ethereum,protocol,28,14
 2026-03-01,near-daos/sputnik-dao-contract,near,governance,0,0
 2026-03-01,near/docs,near,developer_tools,5,3
@@ -310,7 +310,7 @@ week_start,repo,ecosystem,repo_group,commits_default_branch,authors_default_bran
 2026-03-08,anza-xyz/agave,solana,protocol,123,32
 2026-03-08,aptos-labs/aptos-core,aptos,protocol,60,19
 2026-03-08,aurora-is-near/aurora-engine,near,ecosystem,0,0
-2026-03-08,ava-labs/avalanchego,avalanche,protocol,19,11
+2026-03-08,ava-labs/avalanchego,avalanche,protocol,20,11
 2026-03-08,ethereum/go-ethereum,ethereum,protocol,20,13
 2026-03-08,near-daos/sputnik-dao-contract,near,governance,0,0
 2026-03-08,near/docs,near,developer_tools,4,3
@@ -328,7 +328,7 @@ week_start,repo,ecosystem,repo_group,commits_default_branch,authors_default_bran
 2026-03-15,anza-xyz/agave,solana,protocol,78,25
 2026-03-15,aptos-labs/aptos-core,aptos,protocol,39,13
 2026-03-15,aurora-is-near/aurora-engine,near,ecosystem,2,1
-2026-03-15,ava-labs/avalanchego,avalanche,protocol,16,7
+2026-03-15,ava-labs/avalanchego,avalanche,protocol,18,8
 2026-03-15,ethereum/go-ethereum,ethereum,protocol,20,13
 2026-03-15,near-daos/sputnik-dao-contract,near,governance,0,0
 2026-03-15,near/docs,near,developer_tools,6,5
@@ -382,7 +382,7 @@ week_start,repo,ecosystem,repo_group,commits_default_branch,authors_default_bran
 2026-04-05,anza-xyz/agave,solana,protocol,70,28
 2026-04-05,aptos-labs/aptos-core,aptos,protocol,39,18
 2026-04-05,aurora-is-near/aurora-engine,near,ecosystem,1,1
-2026-04-05,ava-labs/avalanchego,avalanche,protocol,13,6
+2026-04-05,ava-labs/avalanchego,avalanche,protocol,14,7
 2026-04-05,ethereum/go-ethereum,ethereum,protocol,15,12
 2026-04-05,near-daos/sputnik-dao-contract,near,governance,0,0
 2026-04-05,near/docs,near,developer_tools,4,2
@@ -400,7 +400,7 @@ week_start,repo,ecosystem,repo_group,commits_default_branch,authors_default_bran
 2026-04-12,anza-xyz/agave,solana,protocol,101,25
 2026-04-12,aptos-labs/aptos-core,aptos,protocol,50,14
 2026-04-12,aurora-is-near/aurora-engine,near,ecosystem,5,2
-2026-04-12,ava-labs/avalanchego,avalanche,protocol,19,7
+2026-04-12,ava-labs/avalanchego,avalanche,protocol,20,7
 2026-04-12,ethereum/go-ethereum,ethereum,protocol,29,21
 2026-04-12,near-daos/sputnik-dao-contract,near,governance,0,0
 2026-04-12,near/docs,near,developer_tools,0,0
@@ -436,7 +436,7 @@ week_start,repo,ecosystem,repo_group,commits_default_branch,authors_default_bran
 2026-04-26,anza-xyz/agave,solana,protocol,54,18
 2026-04-26,aptos-labs/aptos-core,aptos,protocol,38,13
 2026-04-26,aurora-is-near/aurora-engine,near,ecosystem,0,0
-2026-04-26,ava-labs/avalanchego,avalanche,protocol,18,7
+2026-04-26,ava-labs/avalanchego,avalanche,protocol,22,8
 2026-04-26,ethereum/go-ethereum,ethereum,protocol,21,11
 2026-04-26,near-daos/sputnik-dao-contract,near,governance,0,0
 2026-04-26,near/docs,near,developer_tools,10,1
@@ -454,7 +454,7 @@ week_start,repo,ecosystem,repo_group,commits_default_branch,authors_default_bran
 2026-05-03,anza-xyz/agave,solana,protocol,65,22
 2026-05-03,aptos-labs/aptos-core,aptos,protocol,36,17
 2026-05-03,aurora-is-near/aurora-engine,near,ecosystem,0,0
-2026-05-03,ava-labs/avalanchego,avalanche,protocol,20,8
+2026-05-03,ava-labs/avalanchego,avalanche,protocol,25,8
 2026-05-03,ethereum/go-ethereum,ethereum,protocol,22,14
 2026-05-03,near-daos/sputnik-dao-contract,near,governance,0,0
 2026-05-03,near/docs,near,developer_tools,7,4
@@ -472,7 +472,7 @@ week_start,repo,ecosystem,repo_group,commits_default_branch,authors_default_bran
 2026-05-10,anza-xyz/agave,solana,protocol,83,29
 2026-05-10,aptos-labs/aptos-core,aptos,protocol,60,20
 2026-05-10,aurora-is-near/aurora-engine,near,ecosystem,5,1
-2026-05-10,ava-labs/avalanchego,avalanche,protocol,10,6
+2026-05-10,ava-labs/avalanchego,avalanche,protocol,11,6
 2026-05-10,ethereum/go-ethereum,ethereum,protocol,27,12
 2026-05-10,near-daos/sputnik-dao-contract,near,governance,0,0
 2026-05-10,near/docs,near,developer_tools,5,2
@@ -490,7 +490,7 @@ week_start,repo,ecosystem,repo_group,commits_default_branch,authors_default_bran
 2026-05-17,anza-xyz/agave,solana,protocol,89,31
 2026-05-17,aptos-labs/aptos-core,aptos,protocol,47,17
 2026-05-17,aurora-is-near/aurora-engine,near,ecosystem,1,1
-2026-05-17,ava-labs/avalanchego,avalanche,protocol,17,8
+2026-05-17,ava-labs/avalanchego,avalanche,protocol,21,9
 2026-05-17,ethereum/go-ethereum,ethereum,protocol,20,15
 2026-05-17,near-daos/sputnik-dao-contract,near,governance,0,0
 2026-05-17,near/docs,near,developer_tools,5,2
@@ -508,7 +508,7 @@ week_start,repo,ecosystem,repo_group,commits_default_branch,authors_default_bran
 2026-05-24,anza-xyz/agave,solana,protocol,93,29
 2026-05-24,aptos-labs/aptos-core,aptos,protocol,36,14
 2026-05-24,aurora-is-near/aurora-engine,near,ecosystem,0,0
-2026-05-24,ava-labs/avalanchego,avalanche,protocol,6,3
+2026-05-24,ava-labs/avalanchego,avalanche,protocol,7,4
 2026-05-24,ethereum/go-ethereum,ethereum,protocol,30,15
 2026-05-24,near-daos/sputnik-dao-contract,near,governance,1,1
 2026-05-24,near/docs,near,developer_tools,1,1
@@ -526,7 +526,7 @@ week_start,repo,ecosystem,repo_group,commits_default_branch,authors_default_bran
 2026-05-31,anza-xyz/agave,solana,protocol,91,25
 2026-05-31,aptos-labs/aptos-core,aptos,protocol,37,15
 2026-05-31,aurora-is-near/aurora-engine,near,ecosystem,1,1
-2026-05-31,ava-labs/avalanchego,avalanche,protocol,4,3
+2026-05-31,ava-labs/avalanchego,avalanche,protocol,14,5
 2026-05-31,ethereum/go-ethereum,ethereum,protocol,22,10
 2026-05-31,near-daos/sputnik-dao-contract,near,governance,0,0
 2026-05-31,near/docs,near,developer_tools,0,0
@@ -544,7 +544,7 @@ week_start,repo,ecosystem,repo_group,commits_default_branch,authors_default_bran
 2026-06-07,anza-xyz/agave,solana,protocol,97,28
 2026-06-07,aptos-labs/aptos-core,aptos,protocol,42,12
 2026-06-07,aurora-is-near/aurora-engine,near,ecosystem,1,1
-2026-06-07,ava-labs/avalanchego,avalanche,protocol,11,8
+2026-06-07,ava-labs/avalanchego,avalanche,protocol,14,10
 2026-06-07,ethereum/go-ethereum,ethereum,protocol,20,9
 2026-06-07,near-daos/sputnik-dao-contract,near,governance,0,0
 2026-06-07,near/docs,near,developer_tools,2,2
@@ -562,7 +562,7 @@ week_start,repo,ecosystem,repo_group,commits_default_branch,authors_default_bran
 2026-06-14,anza-xyz/agave,solana,protocol,100,29
 2026-06-14,aptos-labs/aptos-core,aptos,protocol,32,14
 2026-06-14,aurora-is-near/aurora-engine,near,ecosystem,1,1
-2026-06-14,ava-labs/avalanchego,avalanche,protocol,14,7
+2026-06-14,ava-labs/avalanchego,avalanche,protocol,22,9
 2026-06-14,ethereum/go-ethereum,ethereum,protocol,13,5
 2026-06-14,near-daos/sputnik-dao-contract,near,governance,0,0
 2026-06-14,near/docs,near,developer_tools,1,1
@@ -580,7 +580,7 @@ week_start,repo,ecosystem,repo_group,commits_default_branch,authors_default_bran
 2026-06-21,anza-xyz/agave,solana,protocol,98,23
 2026-06-21,aptos-labs/aptos-core,aptos,protocol,26,12
 2026-06-21,aurora-is-near/aurora-engine,near,ecosystem,0,0
-2026-06-21,ava-labs/avalanchego,avalanche,protocol,21,7
+2026-06-21,ava-labs/avalanchego,avalanche,protocol,26,8
 2026-06-21,ethereum/go-ethereum,ethereum,protocol,15,9
 2026-06-21,near-daos/sputnik-dao-contract,near,governance,0,0
 2026-06-21,near/docs,near,developer_tools,4,3
@@ -598,7 +598,7 @@ week_start,repo,ecosystem,repo_group,commits_default_branch,authors_default_bran
 2026-06-28,anza-xyz/agave,solana,protocol,76,28
 2026-06-28,aptos-labs/aptos-core,aptos,protocol,12,6
 2026-06-28,aurora-is-near/aurora-engine,near,ecosystem,1,1
-2026-06-28,ava-labs/avalanchego,avalanche,protocol,14,8
+2026-06-28,ava-labs/avalanchego,avalanche,protocol,16,9
 2026-06-28,ethereum/go-ethereum,ethereum,protocol,35,11
 2026-06-28,near-daos/sputnik-dao-contract,near,governance,0,0
 2026-06-28,near/docs,near,developer_tools,7,4
@@ -616,7 +616,7 @@ week_start,repo,ecosystem,repo_group,commits_default_branch,authors_default_bran
 2026-07-05,anza-xyz/agave,solana,protocol,84,30
 2026-07-05,aptos-labs/aptos-core,aptos,protocol,12,8
 2026-07-05,aurora-is-near/aurora-engine,near,ecosystem,0,0
-2026-07-05,ava-labs/avalanchego,avalanche,protocol,12,8
+2026-07-05,ava-labs/avalanchego,avalanche,protocol,16,10
 2026-07-05,ethereum/go-ethereum,ethereum,protocol,18,10
 2026-07-05,near-daos/sputnik-dao-contract,near,governance,0,0
 2026-07-05,near/docs,near,developer_tools,5,4
@@ -634,7 +634,7 @@ week_start,repo,ecosystem,repo_group,commits_default_branch,authors_default_bran
 2026-07-12,anza-xyz/agave,solana,protocol,100,29
 2026-07-12,aptos-labs/aptos-core,aptos,protocol,16,8
 2026-07-12,aurora-is-near/aurora-engine,near,ecosystem,5,3
-2026-07-12,ava-labs/avalanchego,avalanche,protocol,21,5
+2026-07-12,ava-labs/avalanchego,avalanche,protocol,23,7
 2026-07-12,ethereum/go-ethereum,ethereum,protocol,23,13
 2026-07-12,near-daos/sputnik-dao-contract,near,governance,0,0
 2026-07-12,near/docs,near,developer_tools,1,1
@@ -652,7 +652,7 @@ week_start,repo,ecosystem,repo_group,commits_default_branch,authors_default_bran
 2026-07-19,anza-xyz/agave,solana,protocol,88,35
 2026-07-19,aptos-labs/aptos-core,aptos,protocol,12,8
 2026-07-19,aurora-is-near/aurora-engine,near,ecosystem,0,0
-2026-07-19,ava-labs/avalanchego,avalanche,protocol,9,3
+2026-07-19,ava-labs/avalanchego,avalanche,protocol,15,5
 2026-07-19,ethereum/go-ethereum,ethereum,protocol,19,5
 2026-07-19,near-daos/sputnik-dao-contract,near,governance,0,0
 2026-07-19,near/docs,near,developer_tools,4,4
@@ -670,7 +670,7 @@ week_start,repo,ecosystem,repo_group,commits_default_branch,authors_default_bran
 2026-07-26,anza-xyz/agave,solana,protocol,76,29
 2026-07-26,aptos-labs/aptos-core,aptos,protocol,20,7
 2026-07-26,aurora-is-near/aurora-engine,near,ecosystem,2,1
-2026-07-26,ava-labs/avalanchego,avalanche,protocol,13,9
+2026-07-26,ava-labs/avalanchego,avalanche,protocol,28,11
 2026-07-26,ethereum/go-ethereum,ethereum,protocol,9,5
 2026-07-26,near-daos/sputnik-dao-contract,near,governance,0,0
 2026-07-26,near/docs,near,developer_tools,1,1
@@ -688,7 +688,7 @@ week_start,repo,ecosystem,repo_group,commits_default_branch,authors_default_bran
 2026-08-02,anza-xyz/agave,solana,protocol,113,28
 2026-08-02,aptos-labs/aptos-core,aptos,protocol,19,7
 2026-08-02,aurora-is-near/aurora-engine,near,ecosystem,0,0
-2026-08-02,ava-labs/avalanchego,avalanche,protocol,16,8
+2026-08-02,ava-labs/avalanchego,avalanche,protocol,27,11
 2026-08-02,ethereum/go-ethereum,ethereum,protocol,19,9
 2026-08-02,near-daos/sputnik-dao-contract,near,governance,0,0
 2026-08-02,near/docs,near,developer_tools,6,3
@@ -706,7 +706,7 @@ week_start,repo,ecosystem,repo_group,commits_default_branch,authors_default_bran
 2026-08-09,anza-xyz/agave,solana,protocol,106,27
 2026-08-09,aptos-labs/aptos-core,aptos,protocol,20,9
 2026-08-09,aurora-is-near/aurora-engine,near,ecosystem,1,1
-2026-08-09,ava-labs/avalanchego,avalanche,protocol,6,4
+2026-08-09,ava-labs/avalanchego,avalanche,protocol,9,6
 2026-08-09,ethereum/go-ethereum,ethereum,protocol,18,8
 2026-08-09,near-daos/sputnik-dao-contract,near,governance,0,0
 2026-08-09,near/docs,near,developer_tools,5,2
@@ -724,7 +724,7 @@ week_start,repo,ecosystem,repo_group,commits_default_branch,authors_default_bran
 2026-08-16,anza-xyz/agave,solana,protocol,73,23
 2026-08-16,aptos-labs/aptos-core,aptos,protocol,34,9
 2026-08-16,aurora-is-near/aurora-engine,near,ecosystem,3,2
-2026-08-16,ava-labs/avalanchego,avalanche,protocol,17,5
+2026-08-16,ava-labs/avalanchego,avalanche,protocol,31,7
 2026-08-16,ethereum/go-ethereum,ethereum,protocol,5,3
 2026-08-16,near-daos/sputnik-dao-contract,near,governance,0,0
 2026-08-16,near/docs,near,developer_tools,0,0
@@ -742,7 +742,7 @@ week_start,repo,ecosystem,repo_group,commits_default_branch,authors_default_bran
 2026-08-23,anza-xyz/agave,solana,protocol,76,26
 2026-08-23,aptos-labs/aptos-core,aptos,protocol,18,8
 2026-08-23,aurora-is-near/aurora-engine,near,ecosystem,1,1
-2026-08-23,ava-labs/avalanchego,avalanche,protocol,20,8
+2026-08-23,ava-labs/avalanchego,avalanche,protocol,24,9
 2026-08-23,ethereum/go-ethereum,ethereum,protocol,31,18
 2026-08-23,near-daos/sputnik-dao-contract,near,governance,0,0
 2026-08-23,near/docs,near,developer_tools,0,0
@@ -760,7 +760,7 @@ week_start,repo,ecosystem,repo_group,commits_default_branch,authors_default_bran
 2026-08-30,anza-xyz/agave,solana,protocol,89,30
 2026-08-30,aptos-labs/aptos-core,aptos,protocol,28,7
 2026-08-30,aurora-is-near/aurora-engine,near,ecosystem,8,4
-2026-08-30,ava-labs/avalanchego,avalanche,protocol,22,7
+2026-08-30,ava-labs/avalanchego,avalanche,protocol,29,9
 2026-08-30,ethereum/go-ethereum,ethereum,protocol,15,7
 2026-08-30,near-daos/sputnik-dao-contract,near,governance,0,0
 2026-08-30,near/docs,near,developer_tools,3,2
@@ -778,7 +778,7 @@ week_start,repo,ecosystem,repo_group,commits_default_branch,authors_default_bran
 2026-09-06,anza-xyz/agave,solana,protocol,63,17
 2026-09-06,aptos-labs/aptos-core,aptos,protocol,26,8
 2026-09-06,aurora-is-near/aurora-engine,near,ecosystem,0,0
-2026-09-06,ava-labs/avalanchego,avalanche,protocol,13,9
+2026-09-06,ava-labs/avalanchego,avalanche,protocol,28,10
 2026-09-06,ethereum/go-ethereum,ethereum,protocol,18,12
 2026-09-06,near-daos/sputnik-dao-contract,near,governance,0,0
 2026-09-06,near/docs,near,developer_tools,0,0
@@ -796,7 +796,7 @@ week_start,repo,ecosystem,repo_group,commits_default_branch,authors_default_bran
 2026-09-13,anza-xyz/agave,solana,protocol,94,30
 2026-09-13,aptos-labs/aptos-core,aptos,protocol,14,5
 2026-09-13,aurora-is-near/aurora-engine,near,ecosystem,2,2
-2026-09-13,ava-labs/avalanchego,avalanche,protocol,9,6
+2026-09-13,ava-labs/avalanchego,avalanche,protocol,17,8
 2026-09-13,ethereum/go-ethereum,ethereum,protocol,15,12
 2026-09-13,near-daos/sputnik-dao-contract,near,governance,0,0
 2026-09-13,near/docs,near,developer_tools,3,2
@@ -814,7 +814,7 @@ week_start,repo,ecosystem,repo_group,commits_default_branch,authors_default_bran
 2026-09-20,anza-xyz/agave,solana,protocol,86,29
 2026-09-20,aptos-labs/aptos-core,aptos,protocol,27,8
 2026-09-20,aurora-is-near/aurora-engine,near,ecosystem,2,2
-2026-09-20,ava-labs/avalanchego,avalanche,protocol,12,4
+2026-09-20,ava-labs/avalanchego,avalanche,protocol,18,6
 2026-09-20,ethereum/go-ethereum,ethereum,protocol,13,6
 2026-09-20,near-daos/sputnik-dao-contract,near,governance,0,0
 2026-09-20,near/docs,near,developer_tools,0,0
@@ -832,7 +832,7 @@ week_start,repo,ecosystem,repo_group,commits_default_branch,authors_default_bran
 2026-09-27,anza-xyz/agave,solana,protocol,122,28
 2026-09-27,aptos-labs/aptos-core,aptos,protocol,45,10
 2026-09-27,aurora-is-near/aurora-engine,near,ecosystem,3,2
-2026-09-27,ava-labs/avalanchego,avalanche,protocol,27,9
+2026-09-27,ava-labs/avalanchego,avalanche,protocol,31,10
 2026-09-27,ethereum/go-ethereum,ethereum,protocol,18,11
 2026-09-27,near-daos/sputnik-dao-contract,near,governance,0,0
 2026-09-27,near/docs,near,developer_tools,0,0
@@ -850,7 +850,7 @@ week_start,repo,ecosystem,repo_group,commits_default_branch,authors_default_bran
 2026-10-04,anza-xyz/agave,solana,protocol,109,32
 2026-10-04,aptos-labs/aptos-core,aptos,protocol,30,9
 2026-10-04,aurora-is-near/aurora-engine,near,ecosystem,4,4
-2026-10-04,ava-labs/avalanchego,avalanche,protocol,20,6
+2026-10-04,ava-labs/avalanchego,avalanche,protocol,22,7
 2026-10-04,ethereum/go-ethereum,ethereum,protocol,36,20
 2026-10-04,near-daos/sputnik-dao-contract,near,governance,0,0
 2026-10-04,near/docs,near,developer_tools,1,1
@@ -868,7 +868,7 @@ week_start,repo,ecosystem,repo_group,commits_default_branch,authors_default_bran
 2026-10-11,anza-xyz/agave,solana,protocol,76,23
 2026-10-11,aptos-labs/aptos-core,aptos,protocol,17,12
 2026-10-11,aurora-is-near/aurora-engine,near,ecosystem,0,0
-2026-10-11,ava-labs/avalanchego,avalanche,protocol,30,9
+2026-10-11,ava-labs/avalanchego,avalanche,protocol,34,10
 2026-10-11,ethereum/go-ethereum,ethereum,protocol,17,8
 2026-10-11,near-daos/sputnik-dao-contract,near,governance,0,0
 2026-10-11,near/docs,near,developer_tools,4,3
@@ -886,7 +886,7 @@ week_start,repo,ecosystem,repo_group,commits_default_branch,authors_default_bran
 2026-10-18,anza-xyz/agave,solana,protocol,136,35
 2026-10-18,aptos-labs/aptos-core,aptos,protocol,36,7
 2026-10-18,aurora-is-near/aurora-engine,near,ecosystem,1,1
-2026-10-18,ava-labs/avalanchego,avalanche,protocol,22,8
+2026-10-18,ava-labs/avalanchego,avalanche,protocol,41,10
 2026-10-18,ethereum/go-ethereum,ethereum,protocol,25,13
 2026-10-18,near-daos/sputnik-dao-contract,near,governance,0,0
 2026-10-18,near/docs,near,developer_tools,19,12
@@ -904,7 +904,7 @@ week_start,repo,ecosystem,repo_group,commits_default_branch,authors_default_bran
 2026-10-25,anza-xyz/agave,solana,protocol,132,34
 2026-10-25,aptos-labs/aptos-core,aptos,protocol,52,8
 2026-10-25,aurora-is-near/aurora-engine,near,ecosystem,6,3
-2026-10-25,ava-labs/avalanchego,avalanche,protocol,27,9
+2026-10-25,ava-labs/avalanchego,avalanche,protocol,39,10
 2026-10-25,ethereum/go-ethereum,ethereum,protocol,13,6
 2026-10-25,near-daos/sputnik-dao-contract,near,governance,0,0
 2026-10-25,near/docs,near,developer_tools,25,5
@@ -922,7 +922,7 @@ week_start,repo,ecosystem,repo_group,commits_default_branch,authors_default_bran
 2026-11-01,anza-xyz/agave,solana,protocol,167,42
 2026-11-01,aptos-labs/aptos-core,aptos,protocol,50,13
 2026-11-01,aurora-is-near/aurora-engine,near,ecosystem,3,2
-2026-11-01,ava-labs/avalanchego,avalanche,protocol,30,7
+2026-11-01,ava-labs/avalanchego,avalanche,protocol,38,8
 2026-11-01,ethereum/go-ethereum,ethereum,protocol,14,11
 2026-11-01,near-daos/sputnik-dao-contract,near,governance,0,0
 2026-11-01,near/docs,near,developer_tools,4,1
@@ -940,7 +940,7 @@ week_start,repo,ecosystem,repo_group,commits_default_branch,authors_default_bran
 2026-11-08,anza-xyz/agave,solana,protocol,46,18
 2026-11-08,aptos-labs/aptos-core,aptos,protocol,58,13
 2026-11-08,aurora-is-near/aurora-engine,near,ecosystem,0,0
-2026-11-08,ava-labs/avalanchego,avalanche,protocol,21,7
+2026-11-08,ava-labs/avalanchego,avalanche,protocol,22,8
 2026-11-08,ethereum/go-ethereum,ethereum,protocol,20,11
 2026-11-08,near-daos/sputnik-dao-contract,near,governance,0,0
 2026-11-08,near/docs,near,developer_tools,20,3

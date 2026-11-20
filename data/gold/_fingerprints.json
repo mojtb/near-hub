@@ -1,8 +1,8 @@
 {
  "dim_block_day": {
   "columns": 8,
-  "hash": "2c013382c1cb11903dbf8914e82c0ce8",
-  "rows": 741
+  "hash": "09989a6dfdd41e2ecaf093e126bc18a3",
+  "rows": 742
  },
  "dim_claim": {
   "columns": 11,
@@ -11,12 +11,12 @@
  },
  "dim_date": {
   "columns": 7,
-  "hash": "bfd3ae24213d533b87a32ce4d903f345",
-  "rows": 2312
+  "hash": "634244d4b1b889683b18c4e4b89dad7e",
+  "rows": 2313
  },
  "dim_entity": {
   "columns": 17,
-  "hash": "2f8ae42bc85775dab1e6a1977409eab3",
+  "hash": "88ba01d28dedfe5351d1a87138163791",
   "rows": 72
  },
  "dim_event": {
@@ -26,7 +26,7 @@
  },
  "dim_protocol": {
   "columns": 10,
-  "hash": "7fcf9e3490051db578c0ba5e745be9d7",
+  "hash": "bbb4882779016ab37c090aecd8567bde",
   "rows": 47
  },
  "dim_source": {
@@ -41,68 +41,68 @@
  },
  "dq_bigquery_reads": {
   "columns": 14,
-  "hash": "b3590ea23e5dfc4e8230e1c4dbbf27bd",
-  "rows": 63
+  "hash": "4296cde4bb1802d338e6aab88c2d1b76",
+  "rows": 72
  },
  "dq_bigquery_tables": {
   "columns": 11,
-  "hash": "fedb5ee959a31c7eff30dfafcdd23b8f",
+  "hash": "f0d572d7ba4b9423136d1b13b76a5415",
   "rows": 16
  },
  "dq_freshness": {
   "columns": 10,
-  "hash": "3427c121eeebb71c35c3ad8f477bae0a",
+  "hash": "705a2f1a0084efe37b24634d44b44562",
   "rows": 64
  },
  "dq_ingest_runs": {
   "columns": 6,
-  "hash": "a1df02a54721e8207d1d5c4184d157d4",
-  "rows": 1404
+  "hash": "12a6fcb5009793062de778c747a89815",
+  "rows": 1489
  },
  "dq_provenance": {
   "columns": 10,
-  "hash": "daae43c3a26b0574cc50cf25f6ca50ff",
-  "rows": 1441
+  "hash": "b4e386356ad07fb3aa58d3c4c4baca2f",
+  "rows": 1525
  },
  "dq_reconciliation": {
   "columns": 13,
-  "hash": "a62db04d04a9f905838df68b8e0fa7ca",
+  "hash": "a016912e79b968993e2f2350b413041f",
   "rows": 125
  },
  "dq_revisions": {
   "columns": 9,
-  "hash": "011204ee7f8c0a582a7bc22053cd0aab",
-  "rows": 12880
+  "hash": "a1a2b55530b8fa498959095d820d7266",
+  "rows": 12920
  },
  "fct_bigquery_action_daily": {
   "columns": 8,
-  "hash": "49eb80af042014d57e0183c79c3a1ebc",
-  "rows": 2585
+  "hash": "d178538331228c35a386c67b9de6381c",
+  "rows": 2597
  },
  "fct_bigquery_caller_daily": {
   "columns": 11,
-  "hash": "6f79ee59d629734f274bcb5540f84239",
-  "rows": 11485
+  "hash": "76bc4316dd5387f8bad4ac5f327c76ab",
+  "rows": 11535
  },
  "fct_bigquery_chain_daily": {
   "columns": 14,
-  "hash": "4535dd01d0ebe92a35585617ba8be5f0",
-  "rows": 2312
+  "hash": "96aa3d25263b11c5083f9c8d9c70526c",
+  "rows": 2313
  },
  "fct_bigquery_circulating_supply_daily": {
   "columns": 8,
-  "hash": "52a2e0b849c2a0ee87b6e86c3e285287",
-  "rows": 1416
+  "hash": "af945a9e85ece594a1a9b849db464534",
+  "rows": 1417
  },
  "fct_bigquery_contract_daily": {
   "columns": 13,
-  "hash": "7e48b7ccbbc03822090c2295ae567a8a",
-  "rows": 9850
+  "hash": "97a0a2f8ae42e5da7c374b44bb7c3c68",
+  "rows": 9893
  },
  "fct_bigquery_receiver_daily": {
   "columns": 10,
-  "hash": "4d790dded941c56df8547fb3ddaec314",
-  "rows": 28615
+  "hash": "e261dfc394caa0d785df94840577ef58",
+  "rows": 28657
  },
  "fct_bigquery_signer_cohort_monthly": {
   "columns": 8,
@@ -111,52 +111,52 @@
  },
  "fct_bigquery_signer_daily": {
   "columns": 14,
-  "hash": "c33786f523eb6a07673fc1537e5ba6ba",
-  "rows": 32369
+  "hash": "1dc2a0deedbb63f687ad64e865a5323d",
+  "rows": 32416
  },
  "fct_bigquery_staking_balance_daily": {
   "columns": 16,
-  "hash": "2eee42c626c23a1e5a1f8c4d619c22c4",
-  "rows": 1401
+  "hash": "49e099569e6855fecb2321dea1545f09",
+  "rows": 1402
  },
  "fct_catalog_projects": {
   "columns": 5,
-  "hash": "5c54cfbcfa84f5faa6214ddf35d85fec",
-  "rows": 6513
+  "hash": "22649855aeaff02465d02980a7550e03",
+  "rows": 6858
  },
  "fct_chain_daily": {
   "columns": 25,
-  "hash": "cb302acba2756949b52be2a5df38fdc1",
-  "rows": 2312
+  "hash": "1a42c86daae4024fc14ebab141d5b684",
+  "rows": 2313
  },
  "fct_chain_signatures_daily": {
   "columns": 4,
-  "hash": "de9897eb9e16ddf290f373ecedbb333c",
-  "rows": 383
+  "hash": "55625d8ac0c9f086c4302f5141b99577",
+  "rows": 384
  },
  "fct_circulating_supply_daily": {
   "columns": 8,
-  "hash": "46c2593f1852cebb5eba447580c3d202",
-  "rows": 2228
+  "hash": "e46089c1f5fa9343fd43397deb927416",
+  "rows": 2229
  },
  "fct_contract_daily": {
   "columns": 7,
-  "hash": "3b38dcc8070ab74e2956e1b738f61aa7",
-  "rows": 18968
+  "hash": "686c85f6aba8feb50d173b95e2a3364a",
+  "rows": 19012
  },
  "fct_defi_tvl_daily": {
   "columns": 8,
-  "hash": "d91b76e40e1c9c69734bec33fc8d06f0",
-  "rows": 1917
+  "hash": "3815418a59c18138ddf5ece7706d5013",
+  "rows": 1918
  },
  "fct_deflation_scenarios": {
   "columns": 12,
-  "hash": "bab19c8812d163998c250ff2a8244347",
+  "hash": "ea3cd3dae8b5d4f5442a430207a22a5b",
   "rows": 8
  },
  "fct_dev_activity_weekly": {
   "columns": 6,
-  "hash": "bf953881c42b681215916152fa9c0d6f",
+  "hash": "0203cdd52f208bba045b1394ef0dd8fe",
   "rows": 954
  },
  "fct_dune_dashboard_results": {
@@ -191,23 +191,23 @@
  },
  "fct_etf_absorption_daily": {
   "columns": 10,
-  "hash": "97b70a2759c62d1d94c23a8c3a3f17a0",
-  "rows": 35
+  "hash": "215d3832b0d6f1275cb9b312d47f71bf",
+  "rows": 36
  },
  "fct_etf_nrr_chain_daily": {
   "columns": 15,
-  "hash": "5fb4d5ab889190778830a8580e6fe288",
-  "rows": 52
+  "hash": "4f87dfffb2434a807a06fad132382976",
+  "rows": 53
  },
  "fct_etf_nrr_daily": {
   "columns": 26,
-  "hash": "6390cca9f76d561760757735522fe9b9",
-  "rows": 37
+  "hash": "f6314801c409d0113d946de6a9dd1604",
+  "rows": 38
  },
  "fct_exchange_balance_daily": {
   "columns": 5,
-  "hash": "e62253bf6cafdc8fe06fc6e8213e6c11",
-  "rows": 6000
+  "hash": "b42a4851acecfe152d4b12554c249cab",
+  "rows": 6009
  },
  "fct_governance_decisions": {
   "columns": 32,
@@ -216,68 +216,68 @@
  },
  "fct_governance_proposals": {
   "columns": 29,
-  "hash": "793ba99a5f7ffbd187cf2423cf625431",
+  "hash": "2428911a4f5512f0b00be4d1d302f506",
   "rows": 30
  },
  "fct_governance_threads": {
   "columns": 9,
-  "hash": "8af5d7a773b9534b4d0cc4ad2e664562",
-  "rows": 76
+  "hash": "684fd05368284fe1f03c94a5f9b91ec6",
+  "rows": 80
  },
  "fct_intents_1click_channel_daily": {
   "columns": 8,
-  "hash": "dee7f6c23e95b9f59ddac7742671cf60",
-  "rows": 35452
+  "hash": "9f93c96d1a6e5e907028b1fed6b114d3",
+  "rows": 35606
  },
  "fct_intents_1click_daily": {
   "columns": 11,
-  "hash": "82ac6630663e99ecfe8d775f85b6d1fa",
-  "rows": 592
+  "hash": "084f64003656c8cd984722d008326b7d",
+  "rows": 593
  },
  "fct_intents_1click_fee_recipient_daily": {
   "columns": 5,
-  "hash": "12466a652530cfacf6587e21b239c6cd",
-  "rows": 1334
+  "hash": "6e62d1136af8978b5e22228ee2d60646",
+  "rows": 1337
  },
  "fct_intents_1click_pair_daily": {
   "columns": 11,
-  "hash": "ee5633b50d75148ffda0348d61340ea9",
-  "rows": 184963
+  "hash": "9e39935060f581b4f025db4c00274d56",
+  "rows": 185486
  },
  "fct_intents_1click_route_daily": {
   "columns": 6,
-  "hash": "d27c9e63df174ef2bf595808c5e9b696",
-  "rows": 2072
+  "hash": "38dcc92fb31c5bf0a190bfbb75bd6a26",
+  "rows": 2076
  },
  "fct_intents_1click_size_daily": {
   "columns": 5,
-  "hash": "dacc2502f9b7a7dc69766dae63d3d39f",
-  "rows": 2726
+  "hash": "0a099242794af014317e4b394eef10a4",
+  "rows": 2731
  },
  "fct_intents_asset_daily": {
   "columns": 7,
-  "hash": "82af35f514138ce0407a74d2ac6cf8b0",
-  "rows": 40744
+  "hash": "3d370359b402b8e2a1a0785fb140175a",
+  "rows": 40864
  },
  "fct_intents_chain_daily": {
   "columns": 4,
-  "hash": "5bb0080db3441176477c4992fe5dbeee",
-  "rows": 10997
+  "hash": "248e3b2d517b36be4a555b890cb97275",
+  "rows": 11028
  },
  "fct_intents_channel_economics_monthly": {
   "columns": 12,
-  "hash": "04d345d94e1d7f37fd82a985d3a82c79",
-  "rows": 2436
+  "hash": "ca8f891b6b24d7f3596387f2f801b160",
+  "rows": 2442
  },
  "fct_intents_concentration_monthly": {
   "columns": 11,
-  "hash": "019ae76be055bce17717c9d1c9a8ab6a",
+  "hash": "b0c4d4dd84f711a62e8c60a14bb89583",
   "rows": 86
  },
  "fct_intents_daily": {
   "columns": 14,
-  "hash": "a0a5d1d52d5b6252f903a661a4844f0b",
-  "rows": 709
+  "hash": "63362a64b6fd7aaba1982008324577ba",
+  "rows": 710
  },
  "fct_intents_dashboard_readings": {
   "columns": 5,
@@ -291,58 +291,58 @@
  },
  "fct_intents_pool_chain_monthly": {
   "columns": 12,
-  "hash": "e6684b55beef9fd5f1d35c4dd5b70302",
-  "rows": 1239
+  "hash": "e082431e4400976dda666a2f9dc8b797",
+  "rows": 1238
  },
  "fct_intents_unit_economics_monthly": {
   "columns": 14,
-  "hash": "26f4eafdcd4239ae170a231ff542c1a6",
+  "hash": "65d0e9205da4a507c2d0131e8265853d",
   "rows": 24
  },
  "fct_lst_snapshot": {
   "columns": 7,
-  "hash": "f01d4052e9eae43f737d583648087bdb",
-  "rows": 1923
+  "hash": "a2eeecf8c77b848e2dd2526f997ef9ab",
+  "rows": 1926
  },
  "fct_market_daily": {
   "columns": 6,
-  "hash": "bd5b049bb34b9c2479acb3aee000c41c",
-  "rows": 2312
+  "hash": "deb6db2ea76a22cdc729f46d71189972",
+  "rows": 2313
  },
  "fct_mpc_operators": {
   "columns": 3,
-  "hash": "0507116fbb47585e793e4aa6fe1148fb",
-  "rows": 301
+  "hash": "f5e448f01c8208ae1dd45f47718a57bf",
+  "rows": 317
  },
  "fct_mpc_participants": {
   "columns": 4,
-  "hash": "a85964e8d521318e3f57fc4df6b50c25",
-  "rows": 6796
+  "hash": "f95540af1f86db7a0225c80a94e0d938",
+  "rows": 6812
  },
  "fct_mpc_state": {
   "columns": 6,
-  "hash": "862327abd4c38dbd834a79cd88d0c6e4",
-  "rows": 692
+  "hash": "cd8acc00d53e8a4781d732bf8a4ccc27",
+  "rows": 693
  },
  "fct_net_dilution_daily": {
   "columns": 14,
-  "hash": "ac723951d4e84e27c0d070c081c0636e",
-  "rows": 2283
+  "hash": "574314b731627c1c1ecfc24154cc5a1c",
+  "rows": 2284
  },
  "fct_peer_app_fees_snapshot": {
   "columns": 15,
-  "hash": "a496c493799b16e1bfa4693e07fdc580",
-  "rows": 26474
+  "hash": "b9fc9131415257d636614baad1315d3f",
+  "rows": 27909
  },
  "fct_peer_chain_fees_snapshot": {
   "columns": 15,
-  "hash": "306c5d1c7e43f6043fb8e3666ab3ef9f",
-  "rows": 134
+  "hash": "1620ab3e07aa6372cf39a52a9b3be522",
+  "rows": 141
  },
  "fct_peer_daily": {
   "columns": 15,
-  "hash": "7d666cdd76b3e3d1a6545635d5bda3da",
-  "rows": 15226
+  "hash": "e7ed8d8c1d30a24608ef100be2c4c31c",
+  "rows": 15233
  },
  "fct_peer_supply_readings": {
   "columns": 8,
@@ -351,147 +351,147 @@
  },
  "fct_protocol_config": {
   "columns": 13,
-  "hash": "9fbf2dcd2c81c9f3e390dfcb5c0241eb",
-  "rows": 20
+  "hash": "eaf23a9423e21b1205402bfc8734d909",
+  "rows": 21
  },
  "fct_protocol_fees_snapshot": {
   "columns": 10,
-  "hash": "fe95f0df900356115817ff85f6a72f52",
-  "rows": 558
+  "hash": "013f71e77d68b7b368943a7faff49ba0",
+  "rows": 588
  },
  "fct_protocol_tvl_daily": {
   "columns": 6,
-  "hash": "6d33e94d6d7d03c0307e133f99375394",
-  "rows": 17001
+  "hash": "6cd77f3a4238ca2363d416f207ad9b69",
+  "rows": 17017
  },
  "fct_receiver_sample_daily": {
   "columns": 14,
-  "hash": "4ca99a117a2ae95a36bd7fd5b3225d15",
-  "rows": 207116
+  "hash": "cdaf81b341cca3dbfe6a7b975b8bc06c",
+  "rows": 207453
  },
  "fct_repo_snapshot": {
   "columns": 9,
-  "hash": "76a41b547b71431883a27ea83e99ae1f",
-  "rows": 342
+  "hash": "f876c8d509ea310a6a86e6f0055b2432",
+  "rows": 360
  },
  "fct_revenue_capture": {
   "columns": 4,
-  "hash": "2904dd08462a9b358eb6e1e1eb90bd70",
-  "rows": 228
+  "hash": "00dffe77bac12aed5ea74dcf18184cdf",
+  "rows": 240
  },
  "fct_revenue_inflows_daily": {
   "columns": 5,
-  "hash": "f47f707abc84d546be792e47f018e531",
-  "rows": 525
+  "hash": "35bcdfac58d56aa42f3afb7a8f215060",
+  "rows": 527
  },
  "fct_revenue_page_emissions": {
   "columns": 4,
-  "hash": "7c4b9a11da5cdca8879c0d60eb21334a",
-  "rows": 322
+  "hash": "a37c57f020c73b7fd7bc9f7b0449642c",
+  "rows": 323
  },
  "fct_revenue_page_monthly": {
   "columns": 3,
-  "hash": "820a86f2707b87b556445b0c6a9d99e7",
+  "hash": "0b8b8a450bb2b90b1ed18e6d0baa927b",
   "rows": 16
  },
  "fct_stablecoin_assets": {
   "columns": 6,
-  "hash": "5f1ef0a92431efd3824e5d619a58f59d",
-  "rows": 7517
+  "hash": "42867e937e88f83cb22e31c72ae44e29",
+  "rows": 7916
  },
  "fct_supply_daily": {
   "columns": 8,
-  "hash": "9e1a53464857c6fd850514ebbd79c203",
-  "rows": 2312
+  "hash": "6d7245a338e83778c3348f997a7f145d",
+  "rows": 2313
  },
  "fct_swap_services_daily": {
   "columns": 8,
-  "hash": "68a99f7c35e16447c25f35f94f5a7541",
-  "rows": 7080
+  "hash": "19774e1d8c98c6597369d38467499db1",
+  "rows": 7087
  },
  "fct_thesis_scorecard": {
   "columns": 8,
-  "hash": "53b16bbc4a4d581ba0162e0ee5a9715b",
+  "hash": "e4e1f298adb8e0b4719213cfb1829f5d",
   "rows": 24
  },
  "fct_thesis_scorecard_daily": {
   "columns": 7,
-  "hash": "2dcda238125c00eceae0daf36d02ea08",
-  "rows": 13072
+  "hash": "f9031997d93795af12a2074eaf6039f2",
+  "rows": 13091
  },
  "fct_token_holders": {
   "columns": 10,
-  "hash": "3378f520053f188d2fe444e029bc7246",
-  "rows": 18300
+  "hash": "0339a5aaebd7131d2cfc6be76188305f",
+  "rows": 19500
  },
  "fct_token_price_daily": {
   "columns": 6,
-  "hash": "7a863afd5b7fc298bd60ed37097fe4eb",
-  "rows": 4613
+  "hash": "5f62d0d1150a0af7dbbcdf3e586e6002",
+  "rows": 4621
  },
  "fct_token_prices": {
   "columns": 11,
-  "hash": "8c4b504594026f5b4e902df2e1bdb309",
-  "rows": 94517
+  "hash": "924e57c17442a48a35ef57843c1db4ac",
+  "rows": 99754
  },
  "fct_usage_lead_correlations": {
   "columns": 9,
-  "hash": "8c472a4d35dc5ba1ee3fa79d2c26dad9",
+  "hash": "4b2940218f9946a771a1f1e2de55ab45",
   "rows": 224
  },
  "fct_usage_quality_daily": {
   "columns": 13,
-  "hash": "8cef9ae26bce145ac69d31db961cec1c",
-  "rows": 588
+  "hash": "00132d9973f4416c22bb87cc2b16d4be",
+  "rows": 589
  },
  "fct_validator_epoch": {
   "columns": 14,
-  "hash": "93017f739ce66461474549e1f3e55b09",
-  "rows": 242360
+  "hash": "e864c66dc654c5b84715710217fb82fb",
+  "rows": 243051
  },
  "fct_validator_summary": {
   "columns": 13,
-  "hash": "4e7a70d3f8e99e0250ceb823fa6e4e87",
-  "rows": 707
+  "hash": "07560899776c0bd7d53739d6a3b2c37c",
+  "rows": 709
  },
  "fct_valuation_multiples_daily": {
   "columns": 13,
-  "hash": "86b2f57025ff2e60d8a904f538171225",
-  "rows": 43949
+  "hash": "827f090c6bb991145c806c11f483624d",
+  "rows": 43978
  },
  "fct_venear_snapshot": {
   "columns": 4,
-  "hash": "518422f06729687256fcdd2108069268",
-  "rows": 405
+  "hash": "9fc186ae5ec3d723aaee610fc864a7df",
+  "rows": 406
  },
  "fct_wallet_balance_daily": {
   "columns": 4,
-  "hash": "4d0dfe8c2fc57f1da7281e5ceb9c8d87",
-  "rows": 5030
+  "hash": "324654d0981b31a3aecb09a8574e3425",
+  "rows": 5036
  },
  "fct_wallet_counterparties": {
   "columns": 9,
-  "hash": "274436128bd02f70409f11a34c8d3195",
+  "hash": "dce047878e6f91217c7d7e25f105c98f",
   "rows": 181
  },
  "fct_wallet_flows_daily": {
   "columns": 9,
-  "hash": "4ea54101755568ca5b332b2d8168006d",
-  "rows": 3278
+  "hash": "f765ca07fd924cf277fab8c99f1a8b1b",
+  "rows": 3281
  },
  "fct_wallet_holdings": {
   "columns": 11,
-  "hash": "7ca5558f99d8c729f9bbda92167e8e73",
-  "rows": 163971
+  "hash": "11a7fae3204d2c463ce68645e028a0f2",
+  "rows": 172765
  },
  "fct_wallet_transfers": {
   "columns": 25,
-  "hash": "35fb0600e16ae2852cfcbaf8a0971d1c",
-  "rows": 12447
+  "hash": "667b5cf617ce4c52d6f21d74a7d57dfe",
+  "rows": 12483
  },
  "fct_yield_pools": {
   "columns": 6,
-  "hash": "7fa005def43888e7e1541c1a77ac5638",
-  "rows": 183
+  "hash": "b1ddf595d646af41049834d0954d3eb0",
+  "rows": 192
  }
 }
