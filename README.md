@@ -30,7 +30,7 @@
 ## Where the case stands
 
 <!-- verdict:start -->
-**Not yet. The rating is Hold.** Over the 30 days to 2026-11-16, the fees NEAR's revenue wallets received and the gas burned offset **16.5%** of the new NEAR the chain created, down from **20.0%** over the 30 days before those; to match it, Intents volume has to be **4.9×** today's, or **3.2×** once the voted cut of issuance to 1.6% is in force. Volume grew **36%** over the last year, though its newest 30 days are **13%** below the 30 before; at that pace, with the price and NEAR's share of fees unchanged, that is about **5.2 years** away, or **3.7** after the cut: arithmetic, not a forecast. At the snapshot of 2026-11-20, of 19 claims the data can test, **11** support the long case and **8** count against it; **5** more cannot be settled yet. Of the 10 that test where NEAR stands today, **4** support it; of the 9 that test which way it is moving, **7** do. The rating is Hold because the test that decides the case fails, so the evidence does not support buying on it, and most tests of which way NEAR is moving support it, so the evidence does not support selling either; it is the author's reading, not investment advice.
+**Not yet. The rating is Hold.** Over the 30 days to 2026-11-17, the fees NEAR's revenue wallets received and the gas burned offset **16.6%** of the new NEAR the chain created, down from **19.1%** over the 30 days before those; to match it, Intents volume has to be **5.3×** today's, or **3.4×** once the voted cut of issuance to 1.6% is in force. Volume grew **31%** over the last year, though its newest 30 days are **8%** below the 30 before; at that pace, with the price and NEAR's share of fees unchanged, that is about **6.2 years** away, or **4.5** after the cut: arithmetic, not a forecast. At the snapshot of 2026-11-21, of 19 claims the data can test, **11** support the long case and **8** count against it; **5** more cannot be settled yet. Of the 10 that test where NEAR stands today, **4** support it; of the 9 that test which way it is moving, **7** do. The rating is Hold because the test that decides the case fails, so the evidence does not support buying on it, and most tests of which way NEAR is moving support it, so the evidence does not support selling either; it is the author's reading, not investment advice.
 <!-- verdict:end -->
 
 The count is not a vote, because the claims do not weigh the same. [THESIS.md](THESIS.md) says which one decides the
@@ -158,16 +158,16 @@ Then:
 These lines are generated from the warehouse, and `make verify` fails if they stop matching it.
 
 <!-- expected:start -->
-- Data through: **2026-11-19**, the last full UTC day before the pinned snapshot of 2026-11-20; `dq_freshness` lists any source that ends earlier
+- Data through: **2026-11-20**, the last full UTC day before the pinned snapshot of 2026-11-21; `dq_freshness` lists any source that ends earlier
 - Gold tables and columns: **99** and **977**
 - Reconciliation: **112** comparisons agree, **13** differ, each with a written explanation
-- Issuance over the last 30 days, from supply change plus burn: **2.49%** a year, against **2.50%** in the protocol config
-- Circulating supply, built from NEAR's lockup contracts: **1,310.13M** NEAR, **99.84%** of total supply; on 2025-08-26, the last day NearBlocks computed its own, **1,249.72M** against **1,249.65M**
-- Captured Intents revenue, all time: **$10.24M** per DefiLlama, **$10.21M** rebuilt from wallet transfers
+- Issuance over the last 30 days, from supply change plus burn: **2.51%** a year, against **2.50%** in the protocol config
+- Circulating supply, built from NEAR's lockup contracts: **1,310.24M** NEAR, **99.85%** of total supply; on 2025-08-26, the last day NearBlocks computed its own, **1,249.72M** against **1,249.65M**
+- Captured Intents revenue, all time: **$10.33M** per DefiLlama, **$10.31M** rebuilt from wallet transfers
 - Public Intents volume, all time through 2026-11-17, the last full day of the latest Dune reading: **$33.53B** per NearBlocks, **$33.15B** per NEAR's dashboard on Dune
 - Chain Signatures: **16** MPC participants with a threshold of **11**
 - Largest Intents fee channel, per NEAR's dashboard on Dune as read on 2026-11-18: **swapkit**, with **74%** of listed fees
-- Bitwise NEAR ETF shares outstanding: **2,890,000** per the fund, **2,890,000** counted on chain in whole baskets
+- Bitwise NEAR ETF shares outstanding: **2,850,000** per the fund, **2,850,000** counted on chain in whole baskets
 <!-- expected:end -->
 
 ## The track's sample prompt, item by item

@@ -4111,6 +4111,10 @@
    "decimals": 18,
    "symbol": "BOT"
   },
+  "bought.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "BOUGHT"
+  },
   "bounty-6f51ef.launchpad.justhoot.near": {
    "decimals": 18,
    "symbol": "BOUNTY"
@@ -11384,6 +11388,10 @@
    "decimals": 18,
    "symbol": "IA"
   },
+  "ibatman.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "IBATMAN"
+  },
   "ic-1.launch.intear.near": {
    "decimals": 24,
    "symbol": "IC"
@@ -12543,6 +12551,10 @@
   "jumptoken.jumpfinance.near": {
    "decimals": 18,
    "symbol": "JUMP"
+  },
+  "junior.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "JUNIOR"
   },
   "jupiter.nearlytrade.near": {
    "decimals": 18,
@@ -22290,6 +22302,10 @@
    "decimals": 18,
    "symbol": "PCL"
   },
+  "pcon.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PCON"
+  },
   "pdawg-0e1a18.nearpaid.near": {
    "decimals": 18,
    "symbol": "PDAWG"
@@ -31643,6 +31659,10 @@
   "wrekt.nearlytrade.near": {
    "decimals": 18,
    "symbol": "WREKT"
+  },
+  "wrongo.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "WRONGO"
   },
   "wst.tkn.near": {
    "decimals": 18,

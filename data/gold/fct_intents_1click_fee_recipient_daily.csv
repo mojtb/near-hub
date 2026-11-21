@@ -1330,9 +1330,12 @@ date_day,recipient,entries,fee_usd,is_in_daily_run
 2026-11-17,(other),22231,198971.62,true
 2026-11-17,fefundsadmin.sputnik-dao.near,5,0.7399,true
 2026-11-17,intents.near,10,8.8964,true
-2026-11-18,(other),22196,194228.2417,true
+2026-11-18,(other),22198,194228.3355,true
 2026-11-18,fefundsadmin.sputnik-dao.near,10,34.0997,true
 2026-11-18,intents.near,11,10.8073,true
-2026-11-19,(other),21037,141222.7466,true
+2026-11-19,(other),21041,141234.7899,true
 2026-11-19,fefundsadmin.sputnik-dao.near,3,2.6252,true
 2026-11-19,intents.near,12,10.7179,true
+2026-11-20,(other),30062,446838.0302,true
+2026-11-20,fefundsadmin.sputnik-dao.near,11,426.4029,true
+2026-11-20,intents.near,5,4.3877,true
