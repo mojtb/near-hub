@@ -4865,6 +4865,10 @@
    "decimals": 18,
    "symbol": "CATMAN"
   },
+  "catmeme.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "CATMEME"
+  },
   "catminer-2.cookinglabs.near": {
    "decimals": 18,
    "symbol": "CATMINER"
@@ -9538,6 +9542,10 @@
    "decimals": 18,
    "symbol": "GRAND"
   },
+  "greata.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "GREATA"
+  },
   "grecha.tkn.near": {
    "decimals": 3,
    "symbol": "GRECHA"
@@ -13640,6 +13648,10 @@
    "decimals": 24,
    "symbol": "LonkMeme.com"
   },
+  "lontra-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "LONTRA"
+  },
   "lontra.nearlytrade.near": {
    "decimals": 18,
    "symbol": "LONTRA"
@@ -14800,6 +14812,10 @@
    "symbol": "MNGA"
   },
   "mnga-5.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "MNGA"
+  },
+  "mnga-6.nearlytrade.near": {
    "decimals": 18,
    "symbol": "MNGA"
   },
