@@ -1,5 +1,5 @@
 claim_id,side,claim,value,comparison,threshold,status,as_of_date
-a_doubling_of_volume_reaches_deflation_after_the_cut,bull,"At the end of HSP-029's ramp to 1.6%, a doubling of Intents volume would let revenue and burn match the NEAR that is created",2.8722971122,<=,2.0,fails,2026-11-20
+a_doubling_of_volume_reaches_deflation_after_the_cut,bull,"At the end of HSP-029's ramp to 1.6%, a doubling of Intents volume would let revenue and burn match the NEAR that is created",3.2879569119,<=,2.0,fails,2026-11-19
 capture_is_rising,bull,NEAR's wallets receive a rising share of the fees charged on Intents,0.0856343211,>=,0.0,holds,2026-10-31
 competitors_are_as_large,bear,Other cross-chain swap protocols are as large as NEAR Intents and can take its flow,,,,not_testable,
 dollars_are_arriving_in_intents,bull,Dollars held in NEAR Intents are higher than a quarter ago,0.554294081,>=,0.0,holds,2026-10-31
@@ -13,8 +13,8 @@ intents_volume_leads_usage,bull,Intents volume leads network usage: usage rises 
 liquid_staking_is_shrinking,bear,Less NEAR sits in liquid staking than a year ago,-0.2461515772,<=,0.0,holds,2026-11-24
 near_ai_has_paying_users,bull,NEAR AI has paying users,,,,not_testable,
 near_fees_outgrew_the_median_peer,bull,NEAR's application fees grew faster than the median peer's over the last three complete months,0.8098121053,>=,0.0,holds,2026-10-31
-near_is_dearer_than_the_median_peer,bear,NEAR trades above the median peer on application fees,1.4484759044,>=,1.0,holds,2026-11-20
-offsets_are_rising,bull,Burn and the NEAR the revenue wallets receive are a larger share of issuance than in the 90 days before,0.0688026328,>=,0.0,holds,2026-11-20
+near_is_dearer_than_the_median_peer,bear,NEAR trades above the median peer on application fees,1.5650148998,>=,1.0,holds,2026-11-19
+offsets_are_rising,bull,Burn and the NEAR the revenue wallets receive are a larger share of issuance than in the 90 days before,0.0691460892,>=,0.0,holds,2026-11-19
 revenue_reaches_the_wallets,bull,The revenue NEAR reports arrives on chain: what its wallets received is within 10% of its own monthly series,0.1651319352,<=,0.1,fails,2026-11-23
 revenue_wallets_keep_their_near,bull,The revenue wallets keep the NEAR they receive: under 5% of it has left,0.0125960427,<=,0.05,holds,2026-11-23
 solvers_are_few,bear,A few market makers fill most Intents volume,,,,not_testable,

@@ -1,8 +1,11 @@
 -- fct_defi_tvl_daily marks the days on which DefiLlama's reading of Rhea Lend halved and came back. The flag has to
--- stay a mark for rare dips: two days known to be faults are flagged (2026-04-19, when the reading fell by three
--- quarters for a day, and 2025-11-09), no day in Rhea Lend's first 30 is judged, no calendar year has more than a
--- fifth of its days flagged (2025 and 2026 each have about 6%, and one more episode like September 2025's sixteen days
--- must not turn a nightly red), and a flagged day reads below the clean days of its own month.
+-- stay a mark for rare dips: a day known to be a fault is flagged (2025-11-09), no day in Rhea Lend's first 30 is
+-- judged, no calendar year has more than a fifth of its days flagged (2025 has about 6% and 2026 about 2%, and one more
+-- episode like September 2025's sixteen days must not turn a nightly red), and a flagged day reads below the clean days
+-- of its own month.
+-- 2026-04-19, when the reading fell by three quarters for a day, was the second known fault until DefiLlama repaired it
+-- on 2026-11-24, with fifteen other halved days (2024-10-31, 2025-11-12, and thirteen from April to August 2026). The
+-- old readings stay in silver. If DefiLlama repairs 2025-11-09 as well, take it out of the list.
 with days as (
     select * from {{ ref('fct_defi_tvl_daily') }}
 ),
@@ -10,7 +13,7 @@ with days as (
 known as (
     select d.date_day, 'a known fault day is not flagged' as problem
     from days d
-    where d.date_day in (date '2025-11-09', date '2026-04-19') and not d.is_fault
+    where d.date_day in (date '2025-11-09') and not d.is_fault
 ),
 
 early as (
