@@ -2640,6 +2640,10 @@
    "decimals": 18,
    "symbol": "VGAS"
   },
+  "base-0xf628430260c07eeea7b6993cd6ee9ed8e84a95e0.omft.near": {
+   "decimals": 20,
+   "symbol": "TAUWETHBASE"
+  },
   "base.omdep.near": {
    "decimals": 18,
    "symbol": "BaseEther"
@@ -12356,6 +12360,10 @@
    "decimals": 18,
    "symbol": "JENSEN"
   },
+  "jensen-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "JENSEN"
+  },
   "jensen.nearlytrade.near": {
    "decimals": 18,
    "symbol": "JENSEN"
@@ -14694,6 +14702,10 @@
   "minds.nearlytrade.near": {
    "decimals": 18,
    "symbol": "MINDS"
+  },
+  "minelius.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "MINELIUS"
   },
   "mineminemine.tkn.primitives.near": {
    "decimals": 8,
@@ -18936,6 +18948,10 @@
    "symbol": "NEARVIDIA"
   },
   "nearvidia-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NEARVIDIA"
+  },
+  "nearvidia-4.nearlytrade.near": {
    "decimals": 18,
    "symbol": "NEARVIDIA"
   },
@@ -29045,6 +29061,10 @@
    "symbol": "TEST"
   },
   "test-29.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "TEST"
+  },
+  "test-3.v2-launchpad.justhoot.near": {
    "decimals": 18,
    "symbol": "TEST"
   },
