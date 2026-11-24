@@ -4644,3 +4644,11 @@ date_day,symbol,price_usd,price_source,source_asset_id,price_kind
 2026-11-22,WBTC,61284.76390317532,defillama,coingecko:wrapped-bitcoin,aggregator_price
 2026-11-22,XLM,0.127370159126577,coinmetrics,xlm,reference_rate
 2026-11-22,ZEC,793.679138382696,coinmetrics,zec,reference_rate
+2026-11-23,BTC,61253.2168786616,coinmetrics,btc,reference_rate
+2026-11-23,ETH,1709.89690914085,coinmetrics,eth,reference_rate
+2026-11-23,QTC,30.811396679759646,defillama,coingecko:quantus,aggregator_price
+2026-11-23,SOL,71.8940055826183,coinmetrics,sol,reference_rate
+2026-11-23,TLO,1.0305046231828405,defillama,ethereum:0x0f38f1ce62776d4a0038bc6cac66877a5687383b,aggregator_price
+2026-11-23,WBTC,61370.84766565313,defillama,coingecko:wrapped-bitcoin,aggregator_price
+2026-11-23,XLM,0.129750637507039,coinmetrics,xlm,reference_rate
+2026-11-23,ZEC,775.116757449116,coinmetrics,zec,reference_rate

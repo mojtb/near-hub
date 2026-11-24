@@ -106,7 +106,10 @@ vars:
   # the descriptions of is_fee_revenue_provisional on fct_intents_daily and fct_peer_daily, which state the number.
   # Raised from 3 to 4 on 2026-11-14: DefiLlama's NEAR Intents dailyFees for 2026-11-09 read $263,740 on the third night
   # and $263,808 on the fourth (+0.026%), so the two settle tests failed from the 2026-11-13 snapshot on.
-  intents_fee_settle_nights: 4
+  # Raised from 4 to 5 on 2026-11-24: revenue.near.org's fees for 2026-11-19 read $179,137 on the fourth night and
+  # $179,342 on the fifth (+0.114%), and DefiLlama's revenue for the day moved by $14 the same night. That was the night
+  # the page restated its Intents volume. Of the 84 days from 2026-09-01, it is the only one to move after the fourth.
+  intents_fee_settle_nights: 5
   # Percent of the larger price. When 1Click and Rhea price a token this far apart, fct_wallet_holdings leaves its value empty.
   # On 2026-11-01 to 11-05 two of the 26 tokens both price passed this, and the next largest gap was 10.7%.
   price_disagreement_pct: 20
