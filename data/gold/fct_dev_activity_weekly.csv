@@ -898,7 +898,7 @@ week_start,repo,ecosystem,repo_group,commits_default_branch,authors_default_bran
 2026-10-18,near/nearcore,near,protocol,25,10
 2026-10-18,nearai/cloud-api,near,ai,19,8
 2026-10-18,out-layer/outlayer,near,ai,8,1
-2026-10-18,ton-blockchain/ton,ton,protocol,3,2
+2026-10-18,ton-blockchain/ton,ton,protocol,7,3
 2026-10-25,MystenLabs/sui,sui,protocol,47,15
 2026-10-25,NEAR-DevHub/trezu,near,ecosystem,6,3
 2026-10-25,anza-xyz/agave,solana,protocol,132,34
@@ -916,7 +916,7 @@ week_start,repo,ecosystem,repo_group,commits_default_branch,authors_default_bran
 2026-10-25,near/nearcore,near,protocol,30,15
 2026-10-25,nearai/cloud-api,near,ai,15,5
 2026-10-25,out-layer/outlayer,near,ai,0,0
-2026-10-25,ton-blockchain/ton,ton,protocol,0,0
+2026-10-25,ton-blockchain/ton,ton,protocol,2,2
 2026-11-01,MystenLabs/sui,sui,protocol,47,12
 2026-11-01,NEAR-DevHub/trezu,near,ecosystem,7,4
 2026-11-01,anza-xyz/agave,solana,protocol,167,42
@@ -934,7 +934,7 @@ week_start,repo,ecosystem,repo_group,commits_default_branch,authors_default_bran
 2026-11-01,near/nearcore,near,protocol,41,13
 2026-11-01,nearai/cloud-api,near,ai,28,6
 2026-11-01,out-layer/outlayer,near,ai,14,1
-2026-11-01,ton-blockchain/ton,ton,protocol,0,0
+2026-11-01,ton-blockchain/ton,ton,protocol,20,3
 2026-11-08,MystenLabs/sui,sui,protocol,38,13
 2026-11-08,NEAR-DevHub/trezu,near,ecosystem,4,3
 2026-11-08,anza-xyz/agave,solana,protocol,46,18
@@ -952,7 +952,7 @@ week_start,repo,ecosystem,repo_group,commits_default_branch,authors_default_bran
 2026-11-08,near/nearcore,near,protocol,47,15
 2026-11-08,nearai/cloud-api,near,ai,21,4
 2026-11-08,out-layer/outlayer,near,ai,31,1
-2026-11-08,ton-blockchain/ton,ton,protocol,0,0
+2026-11-08,ton-blockchain/ton,ton,protocol,9,2
 2026-11-15,MystenLabs/sui,sui,protocol,48,17
 2026-11-15,NEAR-DevHub/trezu,near,ecosystem,11,5
 2026-11-15,anza-xyz/agave,solana,protocol,36,13
@@ -970,4 +970,4 @@ week_start,repo,ecosystem,repo_group,commits_default_branch,authors_default_bran
 2026-11-15,near/nearcore,near,protocol,46,11
 2026-11-15,nearai/cloud-api,near,ai,15,4
 2026-11-15,out-layer/outlayer,near,ai,69,2
-2026-11-15,ton-blockchain/ton,ton,protocol,0,0
+2026-11-15,ton-blockchain/ton,ton,protocol,56,3
