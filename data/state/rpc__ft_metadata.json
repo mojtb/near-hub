@@ -12196,7 +12196,15 @@
    "decimals": 18,
    "symbol": "JACKET"
   },
+  "jacket-3.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "JACKET"
+  },
   "jacket.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "JACKET"
+  },
+  "jacket.v2-launchpad.justhoot.near": {
    "decimals": 18,
    "symbol": "JACKET"
   },
@@ -23253,6 +23261,10 @@
   "prediction.nearlytrade.near": {
    "decimals": 18,
    "symbol": "PREDICTION"
+  },
+  "preg.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "PREG"
   },
   "presale.neardrgns.near": {
    "decimals": 18,
