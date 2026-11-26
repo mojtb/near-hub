@@ -5562,6 +5562,10 @@
    "decimals": 18,
    "symbol": "COOKONNEAR"
   },
+  "cooldog.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "COOLDOG"
+  },
   "cop.nearlytrade.near": {
    "decimals": 18,
    "symbol": "COP"
@@ -5876,6 +5880,10 @@
    "symbol": "USDT.e"
   },
   "dacity-2.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "DACITY"
+  },
+  "dacity-2.v2-launchpad.justhoot.near": {
    "decimals": 18,
    "symbol": "DACITY"
   },
@@ -20761,6 +20769,10 @@
   "npm.nearlytrade.near": {
    "decimals": 18,
    "symbol": "NPM"
+  },
+  "npn.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "NPN"
   },
   "npotato.nearpotato.near": {
    "decimals": 24,
