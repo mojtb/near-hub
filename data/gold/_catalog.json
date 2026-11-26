@@ -1821,7 +1821,7 @@
     "name": "is_fee_revenue_provisional",
     "type": "BOOLEAN",
     "unit": "boolean",
-    "description": "True while this day's fee and revenue columns can still change, which is until they have been read 5 nights after the day ended: the newest four days of a nightly build. revenue.near.org and DefiLlama publish a day before its data has fully arrived, then rewrite it. The page read $9,319 for 2026-11-03 and $164,920 a night later, and DefiLlama follows a night after the page. Leave these days out of trends and totals. Volume columns are not affected. The number comes from few reads (2026-10-28 to 2026-11-05), and a data test fails if a figure moves in the day's first week after the flag clears. False does not mean final for good: a later rewrite of history would show in dq_revisions."
+    "description": "True while this day's fee and revenue columns can still change, which is until they have been read 6 nights after the day ended: the newest five days of a nightly build. revenue.near.org and DefiLlama publish a day before its data has fully arrived, then rewrite it. The page read $9,319 for 2026-11-03 and $164,920 a night later, and DefiLlama follows a night after the page. Leave these days out of trends and totals. Volume columns are not affected. The number comes from few reads (2026-10-28 to 2026-11-05), and a data test fails if a figure moves in the day's first week after the flag clears. False does not mean final for good: a later rewrite of history would show in dq_revisions."
    }
   ],
   "rows": 714,
@@ -4397,7 +4397,7 @@
     "name": "is_fee_revenue_provisional",
     "type": "BOOLEAN",
     "unit": "boolean",
-    "description": "True while this day's fees_usd and revenue_usd can still change, by the rule on fct_intents_daily: until they have been read 5 nights after the day ended, so the newest four days of a nightly build. NEAR's fees are mostly Intents fees and settle with them: they read $33,285 for 2026-10-31 and $146,822 two nights later. Every chain gets the same rule, so filtering on this column cuts them all at the same day. The other chains' first reads also run low, by up to about 6% for fees on Ethereum, Solana and Sui, but they have no fixed settling time, so False does not mean settled for them. A data test holds the number for NEAR only."
+    "description": "True while this day's fees_usd and revenue_usd can still change, by the rule on fct_intents_daily: until they have been read 6 nights after the day ended, so the newest five days of a nightly build. NEAR's fees are mostly Intents fees and settle with them: they read $33,285 for 2026-10-31 and $146,822 two nights later. Every chain gets the same rule, so filtering on this column cuts them all at the same day. The other chains' first reads also run low, by up to about 6% for fees on Ethereum, Solana and Sui, but they have no fixed settling time, so False does not mean settled for them. A data test holds the number for NEAR only."
    }
   ],
   "rows": 15261,
@@ -6339,7 +6339,7 @@
     "name": "is_provisional",
     "type": "BOOLEAN",
     "unit": "boolean",
-    "description": "fct_peer_daily.is_fee_revenue_provisional for the day: true on the newest four days, whose fees and revenue can still change."
+    "description": "fct_peer_daily.is_fee_revenue_provisional for the day: true on the newest five days, whose fees and revenue can still change."
    },
    {
     "name": "days_with_value",
