@@ -30,7 +30,7 @@
 ## Where the case stands
 
 <!-- verdict:start -->
-**Not yet. The rating is Hold.** Over the 30 days to 2026-11-20, the fees NEAR's revenue wallets received and the gas burned offset **17.4%** of the new NEAR the chain created, down from **18.5%** over the 30 days before those; to match it, Intents volume has to be **4.5×** today's, or **2.9×** once the voted cut of issuance to 1.6% is in force. Volume grew **30%** over the last year, and its newest 30 days are **6%** above the 30 before; at that pace, with the price and NEAR's share of fees unchanged, that is about **5.8 years** away, or **4.0** after the cut: arithmetic, not a forecast. At the snapshot of 2026-11-26, of 19 claims the data can test, **11** support the long case and **8** count against it; **5** more cannot be settled yet. Of the 10 that test where NEAR stands today, **4** support it; of the 9 that test which way it is moving, **7** do. The rating is Hold because the test that decides the case fails, so the evidence does not support buying on it, and most tests of which way NEAR is moving support it, so the evidence does not support selling either; it is the author's reading, not investment advice.
+**Not yet. The rating is Hold.** Over the 30 days to 2026-11-21, the fees NEAR's revenue wallets received and the gas burned offset **18.0%** of the new NEAR the chain created, down from **18.0%** over the 30 days before those; to match it, Intents volume has to be **4.5×** today's, or **2.9×** once the voted cut of issuance to 1.6% is in force. Volume grew **24%** over the last year, and its newest 30 days are **6%** above the 30 before; at that pace, with the price and NEAR's share of fees unchanged, that is about **7.1 years** away, or **5.0** after the cut: arithmetic, not a forecast. At the snapshot of 2026-11-26, of 19 claims the data can test, **11** support the long case and **8** count against it; **5** more cannot be settled yet. Of the 10 that test where NEAR stands today, **4** support it; of the 9 that test which way it is moving, **7** do. The rating is Hold because the test that decides the case fails, so the evidence does not support buying on it, and most tests of which way NEAR is moving support it, so the evidence does not support selling either; it is the author's reading, not investment advice.
 <!-- verdict:end -->
 
 The count is not a vote, because the claims do not weigh the same. [THESIS.md](THESIS.md) says which one decides the
@@ -163,7 +163,7 @@ These lines are generated from the warehouse, and `make verify` fails if they st
 - Reconciliation: **108** comparisons agree, **17** differ, each with a written explanation
 - Issuance over the last 30 days, from supply change plus burn: **2.48%** a year, against **2.50%** in the protocol config
 - Circulating supply, built from NEAR's lockup contracts: **1,310.67M** NEAR, **99.84%** of total supply; on 2025-08-26, the last day NearBlocks computed its own, **1,249.72M** against **1,249.65M**
-- Captured Intents revenue, all time: **$10.64M** per DefiLlama, **$10.60M** rebuilt from wallet transfers
+- Captured Intents revenue, all time: **$10.63M** per DefiLlama, **$10.60M** rebuilt from wallet transfers
 - Public Intents volume, all time through 2026-11-22, the last full day of the latest Dune reading: **$33.61B** per NearBlocks, **$33.57B** per NEAR's dashboard on Dune
 - Chain Signatures: **16** MPC participants with a threshold of **11**
 - Largest Intents fee channel, per NEAR's dashboard on Dune as read on 2026-11-23: **swapkit**, with **73%** of listed fees

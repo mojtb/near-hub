@@ -1,12 +1,12 @@
 # The long case for NEAR, and what the data says about it
 
-_Written by `make thesis` from the warehouse pinned at 2026-11-27: data through 25 Nov 2026, fees and revenue settled through 20 Nov 2026. Every figure is read from the warehouse, so none is typed. To change a claim or its bar, edit `registry/claims.csv`; to change the wording, edit `tools/thesis.py`._
+_Written by `make thesis` from the warehouse pinned at 2026-11-26: data through 25 Nov 2026, fees and revenue settled through 21 Nov 2026. Every figure is read from the warehouse, so none is typed. To change a claim or its bar, edit `registry/claims.csv`; to change the wording, edit `tools/thesis.py`._
 
 The same scorecard, with a chart and the query behind every claim, is on the dashboard at [nearhub.tech](https://nearhub.tech).
 
 ## The verdict
 
-**Not yet. The rating is Hold.** The long case needs the fees NEAR's revenue wallets receive and the gas burned to match the new NEAR the chain creates. Over the 30 days to 20 Nov 2026 they offset 17.4% of it, down from 18.5% over the 30 days before those. To match it, Intents volume has to be 4.5× today's, or 2.9× once the voted cut of issuance to 1.6% is in force. Both multiples are counted at NEAR's close of $2.86 on 20 Nov 2026, the lowest close of those 30 days; on the NEAR the wallets received at each day's price the first is 6.0×. Volume grew 30% over the last year, and its newest 30 days are 6% above the 30 before; at that pace, with the price and NEAR's share of fees unchanged, that is about 5.8 years away, or 4.0 after the cut. That is arithmetic, not a forecast: [How far away](#how-far-away) sets out the sums.
+**Not yet. The rating is Hold.** The long case needs the fees NEAR's revenue wallets receive and the gas burned to match the new NEAR the chain creates. Over the 30 days to 21 Nov 2026 they offset 18.0% of it, down from 18.0% over the 30 days before those. To match it, Intents volume has to be 4.5× today's, or 2.9× once the voted cut of issuance to 1.6% is in force. Both multiples are counted at NEAR's close of $2.89 on 21 Nov 2026, against an average close of $3.79 over those 30 days; on the NEAR the wallets received at each day's price the first is 5.8×. Volume grew 24% over the last year, and its newest 30 days are 6% above the 30 before; at that pace, with the price and NEAR's share of fees unchanged, that is about 7.1 years away, or 5.0 after the cut. That is arithmetic, not a forecast: [How far away](#how-far-away) sets out the sums.
 
 **Why Hold.** The test that decides the case, whether revenue and burn match the new NEAR, fails, so the evidence does not support buying on the case today. 7 of the 9 tests of which way NEAR is moving support it, so the evidence does not support selling either. This is the author's reading of the scorecard, and it is not investment advice.
 
@@ -14,41 +14,41 @@ New NEAR is paid mostly to stakers: 45% of supply is staked and earns 5.0% a yea
 
 ## The claim
 
-Over the 30 days to 20 Nov 2026, NEAR created 2.71M NEAR, which is 2.51% of supply a year. Gas burned and the NEAR its revenue wallets received came to 17.4% of that: 16.5% received and held by the wallets, 0.9% burned. **The long case is that this gap closes:** NEAR Intents keeps growing, NEAR keeps a larger share of the fees charged on it, and issuance falls to 1.6% a year.
+Over the 30 days to 21 Nov 2026, NEAR created 2.68M NEAR, which is 2.49% of supply a year. Gas burned and the NEAR its revenue wallets received came to 18.0% of that: 17.0% received and held by the wallets, 1.0% burned. **The long case is that this gap closes:** NEAR Intents keeps growing, NEAR keeps a larger share of the fees charged on it, and issuance falls to 1.6% a year.
 
 The revenue wallets are the three accounts revenue.near.org names: `1csfundsadmin.sputnik-dao.near` (1Click fee fund), `buybacks.multisignature.near` (Buyback wallet) and `fefundsadmin.sputnik-dao.near` (Front-end fee fund). The data here records what enters and leaves them. It does not record who can sign for them, or any rule for what the NEAR they hold is used for, so received means held in those accounts, not returned to holders.
 
-On today's numbers the gap has not closed. Only the burned part leaves supply, so total supply grows 2.49% a year, and the NEAR outside the revenue wallets grows 2.07%. At the fee rate and the share of fees measured over those 30 days, and at NEAR's close of $2.86 on 20 Nov 2026, Intents volume would have to be 4.5× what it is for the wallets to receive as much NEAR as is created net of burn, or 2.9× once issuance is 1.6%. Counted on the NEAR the wallets actually received over the 30 days, at each day's price ($3.81 a NEAR on average), the multiple today is 6.0× (NEAR created less burned, over NEAR received): NEAR closed below that average, so at the close the same fees bring in more NEAR. HSP-029, which would set the ramp to 1.6%, has passed its vote and is not yet in force: by its own text validators must adopt it first, so 1.6% is a scenario and not a schedule.
+On today's numbers the gap has not closed. Only the burned part leaves supply, so total supply grows 2.46% a year, and the NEAR outside the revenue wallets grows 2.04%. At the fee rate and the share of fees measured over those 30 days, and at NEAR's close of $2.89 on 21 Nov 2026, Intents volume would have to be 4.5× what it is for the wallets to receive as much NEAR as is created net of burn, or 2.9× once issuance is 1.6%. Counted on the NEAR the wallets actually received over the 30 days, at each day's price ($3.73 a NEAR on average), the multiple today is 5.8× (NEAR created less burned, over NEAR received): NEAR closed below that average, so at the close the same fees bring in more NEAR. HSP-029, which would set the ramp to 1.6%, has passed its vote and is not yet in force: by its own text validators must adopt it first, so 1.6% is a scenario and not a schedule.
 
 The verdict above is where the case stands on today's data, not a forecast of where it goes. The warehouse holds 19 claims the data can settle: the links the case rests on, in order, and the risks to it, each with a measurement and a bar. **11 support the long case and 8 count against it**. Read by what they test, the two halves differ: of the 10 claims that test where NEAR stands today, 4 support the case, and of the 9 that test which way it is moving, 7 do. The count is not a vote: the claims do not weigh the same, and the one that decides the case, how far revenue is from covering issuance, is among those against. Five more claims cannot be settled yet and are listed apart.
 
 ## How far away
 
-Intents volume over the 30 days to 20 Nov 2026 was $4.25B, against $3.27B over the same 30 days a year before, so it grew 30% in a year.
+Intents volume over the 30 days to 21 Nov 2026 was $4.31B, against $3.48B over the same 30 days a year before, so it grew 24% in a year.
 
 Years until Intents volume reaches the break-even multiple, 4.5× today and 2.9× after the cut to 1.6%, if it grows at the measured pace or at a round one (`tools/horizon.py`):
 
 | Growth of Intents volume a year | Years to break even, issuance as now | Years after the cut to 1.6% |
 |---|---|---|
-| +30%, as measured | 5.8 | 4.0 |
-| +25% | 6.8 | 4.7 |
+| +24%, as measured | 7.1 | 5.0 |
+| +25% | 6.8 | 4.8 |
 | +50% | 3.7 | 2.6 |
 | +100% (doubling) | 2.2 | 1.5 |
 
-The multiple itself turns on NEAR's share of fees. These are the eight rows of `gold.fct_deflation_scenarios`, at the share measured over the 30 days and at three higher ones, for issuance as now (2.51% of supply a year) and at 1.6%: the break-even multiple, and how fast the NEAR outside the wallets would grow a year at today's volume.
+The multiple itself turns on NEAR's share of fees. These are the eight rows of `gold.fct_deflation_scenarios`, at the share measured over the 30 days and at three higher ones, for issuance as now (2.49% of supply a year) and at 1.6%: the break-even multiple, and how fast the NEAR outside the wallets would grow a year at today's volume.
 
 | NEAR's share of fees | Multiple, issuance as now | Multiple, at 1.6% | Growth at today's volume, issuance as now | Growth, at 1.6% |
 |---|---|---|---|---|
-| 23.6%, as measured | 4.53× | 2.87× | +1.94% | +1.03% |
-| 50% | 2.14× | 1.36× | +1.33% | +0.41% |
-| 70% | 1.53× | 0.97× | +0.86% | −0.05% |
-| 100% | 1.07× | 0.68× | +0.16% | −0.75% |
+| 22.8%, as measured | 4.53× | 2.90× | +1.92% | +1.03% |
+| 50% | 2.07× | 1.32× | +1.27% | +0.39% |
+| 70% | 1.48× | 0.95× | +0.80% | −0.09% |
+| 100% | 1.03× | 0.66× | +0.08% | −0.80% |
 
-The growth columns count the NEAR the wallets would receive at the close of $2.86 on 20 Nov 2026, so the measured row's 1.94% differs from the 2.07% in The claim, which counts the NEAR they received at each day's price.
+The growth columns count the NEAR the wallets would receive at the close of $2.89 on 21 Nov 2026, so the measured row's 1.92% differs from the 2.04% in The claim, which counts the NEAR they received at each day's price.
 
-A year of new NEAR is worth the issuance rate times NEAR's market value, so what reaches the token in a year (the fees the revenue wallets receive plus the gas burned) matches issuance when the market value is about 40× that amount at today's rate, or about 62× at 1.6%. On 20 Nov 2026 it was 172×. At today's price, then, what reaches the token has to be about 4× what it is: the 4.5× above, counted another way.
+A year of new NEAR is worth the issuance rate times NEAR's market value, so what reaches the token in a year (the fees the revenue wallets receive plus the gas burned) matches issuance when the market value is about 40× that amount at today's rate, or about 62× at 1.6%. On 21 Nov 2026 it was 174×. At today's price, then, what reaches the token has to be about 4× what it is: the 4.5× above, counted another way.
 
-All of this is arithmetic with the price, the fee rate and NEAR's share of fees held as measured on 20 Nov 2026, and not a forecast. Issuance is paid in NEAR, so its value in dollars rises with the price, while revenue is charged in dollars and does not: a higher price moves the break-even further away, and a lower one brings it closer.
+All of this is arithmetic with the price, the fee rate and NEAR's share of fees held as measured on 21 Nov 2026, and not a forecast. Issuance is paid in NEAR, so its value in dollars rises with the price, while revenue is charged in dollars and does not: a higher price moves the break-even further away, and a lower one brings it closer.
 
 ## Evidence for
 
@@ -61,7 +61,7 @@ These results support the long case: a bull claim that holds, or a bear claim th
 | NEAR's wallets receive a rising share of the fees charged on Intents | Which way it is moving | Bull claim holds | **+8.6 points** | at least 0 points | 31 Oct 2026 |
 | More partners pay meaningful fees than a quarter ago | Which way it is moving | Bull claim holds | **+48.3%** | at least 0% | 31 Oct 2026 |
 | The revenue wallets keep the NEAR they receive: under 5% of it has left | Where NEAR stands | Bull claim holds | **1.2%** | at most 5% | 25 Nov 2026 |
-| Burn and the NEAR the revenue wallets receive are a larger share of issuance than in the 90 days before | Which way it is moving | Bull claim holds | **+6.9 points** | at least 0 points | 20 Nov 2026 |
+| Burn and the NEAR the revenue wallets receive are a larger share of issuance than in the 90 days before | Which way it is moving | Bull claim holds | **+6.9 points** | at least 0 points | 21 Nov 2026 |
 | The unlock schedule is spent: under 1% of supply is still locked | Where NEAR stands | Bull claim holds | **0.2%** | at most 1% | 25 Nov 2026 |
 | NEAR's application fees grew faster than the median peer's over the last three complete months | Which way it is moving | Bull claim holds | **+80.8 points** | at least 0 points | 31 Oct 2026 |
 | Zcash is on one side of at least a fifth of 1Click volume | Where NEAR stands | Bear claim fails | **17.7%** | at least 20% | 31 Oct 2026 |
@@ -74,10 +74,10 @@ These results count against it: a bull claim that fails, or a bear claim that ho
 
 | Claim | It tests | Result | Measured | Bar | As of |
 |---|---|---|---|---|---|
-| The revenue NEAR reports arrives on chain: what its wallets received is within 10% of its own monthly series | Where NEAR stands | Bull claim fails | **16.7%** | at most 10% | 25 Nov 2026 |
+| The revenue NEAR reports arrives on chain: what its wallets received is within 10% of its own monthly series | Where NEAR stands | Bull claim fails | **16.5%** | at most 10% | 25 Nov 2026 |
 | The Bitwise ETF took in more NEAR than the chain created over the last 30 days | Where NEAR stands | Bull claim fails | **−1.17×** | at least 1× | 24 Nov 2026 |
-| At the end of HSP-029's ramp to 1.6%, a doubling of Intents volume would let revenue and burn match the NEAR that is created | Where NEAR stands | Bull claim fails | **2.87×** | at most 2× | 20 Nov 2026 |
-| NEAR trades above the median peer on application fees | Where NEAR stands | Bear claim holds | **1.45×** | at least 1× | 20 Nov 2026 |
+| At the end of HSP-029's ramp to 1.6%, a doubling of Intents volume would let revenue and burn match the NEAR that is created | Where NEAR stands | Bull claim fails | **2.90×** | at most 2× | 21 Nov 2026 |
+| NEAR trades above the median peer on application fees | Where NEAR stands | Bear claim holds | **1.39×** | at least 1× | 21 Nov 2026 |
 | One partner supplies more than half of 1Click's fees | Where NEAR stands | Bear claim holds | **69.4%** | at least 50% | 31 Oct 2026 |
 | Fewer accounts sign transactions on NEAR than six months ago | Which way it is moving | Bear claim holds | **−38.9%** | at most −10% | 25 Nov 2026 |
 | The ten largest pools hold more than a third of the stake | Where NEAR stands | Bear claim holds | **36.3%** | at least 33.3% | 25 Nov 2026 |
@@ -96,12 +96,12 @@ These results count against it: a bull claim that fails, or a bear claim that ho
 Three claims are kept as tripwires. The case weakens when one of them stops holding. One of the three does not hold today.
 
 - **Intents volume was at least $2B in each of the last three complete months.** Measured $3.20B against a bar of at least $2B, on 31 Oct 2026: it holds.
-- **The revenue NEAR reports arrives on chain: what its wallets received is within 10% of its own monthly series.** Measured 16.7% against a bar of at most 10%, on 25 Nov 2026: it fails.
+- **The revenue NEAR reports arrives on chain: what its wallets received is within 10% of its own monthly series.** Measured 16.5% against a bar of at most 10%, on 25 Nov 2026: it fails.
 - **The revenue wallets keep the NEAR they receive: under 5% of it has left.** Measured 1.2% against a bar of at most 5%, on 25 Nov 2026: it holds.
 
-Because the revenue check fails, the revenue figures in this file are what NEAR's revenue wallets received on chain (DefiLlama's count of the wallets, which their transfers confirm within 0.33%), not what NEAR reports. The wallets received 16.7% less than NEAR's own monthly series says, and that series stays unexplained until a cause for the gap is published.
+Because the revenue check fails, the revenue figures in this file are what NEAR's revenue wallets received on chain (DefiLlama's count of the wallets, which their transfers confirm within 0.32%), not what NEAR reports. The wallets received 16.5% less than NEAR's own monthly series says, and that series stays unexplained until a cause for the gap is published.
 
-Beyond those, two figures decide the case. The share of new NEAR received by the wallets or burned, 17.4% now, has to reach 100%. At 100% the NEAR outside the wallets stops growing; total supply stops growing only if what the wallets hold is burned. The break-even multiple, 4.5× now, has to reach 1×.
+Beyond those, two figures decide the case. The share of new NEAR received by the wallets or burned, 18.0% now, has to reach 100%. At 100% the NEAR outside the wallets stops growing; total supply stops growing only if what the wallets hold is burned. The break-even multiple, 4.5× now, has to reach 1×.
 
 ## What to watch
 
@@ -132,16 +132,16 @@ The prompt names the NEAR BigQuery public dataset, and the warehouse queries it 
 - On 2026-11-14, when NEAR's public BigQuery dataset had joined the warehouse, three things changed: the claim on fee growth was pointed at the median peer in place of the fastest one, the yardstick the valuation claim already used, because NEAR and the fastest peer had grown within a point of each other and the result turned on which nightly read was scored; the working hypothesis was moved to the claims the data cannot settle, because its result sat inside the band of chance; and one claim read from BigQuery was added (a growing share of NEAR's transactions are sent to NEAR Intents). At the snapshot of 2026-11-12 that took the count from 10 for and 9 against to 11 for and 8 against, with nineteen claims tested as before; at the snapshot of 2026-11-14, where the fee-growth claim fails in its earlier form, it took the count from 9 for and 10 against to 11 for and 8 against.
 - The thresholds were written between 2026-11-10 and 2026-11-14 with the readings of those days in view, so they are round bars for what each claim's wording means, not predictions; why_this_threshold gives the reason for each. The claims file as it stands is timestamped (`registry/claims.csv.ots`, an OpenTimestamps proof). The tag `submission-2026-11-14` marks the repository before that day's change to the claims, so the change can be read with `git diff submission-2026-11-14 -- registry/claims.csv`, and a later change to a bar can be seen against the proof.
 - The ETF claim is read over the last 30 days, −1.17× what the chain issued. Since its first trading day the fund has taken in 2.82×, but that figure leans on its start: 80% of the NEAR arrived in its first week, and it has handed back 3.45M NEAR since its peak on 26 Oct 2026.
-- The share of new NEAR received by the wallets or burned is up on the 90 days before, but it has not climbed steadily: over the 270 days to 20 Nov 2026 the 30-day share moved between 7.8% and 25.5%.
+- The share of new NEAR received by the wallets or burned is up on the 90 days before, but it has not climbed steadily: over the 270 days to 21 Nov 2026 the 30-day share moved between 7.8% and 25.5%.
 - Measured as a share of its bar, the result nearest its bar is "The ten largest pools hold more than a third of the stake": 36.3% against a bar of at least 33.3%. It counts against the case; if that one result reversed, the count would be 12 for and 7 against. The claims whose bar is any rise or any fall measure a change between two periods, which has no bar to be a share of, so they are not on that scale. The smallest of those changes is "A growing share of NEAR's transactions are sent to NEAR Intents", +3.8 points; if it reversed, the count would be 10 for and 9 against.
-- The fee-growth claim has read the median peer since 14 Nov 2026. Against the fastest peer, as it read before, the result rested on two nearly equal numbers: NEAR's application fees grew 91.97% and Solana's 92.40%, the last three complete months against the three before. DefiLlama restates these series after the fact. Scored on each of the 26 nightly reads taken since that quarter closed, the earlier form held on 7 and failed on 19, with the gap between −2.3 points and +0.2 points; the present form held on all 26, with the gap between +79.9 points and +81.0 points (`silver.stg_defillama__chain_fees` keeps every read).
+- The fee-growth claim has read the median peer since 14 Nov 2026. Against the fastest peer, as it read before, the result rested on two nearly equal numbers: NEAR's application fees grew 91.97% and Solana's 92.39%, the last three complete months against the three before. DefiLlama restates these series after the fact. Scored on each of the 26 nightly reads taken since that quarter closed, the earlier form held on 7 and failed on 19, with the gap between −2.3 points and +0.2 points; the present form held on all 26, with the gap between +79.9 points and +81.0 points (`silver.stg_defillama__chain_fees` keeps every read).
 - Zcash is near its bar too: 17.7% of 1Click volume over three months against a bar of 20%, and 22.8% in October 2026 alone.
-- The sums in this file set revenue against new NEAR only. NEAR that already existed can reach the market too: `treasury.near` paid out 30.17M NEAR in 8 transfers between 15 Apr 2026 and 13 May 2026, 2.3% of supply, beside the 32.22M NEAR created over the 365 days to 25 Nov 2026. That NEAR was counted as new when it was created, so it is not in the 17.4%; the Supply page charts the payouts.
+- The sums in this file set revenue against new NEAR only. NEAR that already existed can reach the market too: `treasury.near` paid out 30.17M NEAR in 8 transfers between 15 Apr 2026 and 13 May 2026, 2.3% of supply, beside the 32.22M NEAR created over the 365 days to 25 Nov 2026. That NEAR was counted as new when it was created, so it is not in the 18.0%; the Supply page charts the payouts.
 - The unlock result rests on a definition. Lockups whose owners never switched transfers on held 19.35M NEAR on 25 Nov 2026, and they count as unlocked, as in NEAR Explorer. Counted as locked, the share still locked would be 1.6%, over the bar of at most 1%, and the claim would fail.
 - The count leans on results that sit close to their bars or on a definition: Zcash's share of 1Click volume (17.7% against a bar of at least 20%) and the share of supply still locked (0.2% against a bar of at most 1%). Both count for the case today; if both reversed, the count would be 9 for and 10 against.
 - Most results that count for the case read the same months: 8 of the 11 read the three complete months to 31 Oct 2026, and 7 of them measure NEAR Intents. A strong or weak quarter for Intents would move those 7 together, so they are fewer independent pieces of evidence than their number suggests.
-- Intents volume and fees are NEAR's own published series. The chain's public record moves with that volume: over the three months to 31 Oct 2026, against the three before, transactions sent to `intents.near` changed by +68.6% (`gold.fct_bigquery_receiver_daily`) and the volume NEAR reports by +75.9%. That checks the direction of the series, not its dollars. What its revenue wallets received is checked against the chain: DefiLlama's all-time figure is $10.64M and the same sum rebuilt from wallet transfers, valued as DefiLlama values it at each day's close, is $10.60M, 0.33% apart, so the two agree. DefiLlama takes its figure from NEAR's own count of the same wallets, so this confirms the count and nothing more. NEAR's own monthly revenue series says $12.76M; valued on the day each payment arrived, the wallets received $10.63M, 16.7% less, and no cause has been published.
-- Market caps are not on one supply rule: NEAR's counts nearly all of its supply, and each peer's counts what its project reports as circulating. Most of what DefiLlama counts as a chain's app fees is passed on to others. So the valuation result leans on its basis: NEAR is 1.45 times the median peer on app fees and 1.72 times on the part of fees that applications keep.
+- Intents volume and fees are NEAR's own published series. The chain's public record moves with that volume: over the three months to 31 Oct 2026, against the three before, transactions sent to `intents.near` changed by +68.6% (`gold.fct_bigquery_receiver_daily`) and the volume NEAR reports by +75.9%. That checks the direction of the series, not its dollars. What its revenue wallets received is checked against the chain: DefiLlama's all-time figure is $10.63M and the same sum rebuilt from wallet transfers, valued as DefiLlama values it at each day's close, is $10.60M, 0.32% apart, so the two agree. DefiLlama takes its figure from NEAR's own count of the same wallets, so this confirms the count and nothing more. NEAR's own monthly revenue series says $12.73M; valued on the day each payment arrived, the wallets received $10.63M, 16.5% less, and no cause has been published.
+- Market caps are not on one supply rule: NEAR's counts nearly all of its supply, and each peer's counts what its project reports as circulating. Most of what DefiLlama counts as a chain's app fees is passed on to others. So the valuation result leans on its basis: NEAR is 1.39 times the median peer on app fees and 1.76 times on the part of fees that applications keep.
 - 41% of Intents volume in October 2026 settled confidentially. NEAR's own dashboard still gives that volume by chain and by asset, and no public record shows which account swapped what. That share is rising, so less of Intents can be checked from outside.
 - Across the warehouse, 89 comparisons between independent sources agree, 19 agree but share an upstream, and 17 differ. Each difference is explained in `docs/RECONCILIATION.md`.
 - This is an entry in the NEAR HACKATHON Investment Thesis track, and prizes are paid in NEAR, so the author could gain exposure to the asset analysed here. It is an independent project, not affiliated with the NEAR Foundation, and it is not investment advice.

@@ -1828,8 +1828,8 @@ table.corr{--trk:clamp(52px,9.5vw,136px);--val:52px;--gap:12px;font-size:15px}
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
 <!-- ECharts is fetched once the page has drawn: see the end of the script below -->
-<script src="shared/catalog.js?v=f5a638ea"></script>
-<script src="shared/data.js?v=25bb8fa5"></script>
+<script src="shared/catalog.js?v=665ebce1"></script>
+<script src="shared/data.js?v=7140baef"></script>
 <script src="shared/charts.js?v=9d74e7aa"></script>
 <script src="shared/viz.js?v=6238b9d1"></script>
 <script>
@@ -2396,7 +2396,7 @@ const HZ=(()=>{const h=LC.more.horizon;if(!h||!h.rows||!h.rows.length)return nul
    THE SUPPLY PAGE'S FIGURES. Every number its headlines, cards, gauges and readings print is worked
    out here from the exported series, so they agree with each other and with the charts. The 30-day
    figures are held at the settled day (`set`), because the NEAR the revenue wallets received can
-   still change on the five newest days; levels and the 12-month figures run to the newest day (`day`).
+   still change on the four newest days; levels and the 12-month figures run to the newest day (`day`).
    ============================================================================================ */
 const SUP=(()=>{
   const D=LC.daily,n=D.d.length-1,M=LC.more,day=D.d[n],set=DN.date_day,sN=D.d.indexOf(set),yr=day.slice(0,4);
@@ -3101,7 +3101,7 @@ order by 1;`;
   ans.rerating=[times(rNow),`the median peer's multiple on app fees on ${dm(set)}; ${times(ratio[iMin])} on ${dm(X.d[iMin])}`];
   key.rerate=`NEAR ${fmt.int(X.near[m])}×, the median peer ${fmt.int(X.peer[m])}×`;
   sqlFor.rerate=(g,x,to)=>`-- Market cap over a year of app fees (the 30 days to each day, times 365/30): NEAR, and the median of
--- the six other chains. A week or a month takes its last day. The newest five days are provisional
+-- the six other chains. A week or a month takes its last day. The newest four days are provisional
 -- (is_provisional), because their fees can still change.
 with days as (
   select date_day,

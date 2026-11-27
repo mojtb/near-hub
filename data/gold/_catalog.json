@@ -1821,7 +1821,7 @@
     "name": "is_fee_revenue_provisional",
     "type": "BOOLEAN",
     "unit": "boolean",
-    "description": "True while this day's fee and revenue columns can still change, which is until they have been read 6 nights after the day ended: the newest five days of a nightly build. revenue.near.org and DefiLlama publish a day before its data has fully arrived, then rewrite it. The page read $9,319 for 2026-11-03 and $164,920 a night later, and DefiLlama follows a night after the page. Leave these days out of trends and totals. Volume columns are not affected. The number comes from few reads (2026-10-28 to 2026-11-05), and a data test fails if a figure moves in the day's first week after the flag clears. False does not mean final for good: a later rewrite of history would show in dq_revisions."
+    "description": "True while this day's fee and revenue columns can still change, which is until they have been read 5 nights after the day ended: the newest four days of a nightly build. revenue.near.org and DefiLlama publish a day before its data has fully arrived, then rewrite it. The page read $9,319 for 2026-11-03 and $164,920 a night later, and DefiLlama follows a night after the page. Leave these days out of trends and totals. Volume columns are not affected. The number comes from few reads (2026-10-28 to 2026-11-05), and a data test fails if a figure moves in the day's first week after the flag clears. False does not mean final for good: a later rewrite of history would show in dq_revisions."
    }
   ],
   "rows": 716,
@@ -3326,7 +3326,7 @@
     "description": "Why the row has a value or not, checked in this order. no_price: no list has a positive price in this snapshot. no_decimals: decimals are unknown, which the metadata backlog clears. decimals_disagree: the list counts whole tokens with other decimals than the holding, so the price would be off by powers of ten. sources_disagree: 1Click and Rhea are more than price_disagreement_pct (20) apart, and nothing here says which is right. thin_price: an unvetted token whose position would be worth more than price_depth_multiple (3) times price_depth_usd. valued: value_usd is filled."
    }
   ],
-  "rows": 225592,
+  "rows": 225595,
   "first": "2026-10-28",
   "last": "2026-11-26"
  },
@@ -3496,7 +3496,7 @@
     "description": "True when the epoch had ended at the read, so its production counts are final: the validators' expected blocks add up to the protocol's epoch length (43,200), since every block has one expected producer. False for an epoch the nightly read caught in progress. The backfill reads each such epoch again once it has ended, so only the newest epoch stays false: at the 2026-11-10 pin 688 of 689 epochs were complete, and the one in progress had run 12,907 blocks. The stake columns do not depend on it: stakes are fixed when an epoch starts."
    }
   ],
-  "rows": 247205,
+  "rows": 247214,
   "first": null,
   "last": null
  },
@@ -4397,7 +4397,7 @@
     "name": "is_fee_revenue_provisional",
     "type": "BOOLEAN",
     "unit": "boolean",
-    "description": "True while this day's fees_usd and revenue_usd can still change, by the rule on fct_intents_daily: until they have been read 6 nights after the day ended, so the newest five days of a nightly build. NEAR's fees are mostly Intents fees and settle with them: they read $33,285 for 2026-10-31 and $146,822 two nights later. Every chain gets the same rule, so filtering on this column cuts them all at the same day. The other chains' first reads also run low, by up to about 6% for fees on Ethereum, Solana and Sui, but they have no fixed settling time, so False does not mean settled for them. A data test holds the number for NEAR only."
+    "description": "True while this day's fees_usd and revenue_usd can still change, by the rule on fct_intents_daily: until they have been read 5 nights after the day ended, so the newest four days of a nightly build. NEAR's fees are mostly Intents fees and settle with them: they read $33,285 for 2026-10-31 and $146,822 two nights later. Every chain gets the same rule, so filtering on this column cuts them all at the same day. The other chains' first reads also run low, by up to about 6% for fees on Ethereum, Solana and Sui, but they have no fixed settling time, so False does not mean settled for them. A data test holds the number for NEAR only."
    }
   ],
   "rows": 15275,
@@ -4564,7 +4564,7 @@
     "description": "True on the rows of the newest reading in the table."
    }
   ],
-  "rows": 36576,
+  "rows": 36574,
   "first": "2026-10-28",
   "last": "2026-11-26"
  },
@@ -4897,9 +4897,9 @@
     "description": "How this row in the history file was reached."
    }
   ],
-  "rows": 43,
+  "rows": 42,
   "first": "2026-09-28",
-  "last": "2026-11-25"
+  "last": "2026-11-24"
  },
  {
   "area": "Market and peers",
@@ -6339,7 +6339,7 @@
     "name": "is_provisional",
     "type": "BOOLEAN",
     "unit": "boolean",
-    "description": "fct_peer_daily.is_fee_revenue_provisional for the day: true on the newest five days, whose fees and revenue can still change."
+    "description": "fct_peer_daily.is_fee_revenue_provisional for the day: true on the newest four days, whose fees and revenue can still change."
    },
    {
     "name": "days_with_value",
@@ -6846,7 +6846,7 @@
     "description": "Change from first to last, as a percentage."
    }
   ],
-  "rows": 13690,
+  "rows": 13669,
   "first": "2020-02-11",
   "last": "2026-11-24"
  },
