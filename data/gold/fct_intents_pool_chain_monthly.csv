@@ -122,6 +122,7 @@ date_day,is_month_end,asset_id,contract_id,symbol,dashboard_symbol,token_class,a
 2025-04-30,true,nep245:v2_1.omni.hot.tg:10_A2ewyUyDp6qsue1jqZsGypkCxRJ,v2_1.omni.hot.tg,USDC,USDC,stablecoin,806.722687,806.722687,one_dollar,145465468,2026-11-12
 2025-04-30,true,nep245:v2_1.omni.hot.tg:1100_111bzQBB5v7AhLyPMDwS8uJgQV24KaAPXtwyVWu2KXbbfQU6NXRCz,v2_1.omni.hot.tg,XLM,XLM,other,47.6187082,12.932189036395668,token_price,145465468,2026-11-12
 2025-04-30,true,nep245:v2_1.omni.hot.tg:1100_111bzQBB65GxAPAVoxqmMcgYo5oS3txhqs1Uh1cgahKQUeTUq1TJu,v2_1.omni.hot.tg,USDC,USDC,stablecoin,1441.8608612,1441.8608612,one_dollar,145465468,2026-11-12
+2025-04-30,true,nep245:v2_1.omni.hot.tg:1117_,v2_1.omni.hot.tg,GRAM,GRAM,stablecoin,0.0,0.0,one_dollar,145465468,2026-11-27
 2025-04-30,true,nep245:v2_1.omni.hot.tg:1117_3tsdfyziyc7EJbP2aULWSKU4toBaAcN4FdTgfm5W1mC4ouR,v2_1.omni.hot.tg,USDT,USDT,stablecoin,0.0,0.0,one_dollar,145465468,2026-11-12
 2025-04-30,true,nep245:v2_1.omni.hot.tg:137_3hpYoaLtt8MP1Z2GH1U473DMRKgr,v2_1.omni.hot.tg,USDT,USDT,stablecoin,0.0,0.0,one_dollar,145465468,2026-11-12
 2025-04-30,true,nep245:v2_1.omni.hot.tg:137_qiStmoQJDQPTebaPjgx5VBxZv6L,v2_1.omni.hot.tg,USDC,USDC,stablecoin,0.0,0.0,one_dollar,145465468,2026-11-12
@@ -168,6 +169,7 @@ date_day,is_month_end,asset_id,contract_id,symbol,dashboard_symbol,token_class,a
 2025-05-31,true,nep245:v2_1.omni.hot.tg:10_A2ewyUyDp6qsue1jqZsGypkCxRJ,v2_1.omni.hot.tg,USDC,USDC,stablecoin,2551.629924,2551.629924,one_dollar,149163657,2026-11-12
 2025-05-31,true,nep245:v2_1.omni.hot.tg:1100_111bzQBB5v7AhLyPMDwS8uJgQV24KaAPXtwyVWu2KXbbfQU6NXRCz,v2_1.omni.hot.tg,XLM,XLM,other,68.8538752,18.207671307663155,token_price,149163657,2026-11-12
 2025-05-31,true,nep245:v2_1.omni.hot.tg:1100_111bzQBB65GxAPAVoxqmMcgYo5oS3txhqs1Uh1cgahKQUeTUq1TJu,v2_1.omni.hot.tg,USDC,USDC,stablecoin,2601.798145,2601.798145,one_dollar,149163657,2026-11-12
+2025-05-31,true,nep245:v2_1.omni.hot.tg:1117_,v2_1.omni.hot.tg,GRAM,GRAM,stablecoin,0.0,0.0,one_dollar,149163657,2026-11-27
 2025-05-31,true,nep245:v2_1.omni.hot.tg:1117_3tsdfyziyc7EJbP2aULWSKU4toBaAcN4FdTgfm5W1mC4ouR,v2_1.omni.hot.tg,USDT,USDT,stablecoin,0.0,0.0,one_dollar,149163657,2026-11-12
 2025-05-31,true,nep245:v2_1.omni.hot.tg:137_3hpYoaLtt8MP1Z2GH1U473DMRKgr,v2_1.omni.hot.tg,USDT,USDT,stablecoin,20048.890821,20048.890821,one_dollar,149163657,2026-11-12
 2025-05-31,true,nep245:v2_1.omni.hot.tg:137_qiStmoQJDQPTebaPjgx5VBxZv6L,v2_1.omni.hot.tg,USDC,USDC,stablecoin,19947.880296,19947.880296,one_dollar,149163657,2026-11-12
@@ -216,6 +218,7 @@ date_day,is_month_end,asset_id,contract_id,symbol,dashboard_symbol,token_class,a
 2025-06-30,true,nep245:v2_1.omni.hot.tg:10_A2ewyUyDp6qsue1jqZsGypkCxRJ,v2_1.omni.hot.tg,USDC,USDC,stablecoin,52313.976566,52313.976566,one_dollar,153357742,2026-11-12
 2025-06-30,true,nep245:v2_1.omni.hot.tg:1100_111bzQBB5v7AhLyPMDwS8uJgQV24KaAPXtwyVWu2KXbbfQU6NXRCz,v2_1.omni.hot.tg,XLM,XLM,other,77.2289939,18.429701727617932,token_price,153357742,2026-11-12
 2025-06-30,true,nep245:v2_1.omni.hot.tg:1100_111bzQBB65GxAPAVoxqmMcgYo5oS3txhqs1Uh1cgahKQUeTUq1TJu,v2_1.omni.hot.tg,USDC,USDC,stablecoin,2639.8091133,2639.8091133,one_dollar,153357742,2026-11-12
+2025-06-30,true,nep245:v2_1.omni.hot.tg:1117_,v2_1.omni.hot.tg,GRAM,GRAM,stablecoin,29650.956281285,29650.956281285,one_dollar,153357742,2026-11-27
 2025-06-30,true,nep245:v2_1.omni.hot.tg:1117_3tsdfyziyc7EJbP2aULWSKU4toBaAcN4FdTgfm5W1mC4ouR,v2_1.omni.hot.tg,USDT,USDT,stablecoin,105071.387097,105071.387097,one_dollar,153357742,2026-11-12
 2025-06-30,true,nep245:v2_1.omni.hot.tg:137_3hpYoaLtt8MP1Z2GH1U473DMRKgr,v2_1.omni.hot.tg,USDT,USDT,stablecoin,99908.249792,99908.249792,one_dollar,153357742,2026-11-12
 2025-06-30,true,nep245:v2_1.omni.hot.tg:137_qiStmoQJDQPTebaPjgx5VBxZv6L,v2_1.omni.hot.tg,USDC,USDC,stablecoin,17427.255379,17427.255379,one_dollar,153357742,2026-11-12
@@ -265,6 +268,7 @@ date_day,is_month_end,asset_id,contract_id,symbol,dashboard_symbol,token_class,a
 2025-07-31,true,nep245:v2_1.omni.hot.tg:10_A2ewyUyDp6qsue1jqZsGypkCxRJ,v2_1.omni.hot.tg,USDC,USDC,stablecoin,86.595545,86.595545,one_dollar,157682742,2026-11-12
 2025-07-31,true,nep245:v2_1.omni.hot.tg:1100_111bzQBB5v7AhLyPMDwS8uJgQV24KaAPXtwyVWu2KXbbfQU6NXRCz,v2_1.omni.hot.tg,XLM,XLM,other,428.3557688,172.32547288060124,token_price,157682742,2026-11-12
 2025-07-31,true,nep245:v2_1.omni.hot.tg:1100_111bzQBB65GxAPAVoxqmMcgYo5oS3txhqs1Uh1cgahKQUeTUq1TJu,v2_1.omni.hot.tg,USDC,USDC,stablecoin,2274.2922479,2274.2922479,one_dollar,157682742,2026-11-12
+2025-07-31,true,nep245:v2_1.omni.hot.tg:1117_,v2_1.omni.hot.tg,GRAM,GRAM,stablecoin,28621.642656,28621.642656,one_dollar,157682742,2026-11-27
 2025-07-31,true,nep245:v2_1.omni.hot.tg:1117_3tsdfyziyc7EJbP2aULWSKU4toBaAcN4FdTgfm5W1mC4ouR,v2_1.omni.hot.tg,USDT,USDT,stablecoin,56305.369397,56305.369397,one_dollar,157682742,2026-11-12
 2025-07-31,true,nep245:v2_1.omni.hot.tg:137_3hpYoaLtt8MP1Z2GH1U473DMRKgr,v2_1.omni.hot.tg,USDT,USDT,stablecoin,1174.788629,1174.788629,one_dollar,157682742,2026-11-12
 2025-07-31,true,nep245:v2_1.omni.hot.tg:137_qiStmoQJDQPTebaPjgx5VBxZv6L,v2_1.omni.hot.tg,USDC,USDC,stablecoin,101.766079,101.766079,one_dollar,157682742,2026-11-12
@@ -314,6 +318,7 @@ date_day,is_month_end,asset_id,contract_id,symbol,dashboard_symbol,token_class,a
 2025-08-31,true,nep245:v2_1.omni.hot.tg:10_A2ewyUyDp6qsue1jqZsGypkCxRJ,v2_1.omni.hot.tg,USDC,USDC,stablecoin,9902.836278,9902.836278,one_dollar,162069851,2026-11-12
 2025-08-31,true,nep245:v2_1.omni.hot.tg:1100_111bzQBB5v7AhLyPMDwS8uJgQV24KaAPXtwyVWu2KXbbfQU6NXRCz,v2_1.omni.hot.tg,XLM,XLM,other,341040.9567981,120419.0089268506,token_price,162069851,2026-11-12
 2025-08-31,true,nep245:v2_1.omni.hot.tg:1100_111bzQBB65GxAPAVoxqmMcgYo5oS3txhqs1Uh1cgahKQUeTUq1TJu,v2_1.omni.hot.tg,USDC,USDC,stablecoin,109010.7408358,109010.7408358,one_dollar,162069851,2026-11-12
+2025-08-31,true,nep245:v2_1.omni.hot.tg:1117_,v2_1.omni.hot.tg,GRAM,GRAM,stablecoin,33806.128593472,33806.128593472,one_dollar,162069851,2026-11-27
 2025-08-31,true,nep245:v2_1.omni.hot.tg:1117_3tsdfyziyc7EJbP2aULWSKU4toBaAcN4FdTgfm5W1mC4ouR,v2_1.omni.hot.tg,USDT,USDT,stablecoin,35938.234565,35938.234565,one_dollar,162069851,2026-11-12
 2025-08-31,true,nep245:v2_1.omni.hot.tg:137_3hpYoaLtt8MP1Z2GH1U473DMRKgr,v2_1.omni.hot.tg,USDT,USDT,stablecoin,47325.27485,47325.27485,one_dollar,162069851,2026-11-12
 2025-08-31,true,nep245:v2_1.omni.hot.tg:137_qiStmoQJDQPTebaPjgx5VBxZv6L,v2_1.omni.hot.tg,USDC,USDC,stablecoin,49509.812337,49509.812337,one_dollar,162069851,2026-11-12

@@ -15,7 +15,7 @@ near_ai_has_paying_users,bull,NEAR AI has paying users,,,,not_testable,
 near_fees_outgrew_the_median_peer,bull,NEAR's application fees grew faster than the median peer's over the last three complete months,0.8108154128,>=,0.0,holds,2026-10-31
 near_is_dearer_than_the_median_peer,bear,NEAR trades above the median peer on application fees,1.3904870792,>=,1.0,holds,2026-11-21
 offsets_are_rising,bull,Burn and the NEAR the revenue wallets receive are a larger share of issuance than in the 90 days before,0.0694599586,>=,0.0,holds,2026-11-21
-revenue_reaches_the_wallets,bull,The revenue NEAR reports arrives on chain: what its wallets received is within 10% of its own monthly series,0.1654100826,<=,0.1,fails,2026-11-26
+revenue_reaches_the_wallets,bull,The revenue NEAR reports arrives on chain: what its wallets received is within 10% of its own monthly series,0.165698356,<=,0.1,fails,2026-11-26
 revenue_wallets_keep_their_near,bull,The revenue wallets keep the NEAR they receive: under 5% of it has left,0.0124492995,<=,0.05,holds,2026-11-26
 solvers_are_few,bear,A few market makers fill most Intents volume,,,,not_testable,
 ten_pools_hold_a_third,bear,The ten largest pools hold more than a third of the stake,0.363911079,>=,0.3334,holds,2026-11-26

@@ -37,7 +37,7 @@ GitHub repositories,stg_github__repos,snapshot,2026-11-27,2026-11-27,2026-11-27,
 Governance forum threads,stg_gov__topics,snapshot,2026-11-27,2026-11-27,2026-11-27,0,2,false,108
 House of Stake proposals,stg_rpc__hos_proposals,snapshot,2026-11-27,2026-11-27,2026-11-27,0,2,false,810
 Intents Explorer daily tally,stg_intents_explorer__days,daily,2026-11-27,2026-11-26,2026-11-27,1,3,false,649
-Intents pool on chain: named tokens at month ends and on the newest day,stg_rpc__intents_pool_history,daily,2026-11-27,2026-11-26,2026-11-27,1,35,false,2441
+Intents pool on chain: named tokens at month ends and on the newest day,stg_rpc__intents_pool_history,daily,2026-11-27,2026-11-26,2026-11-27,1,35,false,2448
 Lockup contracts on chain,stg_rpc__lockup_contract_views,snapshot,2026-11-27,2026-11-27,2026-11-27,0,2,false,1429
 NEAR Catalog projects,stg_nearcatalog__projects,snapshot,2026-11-27,2026-11-27,2026-11-27,0,2,false,9271
 NearBlocks Intents by asset,stg_nearblocks__intents_volume_by_asset,daily,2026-11-27,2026-11-26,2026-11-27,1,3,false,71842

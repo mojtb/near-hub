@@ -2326,7 +2326,7 @@
     "description": "Snapshot the token's balance for the day was read in. Past blocks do not change, so a later read gives the same balance."
    }
   ],
-  "rows": 1255,
+  "rows": 1260,
   "first": "2024-11-30",
   "last": "2026-11-26"
  },

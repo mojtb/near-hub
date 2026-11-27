@@ -477,11 +477,11 @@ snapshot_date,repo,ecosystem,repo_group,stars,forks,open_issues,last_push_date,c
 2026-11-27,near-daos/sputnik-dao-contract,near,governance,117,88,54,2026-05-27,2021-01-23
 2026-11-27,near/docs,near,developer_tools,191,505,12,2026-11-23,2019-01-02
 2026-11-27,near/intents,near,intents,65,57,22,2026-11-26,2024-05-02
-2026-11-27,near/mpc,near,chain_signatures,50,53,558,2026-11-27,2024-10-31
+2026-11-27,near/mpc,near,chain_signatures,50,53,559,2026-11-27,2024-10-31
 2026-11-27,near/near-api-js,near,developer_tools,428,274,12,2026-11-25,2019-05-04
 2026-11-27,near/near-cli-rs,near,developer_tools,152,82,40,2026-11-25,2021-03-02
 2026-11-27,near/near-sdk-rs,near,developer_tools,516,284,119,2026-11-23,2019-06-07
-2026-11-27,near/nearcore,near,protocol,2625,810,556,2026-11-27,2018-10-02
+2026-11-27,near/nearcore,near,protocol,2625,810,554,2026-11-27,2018-10-02
 2026-11-27,nearai/cloud-api,near,ai,17,10,208,2026-11-27,2025-09-16
 2026-11-27,out-layer/outlayer,near,ai,14,8,11,2026-11-27,2025-10-09
 2026-11-27,ton-blockchain/ton,ton,protocol,4244,1702,243,2026-11-26,2019-09-07
