@@ -1,25 +1,25 @@
 claim_id,side,claim,value,comparison,threshold,status,as_of_date
-a_doubling_of_volume_reaches_deflation_after_the_cut,bull,"At the end of HSP-029's ramp to 1.6%, a doubling of Intents volume would let revenue and burn match the NEAR that is created",2.9032026215,<=,2.0,fails,2026-11-21
+a_doubling_of_volume_reaches_deflation_after_the_cut,bull,"At the end of HSP-029's ramp to 1.6%, a doubling of Intents volume would let revenue and burn match the NEAR that is created",3.0073010761,<=,2.0,fails,2026-11-22
 capture_is_rising,bull,NEAR's wallets receive a rising share of the fees charged on Intents,0.0856343211,>=,0.0,holds,2026-10-31
 competitors_are_as_large,bear,Other cross-chain swap protocols are as large as NEAR Intents and can take its flow,,,,not_testable,
 dollars_are_arriving_in_intents,bull,Dollars held in NEAR Intents are higher than a quarter ago,0.554294081,>=,0.0,holds,2026-10-31
-etf_took_in_more_than_issuance,bull,The Bitwise ETF took in more NEAR than the chain created over the last 30 days,-1.1712603765,>=,1.0,fails,2026-11-24
+etf_took_in_more_than_issuance,bull,The Bitwise ETF took in more NEAR than the chain created over the last 30 days,0.7440497224,>=,1.0,fails,2026-11-25
 fee_base_is_widening,bull,More partners pay meaningful fees than a quarter ago,0.4827586207,>=,0.0,holds,2026-10-31
 fees_depend_on_one_partner,bear,One partner supplies more than half of 1Click's fees,0.6943629884,>=,0.5,holds,2026-10-31
 foundation_float_is_an_overhang,bear,The NEAR Foundation's liquid NEAR is a large overhang on the float,,,,not_testable,
-intents_is_gaining_share,bull,NEAR Intents is taking a growing share of on-chain trading,0.5939557536,>=,0.0,holds,2026-10-31
+intents_is_gaining_share,bull,NEAR Intents is taking a growing share of on-chain trading,0.5958118539,>=,0.0,holds,2026-10-31
 intents_share_of_transactions_is_rising,bull,A growing share of NEAR's transactions are sent to NEAR Intents,0.0376795518,>=,0.0,holds,2026-10-31
 intents_volume_leads_usage,bull,Intents volume leads network usage: usage rises in the weeks after volume does,0.2219670311,,,not_settled,2026-11-22
-liquid_staking_is_shrinking,bear,Less NEAR sits in liquid staking than a year ago,-0.2477332156,<=,0.0,holds,2026-11-27
+liquid_staking_is_shrinking,bear,Less NEAR sits in liquid staking than a year ago,-0.2518704295,<=,0.0,holds,2026-11-28
 near_ai_has_paying_users,bull,NEAR AI has paying users,,,,not_testable,
-near_fees_outgrew_the_median_peer,bull,NEAR's application fees grew faster than the median peer's over the last three complete months,0.8108154128,>=,0.0,holds,2026-10-31
-near_is_dearer_than_the_median_peer,bear,NEAR trades above the median peer on application fees,1.3904870792,>=,1.0,holds,2026-11-21
-offsets_are_rising,bull,Burn and the NEAR the revenue wallets receive are a larger share of issuance than in the 90 days before,0.0694599586,>=,0.0,holds,2026-11-21
-revenue_reaches_the_wallets,bull,The revenue NEAR reports arrives on chain: what its wallets received is within 10% of its own monthly series,0.165698356,<=,0.1,fails,2026-11-26
-revenue_wallets_keep_their_near,bull,The revenue wallets keep the NEAR they receive: under 5% of it has left,0.0124492995,<=,0.05,holds,2026-11-26
+near_fees_outgrew_the_median_peer,bull,NEAR's application fees grew faster than the median peer's over the last three complete months,0.8102588963,>=,0.0,holds,2026-10-31
+near_is_dearer_than_the_median_peer,bear,NEAR trades above the median peer on application fees,1.3753707181,>=,1.0,holds,2026-11-22
+offsets_are_rising,bull,Burn and the NEAR the revenue wallets receive are a larger share of issuance than in the 90 days before,0.0703675053,>=,0.0,holds,2026-11-22
+revenue_reaches_the_wallets,bull,The revenue NEAR reports arrives on chain: what its wallets received is within 10% of its own monthly series,0.1653686102,<=,0.1,fails,2026-11-27
+revenue_wallets_keep_their_near,bull,The revenue wallets keep the NEAR they receive: under 5% of it has left,0.0124134013,<=,0.05,holds,2026-11-27
 solvers_are_few,bear,A few market makers fill most Intents volume,,,,not_testable,
-ten_pools_hold_a_third,bear,The ten largest pools hold more than a third of the stake,0.363911079,>=,0.3334,holds,2026-11-26
-unlocks_are_behind,bull,The unlock schedule is spent: under 1% of supply is still locked,0.0015470277,<=,0.01,holds,2026-11-26
-usage_is_falling,bear,Fewer accounts sign transactions on NEAR than six months ago,-0.3847964351,<=,-0.1,holds,2026-11-26
+ten_pools_hold_a_third,bear,The ten largest pools hold more than a third of the stake,0.3639301273,>=,0.3334,holds,2026-11-27
+unlocks_are_behind,bull,The unlock schedule is spent: under 1% of supply is still locked,0.0015415163,<=,0.01,holds,2026-11-27
+usage_is_falling,bear,Fewer accounts sign transactions on NEAR than six months ago,-0.3777736198,<=,-0.1,holds,2026-11-27
 volume_stayed_above_2bn_a_month,bull,Intents volume was at least $2B in each of the last three complete months,3201836830.3036957,>=,2000000000.0,holds,2026-10-31
 zcash_is_on_a_fifth_of_volume,bear,Zcash is on one side of at least a fifth of 1Click volume,0.1774535264,>=,0.2,fails,2026-10-31

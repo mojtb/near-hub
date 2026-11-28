@@ -8548,6 +8548,10 @@
    "decimals": 18,
    "symbol": "FLTC"
   },
+  "flu.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "FLU"
+  },
   "fluff.tkn.near": {
    "decimals": 3,
    "symbol": "FLUFF"
@@ -13215,6 +13219,14 @@
   "last3-jqb9.dumpaddict.near": {
    "decimals": 18,
    "symbol": "LAST3"
+  },
+  "lastcall.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "LASTCALL"
+  },
+  "lastcall.v2-launchpad.justhoot.near": {
+   "decimals": 18,
+   "symbol": "LASTCALL"
   },
   "lastdontbu.v2-launchpad.justhoot.near": {
    "decimals": 18,
@@ -29455,6 +29467,18 @@
   "test1.questout.near": {
    "decimals": 18,
    "symbol": "OPTEST"
+  },
+  "test12.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "TEST12"
+  },
+  "test13.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "TEST13"
+  },
+  "test14.nearlytrade.near": {
+   "decimals": 18,
+   "symbol": "TEST14"
   },
   "test2-61ce67.nearlytrade.near": {
    "decimals": 18,
